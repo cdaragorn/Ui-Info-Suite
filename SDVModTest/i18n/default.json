@@ -1,0 +1,17 @@
+{
+    "Billboard" : "Billboard",
+    "Calendar" : "Calendar",
+    "Days" : "days",
+    "DaysToMature" : "days to mature",
+    "FeelingLucky" : "You're feelin' lucky!!",
+    "HarvestPrice" : "Harvest price",
+    "Hours" : "hours",
+    "LevelUp" : "Level Up",
+    "LuckyButNotTooLucky" : "Feelin' lucky... but not too lucky",
+    "MaybeStayHome" : "Maybe you should stay home today...",
+    "Minutes" : "minutes",
+    "NotFeelingLuckyAtAll" : "You're not feeling lucky at all today...",
+    "ReadyToHarvest" : "Ready To Harvest!",
+    "TodaysRecipe" : "Today's Recipe: ",
+    "TravelingMerchantIsInTown" : "Traveling merchant is in town!"
+}

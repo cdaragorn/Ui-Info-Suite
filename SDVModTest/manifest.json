@@ -1,0 +1,13 @@
+﻿{
+   "Name": "UI Info Suite",
+   "Author": "Cdaragorn",
+   "Version": {
+      "MajorVersion": 1,
+      "MinorVersion": 2,
+      "PatchVersion": 6,
+      "Build": null
+   },
+   "Description": "Adds a host of useful information to the user interface. This is based on Demiacle's excellent UIModSuite.",
+   "UniqueID": "Cdaragorn.UiInfoSuite",
+   "EntryDll": "UIInfoSuite.dll"
+}
