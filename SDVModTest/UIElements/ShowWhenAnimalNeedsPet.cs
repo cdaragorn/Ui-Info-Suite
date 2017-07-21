@@ -96,7 +96,7 @@ namespace UIInfoSuite.UIElements
             if (e.NewLocation is AnimalHouse ||
                 e.NewLocation is Farm)
             {
-                _timer.Interval = 5000;
+                _timer.Interval = 1000;
                 _timer.Start();
             }
             else
@@ -118,6 +118,7 @@ namespace UIInfoSuite.UIElements
 
         private void StartDrawingPetNeeds(object sender, ElapsedEventArgs e)
         {
+            _timer.Stop();
             GraphicsEvents.OnPreRenderHudEvent += DrawNeedsPetTooltip;
             GameEvents.SecondUpdateTick += UpdatePetDraw;
             _scale = 4f;
@@ -139,6 +140,7 @@ namespace UIInfoSuite.UIElements
             if (_alpha < 0.1f)
             {
                 StopDrawingPetNeeds();
+                _timer.Start();
             }
         }
 
@@ -187,8 +189,8 @@ namespace UIInfoSuite.UIElements
                     !_helper.Reflection.GetPrivateField<bool>(character, "wasPetToday").GetValue())
                 {
                     Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
-                    positionAboveAnimal.X += 60f;
-                    positionAboveAnimal.Y -= 70f;
+                    positionAboveAnimal.X += 50f;
+                    positionAboveAnimal.Y -= 20f;
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors,
                         new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
@@ -205,8 +207,8 @@ namespace UIInfoSuite.UIElements
 
         private Vector2 GetPetPositionAboveAnimal(Character animal)
         {
-            return new Vector2(Game1.viewport.Width <= Game1.currentLocation.map.DisplayWidth ? animal.position.X - Game1.viewport.X - 16 : animal.position.X + ((Game1.viewport.Width - Game1.currentLocation.map.DisplayWidth) / 2 + 18),
-                Game1.viewport.Height <= Game1.currentLocation.map.DisplayHeight ? animal.position.Y - Game1.viewport.Y + 54 : animal.position.Y + ((Game1.viewport.Height - Game1.currentLocation.map.DisplayHeight) / 2 - 50));
+            return new Vector2(Game1.viewport.Width <= Game1.currentLocation.map.DisplayWidth ? animal.position.X - Game1.viewport.X + 16 : animal.position.X + ((Game1.viewport.Width - Game1.currentLocation.map.DisplayWidth) / 2 + 18),
+                Game1.viewport.Height <= Game1.currentLocation.map.DisplayHeight ? animal.position.Y - Game1.viewport.Y - 34 : animal.position.Y + ((Game1.viewport.Height - Game1.currentLocation.map.DisplayHeight) / 2 - 50));
         }
 
         private Dictionary<long, FarmAnimal> GetAnimalsInCurrentLocation()
