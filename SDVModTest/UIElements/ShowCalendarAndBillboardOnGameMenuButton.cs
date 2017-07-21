@@ -29,6 +29,8 @@ namespace UIInfoSuite.UIElements
         private readonly IDictionary<String, String> _options;
         private readonly IModHelper _helper;
 
+        private Item _hoverItem = null;
+
         public ShowCalendarAndBillboardOnGameMenuButton(IDictionary<String, String> options,
             IModHelper helper)
         {
@@ -42,6 +44,7 @@ namespace UIInfoSuite.UIElements
             GraphicsEvents.OnPreRenderGuiEvent -= RemoveDefaultTooltips;
             ControlEvents.MouseChanged -= OnBillboardIconClick;
             ControlEvents.ControllerButtonPressed -= OnBillboardIconPressed;
+            GraphicsEvents.OnPreRenderEvent -= GetHoverItem;
 
             if (showCalendarAndBillboard)
             {
@@ -49,7 +52,13 @@ namespace UIInfoSuite.UIElements
                 GraphicsEvents.OnPreRenderGuiEvent += RemoveDefaultTooltips;
                 ControlEvents.MouseChanged += OnBillboardIconClick;
                 ControlEvents.ControllerButtonPressed += OnBillboardIconPressed;
+                GraphicsEvents.OnPreRenderEvent += GetHoverItem;
             }
+        }
+
+        private void GetHoverItem(object sender, EventArgs e)
+        {
+            _hoverItem = Tools.GetHoveredItem();
         }
 
         private void OnBillboardIconPressed(object sender, EventArgsControllerButtonPressed e)
@@ -96,7 +105,8 @@ namespace UIInfoSuite.UIElements
 
         private void RenderButtons(object sender, EventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu &&
+            if (_hoverItem == null &&
+                Game1.activeClickableMenu is GameMenu &&
                 (Game1.activeClickableMenu as GameMenu).currentTab == 0)
             {
                 _showBillboardButton.bounds.X = Game1.activeClickableMenu.xPositionOnScreen + Game1.activeClickableMenu.width - 160;
