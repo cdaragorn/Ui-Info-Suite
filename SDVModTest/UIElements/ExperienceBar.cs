@@ -37,6 +37,7 @@ namespace UIInfoSuite.UIElements {
 		private Rectangle _levelUpIconRectangle = new Rectangle(120, 428, 10, 10);
 		private readonly IModHelper _helper;
 		private SoundPlayer _player;
+		private bool _experienceBarShown = false;
 
 		private readonly ModOptionToggle _showLevelUpAnimation;
 		private readonly ModOptionToggle _showExperienceBar;
@@ -147,7 +148,7 @@ namespace UIInfoSuite.UIElements {
 				_shouldDrawLevelUp = true;
 				_timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
 				_timeToDisappear.Start();
-				_showExperienceBar.IsOn = true;
+				_experienceBarShown = true;
 
 				float previousAmbientVolume = Game1.options.ambientVolumeLevel;
 				float previousMusicVolume = Game1.options.musicVolumeLevel;
@@ -180,7 +181,7 @@ namespace UIInfoSuite.UIElements {
 
 		private void StopTimerAndFadeBarOut(object sender, ElapsedEventArgs e) {
 			_timeToDisappear.Stop();
-			_showExperienceBar.IsOn = false;
+			_experienceBarShown = false;
 		}
 
 		private void RemoveAllExperiencePointDisplays(object sender, EventArgsCurrentLocationChanged e) {
@@ -243,7 +244,7 @@ namespace UIInfoSuite.UIElements {
 					_previousItem = currentItem;
 					_currentExperience = experienceEarnedThisLevel;
 
-					if (_showExperienceBar.IsOn &&
+					if (_experienceBarShown &&
 							_levelOfCurrentlyDisplayedExperience != 10) {
 						int barWidth = (int) (_currentExperience / (experienceRequiredToLevel - experienceFromPreviousLevels) * MaxBarWidth);
 						float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
@@ -405,7 +406,7 @@ namespace UIInfoSuite.UIElements {
 				_timeToDisappear.Stop();
 			}
 
-			_showExperienceBar.IsOn = true;
+			_experienceBarShown = true;
 		}
 
 	}
