@@ -9,7 +9,7 @@ namespace UIInfoSuite {
 	public class ModConfig {
 		public string[] KeysForBarrelAndCropTimes { get; set; } = new string[]
 		{
-						Keys.LeftShift.ToString()
+			Keys.LeftShift.ToString()
 		};
 
 		public bool CanRightClickForBarrelAndCropTimes { get; set; } = true;
