@@ -36,6 +36,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="StardewConfigFramework, Version=1.0.6414.30057, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Juice805.StardewConfigFramework.1.0.0\lib\net45\StardewConfigFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,12 +54,10 @@
   <ItemGroup>
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="FeatureController.cs" />
     <Compile Include="LanguageKeys.cs" />
     <Compile Include="ModConfig.cs" />
-    <Compile Include="Options\ModOptionsCheckbox.cs" />
-    <Compile Include="Options\ModOptionsPageButton.cs" />
-    <Compile Include="Options\ModOptionsPageHandler.cs" />
-    <Compile Include="Options\ModOptionsPageIcon.cs" />
+    <Compile Include="OptionKeys.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -96,9 +100,6 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="IconHandler.cs" />
-    <Compile Include="Options\OptionKeys.cs" />
-    <Compile Include="Options\ModOptionsElement.cs" />
-    <Compile Include="Options\ModOptionsPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UIElements\ExperienceBar.cs" />
     <Compile Include="UIElements\ExperiencePointDisplay.cs" />

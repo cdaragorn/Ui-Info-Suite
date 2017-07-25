@@ -1,5 +1,4 @@
-﻿using UIInfoSuite.Options;
-using UIInfoSuite.UIElements;
+﻿using UIInfoSuite.UIElements;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -15,116 +14,72 @@ using System.Globalization;
 using static StardewValley.LocalizedContentManager;
 using System.Resources;
 using System.Reflection;
+using StardewConfigFramework;
 
-namespace UIInfoSuite
-{
-    public class ModEntry : Mod
-    {
+namespace UIInfoSuite {
+	public class ModEntry: Mod {
 
-        private readonly SkipIntro _skipIntro = new SkipIntro();
+		private readonly SkipIntro _skipIntro = new SkipIntro();
 
-        private String _modDataFileName;
-        private readonly Dictionary<String, String> _options = new Dictionary<string, string>();
+		private String _modDataFileName;
+		private ModOptions _modOptions;
+		private ModConfig _modConfig;
 
-        public static IMonitor MonitorObject { get; private set; }
-        public static CultureInfo SpecificCulture { get; private set; }
-        //public static ResourceManager Resources { get; private set; }
-        //public static IModHelper Helper { get; private set; }
+		public static IMonitor MonitorObject { get; private set; }
+		public static CultureInfo SpecificCulture { get; private set; }
+		//public static ResourceManager Resources { get; private set; }
+		//public static IModHelper Helper { get; private set; }
 
-        private ModOptionsPageHandler _modOptionsPageHandler;
+		private FeatureController _controller;
 
-        public ModEntry()
-        {
-            
-        }
+		public ModEntry() {
 
-        public override void Entry(IModHelper helper)
-        {
-            //Helper = helper;
-            MonitorObject = Monitor;
-            SaveEvents.AfterLoad += LoadModData;
-            SaveEvents.AfterSave += SaveModData;
-            SaveEvents.AfterReturnToTitle += ReturnToTitle;
-            GraphicsEvents.OnPreRenderEvent += IconHandler.Handler.Reset;
-            LocalizedContentManager.OnLanguageChange += LocalizedContentManager_OnLanguageChange;
-            LocalizedContentManager_OnLanguageChange(LocalizedContentManager.CurrentLanguageCode);
+		}
 
-            //Resources = new ResourceManager("UIInfoSuite.Resource.strings", Assembly.GetAssembly(typeof(ModEntry)));
-            //try
-            //{
-            //    //Test to make sure the culture specific files are there
-            //    Resources.GetString(LanguageKeys.Days, ModEntry.SpecificCulture);
-            //}
-            //catch
-            //{
-            //    Resources = Properties.Resources.ResourceManager;
-            //}
-        }
+		public override void Entry(IModHelper helper) {
+			//Helper = helper;
+			MonitorObject = Monitor;
+			SaveEvents.AfterLoad += LoadModData;
+			SaveEvents.AfterSave += SaveModData;
+			SaveEvents.AfterReturnToTitle += ReturnToTitle;
+			GraphicsEvents.OnPreRenderEvent += IconHandler.Handler.Reset;
+			LocalizedContentManager.OnLanguageChange += LocalizedContentManager_OnLanguageChange;
+			LocalizedContentManager_OnLanguageChange(LocalizedContentManager.CurrentLanguageCode);
 
-        private void LocalizedContentManager_OnLanguageChange(LanguageCode code)
-        {
-            String cultureString = code.ToString();
-            SpecificCulture = CultureInfo.CreateSpecificCulture(cultureString);
-        }
+			//Resources = new ResourceManager("UIInfoSuite.Resource.strings", Assembly.GetAssembly(typeof(ModEntry)));
+			//try
+			//{
+			//    //Test to make sure the culture specific files are there
+			//    Resources.GetString(LanguageKeys.Days, ModEntry.SpecificCulture);
+			//}
+			//catch
+			//{
+			//    Resources = Properties.Resources.ResourceManager;
+			//}
+		}
 
-        private void ReturnToTitle(object sender, EventArgs e)
-        {
-            _modOptionsPageHandler.Dispose();
-            _modOptionsPageHandler = null;
-        }
+		private void LocalizedContentManager_OnLanguageChange(LanguageCode code) {
+			String cultureString = code.ToString();
+			SpecificCulture = CultureInfo.CreateSpecificCulture(cultureString);
+		}
 
-        private void SaveModData(object sender, EventArgs e)
-        {
-            if (File.Exists(_modDataFileName))
-                File.Delete(_modDataFileName);
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.IndentChars = "  ";
-            using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
-            {
-                writer.WriteStartElement("options");
+		private void ReturnToTitle(object sender, EventArgs e) {
+			_controller.Dispose();
+			_controller = null;
+		}
 
-                foreach (var option in _options)
-                {
-                    writer.WriteStartElement("option");
-                    writer.WriteAttributeString("name", option.Key);
-                    writer.WriteValue(option.Value);
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
-            }
-        }
+		private void SaveModData(object sender, EventArgs e) {
+			_modOptions.SaveUserSettings();
+			Helper.WriteConfig(_modConfig);
+		}
 
-        private void LoadModData(object sender, EventArgs e)
-        {
-            _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.name + "_modData.xml");
-            if (File.Exists(_modDataFileName))
-            {
-                XmlDocument document = new XmlDocument();
+		private void LoadModData(object sender, EventArgs e) {
+			var Settings = IModSettingsFramework.Instance;
+			this._modOptions = ModOptions.LoadUserSettings(this);
+			Settings.AddModOptions(this._modOptions);
 
-                try
-                {
-                    document.Load(_modDataFileName);
-                    XmlNodeList nodes = document.GetElementsByTagName("option");
-
-                    foreach (XmlNode node in nodes)
-                    {
-                        String key = node.Attributes["name"]?.Value;
-                        String value = node.InnerText;
-
-                        if (key != null)
-                            _options[key] = value;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Monitor.Log("Error loading mod config. " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
-                }
-            }
-
-            _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _options);
-        }
-
-       
-    }
+			_modConfig = Helper.ReadConfig<ModConfig>();
+			_controller = new FeatureController(_modOptions, _modConfig, Helper);
+		}
+	}
 }
