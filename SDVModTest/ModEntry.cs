@@ -78,7 +78,12 @@ namespace UIInfoSuite {
 			this._modOptions = ModOptions.LoadUserSettings(this);
 			Settings.AddModOptions(this._modOptions);
 
-			_modConfig = Helper.ReadConfig<ModConfig>();
+			try { // create new config if no file exists
+				_modConfig = Helper.ReadConfig<ModConfig>() ?? new ModConfig();
+			} catch { // if parsing fails, create a new config
+				_modConfig = new ModConfig();
+			}
+			
 			_controller = new FeatureController(_modOptions, _modConfig, Helper);
 		}
 	}
