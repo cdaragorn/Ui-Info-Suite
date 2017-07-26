@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using UIInfoSuite.Extensions;
 using StardewModdingAPI.Events;
@@ -460,11 +460,11 @@ namespace UIInfoSuite.UIElements {
 				int curX = paddedLocationX;
 
 				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.springIcon.X, SourceRects.springIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
-				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2;
+				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2 + Game1.pixelZoom;
 				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.summerIcon.X + SourceRects.springIcon.Width / 2 - 1, SourceRects.summerIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
-				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2;
+				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2 + Game1.pixelZoom;
 				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.fallIcon.X + SourceRects.springIcon.Width / 2 - 1, SourceRects.fallIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
-				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2;
+				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2 + Game1.pixelZoom;
 				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.winterIcon.X + SourceRects.springIcon.Width / 2 - 1, SourceRects.winterIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
 
 				currentLocationY += hover.springIcon.Height + itemSpacing;
