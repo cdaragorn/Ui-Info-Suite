@@ -94,7 +94,7 @@ namespace UIInfoSuite {
 		public static readonly Rectangle fallIcon = new Rectangle(406, 457, 12, 8);
 		public static readonly Rectangle winterIcon = new Rectangle(406, 465, 12, 8);
 		public static readonly Rectangle sunnyIcon = new Rectangle(341, 421, 12, 8);
-		public static readonly Rectangle rainIcon = new Rectangle(465, 421, 12, 8);
+		public static readonly Rectangle rainIcon = new Rectangle(365, 421, 12, 8);
 		public static readonly Rectangle nightIcon = new Rectangle(465, 344, 13, 13);
 
 		public static readonly Rectangle fishIcon = new Rectangle(20, 428, 10, 10);

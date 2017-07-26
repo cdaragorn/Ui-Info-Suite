@@ -60,8 +60,8 @@ namespace UIInfoSuite.UIElements {
 		public TextComponent cropStackPrice = new TextComponent(Game1.smallFont, Color.Black);
 		public IconComponent currencyIcon = new IconComponent(Game1.debrisSpriteSheet, SourceRects.currencyIcon);
 		public IconComponent fishIcon = new IconComponent(SourceRects.fishIcon);
-		public IconComponent rainyIcon = new IconComponent(SourceRects.rainIcon, 0.75f);
-		public IconComponent sunnyIcon = new IconComponent(SourceRects.sunnyIcon, 0.75f);
+		public IconComponent rainyIcon = new IconComponent(SourceRects.rainIcon);
+		public IconComponent sunnyIcon = new IconComponent(SourceRects.sunnyIcon);
 		public TextComponent fishTimes = new TextComponent(Game1.smallFont, Color.Black);
 		public IconComponent springIcon = new IconComponent(SourceRects.springIcon);
 		public IconComponent summerIcon = new IconComponent(SourceRects.summerIcon);

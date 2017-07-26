@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using UIInfoSuite.Extensions;
 using StardewModdingAPI.Events;
@@ -35,9 +35,10 @@ namespace UIInfoSuite.UIElements {
 		private readonly ModOptionToggle _showItemHoverInformation;
 
 		Dictionary<int, string> fishData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "Fish.xnb"));
+		Dictionary<string, string> locationData = Game1.content.Load<Dictionary<string, string>>(Path.Combine("Data", "Locations.xnb"));
 		List<string> cropData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "Crops.xnb")).Values.ToList();
 		Dictionary<int, string> treeData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "fruitTrees.xnb"));
-		Dictionary<string, string> bundleData = Game1.content.Load<Dictionary<String, String>>(Path.Combine("Data", "Bundles.xnb"));
+		Dictionary<string, string> bundleData = Game1.content.Load<Dictionary<string, string>>(Path.Combine("Data", "Bundles.xnb"));
 
 		List<int> springForage = new List<int> { 16, 18, 20, 22, 399, 257, 404, 296 };
 		List<int> summerForage = new List<int> { 396, 402, 420, 259 };
@@ -130,15 +131,33 @@ namespace UIInfoSuite.UIElements {
 			}
 		}
 
-		private Tuple<bool[], bool[], string> GetSeasonsTimesAndWeather(StardewValley.Object hoveredObject) {
+		private Tuple<Dictionary<string, bool>, Dictionary<string, bool>, Dictionary<string, bool>, string> GetSeasonsLocationsWeatherAndTimes(StardewValley.Object hoveredObject) {
 
 			// Spring, Summer, Fall, Winter
-			bool[] seasons = { false, false, false, false };
+			Dictionary<string, bool> seasons = new Dictionary<string, bool>() {
+				{ "spring", false },
+				{ "summer", false },
+				{ "fall", false },
+				{ "winter", false }
+			};
 
 			// Rainy, Sunny
-			bool[] weather = { false, false };
-			string times = "";
+			Dictionary<string, bool> weather = new Dictionary<string, bool>() {
+				{ "sunny", false },
+				{ "rainy", false }
+			};
 
+			// Locations
+			Dictionary<string, bool> locations = new Dictionary<string, bool>()
+			{
+				{ "UndergroundMine", false }, { "Desert", false }, { "ForestRiver", false },
+				{ "Town", false }, { "Mountain", false }, { "Beach", false },
+				{ "Woods", false }, { "Sewer", false }, { "BugLand", false },
+				{ "WitchSwamp", false }, { "Trap", false }, { "ForestPond", false },
+			};
+
+			string times = "";
+			
 			if (hoveredObject != null && fishData.ContainsKey(hoveredObject.ParentSheetIndex) && !hoveredObject.Name.Contains("Algae") && !hoveredObject.Name.Contains("Seaweed")) {
 				// draw the seasons icons 
 				var data = fishData[hoveredObject.ParentSheetIndex].Split('/');
@@ -147,13 +166,13 @@ namespace UIInfoSuite.UIElements {
 					var weatherData = data[7].Split(' ');
 					if (!weatherData.Contains("both")) { // if all weather don't draw any
 						if (weatherData.Contains("rainy")) {
-							weather[0] = true;
+							weather["rainy"] = true;
 						} else {
-							weather[1] = true;
+							weather["sunny"] = true;
 						}
 					} else {
-						weather[0] = true;
-						weather[1] = true;
+						weather["rainy"] = true;
+						weather["sunny"] = true;
 					}
 
 					var timesData = data[5].Split(' ');
@@ -168,7 +187,7 @@ namespace UIInfoSuite.UIElements {
 								times += "am";
 
 							if (i % 2 == 1 && i != timesData.Length - 1) {
-								times += ", ";
+								times += "\n";
 							} else if (i % 2 == 0) {
 								times += "-";
 							}
@@ -177,23 +196,71 @@ namespace UIInfoSuite.UIElements {
 						times = "Any Time";
 					}
 
-					// show seasons
-					var seasonsData = data[6].Split(' ');
-					if (seasonsData.Count() > 0) { // if not all seasons
+					// Seasons data is in Locations.xnb
+					foreach (string key in locationData.Keys) {
+						string[] locationDataArray = locationData[key].Split('/');
 
-						if (seasonsData.Contains("spring"))
-							seasons[0] = true;
+						string[] springData = locationDataArray[4].Split(' ');
+						string[] summerData = locationDataArray[5].Split(' ');
+						string[] fallData = locationDataArray[6].Split(' ');
+						string[] winterData = locationDataArray[7].Split(' ');
 
-						if (seasonsData.Contains("summer"))
-							seasons[1] = true;
+						if (springData.Contains($"{hoveredObject.ParentSheetIndex}")) {
+							seasons["spring"] = true;
+							locations[key + "River"] = true;
 
-						if (seasonsData.Contains("fall"))
-							seasons[2] = true;
+							if (key == "Forest") { // forest has 2 seperate bodies of water
+								if (springData[Array.IndexOf(springData, $"{hoveredObject.ParentSheetIndex}") + 1] == "-1") {
+									locations[key + "Pond"] = true;
+								}
 
-						if (seasonsData.Contains("winter"))
-							seasons[3] = true;
+							} else
+								locations[key] = true;
+						}
+
+						if (summerData.Contains($"{hoveredObject.ParentSheetIndex}")) {
+							seasons["summer"] = true;
+							locations[key + "River"] = true;
+
+							if (key == "Forest") { // forest has 2 seperate bodies of water
+								if (summerData[Array.IndexOf(summerData, $"{hoveredObject.ParentSheetIndex}") + 1] == "-1") {
+									locations[key + "Pond"] = true;
+								}
+
+							} else
+								locations[key] = true;
+						}
+
+						if (fallData.Contains($"{hoveredObject.ParentSheetIndex}")) {
+							seasons["fall"] = true;
+							locations[key + "River"] = true;
+
+							if (key == "Forest") { // forest has 2 seperate bodies of water
+								if (fallData[Array.IndexOf(fallData, $"{hoveredObject.ParentSheetIndex}") + 1] == "-1") {
+									locations[key + "Pond"] = true;
+								}
+
+							} else
+								locations[key] = true;
+						}
+
+						if (winterData.Contains($"{hoveredObject.ParentSheetIndex}")) {
+							seasons["winter"] = true;
+							locations[key + "River"] = true;
+
+							if (key == "Forest") { // forest has 2 seperate bodies of water
+								if (winterData[Array.IndexOf(winterData, $"{hoveredObject.ParentSheetIndex}") + 1] == "-1") {
+									locations[key + "Pond"] = true;
+								}
+
+							} else
+								locations[key] = true;
+						}
 					}
-				}
+
+				} else if (data[1] == "trap") {
+					locations["Trap"] = true;
+ 				}
 			} else if (hoveredObject != null && treeData.Values.ToList().Exists(x => x.Split('/')[2] == $"{hoveredObject.ParentSheetIndex}")) {
 
 				var data = treeData.Values.ToList().Find(x => x.Split('/')[2] == $"{hoveredObject.ParentSheetIndex}").Split('/');
@@ -201,16 +268,16 @@ namespace UIInfoSuite.UIElements {
 				var seasonsData = data[1].Split(' ');
 				if (seasonsData.Count() > 0) {
 					if (seasonsData.Contains("spring"))
-						seasons[0] = true;
+						seasons["spring"] = true;
 
 					if (seasonsData.Contains("summer"))
-						seasons[1] = true;
+						seasons["summer"] = true;
 
 					if (seasonsData.Contains("fall"))
-						seasons[2] = true;
+						seasons["fall"] = true;
 
 					if (seasonsData.Contains("winter"))
-						seasons[3] = true;
+						seasons["winter"] = true;
 				}
 
 			} else if (hoveredObject != null && cropData.Exists(x => { return x.Split('/')[3] == $"{hoveredObject.ParentSheetIndex}"; })) {
@@ -221,16 +288,16 @@ namespace UIInfoSuite.UIElements {
 				if (seasonsData.Count() > 0) {
 
 					if (seasonsData.Contains("spring"))
-						seasons[0] = true;
+						seasons["spring"] = true;
 
 					if (seasonsData.Contains("summer"))
-						seasons[1] = true;
+						seasons["summer"] = true;
 
 					if (seasonsData.Contains("fall"))
-						seasons[2] = true;
+						seasons["fall"] = true;
 
 					if (seasonsData.Contains("winter"))
-						seasons[3] = true;
+						seasons["winter"] = true;
 				}
 			} else if (hoveredObject != null
 				&& ((fallForage.Contains(hoveredObject.ParentSheetIndex))
@@ -240,19 +307,19 @@ namespace UIInfoSuite.UIElements {
 				)) { // Foraged items
 
 				if (springForage.Contains(hoveredObject.ParentSheetIndex))
-					seasons[0] = true;
+					seasons["spring"] = true;
 
 				if (summerForage.Contains(hoveredObject.ParentSheetIndex))
-					seasons[1] = true;
+					seasons["summer"] = true;
 
 				if (fallForage.Contains(hoveredObject.ParentSheetIndex))
-					seasons[2] = true;
+					seasons["fall"] = true;
 
 				if (winterForage.Contains(hoveredObject.ParentSheetIndex))
-					seasons[3] = true;
+					seasons["winter"] = true;
 			}
 
-			return new Tuple<bool[], bool[], string>(seasons, weather, times);
+			return new Tuple<Dictionary<string, bool>, Dictionary<string, bool>, Dictionary<string, bool>, string>(seasons, locations, weather, times);
 
 		}
 
@@ -314,7 +381,7 @@ namespace UIInfoSuite.UIElements {
 				return;
 			}
 
-			Tuple<bool[], bool[], string> timeInfo = GetSeasonsTimesAndWeather(hoverObject);
+			Tuple<Dictionary<string, bool>, Dictionary<string, bool>, Dictionary<string, bool>, string> timeInfo = GetSeasonsLocationsWeatherAndTimes(hoverObject);
 
 			if (hoverObject.type == "Seeds") {
 
@@ -322,7 +389,7 @@ namespace UIInfoSuite.UIElements {
 					var crop = new StardewValley.Object(new Debris(new Crop(_hoverItem.parentSheetIndex, 0, 0).indexOfHarvest, Game1.player.position, Game1.player.position).chunkType, 1);
 					var cropPrice = crop.Price;
 
-					timeInfo = GetSeasonsTimesAndWeather(crop);
+					timeInfo = GetSeasonsLocationsWeatherAndTimes(crop);
 
 					hover.cropPrice.text = $"{cropPrice}";
 					hover.cropPrice.hidden = false;
@@ -337,37 +404,49 @@ namespace UIInfoSuite.UIElements {
 				}
 			}
 
-			if (timeInfo.Item1.Contains(true)) { // if at least one season
-				int num = timeInfo.Item1.Where(x => { return x; }).Count();
-
-				if (timeInfo.Item1[0])
+			if (timeInfo.Item1.Values.Contains(true)) { // if at least one season
+				int num = timeInfo.Item1.Where(x => { return x.Value; }).Count();
+				
+				if (timeInfo.Item1["spring"])
 					hover.springIcon.hidden = false;
-				if (timeInfo.Item1[1])
+				if (timeInfo.Item1["summer"])
 					hover.summerIcon.hidden = false;
-				if (timeInfo.Item1[2])
+				if (timeInfo.Item1["fall"])
 					hover.fallIcon.hidden = false;
-				if (timeInfo.Item1[3])
+				if (timeInfo.Item1["winter"])
 					hover.winterIcon.hidden = false;
 
 				hover.Background.Height += hover.springIcon.Height + itemSpacing;
-				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num != 4 ? num: 2 ) + padding);
+				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num != 4 ? num : 2) + padding);
 			}
 
-			if (timeInfo.Item2.Contains(true)) { // if at least one season
-				int num = timeInfo.Item2.Where(x => { return x; }).Count();
+			if (timeInfo.Item2.Values.Contains(true)) { // if at least one season
+				int num = timeInfo.Item3.Where(x => { return x.Value; }).Count();
 
-				if (timeInfo.Item2[0])
+				// TODO Add custom icons by 4Slice
+				// Catfish and pike are special exceptions with Secret Woods
+
+				hover.Background.Height += hover.springIcon.Height + itemSpacing;
+				// todo decide max width
+				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num < 4 ? num : num) + padding);
+			}
+
+
+			if (timeInfo.Item3.Values.Contains(true)) { // if at least one season
+				int num = timeInfo.Item3.Where(x => { return x.Value; }).Count();
+
+				if (timeInfo.Item3["rainy"])
 					hover.rainyIcon.hidden = false;
-				if (timeInfo.Item2[1])
+				if (timeInfo.Item3["sunny"])
 					hover.sunnyIcon.hidden = false;
 
 				hover.Background.Height += hover.rainyIcon.Height + itemSpacing;
 				hover.ExtendBackgroundWidth((hover.rainyIcon.Width + itemSpacing) * num + padding);
 			}
 
-			if (timeInfo.Item3 != "") {
+			if (timeInfo.Item4 != "") {
 				hover.fishTimes.hidden = false;
-				hover.fishTimes.text = timeInfo.Item3;
+				hover.fishTimes.text = timeInfo.Item4;
 
 				hover.Background.Height += hover.fishTimes.Height + itemSpacing;
 				hover.ExtendBackgroundWidth(hover.fishTimes.Width + padding);
@@ -455,6 +534,7 @@ namespace UIInfoSuite.UIElements {
 				currentLocationY += hover.currencyIcon.Height + itemSpacing;
 			}
 
+			// Draw Season Icons
 			if (!hover.springIcon.hidden && !hover.summerIcon.hidden && !hover.fallIcon.hidden && !hover.winterIcon.hidden) {
 				// draw a custom icon because all 4 is too long
 				int curX = paddedLocationX;
@@ -495,6 +575,12 @@ namespace UIInfoSuite.UIElements {
 				currentLocationY += hover.springIcon.Height + itemSpacing;
 			}
 
+			// TODO Draw Location Icon
+			if (false) {
+
+			}
+
+			// Draw weather Icons
 			if (!hover.rainyIcon.hidden || !hover.sunnyIcon.hidden) {
 
 				int curX = paddedLocationX;
@@ -512,6 +598,7 @@ namespace UIInfoSuite.UIElements {
 				currentLocationY += hover.rainyIcon.Height + itemSpacing;
 			}
 
+			// Draw Fish Times
 			if (!hover.fishTimes.hidden) {
 				hover.fishTimes.draw(Game1.spriteBatch, new Vector2(paddedLocationX, currentLocationY));
 
