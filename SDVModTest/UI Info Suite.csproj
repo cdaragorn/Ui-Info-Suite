@@ -101,6 +101,7 @@
     <Compile Include="ModEntry.cs" />
     <Compile Include="IconHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIElements\HoverComponent.cs" />
     <Compile Include="UIElements\ExperienceBar.cs" />
     <Compile Include="UIElements\ExperiencePointDisplay.cs" />
     <Compile Include="UIElements\LocationOfTownsfolk.cs" />

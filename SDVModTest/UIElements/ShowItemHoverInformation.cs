@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using StardewConfigFramework;
+using System.IO;
 
 namespace UIInfoSuite.UIElements {
 	class ShowItemHoverInformation: IDisposable {
@@ -32,6 +33,16 @@ namespace UIInfoSuite.UIElements {
 		private CommunityCenter _communityCenter;
 		private Dictionary<String, String> _bundleData;
 		private readonly ModOptionToggle _showItemHoverInformation;
+
+		Dictionary<int, string> fishData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "Fish.xnb"));
+		List<string> cropData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "Crops.xnb")).Values.ToList();
+		Dictionary<int, string> treeData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "fruitTrees.xnb"));
+		Dictionary<string, string> bundleData = Game1.content.Load<Dictionary<String, String>>(Path.Combine("Data", "Bundles.xnb"));
+
+		List<int> springForage = new List<int> { 16, 18, 20, 22, 399, 257, 404, 296 };
+		List<int> summerForage = new List<int> { 396, 402, 420, 259 };
+		List<int> fallForage = new List<int> { 406, 408, 410, 281, 404, 420 };
+		List<int> winterForage = new List<int> { 412, 414, 416, 418, 283 };
 
 		public ShowItemHoverInformation(ModOptions modOptions) {
 			_showItemHoverInformation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExtraItemInformation) ?? new ModOptionToggle(OptionKeys.ShowExtraItemInformation, "Show Item hover information");
@@ -119,244 +130,378 @@ namespace UIInfoSuite.UIElements {
 			}
 		}
 
+		private Tuple<bool[], bool[], string> GetSeasonsTimesAndWeather(StardewValley.Object hoveredObject) {
+
+			// Spring, Summer, Fall, Winter
+			bool[] seasons = { false, false, false, false };
+
+			// Rainy, Sunny
+			bool[] weather = { false, false };
+			string times = "";
+
+			if (hoveredObject != null && fishData.ContainsKey(hoveredObject.ParentSheetIndex) && !hoveredObject.Name.Contains("Algae") && !hoveredObject.Name.Contains("Seaweed")) {
+				// draw the seasons icons 
+				var data = fishData[hoveredObject.ParentSheetIndex].Split('/');
+				if (data[1] != "trap") {
+
+					var weatherData = data[7].Split(' ');
+					if (!weatherData.Contains("both")) { // if all weather don't draw any
+						if (weatherData.Contains("rainy")) {
+							weather[0] = true;
+						} else {
+							weather[1] = true;
+						}
+					} else {
+						weather[0] = true;
+						weather[1] = true;
+					}
+
+					var timesData = data[5].Split(' ');
+
+					if (!(timesData[0] == "600" && timesData[1] == "2600")) {
+						for (int i = 0; i < times.Length; i++) {
+							int time = (int.Parse(timesData[i]) / 100);
+							times += time - (time > 12 ? 12 * (int) (time / 12) : 0);
+							if (time >= 12 && time < 24)
+								times += "pm";
+							else
+								times += "am";
+
+							if (i % 2 == 1 && i != times.Length - 1) {
+								times += ", ";
+							} else if (i % 2 == 0) {
+								times += "-";
+							}
+						}
+					} else {
+						times = "Any Time";
+					}
+
+					// show seasons
+					var seasonsData = data[6].Split(' ');
+					if (seasonsData.Count() > 0) { // if not all seasons
+
+						if (seasonsData.Contains("spring"))
+							seasons[0] = true;
+
+						if (seasonsData.Contains("summer"))
+							seasons[1] = true;
+
+						if (seasonsData.Contains("fall"))
+							seasons[2] = true;
+
+						if (seasonsData.Contains("winter"))
+							seasons[3] = true;
+					}
+				}
+			} else if (hoveredObject != null && treeData.Values.ToList().Exists(x => x.Split('/')[2] == $"{hoveredObject.ParentSheetIndex}")) {
+
+				var data = treeData.Values.ToList().Find(x => x.Split('/')[2] == $"{hoveredObject.ParentSheetIndex}").Split('/');
+
+				var seasonsData = data[1].Split(' ');
+				if (seasonsData.Count() > 0) {
+					if (seasonsData.Contains("spring"))
+						seasons[0] = true;
+
+					if (seasonsData.Contains("summer"))
+						seasons[1] = true;
+
+					if (seasonsData.Contains("fall"))
+						seasons[2] = true;
+
+					if (seasonsData.Contains("winter"))
+						seasons[3] = true;
+				}
+
+			} else if (hoveredObject != null && cropData.Exists(x => { return x.Split('/')[3] == $"{hoveredObject.ParentSheetIndex}"; })) {
+
+				var data = cropData.Find(x => { return x.Split('/')[3] == $"{hoveredObject.ParentSheetIndex}"; }).Split('/');
+
+				var seasonsData = data[1].Split(' ');
+				if (seasonsData.Count() > 0) {
+
+					if (seasonsData.Contains("spring"))
+						seasons[0] = true;
+
+					if (seasonsData.Contains("summer"))
+						seasons[1] = true;
+
+					if (seasonsData.Contains("fall"))
+						seasons[2] = true;
+
+					if (seasonsData.Contains("winter"))
+						seasons[3] = true;
+				}
+			} else if (hoveredObject != null
+				&& ((fallForage.Contains(hoveredObject.ParentSheetIndex))
+				|| (springForage.Contains(hoveredObject.ParentSheetIndex))
+				|| (winterForage.Contains(hoveredObject.ParentSheetIndex))
+				|| (summerForage.Contains(hoveredObject.ParentSheetIndex))
+				)) { // Foraged items
+
+				if (springForage.Contains(hoveredObject.ParentSheetIndex))
+					seasons[0] = true;
+
+				if (summerForage.Contains(hoveredObject.ParentSheetIndex))
+					seasons[1] = true;
+
+				if (fallForage.Contains(hoveredObject.ParentSheetIndex))
+					seasons[2] = true;
+
+				if (winterForage.Contains(hoveredObject.ParentSheetIndex))
+					seasons[3] = true;
+			}
+
+			return new Tuple<bool[], bool[], string>(seasons, weather, times);
+
+		}
+
+		Components hover = new Components();
+
 		private void DrawAdvancedTooltip(object sender, EventArgs e) {
-			if (_hoverItem != null) {
-				//String text = string.Empty;
-				//String extra = string.Empty;
-				int truePrice = Tools.GetTruePrice(_hoverItem);
-				int itemPrice = 0;
-				int stackPrice = 0;
+			if (_hoverItem == null)
+				return;
 
-				if (truePrice > 0 &&
-						_hoverItem.Name != "Scythe") {
-					itemPrice = truePrice / 2;
-					//int width = (int)Game1.smallFont.MeasureString(" ").Length();
-					//int numberOfSpaces = 46 / ((int)Game1.smallFont.MeasureString(" ").Length()) + 1;
-					//StringBuilder spaces = new StringBuilder();
-					//for (int i = 0; i < numberOfSpaces; ++i)
-					//{
-					//    spaces.Append(" ");
-					//}
-					//text = "\n" + spaces.ToString() + (truePrice / 2);
+			int padding = 2 * 5 * Game1.pixelZoom;
+			int itemSpacing = 2 * Game1.pixelZoom;
+
+
+			var hoverObject = _hoverItem as StardewValley.Object;
+
+			hover.Reset(); // reset components
+
+			// set minimum background width to bottom padding
+			hover.Background.Height = Game1.pixelZoom - itemSpacing;
+			hover.Background.Width = Game1.pixelZoom * 25;
+
+			foreach (var requiredBundle in _prunedRequiredBundles) {
+				if (requiredBundle.Value.Contains(_hoverItem.parentSheetIndex) &&
+						!_hoverItem.Name.Contains("arecrow")) {
+					hover.bundleName.hidden = false;
+					hover.bundleName.text = requiredBundle.Key;
+					hover.Background.Height += hover.bundleIcon.Height + itemSpacing;
+					hover.ExtendBackgroundWidth(hover.bundleIcon.Width + itemSpacing + hover.bundleName.Width + padding, Game1.pixelZoom * 50);
+					break;
+				}
+			}
+
+			if (hover.bundleName.hidden)
+				hover.Background.Height += padding / 2;
+
+			int truePrice = Tools.GetTruePrice(_hoverItem);
+
+			if (truePrice > 0) {
+				hover.price.hidden = false;
+				hover.price.text = $"{truePrice}";
+				hover.Background.Height += hover.price.Height + itemSpacing;
+				hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.price.Width + padding);
+
+				if (_hoverItem.getStack() > 1) {
+					hover.stackPrice.hidden = false;
+					hover.stackPrice.text = $"{truePrice * _hoverItem.getStack()}";
+					hover.Background.Height += hover.stackPrice.Height + itemSpacing;
+					hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + padding);
+				} else {
+					hover.Background.Height += itemSpacing; // not sure why non stacked items arent properly vertically padded.
+				}
+			} else {
+				// If no price, object will not have any other info of interest to display
+				return;
+			}
+
+			if (hoverObject == null) {
+				// all other possible info needs to be type object
+				return;
+			}
+
+			Tuple<bool[], bool[], string> timeInfo = GetSeasonsTimesAndWeather(hoverObject);
+
+			if (hoverObject.type == "Seeds") {
+
+				if (hoverObject.Name != "Mixed Seeds" && hoverObject.Name != "Winter Seeds" && hoverObject.Name != "Summer Seeds" && hoverObject.Name != "Fall Seeds" && hoverObject.Name != "Spring Seeds") {
+					var crop = new StardewValley.Object(new Debris(new Crop(_hoverItem.parentSheetIndex, 0, 0).indexOfHarvest, Game1.player.position, Game1.player.position).chunkType, 1);
+					var cropPrice = crop.Price;
+
+					timeInfo = GetSeasonsTimesAndWeather(crop);
+
+					hover.cropPrice.text = $"{cropPrice}";
+					hover.cropPrice.hidden = false;
+					hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.price.Width + itemSpacing + (int) hover.cropPrice.font.MeasureString(">").X + itemSpacing + hover.cropPrice.Width + padding);
+
 					if (_hoverItem.getStack() > 1) {
-						stackPrice = (itemPrice * _hoverItem.getStack());
-						//text += " (" + (truePrice / 2 * _hoverItem.getStack()) + ")";
+						hover.cropStackPrice.text = $"{cropPrice * _hoverItem.getStack()}";
+						hover.cropStackPrice.hidden = false;
+						hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + itemSpacing + (int) hover.cropStackPrice.font.MeasureString(">").X + itemSpacing + hover.cropStackPrice.Width + padding);
+
 					}
 				}
-				int cropPrice = 0;
+			}
 
-				//bool flag = false;
-				if (_hoverItem is StardewValley.Object &&
-						(_hoverItem as StardewValley.Object).type == "Seeds" &&
-						itemPrice > 0 &&
-						(_hoverItem.Name != "Mixed Seeds" ||
-						_hoverItem.Name != "Winter Seeds")) {
-					StardewValley.Object itemObject = new StardewValley.Object(new Debris(new Crop(_hoverItem.parentSheetIndex, 0, 0).indexOfHarvest, Game1.player.position, Game1.player.position).chunkType, 1);
-					//extra += "    " + itemObject.Price;
-					cropPrice = itemObject.Price;
-					//flag = true;
-				}
+			if (timeInfo.Item1.Contains(true)) { // if at least one season
+				int num = timeInfo.Item1.Where(x => { return x; }).Count();
 
-				//String hoverTile = _hoverItem.DisplayName + text + extra;
-				//String description = _hoverItem.getDescription();
-				//Vector2 vector2 = DrawTooltip(Game1.spriteBatch, _hoverItem.getDescription(), hoverTile, _hoverItem);
-				//vector2.X += 30;
-				//vector2.Y -= 10;
+				if (timeInfo.Item1[0])
+					hover.springIcon.hidden = false;
+				if (timeInfo.Item1[1])
+					hover.summerIcon.hidden = false;
+				if (timeInfo.Item1[2])
+					hover.fallIcon.hidden = false;
+				if (timeInfo.Item1[3])
+					hover.winterIcon.hidden = false;
 
-				String requiredBundleName = null;
+				hover.Background.Height += hover.springIcon.Height + itemSpacing;
+				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * num + padding);
+			}
 
-				foreach (var requiredBundle in _prunedRequiredBundles) {
-					if (requiredBundle.Value.Contains(_hoverItem.parentSheetIndex) &&
-							!_hoverItem.Name.Contains("arecrow")) {
-						requiredBundleName = requiredBundle.Key;
-						break;
+			if (timeInfo.Item2.Contains(true)) { // if at least one season
+				int num = timeInfo.Item2.Where(x => { return x; }).Count();
+
+				if (timeInfo.Item2[0])
+					hover.rainyIcon.hidden = false;
+				if (timeInfo.Item2[1])
+					hover.sunnyIcon.hidden = false;
+
+				hover.Background.Height += hover.rainyIcon.Height + itemSpacing;
+				hover.ExtendBackgroundWidth((hover.rainyIcon.Width + itemSpacing) * num + padding);
+			}
+
+			if (timeInfo.Item3 != "") {
+				hover.fishTimes.hidden = false;
+				hover.fishTimes.text = timeInfo.Item3;
+
+				hover.Background.Height += hover.fishTimes.Height + itemSpacing;
+				hover.ExtendBackgroundWidth(hover.fishTimes.Width + padding);
+			}
+
+			// place window by mouse
+			hover.Background.Y = Game1.getMouseY() + 12 * Game1.pixelZoom;
+			hover.Background.X = Game1.getMouseX() + 6 * Game1.pixelZoom - hover.Background.Width;
+
+			// 70 * pixelZoom is my guess for the maximum width of the default tooltip
+			// if modify original tooltip to add a global Rectangle of the default tooltip, can get exact dimensions
+			// Would have to revert to removing the original tooltip again.
+
+			// ensure it doesnt go off screen
+			if (hover.Background.Bottom > Game1.viewport.Height) { // bottom
+				hover.Background.Y = Game1.viewport.Height - hover.Background.Height;
+				hover.Background.X = Game1.getMouseX() - 4 * Game1.pixelZoom - hover.Background.Width;
+
+			}
+
+			if (hover.Background.X < 0) { // bottom left
+				hover.Background.X = Game1.getMouseX() + 8 * Game1.pixelZoom + 70 * Game1.pixelZoom;
+			} else if (hover.Background.Right + 70 * Game1.pixelZoom + 8 * Game1.pixelZoom > Game1.viewport.Width) { // bottom right
+				hover.Background.X = Game1.viewport.Width - hover.Background.Width - 8 * Game1.pixelZoom - 70 * Game1.pixelZoom;
+			}
+
+			// Draw Hover Info
+			IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.menuTexture, new Rectangle(0, 256, 60, 60), hover.Background.X, hover.Background.Y, hover.Background.Width, hover.Background.Height, Color.White, 1f, true);
+
+			// keep track of next item location as we go down
+			int currentLocationY = hover.Background.Y;
+			int paddedLocationX = hover.Background.X + padding / 2 ;
+
+			if (!hover.bundleName.hidden) {
+
+				int amountOfSectionsWithoutAlpha = 10;
+				int amountOfSections = 36;
+				int sectionWidth = (hover.Background.Width - hover.bundleIcon.Width) / amountOfSections;
+
+				// Draw fade
+				for (int i = 0; i < amountOfSections; i++) {
+					float sectionAlpha;
+					if (i < amountOfSectionsWithoutAlpha) {
+						sectionAlpha = 0.92f;
+					} else {
+						sectionAlpha = 0.92f - (i - amountOfSectionsWithoutAlpha) * (1f / (amountOfSections - amountOfSectionsWithoutAlpha));
 					}
+					Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(hover.Background.X + SourceRects.bundleIcon.Width * Game1.pixelZoom + (sectionWidth * i), currentLocationY, sectionWidth, SourceRects.bundleIcon.Height * Game1.pixelZoom), Color.Crimson * sectionAlpha);
 				}
 
-				int largestTextWidth = 0;
-				int stackTextWidth = (int) (Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
-				int itemTextWidth = (int) (Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
-				largestTextWidth = (stackTextWidth > itemTextWidth) ? stackTextWidth : itemTextWidth;
-				int windowWidth = Math.Max(largestTextWidth + 90, String.IsNullOrEmpty(requiredBundleName) ? 100 : 300);
+				// Draw Icon
+				hover.bundleIcon.draw(Game1.spriteBatch, new Vector2(hover.Background.X, currentLocationY));
 
-				int windowHeight = 75;
+				// Draw Text
+				hover.bundleName.draw(Game1.spriteBatch, new Vector2(hover.Background.X + hover.bundleIcon.Width + Game1.pixelZoom, currentLocationY + 3 * Game1.pixelZoom));
 
-				if (stackPrice > 0)
-					windowHeight += 40;
+				currentLocationY += hover.bundleIcon.Height + itemSpacing;
+			} else {
+				currentLocationY += padding / 2;
+			}
 
-				if (cropPrice > 0)
-					windowHeight += 40;
+			if (!hover.price.hidden) {
+				hover.currencyIcon.draw(Game1.spriteBatch, new Vector2(paddedLocationX, currentLocationY));
+				hover.price.draw(Game1.spriteBatch, new Vector2(paddedLocationX + hover.currencyIcon.Width + itemSpacing, currentLocationY));
 
-				int windowY = Game1.getMouseY() + 20;
-
-				windowY = Game1.viewport.Height - windowHeight - windowY < 0 ? Game1.viewport.Height - windowHeight : windowY;
-
-				int windowX = Game1.getMouseX() - windowWidth - 25;
-
-				if (Game1.getMouseX() > Game1.viewport.Width - 300) {
-					windowX = Game1.viewport.Width - windowWidth - 350;
-				} else if (windowX < 0) {
-					windowX = Game1.getMouseX() + 350;
+				if (!hover.cropPrice.hidden) {
+					Game1.spriteBatch.DrawString(hover.price.font, ">", new Vector2(paddedLocationX + hover.currencyIcon.Width + itemSpacing + hover.price.Width + itemSpacing, currentLocationY), Game1.textColor);
+					hover.cropPrice.draw(Game1.spriteBatch, new Vector2(paddedLocationX + hover.currencyIcon.Width + itemSpacing + hover.price.Width + itemSpacing + (int) hover.cropPrice.font.MeasureString(">").X + itemSpacing, currentLocationY));
 				}
 
-				Vector2 windowPos = new Vector2(windowX, windowY);
-				Vector2 currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
+				currentLocationY += hover.currencyIcon.Height + itemSpacing;
+			}
 
+			if (!hover.stackPrice.hidden) {
+				hover.currencyIcon.draw(Game1.spriteBatch, new Vector2(paddedLocationX - Game1.pixelZoom, currentLocationY - Game1.pixelZoom));
+				hover.currencyIcon.draw(Game1.spriteBatch, new Vector2(paddedLocationX + Game1.pixelZoom, currentLocationY + Game1.pixelZoom));
 
-				if (itemPrice > 0) {
+				hover.stackPrice.draw(Game1.spriteBatch, new Vector2(paddedLocationX + hover.currencyIcon.Width + itemSpacing, currentLocationY));
 
-
-					IClickableMenu.drawTextureBox(
-							Game1.spriteBatch,
-							Game1.menuTexture,
-							new Rectangle(0, 256, 60, 60),
-							(int) windowPos.X,
-							(int) windowPos.Y,
-							windowWidth,
-							windowHeight,
-							Color.White);
-
-					Game1.spriteBatch.Draw(
-							Game1.debrisSpriteSheet,
-							new Vector2(currentDrawPos.X, currentDrawPos.Y + 4),
-							Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-							Color.White,
-							0,
-							new Vector2(8, 8),
-							Game1.pixelZoom,
-							SpriteEffects.None,
-							0.95f);
-
-					Game1.spriteBatch.DrawString(
-							Game1.smallFont,
-							itemPrice.ToString(),
-							new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10 + 2),
-							Game1.textShadowColor);
-
-					Game1.spriteBatch.DrawString(
-							Game1.smallFont,
-							itemPrice.ToString(),
-							new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-							Game1.textColor);
-
-					currentDrawPos.Y += 40;
-
-					if (stackPrice > 0) {
-						Game1.spriteBatch.Draw(
-								Game1.debrisSpriteSheet,
-								new Vector2(currentDrawPos.X, currentDrawPos.Y),
-								Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-								Color.White,
-								0,
-								new Vector2(8, 8),
-								Game1.pixelZoom,
-								SpriteEffects.None,
-								0.95f);
-
-						Game1.spriteBatch.Draw(
-								Game1.debrisSpriteSheet,
-								new Vector2(currentDrawPos.X, currentDrawPos.Y + 10),
-								Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-								Color.White,
-								0,
-								new Vector2(8, 8),
-								Game1.pixelZoom,
-								SpriteEffects.None,
-								0.95f);
-
-						Game1.spriteBatch.DrawString(
-								Game1.smallFont,
-								stackPrice.ToString(),
-								new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10 + 2),
-								Game1.textShadowColor);
-
-						Game1.spriteBatch.DrawString(
-								Game1.smallFont,
-								stackPrice.ToString(),
-								new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-								Game1.textColor);
-
-						currentDrawPos.Y += 40;
-					}
-
-					//Game1.spriteBatch.Draw(
-					//    Game1.debrisSpriteSheet,
-					//    new Vector2(vector2.X, vector2.Y),
-					//    Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-					//    Color.White,
-					//    0,
-					//    new Vector2(8, 8),
-					//    Game1.pixelZoom,
-					//    SpriteEffects.None,
-					//    0.95f);
-
-					if (cropPrice > 0) {
-						//Game1.spriteBatch.Draw(
-						//    Game1.mouseCursors, new Vector2(vector2.X + Game1.dialogueFont.MeasureString(text).X - 10.0f, vector2.Y - 20f), 
-						//    new Rectangle(60, 428, 10, 10), 
-						//    Color.White, 
-						//    0.0f, 
-						//    Vector2.Zero, 
-						//    Game1.pixelZoom, 
-						//    SpriteEffects.None, 
-						//    0.85f);
-
-						Game1.spriteBatch.Draw(
-								Game1.mouseCursors,
-								new Vector2(currentDrawPos.X - 15, currentDrawPos.Y - 10),
-								new Rectangle(60, 428, 10, 10),
-								Color.White,
-								0.0f,
-								Vector2.Zero,
-								Game1.pixelZoom * 0.75f,
-								SpriteEffects.None,
-								0.85f);
-
-						Game1.spriteBatch.DrawString(
-								Game1.smallFont,
-								cropPrice.ToString(),
-								new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10 + 2),
-								Game1.textShadowColor);
-
-						Game1.spriteBatch.DrawString(
-								Game1.smallFont,
-								cropPrice.ToString(),
-								new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-								Game1.textColor);
-					}
+				if (!hover.cropStackPrice.hidden) {
+					Game1.spriteBatch.DrawString(hover.stackPrice.font, ">", new Vector2(paddedLocationX + hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + itemSpacing, currentLocationY), Game1.textColor);
+					hover.cropStackPrice.draw(Game1.spriteBatch, new Vector2(paddedLocationX + hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + itemSpacing + (int) hover.cropStackPrice.font.MeasureString(">").X + itemSpacing, currentLocationY));
 				}
 
-				if (!String.IsNullOrEmpty(requiredBundleName)) {
-					int num1 = (int) windowPos.X - 30;
-					int num2 = (int) windowPos.Y - 10;
-					int num3 = num1 + 52;
-					int y3 = num2 - 2;
-					int num4 = 288;
-					int height = 36;
-					int num5 = 36;
-					int width = num4 / num5;
-					int num6 = 6;
+				currentLocationY += hover.currencyIcon.Height + itemSpacing;
+			}
 
-					for (int i = 0; i < 36; ++i) {
-						float num7 = (float) (i >= num6 ? 0.92 - (i - num6) * (1.0 / (num5 - num6)) : 0.92f);
-						Game1.spriteBatch.Draw(
-								Game1.staminaRect,
-								new Rectangle(num3 + width * i, y3, width, height),
-								Color.Crimson * num7);
-					}
+			if (!hover.springIcon.hidden || !hover.summerIcon.hidden || !hover.fallIcon.hidden || !hover.winterIcon.hidden) {
+				int curX = paddedLocationX;
 
-					Game1.spriteBatch.DrawString(
-							Game1.dialogueFont,
-							requiredBundleName,
-							new Vector2(num1 + 72, num2),
-							Color.White);
-
-					_bundleIcon.bounds.X = num1 + 16;
-					_bundleIcon.bounds.Y = num2;
-					_bundleIcon.scale = 3;
-					_bundleIcon.draw(Game1.spriteBatch);
+				if (!hover.springIcon.hidden) {
+					hover.springIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.springIcon.Width + itemSpacing;
 				}
-				//RestoreMenuState();
+
+				if (!hover.summerIcon.hidden) {
+					hover.summerIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.springIcon.Width + itemSpacing;
+				}
+
+				if (!hover.fallIcon.hidden) {
+					hover.fallIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.springIcon.Width + itemSpacing;
+				}
+
+				if (!hover.winterIcon.hidden) {
+					hover.winterIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.springIcon.Width + itemSpacing;
+				}
+
+				currentLocationY += hover.springIcon.Height + itemSpacing;
+			}
+
+			if (!hover.rainyIcon.hidden || !hover.sunnyIcon.hidden) {
+
+				int curX = paddedLocationX;
+
+				if (!hover.rainyIcon.hidden) {
+					hover.rainyIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.rainyIcon.Width + itemSpacing;
+				}
+
+				if (!hover.sunnyIcon.hidden) {
+					hover.sunnyIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.rainyIcon.Width + itemSpacing;
+				}
+
+				currentLocationY += hover.rainyIcon.Height + itemSpacing;
+			}
+
+			if (!hover.fishTimes.hidden) {
+				hover.fishTimes.draw(Game1.spriteBatch, new Vector2(paddedLocationX, currentLocationY));
+
+				currentLocationY += hover.fishTimes.Height + itemSpacing;
 			}
 		}
 
@@ -383,6 +528,8 @@ namespace UIInfoSuite.UIElements {
 
 			return DrawHoverText(batch, hoverText, Game1.smallFont, -1, -1, -1, hoverTitle, -1, buffIconsToDisplay, hoveredItem);
 		}
+
+		static Rectangle defaultTooltip = new Rectangle();
 
 		private static Vector2 DrawHoverText(SpriteBatch batch, String text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, String boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null) {
 			Vector2 result = Vector2.Zero;
@@ -459,6 +606,12 @@ namespace UIInfoSuite.UIElements {
 					yPos = Game1.viewport.Height - extraInfoBackgroundHeight;
 				}
 				int hoveredItemHeight = (int) (hoveredItem == null || categoryName.Length <= 0 ? 0 : font.MeasureString("asd").Y);
+
+				// save location for custom tooltip
+				ShowItemHoverInformation.defaultTooltip.X = xPos;
+				ShowItemHoverInformation.defaultTooltip.Y = yPos;
+				ShowItemHoverInformation.defaultTooltip.Width = infoWindowWidth;
+				ShowItemHoverInformation.defaultTooltip.Height = extraInfoBackgroundHeight;
 
 				IClickableMenu.drawTextureBox(
 						batch,
