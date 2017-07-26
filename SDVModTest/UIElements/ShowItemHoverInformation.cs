@@ -159,7 +159,7 @@ namespace UIInfoSuite.UIElements {
 					var timesData = data[5].Split(' ');
 
 					if (!(timesData[0] == "600" && timesData[1] == "2600")) {
-						for (int i = 0; i < times.Length; i++) {
+						for (int i = 0; i < timesData.Length; i++) {
 							int time = (int.Parse(timesData[i]) / 100);
 							times += time - (time > 12 ? 12 * (int) (time / 12) : 0);
 							if (time >= 12 && time < 24)
@@ -167,7 +167,7 @@ namespace UIInfoSuite.UIElements {
 							else
 								times += "am";
 
-							if (i % 2 == 1 && i != times.Length - 1) {
+							if (i % 2 == 1 && i != timesData.Length - 1) {
 								times += ", ";
 							} else if (i % 2 == 0) {
 								times += "-";
