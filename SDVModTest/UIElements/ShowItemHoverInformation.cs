@@ -350,7 +350,7 @@ namespace UIInfoSuite.UIElements {
 					hover.winterIcon.hidden = false;
 
 				hover.Background.Height += hover.springIcon.Height + itemSpacing;
-				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * num + padding);
+				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num != 4 ? num: 2 ) + padding);
 			}
 
 			if (timeInfo.Item2.Contains(true)) { // if at least one season
@@ -399,7 +399,7 @@ namespace UIInfoSuite.UIElements {
 
 			// keep track of next item location as we go down
 			int currentLocationY = hover.Background.Y;
-			int paddedLocationX = hover.Background.X + padding / 2 ;
+			int paddedLocationX = hover.Background.X + padding / 2;
 
 			if (!hover.bundleName.hidden) {
 
@@ -455,7 +455,21 @@ namespace UIInfoSuite.UIElements {
 				currentLocationY += hover.currencyIcon.Height + itemSpacing;
 			}
 
-			if (!hover.springIcon.hidden || !hover.summerIcon.hidden || !hover.fallIcon.hidden || !hover.winterIcon.hidden) {
+			if (!hover.springIcon.hidden && !hover.summerIcon.hidden && !hover.fallIcon.hidden && !hover.winterIcon.hidden) {
+				// draw a custom icon because all 4 is too long
+				int curX = paddedLocationX;
+
+				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.springIcon.X, SourceRects.springIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
+				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2;
+				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.summerIcon.X + SourceRects.springIcon.Width / 2 - 1, SourceRects.summerIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
+				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2;
+				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.fallIcon.X + SourceRects.springIcon.Width / 2 - 1, SourceRects.fallIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
+				curX += (SourceRects.springIcon.Width * Game1.pixelZoom) / 2;
+				Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(curX, currentLocationY), new Rectangle(SourceRects.winterIcon.X + SourceRects.springIcon.Width / 2 - 1, SourceRects.winterIcon.Y, SourceRects.springIcon.Width / 2, SourceRects.springIcon.Height), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.88f);
+
+				currentLocationY += hover.springIcon.Height + itemSpacing;
+
+			} else if (!hover.springIcon.hidden || !hover.summerIcon.hidden || !hover.fallIcon.hidden || !hover.winterIcon.hidden) {
 				int curX = paddedLocationX;
 
 				if (!hover.springIcon.hidden) {
