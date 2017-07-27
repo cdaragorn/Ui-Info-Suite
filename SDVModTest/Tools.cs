@@ -4,6 +4,7 @@ using StardewValley.Menus;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,6 +13,8 @@ using System.Threading.Tasks;
 
 namespace UIInfoSuite {
 	static class Tools {
+
+		public static Dictionary<int, string> objectInformation = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "ObjectInformation.xnb"));
 
 		public static void CreateSafeDelayedDialogue(String dialogue, int timer) {
 			Task.Factory.StartNew(() => {
@@ -52,41 +55,60 @@ namespace UIInfoSuite {
 			} else {
 				price = itemObject.sellToStorePrice();
 			}
-				return price;
+			return price;
+		}
+
+		public static Item GetHoveredItem() {
+			Item hoverItem = null;
+
+			for (int i = 0; i < Game1.onScreenMenus.Count; ++i) {
+				Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
+				if (onScreenMenu != null) {
+					FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
+					hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
+					//hoverItemField.SetValue(onScreenMenu, null);
+				}
 			}
 
-			public static Item GetHoveredItem()
-			{
-				Item hoverItem = null;
-
-				for (int i = 0; i < Game1.onScreenMenus.Count; ++i) {
-					Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
-					if (onScreenMenu != null) {
-						FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
-						hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
-						//hoverItemField.SetValue(onScreenMenu, null);
+			if (Game1.activeClickableMenu is GameMenu) {
+				List<IClickableMenu> menuList = typeof(GameMenu).GetField("pages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.activeClickableMenu) as List<IClickableMenu>;
+				foreach (var menu in menuList) {
+					if (menu is InventoryPage && menuList[(Game1.activeClickableMenu as GameMenu).currentTab] is InventoryPage) {
+						FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
+						hoverItem = hoveredItemField.GetValue(menu) as Item;
+						//typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
 					}
-				}
 
-				if (Game1.activeClickableMenu is GameMenu) {
-					List<IClickableMenu> menuList = typeof(GameMenu).GetField("pages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.activeClickableMenu) as List<IClickableMenu>;
-					foreach (var menu in menuList) {
-						if (menu is InventoryPage) {
-							FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
-							hoverItem = hoveredItemField.GetValue(menu) as Item;
-							//typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
+					if (menu is CollectionsPage && menuList[(Game1.activeClickableMenu as GameMenu).currentTab] is CollectionsPage) {
+
+						FieldInfo hoveredItemField = typeof(CollectionsPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic);
+						var hoverText = hoveredItemField.GetValue(menu) as string;
+						var textArray = hoverText.Split('\r');
+
+						if (textArray.Count() > 1) {
+							string name = textArray[0];
+
+							int index = objectInformation.First(x => {
+								if (x.Value.Split('/')[0] == name) {
+									return true;
+								}
+								return false;
+							}).Key;
+
+							hoverItem = new StardewValley.Object(Vector2.Zero, index, 1);
 						}
 					}
 				}
-
-				if (Game1.activeClickableMenu is ItemGrabMenu) {
-					hoverItem = (Game1.activeClickableMenu as MenuWithInventory).hoveredItem;
-					//(Game1.activeClickableMenu as MenuWithInventory).hoveredItem = null;
-				}
-
-				return hoverItem;
 			}
+
+			if (Game1.activeClickableMenu is ItemGrabMenu) {
+				hoverItem = (Game1.activeClickableMenu as MenuWithInventory).hoveredItem;
+				//(Game1.activeClickableMenu as MenuWithInventory).hoveredItem = null;
+			}
+
+			return hoverItem;
 		}
+	}
 
 	public static class SourceRects {
 		public static readonly Rectangle springIcon = new Rectangle(406, 441, 12, 8);
