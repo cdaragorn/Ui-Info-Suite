@@ -70,7 +70,7 @@ namespace UIInfoSuite {
 			_showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modOptions, modconfig);
 
 			//_optionsElements.Add(new ModOptionsCheckbox("Show Item hover information", whichOption++, _showItemHoverInformation.ToggleOption, _options, OptionKeys.ShowExtraItemInformation));
-			_showItemHoverInformation = new ShowItemHoverInformation(modOptions);
+			_showItemHoverInformation = new ShowItemHoverInformation(modOptions, helper);
 
 			//_optionsElements.Add(new ModOptionsCheckbox("Show Traveling Merchant", whichOption++, _showTravelingMerchant.ToggleOption, _options, OptionKeys.ShowTravelingMerchant));
 			_showTravelingMerchant = new ShowTravelingMerchant(modOptions, helper);

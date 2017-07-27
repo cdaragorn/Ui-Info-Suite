@@ -105,5 +105,19 @@ namespace UIInfoSuite {
 		public static readonly Rectangle currencyIcon = new Rectangle(5, 69, 6, 6);
 
 
+		public static readonly Rectangle beachIcon = new Rectangle(0, 0, 12, 8);
+		public static readonly Rectangle bugLairIcon = new Rectangle(12, 0, 12, 8);
+		public static readonly Rectangle desertIcon = new Rectangle(24, 0, 12, 8);
+		public static readonly Rectangle forestRiverIcon = new Rectangle(36, 0, 12, 8);
+		public static readonly Rectangle minesIcon = new Rectangle(48, 0, 12, 8);
+		public static readonly Rectangle mountainIcon = new Rectangle(60, 0, 12, 8);
+		public static readonly Rectangle secretWoodsIcon = new Rectangle(72, 0, 12, 8);
+		public static readonly Rectangle sewersIcon = new Rectangle(84, 0, 12, 8);
+		public static readonly Rectangle townIcon = new Rectangle(96, 0, 12, 8);
+		public static readonly Rectangle witchSwampIcon = new Rectangle(108, 0, 12, 8);
+
+		// Todo
+		public static readonly Rectangle forestPondIcon = new Rectangle(36, 0, 12, 8);
+		public static readonly Rectangle trapIcon = new Rectangle(36, 0, 12, 8);
 	}
 }

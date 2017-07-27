@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewModdingAPI;
+using System.IO;
 
 namespace UIInfoSuite.UIElements {
 
@@ -13,7 +15,20 @@ namespace UIInfoSuite.UIElements {
 
 		public List<HoverComponent> list = new List<HoverComponent>();
 
-		public Components() {
+		public Components(IModHelper helper) {
+			beachIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.beachIcon);
+			bugLandIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.bugLairIcon);
+			desertIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.desertIcon);
+			forestRiverIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.forestRiverIcon);
+			minesIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.minesIcon);
+			mountainIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.mountainIcon);
+			secretWoodsIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.secretWoodsIcon);
+			sewersIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.sewersIcon);
+			townIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.townIcon);
+			witchSwampIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.witchSwampIcon);
+			forestPondIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.forestPondIcon);
+			trapIcon = new IconComponent(helper.Content.Load<Texture2D>(Path.Combine("Resource", "LocationIcons.png")), SourceRects.trapIcon);
+
 			foreach (var component in this.GetType().GetFields()) {
 				if (component.GetValue(this) as HoverComponent != null)
 					list.Add(component.GetValue(this) as HoverComponent);
@@ -67,6 +82,20 @@ namespace UIInfoSuite.UIElements {
 		public IconComponent summerIcon = new IconComponent(SourceRects.summerIcon);
 		public IconComponent fallIcon = new IconComponent(SourceRects.fallIcon);
 		public IconComponent winterIcon = new IconComponent(SourceRects.winterIcon);
+
+		// Custom Location Icons by 4Slice
+		public IconComponent beachIcon;
+		public IconComponent bugLandIcon;
+		public IconComponent desertIcon;
+		public IconComponent forestRiverIcon;
+		public IconComponent minesIcon; 
+		public IconComponent mountainIcon;
+		public IconComponent secretWoodsIcon;
+		public IconComponent sewersIcon;
+		public IconComponent townIcon;
+		public IconComponent witchSwampIcon;
+		public IconComponent forestPondIcon;
+		public IconComponent trapIcon;
 
 	}
 	// End of Class

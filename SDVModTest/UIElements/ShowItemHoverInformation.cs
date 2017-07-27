@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewConfigFramework;
 using System.IO;
+using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements {
 	class ShowItemHoverInformation: IDisposable {
@@ -45,7 +46,9 @@ namespace UIInfoSuite.UIElements {
 		List<int> fallForage = new List<int> { 406, 408, 410, 281, 404, 420 };
 		List<int> winterForage = new List<int> { 412, 414, 416, 418, 283 };
 
-		public ShowItemHoverInformation(ModOptions modOptions) {
+		public ShowItemHoverInformation(ModOptions modOptions, IModHelper helper) {
+			hover = new Components(helper);
+
 			_showItemHoverInformation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExtraItemInformation) ?? new ModOptionToggle(OptionKeys.ShowExtraItemInformation, "Show Item hover information");
 			_showItemHoverInformation.ValueChanged += ToggleOption;
 			modOptions.AddModOption(_showItemHoverInformation);
@@ -323,7 +326,7 @@ namespace UIInfoSuite.UIElements {
 
 		}
 
-		Components hover = new Components();
+		Components hover;
 
 		private void DrawAdvancedTooltip(object sender, EventArgs e) {
 			if (_hoverItem == null)
@@ -421,14 +424,71 @@ namespace UIInfoSuite.UIElements {
 			}
 
 			if (timeInfo.Item2.Values.Contains(true)) { // if at least one season
-				int num = timeInfo.Item3.Where(x => { return x.Value; }).Count();
+				int num = 0;
+				// count manually, dictionary countains extra locations (i.e Temp, FishGame)
+
 
 				// TODO Add custom icons by 4Slice
 				// Catfish and pike are special exceptions with Secret Woods
+				if (timeInfo.Item2["UndergroundMine"]) {
+					hover.minesIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Desert"]) {
+					hover.desertIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["ForestRiver"]) {
+					hover.forestRiverIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Town"]) {
+					hover.townIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Mountain"]) {
+					hover.mountainIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Beach"]) {
+					hover.beachIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Woods"]) {
+					hover.secretWoodsIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Sewer"]) {
+					hover.sewersIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["BugLand"]) {
+					hover.bugLandIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["WitchSwamp"]) {
+					hover.witchSwampIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["Trap"]) {
+					hover.trapIcon.hidden = false;
+					num++;
+				}
+				if (timeInfo.Item2["ForestPond"]) {
+					hover.forestPondIcon.hidden = false;
+					num++;
+				}
+
+				/*
+				{ "UndergroundMine", false }, { "Desert", false }, { "ForestRiver", false },
+				{ "Town", false }, { "Mountain", false }, { "Beach", false },
+				{ "Woods", false }, { "Sewer", false }, { "BugLand", false },
+				{ "WitchSwamp", false }, { "Trap", false }, { "ForestPond", false },
+				 */
 
 				hover.Background.Height += hover.springIcon.Height + itemSpacing;
 				// todo decide max width
-				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num < 4 ? num : num) + padding);
+				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * num + padding);
 			}
 
 
@@ -576,8 +636,73 @@ namespace UIInfoSuite.UIElements {
 			}
 
 			// TODO Draw Location Icon
-			if (false) {
+			if (!hover.minesIcon.hidden || !hover.desertIcon.hidden || !hover.forestRiverIcon.hidden 
+				|| !hover.townIcon.hidden || !hover.mountainIcon.hidden || !hover.beachIcon.hidden 
+				|| !hover.secretWoodsIcon.hidden || !hover.sewersIcon.hidden || !hover.bugLandIcon.hidden
+				|| !hover.witchSwampIcon.hidden || !hover.trapIcon.hidden || !hover.forestPondIcon.hidden) {
+				int curX = paddedLocationX;
 
+				if (!hover.minesIcon.hidden) {
+					hover.minesIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.desertIcon.hidden) {
+					hover.desertIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.forestRiverIcon.hidden) {
+					hover.forestRiverIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.townIcon.hidden) {
+					hover.townIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.mountainIcon.hidden) {
+					hover.mountainIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.beachIcon.hidden) {
+					hover.beachIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.secretWoodsIcon.hidden) {
+					hover.secretWoodsIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.sewersIcon.hidden) {
+					hover.sewersIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.bugLandIcon.hidden) {
+					hover.bugLandIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.witchSwampIcon.hidden) {
+					hover.witchSwampIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.trapIcon.hidden) {
+					hover.trapIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				if (!hover.forestPondIcon.hidden) {
+					hover.forestPondIcon.draw(Game1.spriteBatch, new Vector2(curX, currentLocationY));
+					curX += hover.townIcon.Width + itemSpacing;
+				}
+
+				currentLocationY += hover.townIcon.Height + itemSpacing;
 			}
 
 			// Draw weather Icons
