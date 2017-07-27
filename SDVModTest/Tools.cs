@@ -117,7 +117,7 @@ namespace UIInfoSuite {
 		public static readonly Rectangle witchSwampIcon = new Rectangle(108, 0, 12, 8);
 
 		// Todo
-		public static readonly Rectangle forestPondIcon = new Rectangle(36, 0, 12, 8);
-		public static readonly Rectangle trapIcon = new Rectangle(36, 0, 12, 8);
+		public static readonly Rectangle forestPondIcon = new Rectangle(132, 0, 12, 8);
+		public static readonly Rectangle trapIcon = new Rectangle(120, 0, 12, 8);
 	}
 }

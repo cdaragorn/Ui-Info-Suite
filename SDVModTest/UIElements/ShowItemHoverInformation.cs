@@ -19,6 +19,7 @@ using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements {
 	class ShowItemHoverInformation: IDisposable {
+
 		private readonly Dictionary<String, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();
 		private readonly ClickableTextureComponent _bundleIcon =
 				new ClickableTextureComponent(
@@ -46,6 +47,8 @@ namespace UIInfoSuite.UIElements {
 		List<int> fallForage = new List<int> { 406, 408, 410, 281, 404, 420 };
 		List<int> winterForage = new List<int> { 412, 414, 416, 418, 283 };
 
+		Components hover;
+
 		public ShowItemHoverInformation(ModOptions modOptions, IModHelper helper) {
 			hover = new Components(helper);
 
@@ -60,9 +63,8 @@ namespace UIInfoSuite.UIElements {
 			if (identifier != OptionKeys.ShowExtraItemInformation)
 				return;
 
+			GraphicsEvents.OnPostRenderEvent -= DrawAdvancedTooltip;
 			PlayerEvents.InventoryChanged -= PopulateRequiredBundles;
-			GraphicsEvents.OnPostRenderEvent -= DrawAdvancedTooltipForMenu;
-			GraphicsEvents.OnPostRenderHudEvent -= DrawAdvancedTooltipForToolbar;
 			GraphicsEvents.OnPreRenderEvent -= GetHoverItem;
 
 			if (showItemHoverInformation) {
@@ -70,8 +72,7 @@ namespace UIInfoSuite.UIElements {
 				_bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
 				PopulateRequiredBundles(null, null);
 				PlayerEvents.InventoryChanged += PopulateRequiredBundles;
-				GraphicsEvents.OnPostRenderEvent += DrawAdvancedTooltipForMenu;
-				GraphicsEvents.OnPostRenderHudEvent += DrawAdvancedTooltipForToolbar;
+				GraphicsEvents.OnPostRenderEvent += DrawAdvancedTooltip;
 				GraphicsEvents.OnPreRenderEvent += GetHoverItem;
 			}
 		}
@@ -84,15 +85,36 @@ namespace UIInfoSuite.UIElements {
 			_hoverItem = Tools.GetHoveredItem();
 		}
 
-		private void DrawAdvancedTooltipForToolbar(object sender, EventArgs e) {
-			if (Game1.activeClickableMenu == null) {
-				DrawAdvancedTooltip(sender, e);
-			}
-		}
+		private void removeDefaultTooltip() {
+			// Not currently working
 
-		private void DrawAdvancedTooltipForMenu(object sender, EventArgs e) {
-			if (Game1.activeClickableMenu != null) {
-				DrawAdvancedTooltip(sender, e);
+			// Remove hovers from toolbar
+			for (int j = 0; j < Game1.onScreenMenus.Count; j++) {
+				if (Game1.onScreenMenus[j] is Toolbar) {
+					var menu = Game1.onScreenMenus[j] as Toolbar;
+					typeof(Toolbar).GetField("hoverItem", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(menu, null);
+				}
+			}
+
+			// Remove hovers from inventory
+			if (Game1.activeClickableMenu is GameMenu) {
+
+				// Get pages from GameMenu            
+				var pages = (List<IClickableMenu>) typeof(GameMenu).GetField("pages", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Game1.activeClickableMenu);
+
+				// Overwrite Inventory Menu
+				for (int i = 0; i < pages.Count; i++) {
+					if (pages[i] is InventoryPage) {
+						var inventoryPage = (InventoryPage) pages[i];
+						typeof(InventoryPage).GetField("hoverText", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(inventoryPage, "");
+					}
+				}
+			}
+
+			// Remove hovers from chests and shipping bin
+			if (Game1.activeClickableMenu is ItemGrabMenu) {
+				var itemGrabMenu = (ItemGrabMenu) Game1.activeClickableMenu;
+				itemGrabMenu.hoveredItem = null;
 			}
 		}
 
@@ -160,7 +182,7 @@ namespace UIInfoSuite.UIElements {
 			};
 
 			string times = "";
-			
+
 			if (hoveredObject != null && fishData.ContainsKey(hoveredObject.ParentSheetIndex) && !hoveredObject.Name.Contains("Algae") && !hoveredObject.Name.Contains("Seaweed")) {
 				// draw the seasons icons 
 				var data = fishData[hoveredObject.ParentSheetIndex].Split('/');
@@ -263,7 +285,7 @@ namespace UIInfoSuite.UIElements {
 
 				} else if (data[1] == "trap") {
 					locations["Trap"] = true;
- 				}
+				}
 			} else if (hoveredObject != null && treeData.Values.ToList().Exists(x => x.Split('/')[2] == $"{hoveredObject.ParentSheetIndex}")) {
 
 				var data = treeData.Values.ToList().Find(x => x.Split('/')[2] == $"{hoveredObject.ParentSheetIndex}").Split('/');
@@ -326,11 +348,12 @@ namespace UIInfoSuite.UIElements {
 
 		}
 
-		Components hover;
-
 		private void DrawAdvancedTooltip(object sender, EventArgs e) {
 			if (_hoverItem == null)
 				return;
+
+			//removeDefaultTooltip();
+
 
 			int padding = 2 * 5 * Game1.pixelZoom;
 			int itemSpacing = 2 * Game1.pixelZoom;
@@ -409,7 +432,7 @@ namespace UIInfoSuite.UIElements {
 
 			if (timeInfo.Item1.Values.Contains(true)) { // if at least one season
 				int num = timeInfo.Item1.Where(x => { return x.Value; }).Count();
-				
+
 				if (timeInfo.Item1["spring"])
 					hover.springIcon.hidden = false;
 				if (timeInfo.Item1["summer"])
@@ -636,8 +659,8 @@ namespace UIInfoSuite.UIElements {
 			}
 
 			// TODO Draw Location Icon
-			if (!hover.minesIcon.hidden || !hover.desertIcon.hidden || !hover.forestRiverIcon.hidden 
-				|| !hover.townIcon.hidden || !hover.mountainIcon.hidden || !hover.beachIcon.hidden 
+			if (!hover.minesIcon.hidden || !hover.desertIcon.hidden || !hover.forestRiverIcon.hidden
+				|| !hover.townIcon.hidden || !hover.mountainIcon.hidden || !hover.beachIcon.hidden
 				|| !hover.secretWoodsIcon.hidden || !hover.sewersIcon.hidden || !hover.bugLandIcon.hidden
 				|| !hover.witchSwampIcon.hidden || !hover.trapIcon.hidden || !hover.forestPondIcon.hidden) {
 				int curX = paddedLocationX;
@@ -731,498 +754,312 @@ namespace UIInfoSuite.UIElements {
 			}
 		}
 
-		private void RestoreMenuState() {
-			if (Game1.activeClickableMenu is ItemGrabMenu) {
-				(Game1.activeClickableMenu as MenuWithInventory).hoveredItem = _hoverItem;
-			}
-		}
-
-
-		private static Vector2 DrawTooltip(SpriteBatch batch, String hoverText, String hoverTitle, Item hoveredItem) {
-			bool flag = hoveredItem != null &&
-					hoveredItem is StardewValley.Object &&
-					(hoveredItem as StardewValley.Object).edibility != -300;
-
-			int healAmmountToDisplay = flag ? (hoveredItem as StardewValley.Object).edibility : -1;
-			string[] buffIconsToDisplay = null;
-			if (flag) {
-				String objectInfo = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex];
-				if (Game1.objectInformation[(hoveredItem as StardewValley.Object).parentSheetIndex].Split('/').Length >= 7) {
-					buffIconsToDisplay = Game1.objectInformation[(hoveredItem as StardewValley.Object).parentSheetIndex].Split('/')[6].Split('^');
-				}
-			}
-
-			return DrawHoverText(batch, hoverText, Game1.smallFont, -1, -1, -1, hoverTitle, -1, buffIconsToDisplay, hoveredItem);
-		}
-
 		static Rectangle defaultTooltip = new Rectangle();
 
-		private static Vector2 DrawHoverText(SpriteBatch batch, String text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, String boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null) {
-			Vector2 result = Vector2.Zero;
+		// -------------------------------------------- COPIED METHODS FROM GAME ----------------------------------------------
 
-			if (String.IsNullOrEmpty(text)) {
-				result = Vector2.Zero;
-			} else {
-				if (String.IsNullOrEmpty(boldTitleText))
-					boldTitleText = null;
+		public static void drawToolTip(SpriteBatch b, string hoverText, string hoverTitle, Item hoveredItem, bool heldItem = false, int healAmountToDisplay = -1, int currencySymbol = 0, int extraItemToShowIndex = -1, int extraItemToShowAmount = -1, CraftingRecipe craftingIngredients = null, int moneyAmountToShowAtBottom = -1) {
+			bool flag = hoveredItem != null && hoveredItem is StardewValley.Object && (hoveredItem as StardewValley.Object).edibility != -300;
 
-				int num1 = 20;
-				int infoWindowWidth = (int) Math.Max(healAmountToDisplay != -1 ? font.MeasureString(healAmountToDisplay.ToString() + "+ Energy" + (Game1.tileSize / 2)).X : 0, Math.Max(font.MeasureString(text).X, boldTitleText != null ? Game1.dialogueFont.MeasureString(boldTitleText).X : 0)) + Game1.tileSize / 2;
-				int extraInfoBackgroundHeight = (int) Math.Max(
-						num1 * 3,
-						font.MeasureString(text).Y + Game1.tileSize / 2 + (moneyAmountToDisplayAtBottom > -1 ? (font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).Y + 4.0) : 0) + (boldTitleText != null ? Game1.dialogueFont.MeasureString(boldTitleText).Y + (Game1.tileSize / 4) : 0) + (healAmountToDisplay != -1 ? 38 : 0));
+
+			drawHoverText(b, hoverText, Game1.smallFont, heldItem ? (Game1.tileSize / 2 + 8) : 0, heldItem ? (Game1.tileSize / 2 + 8) : 0, moneyAmountToShowAtBottom, hoverTitle, flag ? (hoveredItem as StardewValley.Object).edibility : -1, (flag && Game1.objectInformation[(hoveredItem as StardewValley.Object).parentSheetIndex].Split(new char[] {
+								'/'
+						}).Length > 7) ? Game1.objectInformation[(hoveredItem as StardewValley.Object).parentSheetIndex].Split(new char[] {
+								'/'
+						})[7].Split(new char[] {
+								' '
+						}) : null, hoveredItem, currencySymbol, extraItemToShowIndex, extraItemToShowAmount, -1, -1, 1f, craftingIngredients);
+		}
+
+		// slightly modified
+		public static void drawHoverText(SpriteBatch b, string text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, string boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null, int currencySymbol = 0, int extraItemToShowIndex = -1, int extraItemToShowAmount = -1, int overrideX = -1, int overrideY = -1, float alpha = 1f, CraftingRecipe craftingIngredients = null) {
+			if (text == null || text.Length == 0) {
+				return;
+			}
+			if (boldTitleText != null && boldTitleText.Length == 0) {
+				boldTitleText = null;
+			}
+			int num = 20;
+			int num2 = Math.Max((healAmountToDisplay != -1) ? ((int) font.MeasureString(healAmountToDisplay + "+ Energy" + Game1.tileSize / 2).X) : 0, Math.Max((int) font.MeasureString(text).X, (boldTitleText != null) ? ((int) Game1.dialogueFont.MeasureString(boldTitleText).X) : 0)) + Game1.tileSize / 2;
+			int num3 = Math.Max(num * 3, (int) font.MeasureString(text).Y + Game1.tileSize / 2 + (int) ((moneyAmountToDisplayAtBottom > -1) ? (font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).Y + 4f) : 0f) + (int) ((boldTitleText != null) ? (Game1.dialogueFont.MeasureString(boldTitleText).Y + (float) (Game1.tileSize / 4)) : 0f) + ((healAmountToDisplay != -1) ? 38 : 0));
+			if (extraItemToShowIndex != -1) {
+				string[] array = Game1.objectInformation[extraItemToShowIndex].Split(new char[] {
+										'/'
+								});
+				string text2 = array[0];
+				if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en) {
+					text2 = array[array.Length - 1];
+				}
+				string text3 = Game1.content.LoadString("Strings\\UI:ItemHover_Requirements", new object[] {
+										extraItemToShowAmount,
+										text2
+								});
+				int num4 = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, extraItemToShowIndex, 16, 16).Width * 2 * Game1.pixelZoom;
+				num2 = Math.Max(num2, num4 + (int) font.MeasureString(text3).X);
+			}
+			if (buffIconsToDisplay != null) {
+				for (int i = 0; i < buffIconsToDisplay.Length; i++) {
+					if (!buffIconsToDisplay[i].Equals("0")) {
+						num3 += 34;
+					}
+				}
+				num3 += 4;
+			}
+			string text4 = null;
+			if (hoveredItem != null) {
+				num3 += (Game1.tileSize + 4) * hoveredItem.attachmentSlots();
+				text4 = hoveredItem.getCategoryName();
+				if (text4.Length > 0) {
+					num2 = Math.Max(num2, (int) font.MeasureString(text4).X + Game1.tileSize / 2);
+					num3 += (int) font.MeasureString("T").Y;
+				}
+				int num5 = 9999;
+				int num6 = 15 * Game1.pixelZoom + Game1.tileSize / 2;
+				if (hoveredItem is MeleeWeapon) {
+					num3 = Math.Max(num * 3, (int) ((boldTitleText != null) ? (Game1.dialogueFont.MeasureString(boldTitleText).Y + (float) (Game1.tileSize / 4)) : 0f) + Game1.tileSize / 2) + (int) font.MeasureString("T").Y + (int) ((moneyAmountToDisplayAtBottom > -1) ? (font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).Y + 4f) : 0f);
+					num3 += ((hoveredItem.Name == "Scythe") ? 0 : ((hoveredItem as MeleeWeapon).getNumberOfDescriptionCategories() * Game1.pixelZoom * 12));
+					num3 += (int) font.MeasureString(Game1.parseText((hoveredItem as MeleeWeapon).description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y;
+					num2 = (int) Math.Max((float) num2, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_Damage", new object[] {
+												num5,
+												num5
+										})).X + (float) num6, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_Speed", new object[] {
+												num5
+										})).X + (float) num6, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_DefenseBonus", new object[] {
+												num5
+										})).X + (float) num6, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_CritChanceBonus", new object[] {
+												num5
+										})).X + (float) num6, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_CritPowerBonus", new object[] {
+												num5
+										})).X + (float) num6, font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_Weight", new object[] {
+												num5
+										})).X + (float) num6))))));
+				} else if (hoveredItem is Boots) {
+					num3 -= (int) font.MeasureString(text).Y;
+					num3 += (int) ((float) ((hoveredItem as Boots).getNumberOfDescriptionCategories() * Game1.pixelZoom * 12) + font.MeasureString(Game1.parseText((hoveredItem as Boots).description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y);
+					num2 = (int) Math.Max((float) num2, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_DefenseBonus", new object[] {
+												num5
+										})).X + (float) num6, font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_ImmunityBonus", new object[] {
+												num5
+										})).X + (float) num6));
+				} else if (hoveredItem is StardewValley.Object && (hoveredItem as StardewValley.Object).edibility != -300) {
+					if (healAmountToDisplay == -1) {
+						num3 += (Game1.tileSize / 2 + Game1.pixelZoom * 2) * ((healAmountToDisplay > 0) ? 2 : 1);
+					} else {
+						num3 += Game1.tileSize / 2 + Game1.pixelZoom * 2;
+					}
+					healAmountToDisplay = (int) Math.Ceiling((double) (hoveredItem as StardewValley.Object).Edibility * 2.5) + (hoveredItem as StardewValley.Object).quality * (hoveredItem as StardewValley.Object).Edibility;
+					num2 = (int) Math.Max((float) num2, Math.Max(font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_Energy", new object[] {
+												num5
+										})).X + (float) num6, font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_Health", new object[] {
+												num5
+										})).X + (float) num6));
+				}
 				if (buffIconsToDisplay != null) {
-					for (int i = 0; i < buffIconsToDisplay.Length; ++i) {
-						if (!buffIconsToDisplay[i].Equals("0"))
-							extraInfoBackgroundHeight += 34;
-					}
-					extraInfoBackgroundHeight += 4;
-				}
-
-				String categoryName = null;
-				if (hoveredItem != null) {
-					extraInfoBackgroundHeight += (Game1.tileSize + 4) * hoveredItem.attachmentSlots();
-					categoryName = hoveredItem.getCategoryName();
-					if (categoryName.Length > 0)
-						extraInfoBackgroundHeight += (int) font.MeasureString("T").Y;
-
-					if (hoveredItem is MeleeWeapon) {
-						extraInfoBackgroundHeight = (int) (Math.Max(
-								num1 * 3,
-								(boldTitleText != null ?
-										Game1.dialogueFont.MeasureString(boldTitleText).Y + (Game1.tileSize / 4)
-										: 0) +
-								Game1.tileSize / 2) +
-								font.MeasureString("T").Y +
-								(moneyAmountToDisplayAtBottom > -1 ?
-										font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).Y + 4.0
-										: 0) +
-								(hoveredItem as MeleeWeapon).getNumberOfDescriptionCategories() *
-								Game1.pixelZoom * 12 +
-								font.MeasureString(Game1.parseText((hoveredItem as MeleeWeapon).Description,
-								Game1.smallFont,
-								Game1.tileSize * 4 +
-								Game1.tileSize / 4)).Y);
-
-						infoWindowWidth = (int) Math.Max(infoWindowWidth, font.MeasureString("99-99 Damage").X + (15 * Game1.pixelZoom) + (Game1.tileSize / 2));
-					} else if (hoveredItem is Boots) {
-						Boots hoveredBoots = hoveredItem as Boots;
-						extraInfoBackgroundHeight = extraInfoBackgroundHeight - (int) font.MeasureString(text).Y + (int) (hoveredBoots.getNumberOfDescriptionCategories() * Game1.pixelZoom * 12 + font.MeasureString(Game1.parseText(hoveredBoots.description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y);
-						infoWindowWidth = (int) Math.Max(infoWindowWidth, font.MeasureString("99-99 Damage").X + (15 * Game1.pixelZoom) + (Game1.tileSize / 2));
-					} else if (hoveredItem is StardewValley.Object &&
-								(hoveredItem as StardewValley.Object).edibility != -300) {
-						StardewValley.Object hoveredObject = hoveredItem as StardewValley.Object;
-						healAmountToDisplay = (int) Math.Ceiling(hoveredObject.Edibility * 2.5) + hoveredObject.quality * hoveredObject.Edibility;
-						extraInfoBackgroundHeight += (Game1.tileSize / 2 + Game1.pixelZoom * 2) * (healAmountToDisplay > 0 ? 2 : 1);
-					}
-				}
-
-				//Crafting ingredients were never used
-
-				int xPos = Game1.getOldMouseX() + Game1.tileSize / 2 + xOffset;
-				int yPos = Game1.getOldMouseY() + Game1.tileSize / 2 + yOffset;
-
-				if (xPos + infoWindowWidth > Game1.viewport.Width) {
-					xPos = Game1.viewport.Width - infoWindowWidth;
-					yPos += Game1.tileSize / 4;
-				}
-
-				if (yPos + extraInfoBackgroundHeight > Game1.viewport.Height) {
-					xPos += Game1.tileSize / 4;
-					yPos = Game1.viewport.Height - extraInfoBackgroundHeight;
-				}
-				int hoveredItemHeight = (int) (hoveredItem == null || categoryName.Length <= 0 ? 0 : font.MeasureString("asd").Y);
-
-				// save location for custom tooltip
-				ShowItemHoverInformation.defaultTooltip.X = xPos;
-				ShowItemHoverInformation.defaultTooltip.Y = yPos;
-				ShowItemHoverInformation.defaultTooltip.Width = infoWindowWidth;
-				ShowItemHoverInformation.defaultTooltip.Height = extraInfoBackgroundHeight;
-
-				IClickableMenu.drawTextureBox(
-						batch,
-						Game1.menuTexture,
-						new Rectangle(0, 256, 60, 60),
-						xPos,
-						yPos,
-						infoWindowWidth,
-						extraInfoBackgroundHeight,
-						Color.White);
-
-				if (boldTitleText != null) {
-					IClickableMenu.drawTextureBox(
-							batch,
-							Game1.menuTexture,
-							new Rectangle(0, 256, 60, 60),
-							xPos,
-							yPos,
-							infoWindowWidth,
-							(int) (Game1.dialogueFont.MeasureString(boldTitleText).Y + Game1.tileSize / 2 + hoveredItemHeight - Game1.pixelZoom),
-							Color.White,
-							1,
-							false);
-
-					batch.Draw(
-							Game1.menuTexture,
-							new Rectangle(xPos + Game1.pixelZoom * 3, yPos + (int) Game1.dialogueFont.MeasureString(boldTitleText).Y + Game1.tileSize / 2 + hoveredItemHeight - Game1.pixelZoom, infoWindowWidth - Game1.pixelZoom * 6, Game1.pixelZoom),
-							new Rectangle(44, 300, 4, 4),
-							Color.White);
-
-					batch.DrawString(
-							Game1.dialogueFont,
-							boldTitleText,
-							new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4) + new Vector2(2, 2),
-							Game1.textShadowColor);
-
-					batch.DrawString(
-							Game1.dialogueFont,
-							boldTitleText,
-							new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4) + new Vector2(0, 2),
-							Game1.textShadowColor);
-
-					batch.DrawString(
-							Game1.dialogueFont,
-							boldTitleText,
-							new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4),
-							Game1.textColor);
-
-					yPos += (int) Game1.dialogueFont.MeasureString(boldTitleText).Y;
-				}
-
-				int yPositionToReturn = yPos;
-				if (hoveredItem != null && categoryName.Length > 0) {
-					yPos -= 4;
-					Utility.drawTextWithShadow(
-							batch,
-							categoryName,
-							font,
-							new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4),
-							hoveredItem.getCategoryColor(),
-							1,
-							-1,
-							2,
-							2);
-					yPos += (int) (font.MeasureString("T").Y + (boldTitleText != null ? Game1.tileSize / 4 : 0) + Game1.pixelZoom);
-				} else {
-					yPos += (boldTitleText != null ? Game1.tileSize / 4 : 0);
-				}
-
-				if (hoveredItem is Boots) {
-					Boots boots = hoveredItem as Boots;
-					Utility.drawTextWithShadow(
-							batch,
-							Game1.parseText(
-									boots.description,
-									Game1.smallFont,
-									Game1.tileSize * 4 + Game1.tileSize / 4),
-							font,
-							new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4),
-							Game1.textColor);
-
-					yPos += (int) font.MeasureString(
-							Game1.parseText(
-									boots.description,
-									Game1.smallFont,
-									Game1.tileSize * 4 + Game1.tileSize / 4)).Y;
-
-					if (boots.defenseBonus > 0) {
-						Utility.drawWithShadow(
-								batch,
-								Game1.mouseCursors,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-								new Rectangle(110, 428, 10, 10),
-								Color.White,
-								0,
-								Vector2.Zero,
-								Game1.pixelZoom);
-
-						Utility.drawTextWithShadow(
-								batch,
-								Game1.content.LoadString("Strings\\UI:ItemHover_DefenseBonus", new object[] { boots.defenseBonus }),
-								font,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-								Game1.textColor * 0.9f);
-						yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-					}
-
-					if (boots.immunityBonus > 0) {
-						Utility.drawWithShadow(
-								batch,
-								Game1.mouseCursors,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-								new Rectangle(150, 428, 10, 10),
-								Color.White,
-								0,
-								Vector2.Zero,
-								Game1.pixelZoom);
-						Utility.drawTextWithShadow(
-								batch,
-								Game1.content.LoadString("Strings\\UI:ItemHover_ImmunityBonus", new object[] { boots.immunityBonus }),
-								font,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-								Game1.textColor * 0.9f);
-
-						yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-					}
-				} else if (hoveredItem is MeleeWeapon) {
-					MeleeWeapon meleeWeapon = hoveredItem as MeleeWeapon;
-					Utility.drawTextWithShadow(
-							batch,
-							Game1.parseText(meleeWeapon.Description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4),
-							font,
-							new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4),
-							Game1.textColor);
-					yPos += (int) font.MeasureString(Game1.parseText(meleeWeapon.Description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y;
-
-					if ((meleeWeapon as Tool).indexOfMenuItemView != 47) {
-						Utility.drawWithShadow(
-								batch,
-								Game1.mouseCursors,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-								new Rectangle(120, 428, 10, 10),
-								Color.White,
-								0,
-								Vector2.Zero,
-								Game1.pixelZoom);
-
-						Utility.drawTextWithShadow(
-								batch,
-								Game1.content.LoadString("Strings\\UI:ItemHover_Damage", new object[] { meleeWeapon.minDamage, meleeWeapon.maxDamage }),
-								font,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-								Game1.textColor * 0.9f);
-						yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-
-						if (meleeWeapon.speed != (meleeWeapon.type == 2 ? -8 : 0)) {
-							Utility.drawWithShadow(
-									batch,
-									Game1.mouseCursors,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-									new Rectangle(130, 428, 10, 10),
-									Color.White,
-									0,
-									Vector2.Zero,
-									Game1.pixelZoom,
-									false,
-									1);
-							bool flag = meleeWeapon.type == 2 ? meleeWeapon.speed < -8 : meleeWeapon.speed < 0;
-							String speedText = ((meleeWeapon.type == 2 ? meleeWeapon.speed + 8 : meleeWeapon.speed) / 2).ToString();
-							Utility.drawTextWithShadow(
-									batch,
-									Game1.content.LoadString("Strings\\UI:ItemHover_Speed", new object[] { (meleeWeapon.speed > 0 ? "+" : "") + speedText }),
-									font,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-									flag ? Color.DarkRed : Game1.textColor * 0.9f);
-							yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-						}
-
-						if (meleeWeapon.addedDefense > 0) {
-							Utility.drawWithShadow(
-									batch,
-									Game1.mouseCursors,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-									new Rectangle(110, 428, 10, 10),
-									Color.White,
-									0.0f,
-									Vector2.Zero,
-									Game1.pixelZoom,
-									false,
-									1f);
-							Utility.drawTextWithShadow(
-									batch,
-									Game1.content.LoadString("Strings\\UI:ItemHover_DefenseBonus", new object[] { meleeWeapon.addedDefense }),
-									font,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-									Game1.textColor * 0.9f);
-							yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-						}
-
-						if (meleeWeapon.critChance / 0.02 >= 2.0) {
-							Utility.drawWithShadow(
-									batch,
-									Game1.mouseCursors,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-									new Rectangle(40, 428, 10, 10),
-									Color.White,
-									0.0f,
-									Vector2.Zero,
-									Game1.pixelZoom,
-									false,
-									1f);
-							Utility.drawTextWithShadow(
-									batch, Game1.content.LoadString("Strings\\UI:ItemHover_CritChanceBonus", new object[] { meleeWeapon.critChance / 0.02 }),
-									font,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-									Game1.textColor * 0.9f);
-							yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-						}
-
-						if (((double) meleeWeapon.critMultiplier - 3.0) / 0.02 >= 1.0) {
-							Utility.drawWithShadow(
-									batch,
-									Game1.mouseCursors,
-									new Vector2(xPos + Game1.tileSize / 4, yPos + Game1.tileSize / 4 + 4),
-									new Rectangle(160, 428, 10, 10),
-									Color.White,
-									0.0f,
-									Vector2.Zero,
-									Game1.pixelZoom,
-									false,
-									1f);
-
-							Utility.drawTextWithShadow(
-									batch, Game1.content.LoadString("Strings\\UI:ItemHover_CritPowerBonus", new object[] { (int) ((meleeWeapon.critMultiplier - 3.0) / 0.02) }),
-									font,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 11, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-									Game1.textColor * 0.9f);
-							yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-						}
-
-						if (meleeWeapon.knockback != meleeWeapon.defaultKnockBackForThisType(meleeWeapon.type)) {
-							Utility.drawWithShadow(
-									batch,
-									Game1.mouseCursors,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 4),
-									new Rectangle(70, 428, 10, 10),
-									Color.White,
-									0.0f,
-									Vector2.Zero, Game1.pixelZoom,
-									false,
-									1f);
-							Utility.drawTextWithShadow(
-									batch,
-									Game1.content.LoadString(
-											"Strings\\UI:ItemHover_Weight",
-											new object[] { meleeWeapon.knockback > meleeWeapon.defaultKnockBackForThisType(meleeWeapon.type) ? "+" : "" + Math.Ceiling(Math.Abs(meleeWeapon.knockback - meleeWeapon.defaultKnockBackForThisType(meleeWeapon.type) * 10.0)) }),
-									font,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom * 13, yPos + Game1.tileSize / 4 + Game1.pixelZoom * 3),
-									Game1.textColor * 0.9f);
-							yPos += (int) Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
-						}
-					}
-
-				} else if (text.Length > 1) {
-					int textXPos = xPos + Game1.tileSize / 4;
-					int textYPos = yPos + Game1.tileSize / 4 + 4;
-					batch.DrawString(
-							font,
-							text,
-							new Vector2(textXPos, textYPos) + new Vector2(2, 2),
-							Game1.textShadowColor);
-
-					batch.DrawString(
-							font,
-							text,
-							new Vector2(textXPos, textYPos) + new Vector2(0, 2),
-							Game1.textShadowColor);
-
-					batch.DrawString(
-							font,
-							text,
-							new Vector2(textXPos, textYPos) + new Vector2(2, 0),
-							Game1.textShadowColor);
-
-					batch.DrawString(
-							font,
-							text,
-							new Vector2(textXPos, textYPos),
-							Game1.textColor * 0.9f);
-
-					yPos += (int) font.MeasureString(text).Y + 4;
-				}
-
-				if (healAmountToDisplay != -1) {
-					Utility.drawWithShadow(
-							batch,
-							Game1.mouseCursors,
-							new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4),
-							new Rectangle(healAmountToDisplay < 0 ? 140 : 0, 428, 10, 10),
-							Color.White,
-							0.0f,
-							Vector2.Zero,
-							3f,
-							false,
-							0.95f);
-					Utility.drawTextWithShadow(
-							batch, Game1.content.LoadString("Strings\\UI:ItemHover_Energy", new object[] { ((healAmountToDisplay > 0 ? "+" : "") + healAmountToDisplay) }),
-							font,
-							new Vector2(xPos + Game1.tileSize / 4 + 34 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 8),
-							Game1.textColor);
-					yPos += 34;
-
-					if (healAmountToDisplay > 0) {
-						Utility.drawWithShadow(
-								batch,
-								Game1.mouseCursors,
-								new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4),
-								new Rectangle(0, 438, 10, 10),
-								Color.White,
-								0,
-								Vector2.Zero,
-								3,
-								false,
-								0.95f);
-
-						Utility.drawTextWithShadow(
-								batch,
-								Game1.content.LoadString(
-										"Strings\\UI:ItemHover_Health",
-										new object[] { "+" + (healAmountToDisplay * 0.4) }),
-								font,
-								new Vector2(xPos + Game1.tileSize / 4 + 34 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 8),
-								Game1.textColor);
-
-						yPos += 34;
-					}
-				}
-
-				if (buffIconsToDisplay != null) {
-					for (int i = 0; i < buffIconsToDisplay.Length; ++i) {
-						String buffIcon = buffIconsToDisplay[i];
-						if (buffIcon != "0") {
-							Utility.drawWithShadow(
-									batch,
-									Game1.mouseCursors,
-									new Vector2(xPos + Game1.tileSize / 4 + Game1.pixelZoom, yPos + Game1.tileSize / 4),
-									new Rectangle(10 + i * 10, 428, 10, 10),
-									Color.White,
-									0, Vector2.Zero,
-									3,
-									false,
-									0.95f);
-
-							string textToDraw = (buffIcon.SafeParseInt32() > 0 ? "+" : string.Empty) + buffIcon + " ";
-
-							//if (i <= 10)
-							//    textToDraw = Game1.content.LoadString("Strings\\UI:ItemHover_Buff" + i, new object[] { textToDraw });
-
-							Utility.drawTextWithShadow(
-									batch,
-									textToDraw,
-									font,
-									new Vector2(xPos + Game1.tileSize / 4 + 34 + Game1.pixelZoom, yPos + Game1.tileSize / 4 + 8),
-									Game1.textColor);
-							yPos += 34;
+					for (int j = 0; j < buffIconsToDisplay.Length; j++) {
+						if (!buffIconsToDisplay[j].Equals("0") && j <= 11) {
+							num2 = (int) Math.Max((float) num2, font.MeasureString(Game1.content.LoadString("Strings\\UI:ItemHover_Buff" + j, new object[] {
+																num5
+														})).X + (float) num6);
 						}
 					}
 				}
-
-				if (hoveredItem != null &&
-						hoveredItem.attachmentSlots() > 0) {
-					yPos += 16;
-					hoveredItem.drawAttachments(batch, xPos + Game1.tileSize / 4, yPos);
-					if (moneyAmountToDisplayAtBottom > -1)
-						yPos += Game1.tileSize * hoveredItem.attachmentSlots();
+			}
+			if (craftingIngredients != null) {
+				num2 = Math.Max((int) Game1.dialogueFont.MeasureString(boldTitleText).X + Game1.pixelZoom * 3, Game1.tileSize * 6);
+				num3 += craftingIngredients.getDescriptionHeight(num2 - Game1.pixelZoom * 2) + ((healAmountToDisplay == -1) ? (-Game1.tileSize / 2) : 0) + Game1.pixelZoom * 3;
+			}
+			if (hoveredItem is FishingRod && moneyAmountToDisplayAtBottom > -1) {
+				num3 += (int) font.MeasureString("T").Y;
+			}
+			int num7 = Game1.getOldMouseX() + Game1.tileSize / 2 + xOffset;
+			int num8 = Game1.getOldMouseY() + Game1.tileSize / 2 + yOffset;
+			if (overrideX != -1) {
+				num7 = overrideX;
+			}
+			if (overrideY != -1) {
+				num8 = overrideY;
+			}
+			if (num7 + num2 > Utility.getSafeArea().Right) {
+				num7 = Utility.getSafeArea().Right - num2;
+				num8 += Game1.tileSize / 4;
+			}
+			if (num8 + num3 > Utility.getSafeArea().Bottom) {
+				num7 += Game1.tileSize / 4;
+				if (num7 + num2 > Utility.getSafeArea().Right) {
+					num7 = Utility.getSafeArea().Right - num2;
 				}
-
-				if (moneyAmountToDisplayAtBottom > -1) {
-
-				}
-
-				result = new Vector2(xPos, yPositionToReturn);
+				num8 = Utility.getSafeArea().Bottom - num3;
 			}
 
-			return result;
+			// save the size
+			defaultTooltip = new Rectangle(num7, num8, num2 + ((craftingIngredients != null) ? (Game1.tileSize / 3) : 0), num3);
+
+			IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), num7, num8, num2 + ((craftingIngredients != null) ? (Game1.tileSize / 3) : 0), num3, Color.White * alpha, 1f, true);
+			if (boldTitleText != null) {
+				IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), num7, num8, num2 + ((craftingIngredients != null) ? (Game1.tileSize / 3) : 0), (int) Game1.dialogueFont.MeasureString(boldTitleText).Y + Game1.tileSize / 2 + (int) ((hoveredItem != null && text4.Length > 0) ? font.MeasureString("asd").Y : 0f) - Game1.pixelZoom, Color.White * alpha, 1f, false);
+				b.Draw(Game1.menuTexture, new Rectangle(num7 + Game1.pixelZoom * 3, num8 + (int) Game1.dialogueFont.MeasureString(boldTitleText).Y + Game1.tileSize / 2 + (int) ((hoveredItem != null && text4.Length > 0) ? font.MeasureString("asd").Y : 0f) - Game1.pixelZoom, num2 - Game1.pixelZoom * ((craftingIngredients == null) ? 6 : 1), Game1.pixelZoom), new Rectangle?(new Rectangle(44, 300, 4, 4)), Color.White);
+				b.DrawString(Game1.dialogueFont, boldTitleText, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(2f, 2f), Game1.textShadowColor);
+				b.DrawString(Game1.dialogueFont, boldTitleText, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(0f, 2f), Game1.textShadowColor);
+				b.DrawString(Game1.dialogueFont, boldTitleText, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), Game1.textColor);
+				num8 += (int) Game1.dialogueFont.MeasureString(boldTitleText).Y;
+			}
+			if (hoveredItem != null && text4.Length > 0) {
+				num8 -= 4;
+				Utility.drawTextWithShadow(b, text4, font, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), hoveredItem.getCategoryColor(), 1f, -1f, 2, 2, 1f, 3);
+				num8 += (int) font.MeasureString("T").Y + ((boldTitleText != null) ? (Game1.tileSize / 4) : 0) + Game1.pixelZoom;
+			} else {
+				num8 += ((boldTitleText != null) ? (Game1.tileSize / 4) : 0);
+			}
+			if (hoveredItem != null && hoveredItem is Boots) {
+				Boots boots = hoveredItem as Boots;
+				Utility.drawTextWithShadow(b, Game1.parseText(boots.description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4), font, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+				num8 += (int) font.MeasureString(Game1.parseText(boots.description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y;
+				if (boots.defenseBonus > 0) {
+					Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(110, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+					Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_DefenseBonus", new object[] {
+												boots.defenseBonus
+										}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+					num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+				}
+				if (boots.immunityBonus > 0) {
+					Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(150, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+					Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_ImmunityBonus", new object[] {
+												boots.immunityBonus
+										}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+					num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+				}
+			} else if (hoveredItem != null && hoveredItem is MeleeWeapon) {
+				MeleeWeapon meleeWeapon = hoveredItem as MeleeWeapon;
+				Utility.drawTextWithShadow(b, Game1.parseText(meleeWeapon.description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4), font, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+				num8 += (int) font.MeasureString(Game1.parseText(meleeWeapon.description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y;
+				if (meleeWeapon.indexOfMenuItemView != 47) {
+					Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(120, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+					Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_Damage", new object[] {
+												meleeWeapon.minDamage,
+												meleeWeapon.maxDamage
+										}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+					num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+					if (meleeWeapon.speed != ((meleeWeapon.type == 2) ? -8 : 0)) {
+						Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(130, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+						bool flag = (meleeWeapon.type == 2 && meleeWeapon.speed < -8) || (meleeWeapon.type != 2 && meleeWeapon.speed < 0);
+						Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_Speed", new object[] {
+														((((meleeWeapon.type == 2) ? (meleeWeapon.speed - -8) : meleeWeapon.speed) > 0) ? "+" : "") + ((meleeWeapon.type == 2) ? (meleeWeapon.speed - -8) : meleeWeapon.speed) / 2
+												}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), flag ? Color.DarkRed : (Game1.textColor * 0.9f * alpha), 1f, -1f, -1, -1, 1f, 3);
+						num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+					}
+					if (meleeWeapon.addedDefense > 0) {
+						Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(110, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+						Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_DefenseBonus", new object[] {
+														meleeWeapon.addedDefense
+												}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+						num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+					}
+					if ((double) meleeWeapon.critChance / 0.02 >= 2.0) {
+						Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(40, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+						Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_CritChanceBonus", new object[] {
+														(int)((double)meleeWeapon.critChance / 0.02)
+												}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+						num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+					}
+					if ((double) (meleeWeapon.critMultiplier - 3f) / 0.02 >= 1.0) {
+						Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(160, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+						Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_CritPowerBonus", new object[] {
+														(int)((double)(meleeWeapon.critMultiplier - 3f) / 0.02)
+												}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 11), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+						num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+					}
+					if (meleeWeapon.knockback != meleeWeapon.defaultKnockBackForThisType(meleeWeapon.type)) {
+						Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 4)), new Rectangle(70, 428, 10, 10), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+						Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_Weight", new object[] {
+														(((float)((int)Math.Ceiling ((double)(Math.Abs (meleeWeapon.knockback - meleeWeapon.defaultKnockBackForThisType (meleeWeapon.type)) * 10f))) > meleeWeapon.defaultKnockBackForThisType (meleeWeapon.type)) ? "+" : "") + (int)Math.Ceiling ((double)(Math.Abs (meleeWeapon.knockback - meleeWeapon.defaultKnockBackForThisType (meleeWeapon.type)) * 10f))
+												}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom * 13), (float) (num8 + Game1.tileSize / 4 + Game1.pixelZoom * 3)), Game1.textColor * 0.9f * alpha, 1f, -1f, -1, -1, 1f, 3);
+						num8 += (int) Math.Max(font.MeasureString("TT").Y, (float) (12 * Game1.pixelZoom));
+					}
+				}
+			} else if (!string.IsNullOrEmpty(text) && text != " ") {
+				b.DrawString(font, text, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(2f, 2f), Game1.textShadowColor * alpha);
+				b.DrawString(font, text, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(0f, 2f), Game1.textShadowColor * alpha);
+				b.DrawString(font, text, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(2f, 0f), Game1.textShadowColor * alpha);
+				b.DrawString(font, text, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), Game1.textColor * 0.9f * alpha);
+				num8 += (int) font.MeasureString(text).Y + 4;
+			}
+			if (craftingIngredients != null) {
+				craftingIngredients.drawRecipeDescription(b, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 - Game1.pixelZoom * 2)), num2);
+				num8 += craftingIngredients.getDescriptionHeight(num2);
+			}
+			if (healAmountToDisplay != -1) {
+				if (healAmountToDisplay > 0) {
+					Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4)), new Rectangle((healAmountToDisplay < 0) ? 140 : 0, 428, 10, 10), Color.White, 0f, Vector2.Zero, 3f, false, 0.95f, -1, -1, 0.35f);
+					Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_Energy", new object[] {
+												((healAmountToDisplay > 0) ? "+" : "") + healAmountToDisplay
+										}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + 34 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 8)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+					num8 += 34;
+					Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4)), new Rectangle(0, 438, 10, 10), Color.White, 0f, Vector2.Zero, 3f, false, 0.95f, -1, -1, 0.35f);
+					Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_Health", new object[] {
+												((healAmountToDisplay > 0) ? "+" : "") + (int)((float)healAmountToDisplay * 0.4f)
+										}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + 34 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 8)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+					num8 += 34;
+				} else if (healAmountToDisplay != -300) {
+					Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4)), new Rectangle(140, 428, 10, 10), Color.White, 0f, Vector2.Zero, 3f, false, 0.95f, -1, -1, 0.35f);
+					Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:ItemHover_Energy", new object[] {
+												string.Concat (healAmountToDisplay)
+										}), font, new Vector2((float) (num7 + Game1.tileSize / 4 + 34 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 8)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+					num8 += 34;
+				}
+			}
+			if (buffIconsToDisplay != null) {
+				for (int k = 0; k < buffIconsToDisplay.Length; k++) {
+					if (!buffIconsToDisplay[k].Equals("0")) {
+						Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 4 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4)), new Rectangle(10 + k * 10, 428, 10, 10), Color.White, 0f, Vector2.Zero, 3f, false, 0.95f, -1, -1, 0.35f);
+						string text5 = ((Convert.ToInt32(buffIconsToDisplay[k]) > 0) ? "+" : "") + buffIconsToDisplay[k] + " ";
+						if (k <= 11) {
+							text5 = Game1.content.LoadString("Strings\\UI:ItemHover_Buff" + k, new object[] {
+																text5
+														});
+						}
+						Utility.drawTextWithShadow(b, text5, font, new Vector2((float) (num7 + Game1.tileSize / 4 + 34 + Game1.pixelZoom), (float) (num8 + Game1.tileSize / 4 + 8)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+						num8 += 34;
+					}
+				}
+			}
+			if (hoveredItem != null && hoveredItem.attachmentSlots() > 0) {
+				num8 += 16;
+				hoveredItem.drawAttachments(b, num7 + Game1.tileSize / 4, num8);
+				if (moneyAmountToDisplayAtBottom > -1) {
+					num8 += Game1.tileSize * hoveredItem.attachmentSlots();
+				}
+			}
+			if (moneyAmountToDisplayAtBottom > -1) {
+				b.DrawString(font, string.Concat(moneyAmountToDisplayAtBottom), new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(2f, 2f), Game1.textShadowColor);
+				b.DrawString(font, string.Concat(moneyAmountToDisplayAtBottom), new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(0f, 2f), Game1.textShadowColor);
+				b.DrawString(font, string.Concat(moneyAmountToDisplayAtBottom), new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)) + new Vector2(2f, 0f), Game1.textShadowColor);
+				b.DrawString(font, string.Concat(moneyAmountToDisplayAtBottom), new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.tileSize / 4 + 4)), Game1.textColor);
+				if (currencySymbol == 0) {
+					b.Draw(Game1.debrisSpriteSheet, new Vector2((float) (num7 + Game1.tileSize / 4) + font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).X + 20f, (float) (num8 + Game1.tileSize / 4 + 16)), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16)), Color.White, 0f, new Vector2(8f, 8f), (float) Game1.pixelZoom, SpriteEffects.None, 0.95f);
+				} else if (currencySymbol == 1) {
+					b.Draw(Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 8) + font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).X + 20f, (float) (num8 + Game1.tileSize / 4 - 5)), new Rectangle?(new Rectangle(338, 400, 8, 8)), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, SpriteEffects.None, 1f);
+				} else if (currencySymbol == 2) {
+					b.Draw(Game1.mouseCursors, new Vector2((float) (num7 + Game1.tileSize / 8) + font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).X + 20f, (float) (num8 + Game1.tileSize / 4 - 7)), new Rectangle?(new Rectangle(211, 373, 9, 10)), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, SpriteEffects.None, 1f);
+				}
+				num8 += Game1.tileSize * 3 / 4;
+			}
+			if (extraItemToShowIndex != -1) {
+				IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), num7, num8 + Game1.pixelZoom, num2, Game1.tileSize * 3 / 2, Color.White, 1f, true);
+				num8 += Game1.pixelZoom * 5;
+				string text6 = Game1.objectInformation[extraItemToShowIndex].Split(new char[] {
+										'/'
+								})[4];
+				string text7 = Game1.content.LoadString("Strings\\UI:ItemHover_Requirements", new object[] {
+										extraItemToShowAmount,
+										text6
+								});
+				b.DrawString(font, text7, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.pixelZoom)) + new Vector2(2f, 2f), Game1.textShadowColor);
+				b.DrawString(font, text7, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.pixelZoom)) + new Vector2(0f, 2f), Game1.textShadowColor);
+				b.DrawString(font, text7, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.pixelZoom)) + new Vector2(2f, 0f), Game1.textShadowColor);
+				b.DrawString(Game1.smallFont, text7, new Vector2((float) (num7 + Game1.tileSize / 4), (float) (num8 + Game1.pixelZoom)), Game1.textColor);
+				b.Draw(Game1.objectSpriteSheet, new Vector2((float) (num7 + Game1.tileSize / 4 + (int) font.MeasureString(text7).X + Game1.tileSize / 3), (float) num8), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, extraItemToShowIndex, 16, 16)), Color.White, 0f, Vector2.Zero, (float) Game1.pixelZoom, SpriteEffects.None, 1f);
+			}
 		}
+
 	}
 }
