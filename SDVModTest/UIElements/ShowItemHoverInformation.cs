@@ -64,14 +64,11 @@ namespace UIInfoSuite.UIElements {
 				return;
 
 			GraphicsEvents.OnPostRenderEvent -= DrawAdvancedTooltip;
-			PlayerEvents.InventoryChanged -= PopulateRequiredBundles;
 			GraphicsEvents.OnPreRenderEvent -= GetHoverItem;
 
 			if (showItemHoverInformation) {
 				_communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
 				_bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
-				PopulateRequiredBundles(null, null);
-				PlayerEvents.InventoryChanged += PopulateRequiredBundles;
 				GraphicsEvents.OnPostRenderEvent += DrawAdvancedTooltip;
 				GraphicsEvents.OnPreRenderEvent += GetHoverItem;
 			}
@@ -118,42 +115,40 @@ namespace UIInfoSuite.UIElements {
 			}
 		}
 
-		private void PopulateRequiredBundles(object sender, EventArgsInventoryChanged e) {
-			_prunedRequiredBundles.Clear();
-			foreach (var bundle in _bundleData) {
-				String[] bundleRoomInfo = bundle.Key.Split('/');
-				String bundleRoom = bundleRoomInfo[0];
-				int roomNum;
+		CommunityCenter communityCenter = (CommunityCenter) Game1.getLocationFromName("CommunityCenter");
 
-				switch (bundleRoom) {
-				case "Pantry": roomNum = 0; break;
-				case "Crafts Room": roomNum = 1; break;
-				case "Fish Tank": roomNum = 2; break;
-				case "Boiler Room": roomNum = 3; break;
-				case "Vault": roomNum = 4; break;
-				case "Bulletin Board": roomNum = 5; break;
-				default: continue;
-				}
+		private string getRequiredBundleName(StardewValley.Object hoverItem) {
+			// Determine bundle info
+			int bundleIndex = 0;
+			int bundleItemIndex = 0;
 
-				if (_communityCenter.shouldNoteAppearInArea(roomNum)) {
-					int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
-					string[] bundleInfo = bundle.Value.Split('/');
-					string bundleName = bundleInfo[0];
-					string[] bundleValues = bundleInfo[2].Split(' ');
-					List<int> source = new List<int>();
+			string bundleName = "";
 
-					for (int i = 0; i < bundleValues.Length; i += 3) {
-						int bundleValue = bundleValues[i].SafeParseInt32();
-						if (bundleValue != -1 &&
-								!_communityCenter.bundles[bundleNumber][i / 3]) {
-							source.Add(bundleValue);
+			// Check if item missing from bundle;
+			if (bundleData.Values.ToList().Exists(x => {
+				var valueData = x.Split('/');
+				var items = valueData[2].Split(' ');
+
+				for (int i = 0; i < items.Count(); i += 3) {
+					if (items[i] == $"{hoverItem.parentSheetIndex}" 
+					&& hoverItem.quality >= Int32.Parse(items[i+2])) {
+
+						bundleIndex = bundleData.Values.ToList().IndexOf(x);
+						var bundleNum = int.Parse(bundleData.Keys.ToList()[bundleIndex].Split('/')[1]);
+						bundleItemIndex = i;
+						bundleName = valueData[0];
+
+						if (!communityCenter.bundles[bundleNum][bundleItemIndex / 3]) {
+							return true;
 						}
-					}
 
-					if (source.Count > 0)
-						_prunedRequiredBundles.Add(bundleName, source);
+					}
 				}
-			}
+				return false;
+			})) {
+					return bundleName;
+			} else 
+				return "";
 		}
 
 		private Tuple<Dictionary<string, bool>, Dictionary<string, bool>, Dictionary<string, bool>, string> GetSeasonsLocationsWeatherAndTimes(StardewValley.Object hoveredObject) {
@@ -348,9 +343,13 @@ namespace UIInfoSuite.UIElements {
 
 		}
 
+		Item lastDrawnItem;
+
 		private void DrawAdvancedTooltip(object sender, EventArgs e) {
-			if (_hoverItem == null)
+			if (_hoverItem == null) {
+				lastDrawnItem = null;
 				return;
+			}
 
 			//removeDefaultTooltip();
 
@@ -358,182 +357,181 @@ namespace UIInfoSuite.UIElements {
 			int padding = 2 * 5 * Game1.pixelZoom;
 			int itemSpacing = 2 * Game1.pixelZoom;
 
-
 			var hoverObject = _hoverItem as StardewValley.Object;
 
-			hover.Reset(); // reset components
+			// Efficiency, save previous hover item, only reset & recalculate if is new item. else skip to draw
+			if (lastDrawnItem != _hoverItem) {
+				hover.Reset(); // reset components
 
-			// set minimum background width to bottom padding
-			hover.Background.Height = Game1.pixelZoom - itemSpacing;
-			hover.Background.Width = Game1.pixelZoom * 25;
+				// set minimum background width to bottom padding
+				hover.Background.Height = Game1.pixelZoom - itemSpacing;
+				hover.Background.Width = Game1.pixelZoom * 25;
 
-			foreach (var requiredBundle in _prunedRequiredBundles) {
-				if (requiredBundle.Value.Contains(_hoverItem.parentSheetIndex) &&
-						!_hoverItem.Name.Contains("arecrow")) {
-					hover.bundleName.hidden = false;
-					hover.bundleName.text = requiredBundle.Key;
-					hover.Background.Height += hover.bundleIcon.Height + itemSpacing;
-					hover.ExtendBackgroundWidth(hover.bundleIcon.Width + itemSpacing + hover.bundleName.Width + padding, Game1.pixelZoom * 50);
-					break;
-				}
-			}
+				int truePrice = Tools.GetTruePrice(_hoverItem);
 
-			if (hover.bundleName.hidden)
-				hover.Background.Height += padding / 2;
-
-			int truePrice = Tools.GetTruePrice(_hoverItem);
-
-			if (truePrice > 0) {
-				hover.price.hidden = false;
-				hover.price.text = $"{truePrice}";
-				hover.Background.Height += hover.price.Height + itemSpacing;
-				hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.price.Width + padding);
-
-				if (_hoverItem.getStack() > 1) {
-					hover.stackPrice.hidden = false;
-					hover.stackPrice.text = $"{truePrice * _hoverItem.getStack()}";
-					hover.Background.Height += hover.stackPrice.Height + itemSpacing;
-					hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + padding);
-				} else {
-					hover.Background.Height += itemSpacing; // not sure why non stacked items arent properly vertically padded.
-				}
-			} else {
-				// If no price, object will not have any other info of interest to display
-				return;
-			}
-
-			if (hoverObject == null) {
-				// all other possible info needs to be type object
-				return;
-			}
-
-			Tuple<Dictionary<string, bool>, Dictionary<string, bool>, Dictionary<string, bool>, string> timeInfo = GetSeasonsLocationsWeatherAndTimes(hoverObject);
-
-			if (hoverObject.type == "Seeds") {
-
-				if (hoverObject.Name != "Mixed Seeds" && hoverObject.Name != "Winter Seeds" && hoverObject.Name != "Summer Seeds" && hoverObject.Name != "Fall Seeds" && hoverObject.Name != "Spring Seeds") {
-					var crop = new StardewValley.Object(new Debris(new Crop(_hoverItem.parentSheetIndex, 0, 0).indexOfHarvest, Game1.player.position, Game1.player.position).chunkType, 1);
-					var cropPrice = crop.Price;
-
-					timeInfo = GetSeasonsLocationsWeatherAndTimes(crop);
-
-					hover.cropPrice.text = $"{cropPrice}";
-					hover.cropPrice.hidden = false;
-					hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.price.Width + itemSpacing + (int) hover.cropPrice.font.MeasureString(">").X + itemSpacing + hover.cropPrice.Width + padding);
+				if (truePrice > 0) {
+					hover.price.hidden = false;
+					hover.price.text = $"{truePrice}";
+					hover.Background.Height += hover.price.Height + itemSpacing;
+					hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.price.Width + padding);
 
 					if (_hoverItem.getStack() > 1) {
-						hover.cropStackPrice.text = $"{cropPrice * _hoverItem.getStack()}";
-						hover.cropStackPrice.hidden = false;
-						hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + itemSpacing + (int) hover.cropStackPrice.font.MeasureString(">").X + itemSpacing + hover.cropStackPrice.Width + padding);
+						hover.stackPrice.hidden = false;
+						hover.stackPrice.text = $"{truePrice * _hoverItem.getStack()}";
+						hover.Background.Height += hover.stackPrice.Height + itemSpacing;
+						hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + padding);
+					} else {
+						hover.Background.Height += itemSpacing; // not sure why non stacked items arent properly vertically padded.
+					}
+				} else {
+					// If no price, object will not have any other info of interest to display
+					return;
+				}
 
+				if (hoverObject == null) {
+					// all other possible info needs to be type object
+					return;
+				}
+
+				string bundleName = getRequiredBundleName(hoverObject);
+				if (bundleName != "") {
+					hover.bundleName.hidden = false;
+					hover.bundleName.text = bundleName;
+					hover.Background.Height += hover.bundleIcon.Height + itemSpacing;
+					hover.ExtendBackgroundWidth(hover.bundleIcon.Width + itemSpacing + hover.bundleName.Width + padding, Game1.pixelZoom * 50);
+				} else
+					hover.Background.Height += padding / 2;
+
+				Tuple<Dictionary<string, bool>, Dictionary<string, bool>, Dictionary<string, bool>, string> LocationTimeInfo = GetSeasonsLocationsWeatherAndTimes(hoverObject);
+
+				if (hoverObject.type == "Seeds") {
+
+					if (hoverObject.Name != "Mixed Seeds" && hoverObject.Name != "Winter Seeds" && hoverObject.Name != "Summer Seeds" && hoverObject.Name != "Fall Seeds" && hoverObject.Name != "Spring Seeds") {
+						var crop = new StardewValley.Object(new Debris(new Crop(_hoverItem.parentSheetIndex, 0, 0).indexOfHarvest, Game1.player.position, Game1.player.position).chunkType, 1);
+						var cropPrice = crop.Price;
+
+						LocationTimeInfo = GetSeasonsLocationsWeatherAndTimes(crop);
+
+						hover.cropPrice.text = $"{cropPrice}";
+						hover.cropPrice.hidden = false;
+						hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.price.Width + itemSpacing + (int) hover.cropPrice.font.MeasureString(">").X + itemSpacing + hover.cropPrice.Width + padding);
+
+						if (_hoverItem.getStack() > 1) {
+							hover.cropStackPrice.text = $"{cropPrice * _hoverItem.getStack()}";
+							hover.cropStackPrice.hidden = false;
+							hover.ExtendBackgroundWidth(hover.currencyIcon.Width + itemSpacing + hover.stackPrice.Width + itemSpacing + (int) hover.cropStackPrice.font.MeasureString(">").X + itemSpacing + hover.cropStackPrice.Width + padding);
+
+						}
 					}
 				}
+
+				if (LocationTimeInfo.Item1.Values.Contains(true)) { // if at least one season
+					int num = LocationTimeInfo.Item1.Where(x => { return x.Value; }).Count();
+
+					if (LocationTimeInfo.Item1["spring"])
+						hover.springIcon.hidden = false;
+					if (LocationTimeInfo.Item1["summer"])
+						hover.summerIcon.hidden = false;
+					if (LocationTimeInfo.Item1["fall"])
+						hover.fallIcon.hidden = false;
+					if (LocationTimeInfo.Item1["winter"])
+						hover.winterIcon.hidden = false;
+
+					hover.Background.Height += hover.springIcon.Height + itemSpacing;
+					hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num != 4 ? num : 2) + padding);
+				}
+
+				if (LocationTimeInfo.Item2.Values.Contains(true)) { // if at least one season
+					int num = 0;
+					// count manually, dictionary countains extra locations (i.e Temp, FishGame)
+
+
+					// TODO Add custom icons by 4Slice
+					// Catfish and pike are special exceptions with Secret Woods
+					if (LocationTimeInfo.Item2["UndergroundMine"]) {
+						hover.minesIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Desert"]) {
+						hover.desertIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["ForestRiver"]) {
+						hover.forestRiverIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Town"]) {
+						hover.townIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Mountain"]) {
+						hover.mountainIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Beach"]) {
+						hover.beachIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Woods"]) {
+						hover.secretWoodsIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Sewer"]) {
+						hover.sewersIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["BugLand"]) {
+						hover.bugLandIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["WitchSwamp"]) {
+						hover.witchSwampIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["Trap"]) {
+						hover.trapIcon.hidden = false;
+						num++;
+					}
+					if (LocationTimeInfo.Item2["ForestPond"]) {
+						hover.forestPondIcon.hidden = false;
+						num++;
+					}
+
+					/*
+					{ "UndergroundMine", false }, { "Desert", false }, { "ForestRiver", false },
+					{ "Town", false }, { "Mountain", false }, { "Beach", false },
+					{ "Woods", false }, { "Sewer", false }, { "BugLand", false },
+					{ "WitchSwamp", false }, { "Trap", false }, { "ForestPond", false },
+					 */
+
+					hover.Background.Height += hover.springIcon.Height + itemSpacing;
+					// todo decide max width
+					hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * num + padding);
+				}
+
+
+				if (LocationTimeInfo.Item3.Values.Contains(true)) { // if at least one season
+					int num = LocationTimeInfo.Item3.Where(x => { return x.Value; }).Count();
+
+					if (LocationTimeInfo.Item3["rainy"])
+						hover.rainyIcon.hidden = false;
+					if (LocationTimeInfo.Item3["sunny"])
+						hover.sunnyIcon.hidden = false;
+
+					hover.Background.Height += hover.rainyIcon.Height + itemSpacing;
+					hover.ExtendBackgroundWidth((hover.rainyIcon.Width + itemSpacing) * num + padding);
+				}
+
+				if (LocationTimeInfo.Item4 != "") {
+					hover.fishTimes.hidden = false;
+					hover.fishTimes.text = LocationTimeInfo.Item4;
+
+					hover.Background.Height += hover.fishTimes.Height + itemSpacing;
+					hover.ExtendBackgroundWidth(hover.fishTimes.Width + padding);
+				}
 			}
 
-			if (timeInfo.Item1.Values.Contains(true)) { // if at least one season
-				int num = timeInfo.Item1.Where(x => { return x.Value; }).Count();
-
-				if (timeInfo.Item1["spring"])
-					hover.springIcon.hidden = false;
-				if (timeInfo.Item1["summer"])
-					hover.summerIcon.hidden = false;
-				if (timeInfo.Item1["fall"])
-					hover.fallIcon.hidden = false;
-				if (timeInfo.Item1["winter"])
-					hover.winterIcon.hidden = false;
-
-				hover.Background.Height += hover.springIcon.Height + itemSpacing;
-				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * (num != 4 ? num : 2) + padding);
-			}
-
-			if (timeInfo.Item2.Values.Contains(true)) { // if at least one season
-				int num = 0;
-				// count manually, dictionary countains extra locations (i.e Temp, FishGame)
-
-
-				// TODO Add custom icons by 4Slice
-				// Catfish and pike are special exceptions with Secret Woods
-				if (timeInfo.Item2["UndergroundMine"]) {
-					hover.minesIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Desert"]) {
-					hover.desertIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["ForestRiver"]) {
-					hover.forestRiverIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Town"]) {
-					hover.townIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Mountain"]) {
-					hover.mountainIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Beach"]) {
-					hover.beachIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Woods"]) {
-					hover.secretWoodsIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Sewer"]) {
-					hover.sewersIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["BugLand"]) {
-					hover.bugLandIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["WitchSwamp"]) {
-					hover.witchSwampIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["Trap"]) {
-					hover.trapIcon.hidden = false;
-					num++;
-				}
-				if (timeInfo.Item2["ForestPond"]) {
-					hover.forestPondIcon.hidden = false;
-					num++;
-				}
-
-				/*
-				{ "UndergroundMine", false }, { "Desert", false }, { "ForestRiver", false },
-				{ "Town", false }, { "Mountain", false }, { "Beach", false },
-				{ "Woods", false }, { "Sewer", false }, { "BugLand", false },
-				{ "WitchSwamp", false }, { "Trap", false }, { "ForestPond", false },
-				 */
-
-				hover.Background.Height += hover.springIcon.Height + itemSpacing;
-				// todo decide max width
-				hover.ExtendBackgroundWidth((hover.springIcon.Width + itemSpacing) * num + padding);
-			}
-
-
-			if (timeInfo.Item3.Values.Contains(true)) { // if at least one season
-				int num = timeInfo.Item3.Where(x => { return x.Value; }).Count();
-
-				if (timeInfo.Item3["rainy"])
-					hover.rainyIcon.hidden = false;
-				if (timeInfo.Item3["sunny"])
-					hover.sunnyIcon.hidden = false;
-
-				hover.Background.Height += hover.rainyIcon.Height + itemSpacing;
-				hover.ExtendBackgroundWidth((hover.rainyIcon.Width + itemSpacing) * num + padding);
-			}
-
-			if (timeInfo.Item4 != "") {
-				hover.fishTimes.hidden = false;
-				hover.fishTimes.text = timeInfo.Item4;
-
-				hover.Background.Height += hover.fishTimes.Height + itemSpacing;
-				hover.ExtendBackgroundWidth(hover.fishTimes.Width + padding);
-			}
+			lastDrawnItem = _hoverItem;
 
 			// place window by mouse
 			hover.Background.Y = Game1.getMouseY() + 12 * Game1.pixelZoom;
