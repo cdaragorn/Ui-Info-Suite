@@ -14,7 +14,12 @@ using System.Threading.Tasks;
 namespace UIInfoSuite {
 	static class Tools {
 
-		public static Dictionary<int, string> objectInformation = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "ObjectInformation.xnb"));
+		public static Dictionary<int, string> objectInformation = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "ObjectInformation"));
+		public static Dictionary<int, string> fishData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "Fish"));
+		public static Dictionary<string, string> locationData = Game1.content.Load<Dictionary<string, string>>(Path.Combine("Data", "Locations"));
+		public static Dictionary<int, string> cropData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "Crops"));
+		public static Dictionary<int, string> treeData = Game1.content.Load<Dictionary<int, string>>(Path.Combine("Data", "fruitTrees"));
+		public static Dictionary<string, string> bundleData = Game1.content.Load<Dictionary<string, string>>(Path.Combine("Data", "Bundles"));
 
 		public static void CreateSafeDelayedDialogue(String dialogue, int timer) {
 			Task.Factory.StartNew(() => {
