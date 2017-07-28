@@ -73,11 +73,11 @@ namespace UIInfoSuite.UIElements {
 
 				} else if (name.Contains("sprinkler")) {
 					if (name.Contains("iridium")) {
-						arrayToUse = _modConfig.IridiumSprinkler;
+						arrayToUse = _modConfig.getIntArray(_modConfig.IridiumSprinkler);
 					} else if (name.Contains("quality")) {
-						arrayToUse = _modConfig.QualitySprinkler;
+						arrayToUse = _modConfig.getIntArray(_modConfig.QualitySprinkler);
 					} else {
-						arrayToUse = _modConfig.Sprinkler;
+						arrayToUse = _modConfig.getIntArray(_modConfig.Sprinkler);
 					}
 
 					if (arrayToUse != null)
@@ -89,11 +89,11 @@ namespace UIInfoSuite.UIElements {
 						foreach (StardewValley.Object next in objects) {
 							string objectName = next.name.ToLower();
 							if (objectName.Contains("iridium")) {
-								arrayToUse = _modConfig.IridiumSprinkler;
+								arrayToUse = _modConfig.getIntArray(_modConfig.IridiumSprinkler);
 							} else if (objectName.Contains("quality")) {
-								arrayToUse = _modConfig.QualitySprinkler;
+								arrayToUse = _modConfig.getIntArray(_modConfig.QualitySprinkler);
 							} else {
-								arrayToUse = _modConfig.Sprinkler;
+								arrayToUse = _modConfig.getIntArray(_modConfig.Sprinkler);
 							}
 
 							if (arrayToUse != null)
@@ -101,7 +101,7 @@ namespace UIInfoSuite.UIElements {
 						}
 					}
 				} else if (name.Contains("bee house")) {
-					ParseConfigToHighlightedArea(_modConfig.Beehouse, TileUnderMouseX, TileUnderMouseY);
+					ParseConfigToHighlightedArea(_modConfig.getIntArray(_modConfig.Beehouse), TileUnderMouseX, TileUnderMouseY);
 				}
 
 			}
