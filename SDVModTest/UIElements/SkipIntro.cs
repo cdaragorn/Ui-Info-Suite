@@ -31,7 +31,7 @@ namespace UIInfoSuite.UIElements
         private void ControlEvents_KeyPressed(object sender, EventArgsKeyPressed e)
         {
             if (Game1.activeClickableMenu is TitleMenu &&
-                e.KeyPressed == Keys.Escape)
+                    e.KeyPressed == Keys.Escape)
             {
                 (Game1.activeClickableMenu as TitleMenu)?.skipToTitleButtons();
                 ControlEvents.KeyPressed -= ControlEvents_KeyPressed;

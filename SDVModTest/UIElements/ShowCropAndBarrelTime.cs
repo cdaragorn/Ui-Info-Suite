@@ -14,23 +14,35 @@ using System.Reflection;
 using System.Globalization;
 using StardewValley.Objects;
 using StardewModdingAPI;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
-    class ShowCropAndBarrelTime : IDisposable
+    class ShowCropAndBarrelTime: IDisposable
     {
         private Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
         private StardewValley.Object _currentTile;
         private TerrainFeature _terrain;
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _showCropAndBarrelTime;
 
-        public ShowCropAndBarrelTime(IModHelper helper)
+        public ShowCropAndBarrelTime(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _showCropAndBarrelTime = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowCropAndBarrelTooltip) ?? new ModOptionToggle(OptionKeys.ShowCropAndBarrelTooltip, "Show crop and barrel times");
+            _showCropAndBarrelTime.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showCropAndBarrelTime);
+
+            ToggleOption(_showCropAndBarrelTime.identifier, _showCropAndBarrelTime.IsOn);
+
         }
 
-        public void ToggleOption(bool showCropAndBarrelTimes)
+        public void ToggleOption(string identifier, bool showCropAndBarrelTimes)
         {
+            if (identifier != OptionKeys.ShowCropAndBarrelTooltip)
+                return;
+
             GraphicsEvents.OnPreRenderHudEvent -= DrawHoverTooltip;
             GameEvents.FourthUpdateTick -= GetTileUnderCursor;
 
@@ -49,7 +61,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowCropAndBarrelTooltip, false);
         }
 
         private void DrawHoverTooltip(object sender, EventArgs e)
@@ -59,12 +71,12 @@ namespace UIInfoSuite.UIElements
             //TerrainFeature feature = null;
 
             if (_currentTile != null &&
-                (!_currentTile.bigCraftable ||
-                _currentTile.minutesUntilReady > 0))
+                    (!_currentTile.bigCraftable ||
+                    _currentTile.minutesUntilReady > 0))
             {
                 if (_currentTile.bigCraftable &&
-                    _currentTile.minutesUntilReady > 0 &&
-                    _currentTile.Name != "Heater")
+                        _currentTile.minutesUntilReady > 0 &&
+                        _currentTile.Name != "Heater")
                 {
                     StringBuilder hoverText = new StringBuilder();
 
@@ -72,9 +84,9 @@ namespace UIInfoSuite.UIElements
                     {
                         Cask currentCask = _currentTile as Cask;
 
-                        hoverText.Append((int)(currentCask.daysToMature / currentCask.agingRate))
-                            .Append(" " + _helper.SafeGetString(
-                            LanguageKeys.DaysToMature));
+                        hoverText.Append((int) (currentCask.daysToMature / currentCask.agingRate))
+                                .Append(" " + _helper.SafeGetString(
+                                LanguageKeys.DaysToMature));
                     }
                     else
                     {
@@ -82,17 +94,17 @@ namespace UIInfoSuite.UIElements
                         int minutes = _currentTile.minutesUntilReady % 60;
                         if (hours > 0)
                             hoverText.Append(hours).Append(" ")
-                                .Append(_helper.SafeGetString(
-                                    LanguageKeys.Hours))
-                                .Append(", ");
+                                    .Append(_helper.SafeGetString(
+                                            LanguageKeys.Hours))
+                                    .Append(", ");
                         hoverText.Append(minutes).Append(" ")
-                            .Append(_helper.SafeGetString(
-                                LanguageKeys.Minutes));
+                                .Append(_helper.SafeGetString(
+                                        LanguageKeys.Minutes));
                     }
                     IClickableMenu.drawHoverText(
-                        Game1.spriteBatch,
-                        hoverText.ToString(),
-                        Game1.smallFont);
+                            Game1.spriteBatch,
+                            hoverText.ToString(),
+                            Game1.smallFont);
                 }
             }
             else if (_terrain != null)
@@ -101,12 +113,12 @@ namespace UIInfoSuite.UIElements
                 {
                     HoeDirt hoeDirt = _terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
-                        !hoeDirt.crop.dead)
+                            !hoeDirt.crop.dead)
                     {
                         int num = 0;
 
                         if (hoeDirt.crop.fullyGrown &&
-                            hoeDirt.crop.dayOfCurrentPhase > 0)
+                                hoeDirt.crop.dayOfCurrentPhase > 0)
                         {
                             num = hoeDirt.crop.dayOfCurrentPhase;
                         }
@@ -136,18 +148,18 @@ namespace UIInfoSuite.UIElements
                             if (num > 0)
                             {
                                 finalHoverText.Append(num).Append(" ")
-                                    .Append(_helper.SafeGetString(
-                                        LanguageKeys.Days));
+                                        .Append(_helper.SafeGetString(
+                                                LanguageKeys.Days));
                             }
                             else
                             {
                                 finalHoverText.Append(_helper.SafeGetString(
-                                    LanguageKeys.ReadyToHarvest));
+                                        LanguageKeys.ReadyToHarvest));
                             }
                             IClickableMenu.drawHoverText(
-                                Game1.spriteBatch,
-                                finalHoverText.ToString(),
-                                Game1.smallFont);
+                                    Game1.spriteBatch,
+                                    finalHoverText.ToString(),
+                                    Game1.smallFont);
                         }
                     }
                 }
@@ -158,11 +170,11 @@ namespace UIInfoSuite.UIElements
                     if (tree.daysUntilMature > 0)
                     {
                         IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            tree.daysUntilMature + " " +
-                                _helper.SafeGetString(
-                                    LanguageKeys.DaysToMature),
-                            Game1.smallFont);
+                                Game1.spriteBatch,
+                                tree.daysUntilMature + " " +
+                                        _helper.SafeGetString(
+                                                LanguageKeys.DaysToMature),
+                                Game1.smallFont);
                     }
                 }
             }

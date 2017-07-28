@@ -9,18 +9,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
-    class LuckOfDay : IDisposable
+    class LuckOfDay: IDisposable
     {
         private String _hoverText = string.Empty;
         private Color _color = new Color(Color.White.ToVector4());
         private ClickableTextureComponent _icon;
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _luckIcon;
 
-        public void Toggle(bool showLuckOfDay)
+        public void Toggle(string identifier, bool showLuckOfDay)
         {
+            if (identifier != OptionKeys.ShowLuckIcon)
+                return;
+
             LocationEvents.CurrentLocationChanged -= AdjustIconXToBlackBorder;
             GraphicsEvents.OnPreRenderHudEvent -= DrawDiceIcon;
             GraphicsEvents.OnPostRenderHudEvent -= DrawHoverTextOverEverything;
@@ -36,14 +41,22 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        public LuckOfDay(IModHelper helper)
+        public LuckOfDay(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            // Add the option to the menu
+            _luckIcon = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowLuckIcon) ?? new ModOptionToggle(OptionKeys.ShowLuckIcon, "Show luck icon");
+            _luckIcon.ValueChanged += Toggle;
+            modOptions.AddModOption(_luckIcon);
+
+            // initialize it
+            Toggle(_luckIcon.identifier, _luckIcon.IsOn);
         }
 
         public void Dispose()
         {
-            Toggle(false);
+            Toggle(OptionKeys.ShowLuckIcon, false);
         }
 
         private void CalculateLuck(object sender, EventArgs e)
@@ -95,17 +108,17 @@ namespace UIInfoSuite.UIElements
 
         private void AdjustIconXToBlackBorder(object sender, EventArgsCurrentLocationChanged e)
         {
-            _icon = new ClickableTextureComponent("", 
-                new Rectangle(Tools.GetWidthInPlayArea() - 134, 
-                            290, 
-                            10 * Game1.pixelZoom, 
-                            10 * Game1.pixelZoom), 
-                "", 
-                "", 
-                Game1.mouseCursors, 
-                new Rectangle(50, 428, 10, 14), 
-                Game1.pixelZoom, 
-                false);
+            _icon = new ClickableTextureComponent("",
+                    new Rectangle(Tools.GetWidthInPlayArea() - 134,
+                                            290,
+                                            10 * Game1.pixelZoom,
+                                            10 * Game1.pixelZoom),
+                    "",
+                    "",
+                    Game1.mouseCursors,
+                    new Rectangle(50, 428, 10, 14),
+                    Game1.pixelZoom,
+                    false);
         }
     }
 }

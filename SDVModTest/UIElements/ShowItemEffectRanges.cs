@@ -7,21 +7,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
-    class ShowItemEffectRanges : IDisposable
+    class ShowItemEffectRanges: IDisposable
     {
         private readonly List<Point> _effectiveArea = new List<Point>();
         private readonly ModConfig _modConfig;
 
-        public ShowItemEffectRanges(ModConfig modConfig)
+        private readonly ModOptionToggle _showItemEffectRanges;
+
+        public ShowItemEffectRanges(ModOptions modOptions, ModConfig modConfig)
         {
             _modConfig = modConfig;
+
+            _showItemEffectRanges = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowItemEffectRanges) ?? new ModOptionToggle(OptionKeys.ShowItemEffectRanges, "Show scarecrow and sprinkler range");
+            _showItemEffectRanges.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showItemEffectRanges);
+
+            ToggleOption(_showItemEffectRanges.identifier, _showItemEffectRanges.IsOn);
         }
 
-        public void ToggleOption(bool showItemEffectRanges)
+        public void ToggleOption(string identifier, bool showItemEffectRanges)
         {
+            if (identifier != OptionKeys.ShowItemEffectRanges)
+                return;
+
             GraphicsEvents.OnPostRenderEvent -= DrawTileOutlines;
             GameEvents.FourthUpdateTick -= CheckDrawTileOutlines;
 
@@ -34,7 +46,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowItemEffectRanges, false);
         }
 
         private void CheckDrawTileOutlines(object sender, EventArgs e)
@@ -42,8 +54,8 @@ namespace UIInfoSuite.UIElements
             _effectiveArea.Clear();
 
             if (Game1.player.CurrentItem != null &&
-                Game1.activeClickableMenu == null &&
-                !Game1.eventUp)
+                    Game1.activeClickableMenu == null &&
+                    !Game1.eventUp)
             {
                 String name = Game1.player.CurrentItem.Name.ToLower();
                 Item currentItem = Game1.player.CurrentItem;
@@ -68,7 +80,7 @@ namespace UIInfoSuite.UIElements
                     {
                         foreach (StardewValley.Object next in objects)
                         {
-                            ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                            ParseConfigToHighlightedArea(arrayToUse, (int) next.TileLocation.X, (int) next.TileLocation.Y);
                         }
                     }
 
@@ -77,15 +89,15 @@ namespace UIInfoSuite.UIElements
                 {
                     if (name.Contains("iridium"))
                     {
-                        arrayToUse = _modConfig.IridiumSprinkler;
+                        arrayToUse = _modConfig.getIntArray(_modConfig.IridiumSprinkler);
                     }
                     else if (name.Contains("quality"))
                     {
-                        arrayToUse = _modConfig.QualitySprinkler;
+                        arrayToUse = _modConfig.getIntArray(_modConfig.QualitySprinkler);
                     }
                     else
                     {
-                        arrayToUse = _modConfig.Sprinkler;
+                        arrayToUse = _modConfig.getIntArray(_modConfig.Sprinkler);
                     }
 
                     if (arrayToUse != null)
@@ -100,25 +112,25 @@ namespace UIInfoSuite.UIElements
                             string objectName = next.name.ToLower();
                             if (objectName.Contains("iridium"))
                             {
-                                arrayToUse = _modConfig.IridiumSprinkler;
+                                arrayToUse = _modConfig.getIntArray(_modConfig.IridiumSprinkler);
                             }
                             else if (objectName.Contains("quality"))
                             {
-                                arrayToUse = _modConfig.QualitySprinkler;
+                                arrayToUse = _modConfig.getIntArray(_modConfig.QualitySprinkler);
                             }
                             else
                             {
-                                arrayToUse = _modConfig.Sprinkler;
+                                arrayToUse = _modConfig.getIntArray(_modConfig.Sprinkler);
                             }
 
                             if (arrayToUse != null)
-                                ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                                ParseConfigToHighlightedArea(arrayToUse, (int) next.TileLocation.X, (int) next.TileLocation.Y);
                         }
                     }
                 }
                 else if (name.Contains("bee house"))
                 {
-                    ParseConfigToHighlightedArea(_modConfig.Beehouse, TileUnderMouseX, TileUnderMouseY);
+                    ParseConfigToHighlightedArea(_modConfig.getIntArray(_modConfig.Beehouse), TileUnderMouseX, TileUnderMouseY);
                 }
 
             }
@@ -128,15 +140,15 @@ namespace UIInfoSuite.UIElements
         {
             foreach (Point point in _effectiveArea)
                 Game1.spriteBatch.Draw(
-                    Game1.mouseCursors,
-                    Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
-                    new Rectangle(194, 388, 16, 16),
-                    Color.White * 0.7f,
-                    0.0f,
-                    Vector2.Zero,
-                    Game1.pixelZoom,
-                    SpriteEffects.None,
-                    0.01f);
+                        Game1.mouseCursors,
+                        Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
+                        new Rectangle(194, 388, 16, 16),
+                        Color.White * 0.7f,
+                        0.0f,
+                        Vector2.Zero,
+                        Game1.pixelZoom,
+                        SpriteEffects.None,
+                        0.01f);
         }
 
         private void ParseConfigToHighlightedArea(int[][] highlightedLocation, int xPos, int yPos)

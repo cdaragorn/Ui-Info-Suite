@@ -11,16 +11,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
-    class ShowTravelingMerchant : IDisposable
+    class ShowTravelingMerchant: IDisposable
     {
         private bool _travelingMerchantIsHere = false;
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _showTravelingMerchant;
 
-        public void ToggleOption(bool showTravelingMerchant)
+        public void ToggleOption(string identifier, bool showTravelingMerchant)
         {
+            if (identifier != OptionKeys.ShowTravelingMerchant)
+                return;
+
             GraphicsEvents.OnPreRenderHudEvent -= DrawTravelingMerchant;
             TimeEvents.AfterDayStarted -= DayChanged;
 
@@ -32,14 +37,20 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        public ShowTravelingMerchant(IModHelper helper)
+        public ShowTravelingMerchant(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _showTravelingMerchant = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowTravelingMerchant) ?? new ModOptionToggle(OptionKeys.ShowTravelingMerchant, "Show Traveling Merchant");
+            _showTravelingMerchant.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showTravelingMerchant);
+
+            ToggleOption(_showTravelingMerchant.identifier, _showTravelingMerchant.IsOn);
         }
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowTravelingMerchant, false);
         }
 
         private void DayChanged(object sender, EventArgs e)
@@ -53,23 +64,23 @@ namespace UIInfoSuite.UIElements
         {
 
             if (!Game1.eventUp &&
-                _travelingMerchantIsHere)
+                    _travelingMerchantIsHere)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                ClickableTextureComponent textureComponent = 
-                    new ClickableTextureComponent(
-                        new Rectangle(iconPosition.X, iconPosition.Y, 40, 40), 
-                        Game1.content.Load<Texture2D>("LooseSprites\\Cursors"), 
-                        new Rectangle(192, 1411, 20, 20), 
-                        2f);
+                ClickableTextureComponent textureComponent =
+                        new ClickableTextureComponent(
+                                new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
+                                Game1.content.Load<Texture2D>("LooseSprites\\Cursors"),
+                                new Rectangle(192, 1411, 20, 20),
+                                2f);
                 textureComponent.draw(Game1.spriteBatch);
                 if (textureComponent.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                 {
                     string hoverText = _helper.SafeGetString(
-                        LanguageKeys.TravelingMerchantIsInTown);
+                            LanguageKeys.TravelingMerchantIsInTown);
                     IClickableMenu.drawHoverText(
-                        Game1.spriteBatch, 
-                        hoverText, Game1.dialogueFont);
+                            Game1.spriteBatch,
+                            hoverText, Game1.dialogueFont);
                 }
             }
         }
