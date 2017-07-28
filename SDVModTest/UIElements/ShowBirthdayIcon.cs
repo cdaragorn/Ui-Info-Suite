@@ -12,12 +12,15 @@ using System.Threading.Tasks;
 using StardewConfigFramework;
 using StardewModdingAPI;
 
-namespace UIInfoSuite.UIElements {
-	class ShowBirthdayIcon: IDisposable {
+namespace UIInfoSuite.UIElements
+{
+	class ShowBirthdayIcon: IDisposable
+	{
 		private NPC _birthdayNPC;
 		private readonly ModOptionToggle _showBirthdayIcon;
 
-		public ShowBirthdayIcon(ModOptions modOptions) {
+		public ShowBirthdayIcon(ModOptions modOptions)
+		{
 
 			_showBirthdayIcon = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowBirthdayIcon) ?? new ModOptionToggle(OptionKeys.ShowBirthdayIcon, "Show Birthday icon");
 			_showBirthdayIcon.ValueChanged += ToggleOption;
@@ -26,7 +29,8 @@ namespace UIInfoSuite.UIElements {
 			ToggleOption(_showBirthdayIcon.identifier, _showBirthdayIcon.IsOn);
 		}
 
-		public void ToggleOption(string identifier, bool showBirthdayIcon) {
+		public void ToggleOption(string identifier, bool showBirthdayIcon)
+		{
 			if (identifier != OptionKeys.ShowBirthdayIcon)
 				return;
 
@@ -34,7 +38,8 @@ namespace UIInfoSuite.UIElements {
 			GraphicsEvents.OnPreRenderHudEvent -= DrawBirthdayIcon;
 			GameEvents.HalfSecondTick -= CheckIfGiftHasBeenGiven;
 
-			if (showBirthdayIcon) {
+			if (showBirthdayIcon)
+			{
 				CheckForBirthday(null, null);
 				TimeEvents.AfterDayStarted += CheckForBirthday;
 				GraphicsEvents.OnPreRenderHudEvent += DrawBirthdayIcon;
@@ -42,26 +47,34 @@ namespace UIInfoSuite.UIElements {
 			}
 		}
 
-		private void CheckIfGiftHasBeenGiven(object sender, EventArgs e) {
-			if (_birthdayNPC != null) {
+		private void CheckIfGiftHasBeenGiven(object sender, EventArgs e)
+		{
+			if (_birthdayNPC != null)
+			{
 				var birthdayNPCDetails = Game1.player.friendships.SafeGet(_birthdayNPC.name);
 
-				if (birthdayNPCDetails != null) {
+				if (birthdayNPCDetails != null)
+				{
 					if (birthdayNPCDetails[3] == 1)
 						_birthdayNPC = null;
 				}
 			}
 		}
 
-		public void Dispose() {
+		public void Dispose()
+		{
 			ToggleOption(OptionKeys.ShowBirthdayIcon, false);
 		}
 
-		private void CheckForBirthday(object sender, EventArgs e) {
+		private void CheckForBirthday(object sender, EventArgs e)
+		{
 			_birthdayNPC = null;
-			foreach (var location in Game1.locations) {
-				foreach (var character in location.characters) {
-					if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth)) {
+			foreach (var location in Game1.locations)
+			{
+				foreach (var character in location.characters)
+				{
+					if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth))
+					{
 						_birthdayNPC = character;
 						break;
 					}
@@ -72,10 +85,13 @@ namespace UIInfoSuite.UIElements {
 			}
 		}
 
-		private void DrawBirthdayIcon(object sender, EventArgs e) {
+		private void DrawBirthdayIcon(object sender, EventArgs e)
+		{
 			var test = Game1.player.friendships;
-			if (!Game1.eventUp) {
-				if (_birthdayNPC != null) {
+			if (!Game1.eventUp)
+			{
+				if (_birthdayNPC != null)
+				{
 					Rectangle headShot = _birthdayNPC.GetHeadShot();
 					Point iconPosition = IconHandler.Handler.GetNewIconPosition();
 					float scale = 2.9f;
@@ -107,7 +123,8 @@ namespace UIInfoSuite.UIElements {
 
 					texture.draw(Game1.spriteBatch);
 
-					if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY())) {
+					if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+					{
 						String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.name);
 						IClickableMenu.drawHoverText(
 								Game1.spriteBatch,

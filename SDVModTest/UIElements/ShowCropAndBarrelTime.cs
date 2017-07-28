@@ -16,15 +16,18 @@ using StardewValley.Objects;
 using StardewModdingAPI;
 using StardewConfigFramework;
 
-namespace UIInfoSuite.UIElements {
-	class ShowCropAndBarrelTime: IDisposable {
+namespace UIInfoSuite.UIElements
+{
+	class ShowCropAndBarrelTime: IDisposable
+	{
 		private Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
 		private StardewValley.Object _currentTile;
 		private TerrainFeature _terrain;
 		private readonly IModHelper _helper;
 		private readonly ModOptionToggle _showCropAndBarrelTime;
 
-		public ShowCropAndBarrelTime(ModOptions modOptions, IModHelper helper) {
+		public ShowCropAndBarrelTime(ModOptions modOptions, IModHelper helper)
+		{
 			_helper = helper;
 
 			_showCropAndBarrelTime = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowCropAndBarrelTooltip) ?? new ModOptionToggle(OptionKeys.ShowCropAndBarrelTooltip, "Show crop and barrel times");
@@ -35,48 +38,58 @@ namespace UIInfoSuite.UIElements {
 
 		}
 
-		public void ToggleOption(string identifier, bool showCropAndBarrelTimes) {
+		public void ToggleOption(string identifier, bool showCropAndBarrelTimes)
+		{
 			if (identifier != OptionKeys.ShowCropAndBarrelTooltip)
 				return;
 
 			GraphicsEvents.OnPreRenderHudEvent -= DrawHoverTooltip;
 			GameEvents.FourthUpdateTick -= GetTileUnderCursor;
 
-			if (showCropAndBarrelTimes) {
+			if (showCropAndBarrelTimes)
+			{
 				GraphicsEvents.OnPreRenderHudEvent += DrawHoverTooltip;
 				GameEvents.FourthUpdateTick += GetTileUnderCursor;
 			}
 		}
 
-		private void GetTileUnderCursor(object sender, EventArgs e) {
+		private void GetTileUnderCursor(object sender, EventArgs e)
+		{
 			_currentTile = Game1.currentLocation.Objects.SafeGet(Game1.currentCursorTile);
 			_terrain = Game1.currentLocation.terrainFeatures.SafeGet(Game1.currentCursorTile);
 		}
 
-		public void Dispose() {
+		public void Dispose()
+		{
 			ToggleOption(OptionKeys.ShowCropAndBarrelTooltip, false);
 		}
 
-		private void DrawHoverTooltip(object sender, EventArgs e) {
+		private void DrawHoverTooltip(object sender, EventArgs e)
+		{
 
 			//StardewValley.Object tile = Game1.currentLocation.Objects.SafeGet(Game1.currentCursorTile);
 			//TerrainFeature feature = null;
 
 			if (_currentTile != null &&
 					(!_currentTile.bigCraftable ||
-					_currentTile.minutesUntilReady > 0)) {
+					_currentTile.minutesUntilReady > 0))
+			{
 				if (_currentTile.bigCraftable &&
 						_currentTile.minutesUntilReady > 0 &&
-						_currentTile.Name != "Heater") {
+						_currentTile.Name != "Heater")
+				{
 					StringBuilder hoverText = new StringBuilder();
 
-					if (_currentTile is Cask) {
+					if (_currentTile is Cask)
+					{
 						Cask currentCask = _currentTile as Cask;
 
 						hoverText.Append((int) (currentCask.daysToMature / currentCask.agingRate))
 								.Append(" " + _helper.SafeGetString(
 								LanguageKeys.DaysToMature));
-					} else {
+					}
+					else
+					{
 						int hours = _currentTile.minutesUntilReady / 60;
 						int minutes = _currentTile.minutesUntilReady % 60;
 						if (hours > 0)
@@ -93,18 +106,26 @@ namespace UIInfoSuite.UIElements {
 							hoverText.ToString(),
 							Game1.smallFont);
 				}
-			} else if (_terrain != null) {
-				if (_terrain is HoeDirt) {
+			}
+			else if (_terrain != null)
+			{
+				if (_terrain is HoeDirt)
+				{
 					HoeDirt hoeDirt = _terrain as HoeDirt;
 					if (hoeDirt.crop != null &&
-							!hoeDirt.crop.dead) {
+							!hoeDirt.crop.dead)
+					{
 						int num = 0;
 
 						if (hoeDirt.crop.fullyGrown &&
-								hoeDirt.crop.dayOfCurrentPhase > 0) {
+								hoeDirt.crop.dayOfCurrentPhase > 0)
+						{
 							num = hoeDirt.crop.dayOfCurrentPhase;
-						} else {
-							for (int i = 0; i < hoeDirt.crop.phaseDays.Count - 1; ++i) {
+						}
+						else
+						{
+							for (int i = 0; i < hoeDirt.crop.phaseDays.Count - 1; ++i)
+							{
 								if (hoeDirt.crop.currentPhase == i)
 									num -= hoeDirt.crop.dayOfCurrentPhase;
 
@@ -113,20 +134,25 @@ namespace UIInfoSuite.UIElements {
 							}
 						}
 
-						if (hoeDirt.crop.indexOfHarvest > 0) {
+						if (hoeDirt.crop.indexOfHarvest > 0)
+						{
 							String hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest);
-							if (String.IsNullOrEmpty(hoverText)) {
+							if (String.IsNullOrEmpty(hoverText))
+							{
 								hoverText = new StardewValley.Object(new Debris(hoeDirt.crop.indexOfHarvest, Vector2.Zero, Vector2.Zero).chunkType, 1).DisplayName;
 								_indexOfCropNames.Add(hoeDirt.crop.indexOfHarvest, hoverText);
 							}
 
 							StringBuilder finalHoverText = new StringBuilder();
 							finalHoverText.Append(hoverText).Append(": ");
-							if (num > 0) {
+							if (num > 0)
+							{
 								finalHoverText.Append(num).Append(" ")
 										.Append(_helper.SafeGetString(
 												LanguageKeys.Days));
-							} else {
+							}
+							else
+							{
 								finalHoverText.Append(_helper.SafeGetString(
 										LanguageKeys.ReadyToHarvest));
 							}
@@ -136,10 +162,13 @@ namespace UIInfoSuite.UIElements {
 									Game1.smallFont);
 						}
 					}
-				} else if (_terrain is FruitTree) {
+				}
+				else if (_terrain is FruitTree)
+				{
 					FruitTree tree = _terrain as FruitTree;
 
-					if (tree.daysUntilMature > 0) {
+					if (tree.daysUntilMature > 0)
+					{
 						IClickableMenu.drawHoverText(
 								Game1.spriteBatch,
 								tree.daysUntilMature + " " +
