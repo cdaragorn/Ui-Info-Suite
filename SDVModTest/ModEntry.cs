@@ -18,12 +18,11 @@ using StardewConfigFramework;
 
 namespace UIInfoSuite
 {
-    public class ModEntry: Mod
+    public class ModEntry : Mod
     {
 
         private readonly SkipIntro _skipIntro = new SkipIntro();
 
-        private String _modDataFileName;
         private ModOptions _modOptions;
         private ModConfig _modConfig;
 
