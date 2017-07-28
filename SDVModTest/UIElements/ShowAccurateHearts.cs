@@ -9,24 +9,40 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
-    class ShowAccurateHearts : IDisposable
+    class ShowAccurateHearts: IDisposable
     {
         private List<ClickableTextureComponent> _friendNames;
         private SocialPage _socialPage;
 
+        private readonly ModOptionToggle _showHeartFills;
+
+        public ShowAccurateHearts(ModOptions modOptions)
+        {
+
+            _showHeartFills = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowHeartFills) ?? new ModOptionToggle(OptionKeys.ShowHeartFills, "Show heart fills");
+            _showHeartFills.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showHeartFills);
+
+            ToggleOption(_showHeartFills.identifier, _showHeartFills.IsOn);
+        }
+
         private readonly int[][] _numArray = new int[][]
         {
-            new int[] { 1, 1, 0, 1, 1 },
-            new int[] { 1, 1, 1, 1, 1 },
-            new int[] { 0, 1, 1, 1, 0 },
-            new int[] { 0, 0, 1, 0, 0 }
+                        new int[] { 1, 1, 0, 1, 1 },
+                        new int[] { 1, 1, 1, 1, 1 },
+                        new int[] { 0, 1, 1, 1, 0 },
+                        new int[] { 0, 0, 1, 0, 0 }
         };
 
-        public void ToggleOption(bool showAccurateHearts)
+        public void ToggleOption(string identifier, bool showAccurateHearts)
         {
+            if (identifier != OptionKeys.ShowHeartFills)
+                return;
+
             MenuEvents.MenuChanged -= OnMenuChange;
             GraphicsEvents.OnPostRenderGuiEvent -= DrawHeartFills;
 
@@ -39,7 +55,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowHeartFills, false);
         }
 
         private void DrawHeartFills(object sender, EventArgs e)
@@ -50,11 +66,11 @@ namespace UIInfoSuite.UIElements
 
                 if (gameMenu.currentTab == 2)
                 {
-                    int slotPosition = (int)typeof(SocialPage)
-                        .GetField(
-                            "slotPosition", 
-                            BindingFlags.Instance | BindingFlags.NonPublic)
-                            .GetValue(_socialPage);
+                    int slotPosition = (int) typeof(SocialPage)
+                            .GetField(
+                                    "slotPosition",
+                                    BindingFlags.Instance | BindingFlags.NonPublic)
+                                    .GetValue(_socialPage);
                     int yOffset = 0;
 
                     for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Count; ++i)
@@ -71,25 +87,25 @@ namespace UIInfoSuite.UIElements
                                 int pointsToNextHeart = friendshipRawValue % 250;
                                 int numHearts = friendshipRawValue / 250;
 
-                                if (friendshipRawValue < 3000 && 
-                                    _friendNames[i].name == Game1.player.spouse || 
-                                    friendshipRawValue < 2500)
+                                if (friendshipRawValue < 3000 &&
+                                        _friendNames[i].name == Game1.player.spouse ||
+                                        friendshipRawValue < 2500)
                                 {
                                     DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
                                     if (!Game1.options.hardwareCursor)
                                         Game1.spriteBatch.Draw(
-                                            Game1.mouseCursors,
-                                            new Vector2(Game1.getMouseX(), Game1.getMouseY()),
-                                            Game1.getSourceRectForStandardTileSheet(
-                                                Game1.mouseCursors, Game1.mouseCursor,
-                                                16,
-                                                16),
-                                            Color.White,
-                                            0.0f,
-                                            Vector2.Zero,
-                                            Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
-                                            SpriteEffects.None,
-                                            1f);
+                                                Game1.mouseCursors,
+                                                new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                                                Game1.getSourceRectForStandardTileSheet(
+                                                        Game1.mouseCursors, Game1.mouseCursor,
+                                                        16,
+                                                        16),
+                                                Color.White,
+                                                0.0f,
+                                                Vector2.Zero,
+                                                Game1.pixelZoom + (float) (Game1.dialogueButtonScale / 150.0),
+                                                SpriteEffects.None,
+                                                1f);
                                 }
                             }
                         }
@@ -97,9 +113,9 @@ namespace UIInfoSuite.UIElements
 
                     String hoverText = typeof(GameMenu).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(gameMenu) as String;
                     IClickableMenu.drawHoverText(
-                        Game1.spriteBatch,
-                        hoverText,
-                        Game1.smallFont);
+                            Game1.spriteBatch,
+                            hoverText,
+                            Game1.smallFont);
                 }
             }
         }
@@ -144,13 +160,13 @@ namespace UIInfoSuite.UIElements
                     if (_numArray[i][j] == 1)
                     {
                         Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                Game1.activeClickableMenu.xPositionOnScreen + 316 + num2 + j * 4,
-                                yPosition + 14 + i * 4,
-                                4,
-                                4),
-                            Color.Crimson);
+                                Game1.staminaRect,
+                                new Rectangle(
+                                        Game1.activeClickableMenu.xPositionOnScreen + 316 + num2 + j * 4,
+                                        yPosition + 14 + i * 4,
+                                        4,
+                                        4),
+                                Color.Crimson);
                     }
                 }
             }

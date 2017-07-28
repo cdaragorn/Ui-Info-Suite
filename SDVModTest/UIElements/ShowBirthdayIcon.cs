@@ -9,15 +9,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
+using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
 {
-    class ShowBirthdayIcon : IDisposable
+    class ShowBirthdayIcon: IDisposable
     {
         private NPC _birthdayNPC;
+        private readonly ModOptionToggle _showBirthdayIcon;
 
-        public void ToggleOption(bool showBirthdayIcon)
+        public ShowBirthdayIcon(ModOptions modOptions)
         {
+
+            _showBirthdayIcon = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowBirthdayIcon) ?? new ModOptionToggle(OptionKeys.ShowBirthdayIcon, "Show Birthday icon");
+            _showBirthdayIcon.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showBirthdayIcon);
+
+            ToggleOption(_showBirthdayIcon.identifier, _showBirthdayIcon.IsOn);
+        }
+
+        public void ToggleOption(string identifier, bool showBirthdayIcon)
+        {
+            if (identifier != OptionKeys.ShowBirthdayIcon)
+                return;
+
             TimeEvents.AfterDayStarted -= CheckForBirthday;
             GraphicsEvents.OnPreRenderHudEvent -= DrawBirthdayIcon;
             GameEvents.HalfSecondTick -= CheckIfGiftHasBeenGiven;
@@ -47,7 +63,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowBirthdayIcon, false);
         }
 
         private void CheckForBirthday(object sender, EventArgs e)
@@ -63,7 +79,7 @@ namespace UIInfoSuite.UIElements
                         break;
                     }
                 }
-                
+
                 if (_birthdayNPC != null)
                     break;
             }
@@ -81,29 +97,29 @@ namespace UIInfoSuite.UIElements
                     float scale = 2.9f;
 
                     Game1.spriteBatch.Draw(
-                        Game1.mouseCursors,
-                        new Vector2(iconPosition.X, iconPosition.Y),
-                        new Rectangle(228, 409, 16, 16),
-                        Color.White,
-                        0.0f,
-                        Vector2.Zero,
-                        scale,
-                        SpriteEffects.None,
-                        1f);
+                            Game1.mouseCursors,
+                            new Vector2(iconPosition.X, iconPosition.Y),
+                            new Rectangle(228, 409, 16, 16),
+                            Color.White,
+                            0.0f,
+                            Vector2.Zero,
+                            scale,
+                            SpriteEffects.None,
+                            1f);
 
                     ClickableTextureComponent texture =
-                        new ClickableTextureComponent(
-                            _birthdayNPC.name,
-                            new Rectangle(
-                                iconPosition.X - 7,
-                                iconPosition.Y - 2,
-                                (int)(16.0 * scale),
-                                (int)(16.0 * scale)),
-                            null,
-                            _birthdayNPC.name,
-                            _birthdayNPC.sprite.Texture,
-                            headShot,
-                            2f);
+                            new ClickableTextureComponent(
+                                    _birthdayNPC.name,
+                                    new Rectangle(
+                                            iconPosition.X - 7,
+                                            iconPosition.Y - 2,
+                                            (int) (16.0 * scale),
+                                            (int) (16.0 * scale)),
+                                    null,
+                                    _birthdayNPC.name,
+                                    _birthdayNPC.sprite.Texture,
+                                    headShot,
+                                    2f);
 
                     texture.draw(Game1.spriteBatch);
 
@@ -111,9 +127,9 @@ namespace UIInfoSuite.UIElements
                     {
                         String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.name);
                         IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            hoverText,
-                            Game1.dialogueFont);
+                                Game1.spriteBatch,
+                                hoverText,
+                                Game1.dialogueFont);
                     }
                 }
             }

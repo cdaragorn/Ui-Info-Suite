@@ -1,5 +1,4 @@
-﻿using UIInfoSuite.Options;
-using UIInfoSuite.UIElements;
+﻿using UIInfoSuite.UIElements;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -15,27 +14,29 @@ using System.Globalization;
 using static StardewValley.LocalizedContentManager;
 using System.Resources;
 using System.Reflection;
+using StardewConfigFramework;
 
 namespace UIInfoSuite
 {
-    public class ModEntry : Mod
+    public class ModEntry: Mod
     {
 
         private readonly SkipIntro _skipIntro = new SkipIntro();
 
         private String _modDataFileName;
-        private readonly Dictionary<String, String> _options = new Dictionary<string, string>();
+        private ModOptions _modOptions;
+        private ModConfig _modConfig;
 
         public static IMonitor MonitorObject { get; private set; }
         public static CultureInfo SpecificCulture { get; private set; }
         //public static ResourceManager Resources { get; private set; }
         //public static IModHelper Helper { get; private set; }
 
-        private ModOptionsPageHandler _modOptionsPageHandler;
+        private FeatureController _controller;
 
         public ModEntry()
         {
-            
+
         }
 
         public override void Entry(IModHelper helper)
@@ -69,62 +70,32 @@ namespace UIInfoSuite
 
         private void ReturnToTitle(object sender, EventArgs e)
         {
-            _modOptionsPageHandler.Dispose();
-            _modOptionsPageHandler = null;
+            _controller.Dispose();
+            _controller = null;
         }
 
         private void SaveModData(object sender, EventArgs e)
         {
-            if (File.Exists(_modDataFileName))
-                File.Delete(_modDataFileName);
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.IndentChars = "  ";
-            using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
-            {
-                writer.WriteStartElement("options");
-
-                foreach (var option in _options)
-                {
-                    writer.WriteStartElement("option");
-                    writer.WriteAttributeString("name", option.Key);
-                    writer.WriteValue(option.Value);
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
-            }
+            _modOptions.SaveUserSettings();
+            Helper.WriteConfig(_modConfig);
         }
 
         private void LoadModData(object sender, EventArgs e)
         {
-            _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.name + "_modData.xml");
-            if (File.Exists(_modDataFileName))
-            {
-                XmlDocument document = new XmlDocument();
+            var Settings = IModSettingsFramework.Instance;
+            this._modOptions = ModOptions.LoadUserSettings(this);
+            Settings.AddModOptions(this._modOptions);
 
-                try
-                {
-                    document.Load(_modDataFileName);
-                    XmlNodeList nodes = document.GetElementsByTagName("option");
-
-                    foreach (XmlNode node in nodes)
-                    {
-                        String key = node.Attributes["name"]?.Value;
-                        String value = node.InnerText;
-
-                        if (key != null)
-                            _options[key] = value;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Monitor.Log("Error loading mod config. " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
-                }
+            try
+            { // create new config if no file exists
+                _modConfig = Helper.ReadConfig<ModConfig>() ?? new ModConfig();
+            }
+            catch
+            { // if parsing fails, create a new config
+                _modConfig = new ModConfig();
             }
 
-            _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _options);
+            _controller = new FeatureController(_modOptions, _modConfig, Helper);
         }
-
-       
     }
 }

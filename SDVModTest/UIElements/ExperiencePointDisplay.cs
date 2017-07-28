@@ -26,8 +26,8 @@ namespace UIInfoSuite.UIElements
             --_alpha;
             Game1.drawWithBorder(
                 "Exp " + _experiencePoints,
-                Color.DarkSlateGray * ((float)_alpha / 100f),
-                Color.PaleTurquoise * ((float)_alpha / 100f),
+                Color.DarkSlateGray * ((float) _alpha / 100f),
+                Color.PaleTurquoise * ((float) _alpha / 100f),
                 new Vector2(_position.X - 28, _position.Y - 130),
                 0.0f,
                 0.8f,

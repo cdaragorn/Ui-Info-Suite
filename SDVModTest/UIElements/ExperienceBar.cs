@@ -16,10 +16,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
-    class ExperienceBar : IDisposable
+    class ExperienceBar: IDisposable
     {
         private const int MaxBarWidth = 175;
         private int _currentLevelIndex = 4;
@@ -31,21 +32,45 @@ namespace UIInfoSuite.UIElements
         private Color _iconColor = Color.White;
         private Color _experienceFillColor = Color.Blue;
         private Item _previousItem = null;
-        private bool _showExperienceBar = false;
         private bool _shouldDrawLevelUp = false;
         private System.Timers.Timer _timeToDisappear = new System.Timers.Timer();
         private readonly TimeSpan _timeBeforeExperienceBarFades = TimeSpan.FromSeconds(8);
         //private SoundEffectInstance _soundEffect;
         private Rectangle _levelUpIconRectangle = new Rectangle(120, 428, 10, 10);
-        private bool _allowExperienceBarToFadeOut = true;
-        private bool _showExperienceGain = true;
-        private bool _showLevelUpAnimation = true;
         private readonly IModHelper _helper;
         private SoundPlayer _player;
+        private bool _experienceBarShown = false;
 
-        public ExperienceBar(IModHelper helper)
+        private readonly ModOptionToggle _showLevelUpAnimation;
+        private readonly ModOptionToggle _showExperienceBar;
+        private readonly ModOptionToggle _allowExperienceBarToFadeOut;
+        private readonly ModOptionToggle _showExperienceGain;
+
+
+        public ExperienceBar(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _showLevelUpAnimation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowLevelUpAnimation) ?? new ModOptionToggle(OptionKeys.ShowLevelUpAnimation, "Show level up animation");
+            _showLevelUpAnimation.ValueChanged += optionChanged;
+            modOptions.AddModOption(_showLevelUpAnimation);
+            optionChanged(_showLevelUpAnimation.identifier, _showLevelUpAnimation.IsOn);
+
+            _showExperienceBar = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceBar) ?? new ModOptionToggle(OptionKeys.ShowExperienceBar, "Show experience bar");
+            _showExperienceBar.ValueChanged += optionChanged;
+            modOptions.AddModOption(_showExperienceBar);
+            optionChanged(_showExperienceBar.identifier, _showExperienceBar.IsOn);
+
+            _allowExperienceBarToFadeOut = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.AllowExperienceBarToFadeOut) ?? new ModOptionToggle(OptionKeys.AllowExperienceBarToFadeOut, "Allow experience bar to fade out");
+            _allowExperienceBarToFadeOut.ValueChanged += optionChanged;
+            modOptions.AddModOption(_allowExperienceBarToFadeOut);
+            optionChanged(_allowExperienceBarToFadeOut.identifier, _allowExperienceBarToFadeOut.IsOn);
+
+            _showExperienceGain = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceGain) ?? new ModOptionToggle(OptionKeys.ShowExperienceGain, "Show experience gain");
+            _showExperienceGain.ValueChanged += optionChanged;
+            modOptions.AddModOption(_showExperienceGain);
+            optionChanged(_showExperienceGain.identifier, _showExperienceGain.IsOn);
+
             String path = string.Empty;
             try
             {
@@ -72,12 +97,33 @@ namespace UIInfoSuite.UIElements
             _timeToDisappear.Dispose();
         }
 
+        public void optionChanged(string identifier, bool isOn)
+        {
+            switch (identifier)
+            {
+            case OptionKeys.ShowLevelUpAnimation:
+                ToggleLevelUpAnimation(isOn);
+                break;
+            case OptionKeys.ShowExperienceBar:
+                ToggleShowExperienceBar(isOn);
+                break;
+            case OptionKeys.AllowExperienceBarToFadeOut:
+                ToggleExperienceBarFade(isOn);
+                break;
+            case OptionKeys.ShowExperienceGain:
+                ToggleShowExperienceGain(isOn);
+                break;
+            default:
+                break;
+            }
+        }
+
         public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
         {
-            _showLevelUpAnimation = showLevelUpAnimation;
+            _showLevelUpAnimation.IsOn = showLevelUpAnimation;
             PlayerEvents.LeveledUp -= OnLevelUp;
 
-            if (_showLevelUpAnimation)
+            if (_showLevelUpAnimation.IsOn)
             {
                 PlayerEvents.LeveledUp += OnLevelUp;
             }
@@ -85,12 +131,12 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleExperienceBarFade(bool allowExperienceBarToFadeOut)
         {
-            _allowExperienceBarToFadeOut = allowExperienceBarToFadeOut;
+            _allowExperienceBarToFadeOut.IsOn = allowExperienceBarToFadeOut;
         }
 
         public void ToggleShowExperienceGain(bool showExperienceGain)
         {
-            _showExperienceGain = showExperienceGain;
+            _showExperienceGain.IsOn = showExperienceGain;
         }
 
         public void ToggleShowExperienceBar(bool showExperienceBar)
@@ -107,20 +153,20 @@ namespace UIInfoSuite.UIElements
 
         private void OnLevelUp(object sender, EventArgsLevelUp e)
         {
-            if (_showLevelUpAnimation)
+            if (_showLevelUpAnimation.IsOn)
             {
                 switch (e.Type)
                 {
-                    case EventArgsLevelUp.LevelType.Combat: _levelUpIconRectangle.X = 120; break;
-                    case EventArgsLevelUp.LevelType.Farming: _levelUpIconRectangle.X = 10; break;
-                    case EventArgsLevelUp.LevelType.Fishing: _levelUpIconRectangle.X = 20; break;
-                    case EventArgsLevelUp.LevelType.Foraging: _levelUpIconRectangle.X = 60; break;
-                    case EventArgsLevelUp.LevelType.Mining: _levelUpIconRectangle.X = 30; break;
+                case EventArgsLevelUp.LevelType.Combat: _levelUpIconRectangle.X = 120; break;
+                case EventArgsLevelUp.LevelType.Farming: _levelUpIconRectangle.X = 10; break;
+                case EventArgsLevelUp.LevelType.Fishing: _levelUpIconRectangle.X = 20; break;
+                case EventArgsLevelUp.LevelType.Foraging: _levelUpIconRectangle.X = 60; break;
+                case EventArgsLevelUp.LevelType.Mining: _levelUpIconRectangle.X = 30; break;
                 }
                 _shouldDrawLevelUp = true;
                 _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
                 _timeToDisappear.Start();
-                _showExperienceBar = true;
+                _experienceBarShown = true;
 
                 float previousAmbientVolume = Game1.options.ambientVolumeLevel;
                 float previousMusicVolume = Game1.options.musicVolumeLevel;
@@ -156,7 +202,7 @@ namespace UIInfoSuite.UIElements
         private void StopTimerAndFadeBarOut(object sender, ElapsedEventArgs e)
         {
             _timeToDisappear.Stop();
-            _showExperienceBar = false;
+            _experienceBarShown = false;
         }
 
         private void RemoveAllExperiencePointDisplays(object sender, EventArgsCurrentLocationChanged e)
@@ -187,7 +233,7 @@ namespace UIInfoSuite.UIElements
                     experienceLevel = Game1.player.miningLevel;
                 }
                 else if (currentItem is MeleeWeapon &&
-                    currentItem.Name != "Scythe")
+                          currentItem.Name != "Scythe")
                 {
                     _experienceFillColor = new Color(204, 0, 3, 0.63f);
                     _currentLevelIndex = 4;
@@ -195,7 +241,7 @@ namespace UIInfoSuite.UIElements
                     experienceLevel = Game1.player.combatLevel;
                 }
                 else if (Game1.currentLocation is Farm &&
-                    !(currentItem is Axe))
+                          !(currentItem is Axe))
                 {
                     _experienceFillColor = new Color(255, 251, 35, 0.38f);
                     _currentLevelIndex = 0;
@@ -224,22 +270,22 @@ namespace UIInfoSuite.UIElements
                     {
                         ShowExperienceBar();
                         if (experienceEarnedThisLevel - _currentExperience > 0 &&
-                        _showExperienceGain)
+                        _showExperienceGain.IsOn)
                         {
                             _experiencePointDisplays.Add(
-                                new ExperiencePointDisplay(
-                                    experienceEarnedThisLevel - _currentExperience,
-                                    Game1.player.getLocalPosition(Game1.viewport)));
+                                    new ExperiencePointDisplay(
+                                            experienceEarnedThisLevel - _currentExperience,
+                                            Game1.player.getLocalPosition(Game1.viewport)));
                         }
                     }
-                    
+
                     _previousItem = currentItem;
                     _currentExperience = experienceEarnedThisLevel;
 
-                    if (_showExperienceBar &&
-                        _levelOfCurrentlyDisplayedExperience != 10)
+                    if (_experienceBarShown &&
+                            _levelOfCurrentlyDisplayedExperience != 10)
                     {
-                        int barWidth = (int)(_currentExperience / (experienceRequiredToLevel - experienceFromPreviousLevels) * MaxBarWidth);
+                        int barWidth = (int) (_currentExperience / (experienceRequiredToLevel - experienceFromPreviousLevels) * MaxBarWidth);
                         float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
 
                         if (Game1.isOutdoorMapSmallerThanViewport())
@@ -249,121 +295,121 @@ namespace UIInfoSuite.UIElements
                         }
 
                         Game1.drawDialogueBox(
-                            (int)leftSide,
-                            Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 160,
-                            240,
-                            160,
-                            false,
-                            true);
+                                (int) leftSide,
+                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 160,
+                                240,
+                                160,
+                                false,
+                                true);
 
                         Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
-                                barWidth,
-                                31),
-                            _experienceFillColor);
+                                Game1.staminaRect,
+                                new Rectangle(
+                                        (int) leftSide + 32,
+                                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
+                                        barWidth,
+                                        31),
+                                _experienceFillColor);
 
                         Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
-                                Math.Min(4, barWidth),
-                                31),
-                            _experienceFillColor);
+                                Game1.staminaRect,
+                                new Rectangle(
+                                        (int) leftSide + 32,
+                                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
+                                        Math.Min(4, barWidth),
+                                        31),
+                                _experienceFillColor);
 
                         Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
-                                barWidth,
-                                4),
-                            _experienceFillColor);
+                                Game1.staminaRect,
+                                new Rectangle(
+                                        (int) leftSide + 32,
+                                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
+                                        barWidth,
+                                        4),
+                                _experienceFillColor);
 
                         Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 36,
-                                barWidth,
-                                4),
-                            _experienceFillColor);
+                                Game1.staminaRect,
+                                new Rectangle(
+                                        (int) leftSide + 32,
+                                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 36,
+                                        barWidth,
+                                        4),
+                                _experienceFillColor);
 
                         ClickableTextureComponent textureComponent =
-                            new ClickableTextureComponent(
-                                "",
-                                new Rectangle(
-                                    (int)leftSide - 36,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 80,
-                                    260,
-                                    100),
-                                "",
-                                "",
-                                Game1.mouseCursors,
-                                new Rectangle(0, 0, 0, 0),
-                                Game1.pixelZoom);
+                                new ClickableTextureComponent(
+                                        "",
+                                        new Rectangle(
+                                                (int) leftSide - 36,
+                                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 80,
+                                                260,
+                                                100),
+                                        "",
+                                        "",
+                                        Game1.mouseCursors,
+                                        new Rectangle(0, 0, 0, 0),
+                                        Game1.pixelZoom);
 
                         if (textureComponent.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                         {
                             Game1.drawWithBorder(
-                                _currentExperience + "/" + (experienceRequiredToLevel - experienceFromPreviousLevels),
-                                Color.Black,
-                                Color.Black,
-                                new Vector2(
-                                    leftSide + 33,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
+                                    _currentExperience + "/" + (experienceRequiredToLevel - experienceFromPreviousLevels),
+                                    Color.Black,
+                                    Color.Black,
+                                    new Vector2(
+                                            leftSide + 33,
+                                            Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
                         }
                         else
                         {
                             Game1.spriteBatch.Draw(
-                                Game1.mouseCursors,
-                                new Vector2(
-                                    leftSide + 54,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 62),
-                                rectangle1,
-                                _iconColor,
-                                0,
-                                Vector2.Zero,
-                                2.9f,
-                                SpriteEffects.None,
-                                0.85f);
+                                    Game1.mouseCursors,
+                                    new Vector2(
+                                            leftSide + 54,
+                                            Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 62),
+                                    rectangle1,
+                                    _iconColor,
+                                    0,
+                                    Vector2.Zero,
+                                    2.9f,
+                                    SpriteEffects.None,
+                                    0.85f);
 
                             Game1.drawWithBorder(
-                                experienceLevel.ToString(),
-                                Color.Black * 0.6f,
-                                Color.Black,
-                                new Vector2(
-                                    leftSide + 33,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
+                                    experienceLevel.ToString(),
+                                    Color.Black * 0.6f,
+                                    Color.Black,
+                                    new Vector2(
+                                            leftSide + 33,
+                                            Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
                         }
 
                         if (_shouldDrawLevelUp)
                         {
                             Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
                             Game1.spriteBatch.Draw(
-                                Game1.mouseCursors,
-                                new Vector2(
-                                    playerLocalPosition.X - 74,
-                                    playerLocalPosition.Y - 130),
-                                _levelUpIconRectangle,
-                                _iconColor,
-                                0,
-                                Vector2.Zero,
-                                Game1.pixelZoom,
-                                SpriteEffects.None,
-                                0.85f);
+                                    Game1.mouseCursors,
+                                    new Vector2(
+                                            playerLocalPosition.X - 74,
+                                            playerLocalPosition.Y - 130),
+                                    _levelUpIconRectangle,
+                                    _iconColor,
+                                    0,
+                                    Vector2.Zero,
+                                    Game1.pixelZoom,
+                                    SpriteEffects.None,
+                                    0.85f);
 
                             Game1.drawWithBorder(
-                                _helper.SafeGetString(
-                                    LanguageKeys.LevelUp),
-                                Color.DarkSlateGray,
-                                Color.PaleTurquoise,
-                                new Vector2(
-                                    playerLocalPosition.X - 28,
-                                    playerLocalPosition.Y - 130));
+                                    _helper.SafeGetString(
+                                            LanguageKeys.LevelUp),
+                                    Color.DarkSlateGray,
+                                    Color.PaleTurquoise,
+                                    new Vector2(
+                                            playerLocalPosition.X - 28,
+                                            playerLocalPosition.Y - 130));
                         }
 
                         for (int i = _experiencePointDisplays.Count - 1; i >= 0; --i)
@@ -388,23 +434,23 @@ namespace UIInfoSuite.UIElements
             int amount = 0;
             switch (currentLevel)
             {
-                case 0: amount = 100; break;
-                case 1: amount = 380; break;
-                case 2: amount = 770; break;
-                case 3: amount = 1300; break;
-                case 4: amount = 2150; break;
-                case 5: amount = 3300; break;
-                case 6: amount = 4800; break;
-                case 7: amount = 6900; break;
-                case 8: amount = 10000; break;
-                case 9: amount = 15000; break;
+            case 0: amount = 100; break;
+            case 1: amount = 380; break;
+            case 2: amount = 770; break;
+            case 3: amount = 1300; break;
+            case 4: amount = 2150; break;
+            case 5: amount = 3300; break;
+            case 6: amount = 4800; break;
+            case 7: amount = 6900; break;
+            case 8: amount = 10000; break;
+            case 9: amount = 15000; break;
             }
             return amount;
         }
 
         private void ShowExperienceBar()
         {
-            if (_allowExperienceBarToFadeOut)
+            if (_allowExperienceBarToFadeOut.IsOn)
             {
                 _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
                 _timeToDisappear.Start();
@@ -414,7 +460,7 @@ namespace UIInfoSuite.UIElements
                 _timeToDisappear.Stop();
             }
 
-            _showExperienceBar = true;
+            _experienceBarShown = true;
         }
 
     }
