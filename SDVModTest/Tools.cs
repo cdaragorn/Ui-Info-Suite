@@ -1,5 +1,5 @@
 using StardewValley;
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
