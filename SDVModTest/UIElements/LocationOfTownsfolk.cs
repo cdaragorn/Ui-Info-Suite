@@ -41,6 +41,7 @@ namespace UIInfoSuite.UIElements
             { "HaleyHouse", new KeyValuePair<int, int>(652, 408) },
             { "Hospital", new KeyValuePair<int, int>(677, 304) },
             { "FarmHouse", new KeyValuePair<int, int>(470, 260) },
+            { "Farm", new KeyValuePair<int, int>(470, 260) },
             { "ScienceHouse", new KeyValuePair<int, int>(732, 148) },
             { "ManorHouse", new KeyValuePair<int, int>(768, 395) },
             { "AdventureGuild", new KeyValuePair<int, int>(0, 0) },
@@ -153,12 +154,28 @@ namespace UIInfoSuite.UIElements
                     int hashCode = friendName.name.GetHashCode();
                     OptionsCheckbox checkbox = new OptionsCheckbox("", hashCode);
                     _checkboxes.Add(checkbox);
+
+                    //default to on
+                    bool optionForThisFriend = true;
                     if (!Game1.player.friendships.ContainsKey(friendName.name))
                     {
                         checkbox.greyedOut = true;
-                        checkbox.isChecked = false;
+                        optionForThisFriend = false;
                     }
-                    checkbox.isChecked = _options.SafeGet(hashCode.ToString()).SafeParseBool();
+                    else
+                    {
+                        String optionValue = _options.SafeGet(hashCode.ToString());
+
+                        if (String.IsNullOrEmpty(optionValue))
+                        {
+                            _options[hashCode.ToString()] = optionForThisFriend.ToString();
+                        }
+                        else
+                        {
+                            optionForThisFriend = optionValue.SafeParseBool();
+                        }
+                    }
+                    checkbox.isChecked = optionForThisFriend;
                 }
             }
         }
@@ -202,40 +219,94 @@ namespace UIInfoSuite.UIElements
                 GameMenu gameMenu = Game1.activeClickableMenu as GameMenu;
                 if (gameMenu.currentTab == 3)
                 {
+                    List<String> namesToShow = new List<string>();
                     foreach (var character in _townsfolk)
                     {
                         try
                         {
                             int hashCode = character.name.GetHashCode();
+
                             bool drawCharacter = _options.SafeGet(hashCode.ToString()).SafeParseBool();
 
                             if (drawCharacter)
                             {
                                 KeyValuePair<int, int> location;
                                 location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
+                                String locationName = character.currentLocation?.name ?? character.DefaultMap;
 
-                                if (character.currentLocation.Name == "Town")
+                                switch (locationName)
                                 {
-                                    String locationName = character.currentLocation.Name;
-                                    xTile.Map map = character.currentLocation.Map;
-                                    int xStart = 595;
-                                    int yStart = 163;
-                                    int townWidth = 345;
-                                    int townHeight = 330;
+                                    case "Town":
+                                    case "Forest":
+                                        {
+                                            int xStart = 0;
+                                            int yStart = 0;
+                                            int areaWidth = 0;
+                                            int areaHeight = 0;
 
-                                    float xScale = (float)townWidth / (float)map.DisplayWidth;
-                                    float yScale = (float)townHeight / (float)map.DisplayHeight;
+                                            switch (locationName)
+                                            {
+                                                case "Town":
+                                                    {
+                                                        xStart = 595;
+                                                        yStart = 163;
+                                                        areaWidth = 345;
+                                                        areaHeight = 330;
+                                                        break;
+                                                    }
 
-                                    float scaledX = character.position.X * xScale;
-                                    float scaledY = character.position.Y * yScale;
-                                    int xPos = (int)scaledX + xStart;
-                                    int yPos = (int)scaledY + yStart;
-                                    location = new KeyValuePair<int, int>(xPos, yPos);
+                                                case "Forest":
+                                                    {
+                                                        xStart = 183;
+                                                        yStart = 378;
+                                                        areaWidth = 319;
+                                                        areaHeight = 261;
+                                                        break;
+                                                    }
+                                            }
+                                            xTile.Map map = character.currentLocation.Map;
+
+                                            float xScale = (float)areaWidth / (float)map.DisplayWidth;
+                                            float yScale = (float)areaHeight / (float)map.DisplayHeight;
+
+                                            float scaledX = character.position.X * xScale;
+                                            float scaledY = character.position.Y * yScale;
+                                            int xPos = (int)scaledX + xStart;
+                                            int yPos = (int)scaledY + yStart;
+                                            location = new KeyValuePair<int, int>(xPos, yPos);
+
+                                            break;
+                                        }
+
+                                    default:
+                                        {
+                                            _mapLocations.TryGetValue(locationName, out location);
+                                            break;
+                                        }
                                 }
-                                else
-                                {
-                                    _mapLocations.TryGetValue(character.currentLocation.name, out location);
-                                }
+
+                                //if (character.currentLocation.Name == "Town")
+                                //{
+                                //    String locationName = character.currentLocation.Name;
+                                //    xTile.Map map = character.currentLocation.Map;
+                                //    int xStart = 595;
+                                //    int yStart = 163;
+                                //    int townWidth = 345;
+                                //    int townHeight = 330;
+
+                                //    float xScale = (float)townWidth / (float)map.DisplayWidth;
+                                //    float yScale = (float)townHeight / (float)map.DisplayHeight;
+
+                                //    float scaledX = character.position.X * xScale;
+                                //    float scaledY = character.position.Y * yScale;
+                                //    int xPos = (int)scaledX + xStart;
+                                //    int yPos = (int)scaledY + yStart;
+                                //    location = new KeyValuePair<int, int>(xPos, yPos);
+                                //}
+                                //else
+                                //{
+                                //    _mapLocations.TryGetValue(character.currentLocation.name, out location);
+                                //}
                                 Rectangle headShot = character.GetHeadShot();
                                 int xBase = Game1.activeClickableMenu.xPositionOnScreen - 158;
                                 int yBase = Game1.activeClickableMenu.yPositionOnScreen - 40;
@@ -254,6 +325,8 @@ namespace UIInfoSuite.UIElements
                                         character.sprite.Texture,
                                         headShot,
                                         2.3f);
+
+                                float headShotScale = 2f;
                                 Game1.spriteBatch.Draw(
                                     character.sprite.Texture,
                                     new Vector2(x, y),
@@ -261,9 +334,18 @@ namespace UIInfoSuite.UIElements
                                     color,
                                     0.0f,
                                     Vector2.Zero,
-                                    2f,
+                                    headShotScale,
                                     SpriteEffects.None,
                                     1f);
+
+                                int mouseX = Game1.getMouseX();
+                                int mouseY = Game1.getMouseY();
+
+                                if (mouseX >= x && mouseX <= x + headShot.Width * headShotScale &&
+                                    mouseY >= y && mouseY <= y + headShot.Height * headShotScale)
+                                {
+                                    namesToShow.Add(character.displayName);
+                                }
 
                                 foreach (var quest in Game1.player.questLog)
                                 {
@@ -299,6 +381,40 @@ namespace UIInfoSuite.UIElements
                         }
                     }
 
+                    if (namesToShow.Count > 0)
+                    {
+                        StringBuilder text = new StringBuilder();
+                        int longestLength = 0;
+                        foreach (String name in namesToShow)
+                        {
+                            text.AppendLine(name);
+                            longestLength = Math.Max(longestLength, (int)Math.Ceiling(Game1.smallFont.MeasureString(name).Length()));
+                        }
+
+                        int windowHeight = Game1.smallFont.LineSpacing * namesToShow.Count + 25;
+                        Vector2 windowPos = new Vector2(Game1.getMouseX() + 40, Game1.getMouseY() - windowHeight);
+                        IClickableMenu.drawTextureBox(
+                            Game1.spriteBatch,
+                            (int)windowPos.X,
+                            (int)windowPos.Y,
+                            longestLength + 30,
+                            Game1.smallFont.LineSpacing * namesToShow.Count + 25,
+                            Color.White);
+
+                        Game1.spriteBatch.DrawString(
+                            Game1.smallFont,
+                            text,
+                            new Vector2(windowPos.X + 17, windowPos.Y + 17),
+                            Game1.textShadowColor);
+
+                        Game1.spriteBatch.DrawString(
+                            Game1.smallFont,
+                            text,
+                            new Vector2(windowPos.X + 15, windowPos.Y + 15),
+                            Game1.textColor);
+                    }
+
+                    //The cursor needs to show up in front of the character faces
                     if (!Game1.options.hardwareCursor)
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
@@ -387,22 +503,22 @@ namespace UIInfoSuite.UIElements
                                 4),
                             Color.BurlyWood);
                     }
-                    Game1.spriteBatch.Draw(
-                        Game1.mouseCursors,
-                        new Vector2(
-                            Game1.getMouseX(), 
-                            Game1.getMouseY()),
-                        Game1.getSourceRectForStandardTileSheet(
-                            Game1.mouseCursors, 
-                            Game1.mouseCursor, 
-                            16, 
-                            16),
-                        Color.White,
-                        0.0f,
-                        Vector2.Zero,
-                        Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
-                        SpriteEffects.None,
-                        1f);
+                    //Game1.spriteBatch.Draw(
+                    //    Game1.mouseCursors,
+                    //    new Vector2(
+                    //        Game1.getMouseX(),
+                    //        Game1.getMouseY()),
+                    //    Game1.getSourceRectForStandardTileSheet(
+                    //        Game1.mouseCursors,
+                    //        Game1.mouseCursor,
+                    //        16,
+                    //        16),
+                    //    Color.White,
+                    //    0.0f,
+                    //    Vector2.Zero,
+                    //    Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
+                    //    SpriteEffects.None,
+                    //    1f);
 
                     if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()))
                         IClickableMenu.drawHoverText(

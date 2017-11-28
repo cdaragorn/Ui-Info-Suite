@@ -59,7 +59,7 @@ namespace UIInfoSuite.UIElements
                 ClickableTextureComponent textureComponent = 
                     new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40), 
-                        Game1.content.Load<Texture2D>("LooseSprites\\Cursors"), 
+                        Game1.mouseCursors, 
                         new Rectangle(192, 1411, 20, 20), 
                         2f);
                 textureComponent.draw(Game1.spriteBatch);

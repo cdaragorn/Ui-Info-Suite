@@ -29,6 +29,7 @@ namespace UIInfoSuite.UIElements
         {
             GraphicsEvents.OnPreRenderHudEvent -= DrawIcon;
             TimeEvents.AfterDayStarted -= CheckForNewRecipe;
+            GameEvents.OneSecondTick -= CheckIfLearnedRecipe;
 
             if (showQueenOfSauceIcon)
             {
@@ -36,7 +37,15 @@ namespace UIInfoSuite.UIElements
                 CheckForNewRecipe(null, null);
                 TimeEvents.AfterDayStarted += CheckForNewRecipe;
                 GraphicsEvents.OnPreRenderHudEvent += DrawIcon;
+                GameEvents.OneSecondTick += CheckIfLearnedRecipe;
             }
+        }
+
+        private void CheckIfLearnedRecipe(object sender, EventArgs e)
+        {
+            if (_drawQueenOfSauceIcon &&
+                Game1.player.knowsRecipe(_todaysRecipe))
+                _drawQueenOfSauceIcon = false;
         }
 
         public ShowQueenOfSauceIcon(IModHelper helper)

@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,27 @@ namespace UIInfoSuite.UIElements
     {
         private readonly List<Point> _effectiveArea = new List<Point>();
         private readonly ModConfig _modConfig;
+
+        private static readonly int[][] _junimoHutArray = new int[17][]
+        {
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+        };
 
         public ShowItemEffectRanges(ModConfig modConfig)
         {
@@ -41,86 +64,102 @@ namespace UIInfoSuite.UIElements
         {
             _effectiveArea.Clear();
 
-            if (Game1.player.CurrentItem != null &&
-                Game1.activeClickableMenu == null &&
+            if (Game1.activeClickableMenu == null &&
                 !Game1.eventUp)
             {
-                String name = Game1.player.CurrentItem.Name.ToLower();
-                Item currentItem = Game1.player.CurrentItem;
-                List<StardewValley.Object> objects = null;
-
-                int[][] arrayToUse = null;
-
-                if (name.Contains("arecrow"))
+                if (Game1.currentLocation is BuildableGameLocation buildableLocation)
                 {
-                    arrayToUse = new int[17][];
-                    for (int i = 0; i < 17; ++i)
-                    {
-                        arrayToUse[i] = new int[17];
-                        for (int j = 0; j < 17; ++j)
-                        {
-                            arrayToUse[i][j] = (Math.Abs(i - 8) + Math.Abs(j - 8) <= 12) ? 1 : 0;
-                        }
-                    }
-                    ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
-                    objects = GetObjectsInLocationOfSimilarName("arecrow");
-                    if (objects != null)
-                    {
-                        foreach (StardewValley.Object next in objects)
-                        {
-                            ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
-                        }
-                    }
+                    Building building = buildableLocation.getBuildingAt(Game1.currentCursorTile);
 
+                    if (building is JunimoHut)
+                    {
+                        foreach (var nextBuilding in buildableLocation.buildings)
+                        {
+                            if (nextBuilding is JunimoHut nextHut)
+                                ParseConfigToHighlightedArea(_junimoHutArray, nextHut.tileX + 1, nextHut.tileY + 1);
+                        }
+                    }
                 }
-                else if (name.Contains("sprinkler"))
-                {
-                    if (name.Contains("iridium"))
-                    {
-                        arrayToUse = _modConfig.IridiumSprinkler;
-                    }
-                    else if (name.Contains("quality"))
-                    {
-                        arrayToUse = _modConfig.QualitySprinkler;
-                    }
-                    else
-                    {
-                        arrayToUse = _modConfig.Sprinkler;
-                    }
 
-                    if (arrayToUse != null)
+                if (Game1.player.CurrentItem != null)
+                {
+                    String name = Game1.player.CurrentItem.Name.ToLower();
+                    Item currentItem = Game1.player.CurrentItem;
+                    List<StardewValley.Object> objects = null;
+
+                    int[][] arrayToUse = null;
+
+                    if (name.Contains("arecrow"))
+                    {
+                        arrayToUse = new int[17][];
+                        for (int i = 0; i < 17; ++i)
+                        {
+                            arrayToUse[i] = new int[17];
+                            for (int j = 0; j < 17; ++j)
+                            {
+                                arrayToUse[i][j] = (Math.Abs(i - 8) + Math.Abs(j - 8) <= 12) ? 1 : 0;
+                            }
+                        }
                         ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
-
-                    objects = GetObjectsInLocationOfSimilarName("sprinkler");
-
-                    if (objects != null)
-                    {
-                        foreach (StardewValley.Object next in objects)
+                        objects = GetObjectsInLocationOfSimilarName("arecrow");
+                        if (objects != null)
                         {
-                            string objectName = next.name.ToLower();
-                            if (objectName.Contains("iridium"))
+                            foreach (StardewValley.Object next in objects)
                             {
-                                arrayToUse = _modConfig.IridiumSprinkler;
-                            }
-                            else if (objectName.Contains("quality"))
-                            {
-                                arrayToUse = _modConfig.QualitySprinkler;
-                            }
-                            else
-                            {
-                                arrayToUse = _modConfig.Sprinkler;
-                            }
-
-                            if (arrayToUse != null)
                                 ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                            }
+                        }
+
+                    }
+                    else if (name.Contains("sprinkler"))
+                    {
+                        if (name.Contains("iridium"))
+                        {
+                            arrayToUse = _modConfig.IridiumSprinkler;
+                        }
+                        else if (name.Contains("quality"))
+                        {
+                            arrayToUse = _modConfig.QualitySprinkler;
+                        }
+                        else
+                        {
+                            arrayToUse = _modConfig.Sprinkler;
+                        }
+
+                        if (arrayToUse != null)
+                            ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
+
+                        objects = GetObjectsInLocationOfSimilarName("sprinkler");
+
+                        if (objects != null)
+                        {
+                            foreach (StardewValley.Object next in objects)
+                            {
+                                string objectName = next.name.ToLower();
+                                if (objectName.Contains("iridium"))
+                                {
+                                    arrayToUse = _modConfig.IridiumSprinkler;
+                                }
+                                else if (objectName.Contains("quality"))
+                                {
+                                    arrayToUse = _modConfig.QualitySprinkler;
+                                }
+                                else
+                                {
+                                    arrayToUse = _modConfig.Sprinkler;
+                                }
+
+                                if (arrayToUse != null)
+                                    ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                            }
                         }
                     }
-                }
-                else if (name.Contains("bee house"))
-                {
-                    ParseConfigToHighlightedArea(_modConfig.Beehouse, TileUnderMouseX, TileUnderMouseY);
-                }
+                    else if (name.Contains("bee house"))
+                    {
+                        ParseConfigToHighlightedArea(_modConfig.Beehouse, TileUnderMouseX, TileUnderMouseY);
+                    }
 
+                }
             }
         }
 

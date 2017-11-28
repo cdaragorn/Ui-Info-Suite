@@ -23,7 +23,6 @@ namespace UIInfoSuite.UIElements
     {
         private const int MaxBarWidth = 175;
         private int _currentLevelIndex = 4;
-        private int _levelOfCurrentlyDisplayedExperience = 0;
         private float _currentExperience = 0;
         private readonly List<ExperiencePointDisplay> _experiencePointDisplays = new List<ExperiencePointDisplay>();
         private GameLocation _currentLocation = new GameLocation();
@@ -31,7 +30,7 @@ namespace UIInfoSuite.UIElements
         private Color _iconColor = Color.White;
         private Color _experienceFillColor = Color.Blue;
         private Item _previousItem = null;
-        private bool _showExperienceBar = false;
+        private bool _experienceBarShouldBeVisible = false;
         private bool _shouldDrawLevelUp = false;
         private System.Timers.Timer _timeToDisappear = new System.Timers.Timer();
         private readonly TimeSpan _timeBeforeExperienceBarFades = TimeSpan.FromSeconds(8);
@@ -40,6 +39,7 @@ namespace UIInfoSuite.UIElements
         private bool _allowExperienceBarToFadeOut = true;
         private bool _showExperienceGain = true;
         private bool _showLevelUpAnimation = true;
+        private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
         private SoundPlayer _player;
 
@@ -61,6 +61,8 @@ namespace UIInfoSuite.UIElements
                 ModEntry.MonitorObject.Log("Error loading sound file from " + path + ": " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
             }
             _timeToDisappear.Elapsed += StopTimerAndFadeBarOut;
+            GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
+            LocationEvents.CurrentLocationChanged += RemoveAllExperiencePointDisplays;
         }
 
         public void Dispose()
@@ -95,14 +97,14 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleShowExperienceBar(bool showExperienceBar)
         {
-            GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
-            LocationEvents.CurrentLocationChanged -= RemoveAllExperiencePointDisplays;
-
-            if (showExperienceBar)
-            {
-                GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
-                LocationEvents.CurrentLocationChanged += RemoveAllExperiencePointDisplays;
-            }
+            //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
+            //LocationEvents.CurrentLocationChanged -= RemoveAllExperiencePointDisplays;
+            _showExperienceBar = showExperienceBar;
+            //if (showExperienceBar)
+            //{
+            //    GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
+            //    LocationEvents.CurrentLocationChanged += RemoveAllExperiencePointDisplays;
+            //}
         }
 
         private void OnLevelUp(object sender, EventArgsLevelUp e)
@@ -120,7 +122,7 @@ namespace UIInfoSuite.UIElements
                 _shouldDrawLevelUp = true;
                 _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
                 _timeToDisappear.Start();
-                _showExperienceBar = true;
+                _experienceBarShouldBeVisible = true;
 
                 float previousAmbientVolume = Game1.options.ambientVolumeLevel;
                 float previousMusicVolume = Game1.options.musicVolumeLevel;
@@ -156,7 +158,7 @@ namespace UIInfoSuite.UIElements
         private void StopTimerAndFadeBarOut(object sender, ElapsedEventArgs e)
         {
             _timeToDisappear.Stop();
-            _showExperienceBar = false;
+            _experienceBarShouldBeVisible = false;
         }
 
         private void RemoveAllExperiencePointDisplays(object sender, EventArgsCurrentLocationChanged e)
@@ -236,8 +238,46 @@ namespace UIInfoSuite.UIElements
                     _previousItem = currentItem;
                     _currentExperience = experienceEarnedThisLevel;
 
-                    if (_showExperienceBar &&
-                        _levelOfCurrentlyDisplayedExperience != 10)
+                    if (_shouldDrawLevelUp)
+                    {
+                        Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
+                        Game1.spriteBatch.Draw(
+                            Game1.mouseCursors,
+                            new Vector2(
+                                playerLocalPosition.X - 74,
+                                playerLocalPosition.Y - 130),
+                            _levelUpIconRectangle,
+                            _iconColor,
+                            0,
+                            Vector2.Zero,
+                            Game1.pixelZoom,
+                            SpriteEffects.None,
+                            0.85f);
+
+                        Game1.drawWithBorder(
+                            _helper.SafeGetString(
+                                LanguageKeys.LevelUp),
+                            Color.DarkSlateGray,
+                            Color.PaleTurquoise,
+                            new Vector2(
+                                playerLocalPosition.X - 28,
+                                playerLocalPosition.Y - 130));
+                    }
+
+                    for (int i = _experiencePointDisplays.Count - 1; i >= 0; --i)
+                    {
+                        if (_experiencePointDisplays[i].IsInvisible)
+                        {
+                            _experiencePointDisplays.RemoveAt(i);
+                        }
+                        else
+                        {
+                            _experiencePointDisplays[i].Draw();
+                        }
+                    }
+
+                    if (_experienceBarShouldBeVisible &&
+                        _showExperienceBar)
                     {
                         int barWidth = (int)(_currentExperience / (experienceRequiredToLevel - experienceFromPreviousLevels) * MaxBarWidth);
                         float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
@@ -340,43 +380,7 @@ namespace UIInfoSuite.UIElements
                                     Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
                         }
 
-                        if (_shouldDrawLevelUp)
-                        {
-                            Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
-                            Game1.spriteBatch.Draw(
-                                Game1.mouseCursors,
-                                new Vector2(
-                                    playerLocalPosition.X - 74,
-                                    playerLocalPosition.Y - 130),
-                                _levelUpIconRectangle,
-                                _iconColor,
-                                0,
-                                Vector2.Zero,
-                                Game1.pixelZoom,
-                                SpriteEffects.None,
-                                0.85f);
-
-                            Game1.drawWithBorder(
-                                _helper.SafeGetString(
-                                    LanguageKeys.LevelUp),
-                                Color.DarkSlateGray,
-                                Color.PaleTurquoise,
-                                new Vector2(
-                                    playerLocalPosition.X - 28,
-                                    playerLocalPosition.Y - 130));
-                        }
-
-                        for (int i = _experiencePointDisplays.Count - 1; i >= 0; --i)
-                        {
-                            if (_experiencePointDisplays[i].IsInvisible)
-                            {
-                                _experiencePointDisplays.RemoveAt(i);
-                            }
-                            else
-                            {
-                                _experiencePointDisplays[i].Draw();
-                            }
-                        }
+                        
                     }
                 }
 
@@ -414,7 +418,7 @@ namespace UIInfoSuite.UIElements
                 _timeToDisappear.Stop();
             }
 
-            _showExperienceBar = true;
+            _experienceBarShouldBeVisible = true;
         }
 
     }

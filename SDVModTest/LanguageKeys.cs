@@ -23,5 +23,7 @@ namespace UIInfoSuite
         public const string LevelUp = "LevelUp";
         public const string Calendar = "Calendar";
         public const string Billboard = "Billboard";
+        public const string DaysUntilToolIsUpgraded = "DaysUntilToolIsUpgraded";
+        public const string ToolIsFinishedBeingUpgraded = "ToolIsFinishedBeingUpgraded";
     }
 }

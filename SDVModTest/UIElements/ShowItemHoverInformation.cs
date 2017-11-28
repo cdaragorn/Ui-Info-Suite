@@ -124,7 +124,9 @@ namespace UIInfoSuite.UIElements
 
         private void DrawAdvancedTooltip(object sender, EventArgs e)
         {
-            if (_hoverItem != null)
+            if (_hoverItem != null &&
+                _hoverItem.Name != "Scythe" &&
+                !(_hoverItem is StardewValley.Tools.FishingRod))
             {
                 //String text = string.Empty;
                 //String extra = string.Empty;
@@ -132,8 +134,7 @@ namespace UIInfoSuite.UIElements
                 int itemPrice = 0;
                 int stackPrice = 0;
 
-                if (truePrice > 0 &&
-                    _hoverItem.Name != "Scythe")
+                if (truePrice > 0)
                 {
                     itemPrice = truePrice / 2;
                     //int width = (int)Game1.smallFont.MeasureString(" ").Length();
@@ -244,7 +245,7 @@ namespace UIInfoSuite.UIElements
                     Game1.spriteBatch.DrawString(
                         Game1.smallFont,
                         itemPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10 + 2),
+                        new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
                         Game1.textShadowColor);
 
                     Game1.spriteBatch.DrawString(
@@ -282,7 +283,7 @@ namespace UIInfoSuite.UIElements
                         Game1.spriteBatch.DrawString(
                             Game1.smallFont,
                             stackPrice.ToString(),
-                            new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10 + 2),
+                            new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
                             Game1.textShadowColor);
 
                         Game1.spriteBatch.DrawString(
@@ -331,7 +332,7 @@ namespace UIInfoSuite.UIElements
                         Game1.spriteBatch.DrawString(
                             Game1.smallFont,
                             cropPrice.ToString(),
-                            new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10 + 2),
+                            new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
                             Game1.textShadowColor);
 
                         Game1.spriteBatch.DrawString(

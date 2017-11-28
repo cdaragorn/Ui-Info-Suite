@@ -75,35 +75,49 @@ namespace UIInfoSuite
 
         private void SaveModData(object sender, EventArgs e)
         {
-            if (File.Exists(_modDataFileName))
-                File.Delete(_modDataFileName);
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.IndentChars = "  ";
-            using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
+            if (!String.IsNullOrWhiteSpace(_modDataFileName))
             {
-                writer.WriteStartElement("options");
-
-                foreach (var option in _options)
+                if (File.Exists(_modDataFileName))
+                    File.Delete(_modDataFileName);
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.IndentChars = "  ";
+                using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
                 {
-                    writer.WriteStartElement("option");
-                    writer.WriteAttributeString("name", option.Key);
-                    writer.WriteValue(option.Value);
+                    writer.WriteStartElement("options");
+
+                    foreach (var option in _options)
+                    {
+                        writer.WriteStartElement("option");
+                        writer.WriteAttributeString("name", option.Key);
+                        writer.WriteValue(option.Value);
+                        writer.WriteEndElement();
+                    }
                     writer.WriteEndElement();
                 }
-                writer.WriteEndElement();
             }
         }
 
         private void LoadModData(object sender, EventArgs e)
         {
-            _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.name + "_modData.xml");
-            if (File.Exists(_modDataFileName))
+            String playerName = Game1.player.Name;
+            try
             {
-                XmlDocument document = new XmlDocument();
-
                 try
                 {
+                    _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.name + "_modData.xml");
+                }
+                catch
+                {
+                    Monitor.Log("Error: Player name contains character that cannot be used in file name. Using generic file name." + Environment.NewLine +
+                        "Options may not be able to be different between characters.", LogLevel.Warn);
+                    _modDataFileName = Path.Combine(Helper.DirectoryPath, "default_modData.xml");
+                }
+
+                if (File.Exists(_modDataFileName))
+                {
+                    XmlDocument document = new XmlDocument();
+
                     document.Load(_modDataFileName);
                     XmlNodeList nodes = document.GetElementsByTagName("option");
 
@@ -115,11 +129,12 @@ namespace UIInfoSuite
                         if (key != null)
                             _options[key] = value;
                     }
+
                 }
-                catch (Exception ex)
-                {
-                    Monitor.Log("Error loading mod config. " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                Monitor.Log("Error loading mod config. " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
             }
 
             _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _options);

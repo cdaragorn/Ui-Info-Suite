@@ -52,15 +52,15 @@ namespace UIInfoSuite
         {
             int truePrice = 0;
 
-            if (item is StardewValley.Object)
+            if (item is StardewValley.Object objectItem)
             {
-                truePrice = (item as StardewValley.Object).sellToStorePrice() * 2;
+                truePrice = objectItem.sellToStorePrice() * 2;
             }
-            else
+            else if (item is StardewValley.Item thing)
             {
-                int parentSheetIndex = item.parentSheetIndex;
-                //needs more
+                truePrice = thing.salePrice();
             }
+
 
             return truePrice;
         }

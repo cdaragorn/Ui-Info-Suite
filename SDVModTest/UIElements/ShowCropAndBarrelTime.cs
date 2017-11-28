@@ -14,6 +14,8 @@ using System.Reflection;
 using System.Globalization;
 using StardewValley.Objects;
 using StardewModdingAPI;
+using StardewValley.Locations;
+using StardewValley.Buildings;
 
 namespace UIInfoSuite.UIElements
 {
@@ -22,6 +24,7 @@ namespace UIInfoSuite.UIElements
         private Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
         private StardewValley.Object _currentTile;
         private TerrainFeature _terrain;
+        private Building _currentTileBuilding = null;
         private readonly IModHelper _helper;
 
         public ShowCropAndBarrelTime(IModHelper helper)
@@ -43,6 +46,15 @@ namespace UIInfoSuite.UIElements
 
         private void GetTileUnderCursor(object sender, EventArgs e)
         {
+            if (Game1.currentLocation is BuildableGameLocation buildableLocation)
+            {
+                _currentTileBuilding = buildableLocation.getBuildingAt(Game1.currentCursorTile);
+            }
+            else
+            {
+                _currentTileBuilding = null;
+            }
+            
             _currentTile = Game1.currentLocation.Objects.SafeGet(Game1.currentCursorTile);
             _terrain = Game1.currentLocation.terrainFeatures.SafeGet(Game1.currentCursorTile);
         }
@@ -57,8 +69,47 @@ namespace UIInfoSuite.UIElements
 
             //StardewValley.Object tile = Game1.currentLocation.Objects.SafeGet(Game1.currentCursorTile);
             //TerrainFeature feature = null;
+            if (_currentTileBuilding != null)
+            {
+                if (_currentTileBuilding is Mill millBuilding)
+                {
+                    if (!millBuilding.input.isEmpty())
+                    {
+                        int wheatCount = 0;
+                        int beetCount = 0;
 
-            if (_currentTile != null &&
+                        foreach (var item in millBuilding.input.items)
+                        {
+                            switch (item.Name)
+                            {
+                                case "Wheat": wheatCount = item.Stack; break;
+                                case "Beet": beetCount = item.Stack; break;
+                            }
+                        }
+
+                        StringBuilder builder = new StringBuilder();
+
+                        if (wheatCount > 0)
+                            builder.Append(wheatCount + " wheat");
+
+                        if (beetCount > 0)
+                        {
+                            if (wheatCount > 0)
+                                builder.Append(Environment.NewLine);
+                            builder.Append(beetCount + " beets");
+                        }
+
+                        if (builder.Length > 0)
+                        {
+                            IClickableMenu.drawHoverText(
+                               Game1.spriteBatch,
+                               builder.ToString(),
+                               Game1.smallFont);
+                        }
+                    }
+                }
+            }
+            else if (_currentTile != null &&
                 (!_currentTile.bigCraftable ||
                 _currentTile.minutesUntilReady > 0))
             {
@@ -75,6 +126,10 @@ namespace UIInfoSuite.UIElements
                         hoverText.Append((int)(currentCask.daysToMature / currentCask.agingRate))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
+                    }
+                    else if (_currentTile is StardewValley.Buildings.Mill)
+                    {
+
                     }
                     else
                     {

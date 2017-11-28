@@ -26,5 +26,6 @@ namespace UIInfoSuite.Options
         public const string ShowHarvestPricesInShop = "ShowHarvestPricesInShop";
         public const string DisplayCalendarAndBillboard = "DisplayCalendarAndBillboard";
         public const string ShowWhenNewRecipesAreAvailable = "ShowWhenNewRecipesAreAvailable";
+        public const string ShowToolUpgradeStatus = "ShowToolUpgradeStatus";
     }
 }
