@@ -89,6 +89,7 @@
     <Compile Include="UIElements\ShowTravelingMerchant.cs" />
     <Compile Include="UIElements\ShowWhenAnimalNeedsPet.cs" />
     <Compile Include="UIElements\SkipIntro.cs" />
+    <Compile Include="FeatureController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="i18n\de.json">
