@@ -23,7 +23,6 @@ namespace UIInfoSuite
 
         private readonly SkipIntro _skipIntro = new SkipIntro();
 
-        private String _modDataFileName;
         private ModOptions _modOptions;
         private ModConfig _modConfig;
 
