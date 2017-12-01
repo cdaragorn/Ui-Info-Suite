@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -16,6 +17,7 @@ namespace UIInfoSuite.UIElements
     {
         private List<ClickableTextureComponent> _friendNames;
         private SocialPage _socialPage;
+        private readonly ModOptionToggle _showHeartFills;
 
         private readonly int[][] _numArray = new int[][]
         {
@@ -25,8 +27,23 @@ namespace UIInfoSuite.UIElements
             new int[] { 0, 0, 1, 0, 0 }
         };
 
-        public void ToggleOption(bool showAccurateHearts)
+        public ShowAccurateHearts(ModOptions modOptions)
         {
+
+            _showHeartFills = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowHeartFills) ?? new ModOptionToggle(OptionKeys.ShowHeartFills, "Show heart fills");
+            _showHeartFills.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showHeartFills);
+
+            ToggleOption(_showHeartFills.identifier, _showHeartFills.IsOn);
+        }
+
+        public void ToggleOption(string identifier, bool showAccurateHearts)
+        {
+            if (identifier != OptionKeys.ShowHeartFills)
+            {
+                return;
+            }
+
             MenuEvents.MenuChanged -= OnMenuChange;
             GraphicsEvents.OnPostRenderGuiEvent -= DrawHeartFills;
 
@@ -39,7 +56,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowHeartFills, false);
         }
 
         private void DrawHeartFills(object sender, EventArgs e)
