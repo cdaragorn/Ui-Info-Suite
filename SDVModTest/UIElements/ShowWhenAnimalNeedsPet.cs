@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -21,15 +22,27 @@ namespace UIInfoSuite.UIElements
         private float _yMovementPerDraw;
         private float _alpha;
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _showWhenAnimalNeedsPet;
 
-        public ShowWhenAnimalNeedsPet(IModHelper helper)
+        public ShowWhenAnimalNeedsPet(ModOptions modOptions, IModHelper helper)
         {
             _timer.Elapsed += StartDrawingPetNeeds;
             _helper = helper;
+
+            _showWhenAnimalNeedsPet = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowAnimalsNeedPets) ?? new ModOptionToggle(OptionKeys.ShowAnimalsNeedPets, "Show when animals need pets");
+            _showWhenAnimalNeedsPet.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showWhenAnimalNeedsPet);
+
+            ToggleOption(_showWhenAnimalNeedsPet.identifier, _showWhenAnimalNeedsPet.IsOn);
         }
 
-        public void ToggleOption(bool showWhenAnimalNeedsPet)
+        public void ToggleOption(string identifier, bool showWhenAnimalNeedsPet)
         {
+            if (identifier != OptionKeys.ShowAnimalsNeedPets)
+            {
+                return;
+            }
+
             _timer.Stop();
             LocationEvents.CurrentLocationChanged -= OnLocationChange;
             GraphicsEvents.OnPreRenderHudEvent -= DrawAnimalHasProduct;
@@ -44,7 +57,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowAnimalsNeedPets, false);
         }
 
         private void DrawAnimalHasProduct(object sender, EventArgs e)
