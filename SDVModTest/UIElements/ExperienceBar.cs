@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -36,16 +37,38 @@ namespace UIInfoSuite.UIElements
         private readonly TimeSpan _timeBeforeExperienceBarFades = TimeSpan.FromSeconds(8);
         //private SoundEffectInstance _soundEffect;
         private Rectangle _levelUpIconRectangle = new Rectangle(120, 428, 10, 10);
-        private bool _allowExperienceBarToFadeOut = true;
-        private bool _showExperienceGain = true;
-        private bool _showLevelUpAnimation = true;
-        private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
         private SoundPlayer _player;
 
-        public ExperienceBar(IModHelper helper)
+        private readonly ModOptionToggle _showLevelUpAnimation;
+        private readonly ModOptionToggle _showExperienceBar;
+        private readonly ModOptionToggle _allowExperienceBarToFadeOut;
+        private readonly ModOptionToggle _showExperienceGain;
+
+        public ExperienceBar(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _showLevelUpAnimation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowLevelUpAnimation) ?? new ModOptionToggle(OptionKeys.ShowLevelUpAnimation, "Show level up animation");
+            _showLevelUpAnimation.ValueChanged += optionChanged;
+            modOptions.AddModOption(_showLevelUpAnimation);
+            optionChanged(_showLevelUpAnimation.identifier, _showLevelUpAnimation.IsOn);
+
+            _showExperienceBar = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceBar) ?? new ModOptionToggle(OptionKeys.ShowExperienceBar, "Show experience bar");
+            _showExperienceBar.ValueChanged += optionChanged;
+            modOptions.AddModOption(_showExperienceBar);
+            optionChanged(_showExperienceBar.identifier, _showExperienceBar.IsOn);
+
+            _allowExperienceBarToFadeOut = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.AllowExperienceBarToFadeOut) ?? new ModOptionToggle(OptionKeys.AllowExperienceBarToFadeOut, "Allow experience bar to fade out");
+            _allowExperienceBarToFadeOut.ValueChanged += optionChanged;
+            modOptions.AddModOption(_allowExperienceBarToFadeOut);
+            optionChanged(_allowExperienceBarToFadeOut.identifier, _allowExperienceBarToFadeOut.IsOn);
+
+            _showExperienceGain = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceGain) ?? new ModOptionToggle(OptionKeys.ShowExperienceGain, "Show experience gain");
+            _showExperienceGain.ValueChanged += optionChanged;
+            modOptions.AddModOption(_showExperienceGain);
+            optionChanged(_showExperienceGain.identifier, _showExperienceGain.IsOn);
+
             String path = string.Empty;
             try
             {
@@ -74,12 +97,33 @@ namespace UIInfoSuite.UIElements
             _timeToDisappear.Dispose();
         }
 
+        public void optionChanged(string identifier, bool isOn)
+        {
+            switch (identifier)
+            {
+                case OptionKeys.ShowLevelUpAnimation:
+                    ToggleLevelUpAnimation(isOn);
+                    break;
+                case OptionKeys.ShowExperienceBar:
+                    ToggleShowExperienceBar(isOn);
+                    break;
+                case OptionKeys.AllowExperienceBarToFadeOut:
+                    ToggleExperienceBarFade(isOn);
+                    break;
+                case OptionKeys.ShowExperienceGain:
+                    ToggleShowExperienceGain(isOn);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
         {
-            _showLevelUpAnimation = showLevelUpAnimation;
+            _showLevelUpAnimation.IsOn = showLevelUpAnimation;
             PlayerEvents.LeveledUp -= OnLevelUp;
 
-            if (_showLevelUpAnimation)
+            if (_showLevelUpAnimation.IsOn)
             {
                 PlayerEvents.LeveledUp += OnLevelUp;
             }
@@ -87,19 +131,19 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleExperienceBarFade(bool allowExperienceBarToFadeOut)
         {
-            _allowExperienceBarToFadeOut = allowExperienceBarToFadeOut;
+            _allowExperienceBarToFadeOut.IsOn = allowExperienceBarToFadeOut;
         }
 
         public void ToggleShowExperienceGain(bool showExperienceGain)
         {
-            _showExperienceGain = showExperienceGain;
+            _showExperienceGain.IsOn = showExperienceGain;
         }
 
         public void ToggleShowExperienceBar(bool showExperienceBar)
         {
             //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
             //LocationEvents.CurrentLocationChanged -= RemoveAllExperiencePointDisplays;
-            _showExperienceBar = showExperienceBar;
+            _showExperienceBar.IsOn = showExperienceBar;
             //if (showExperienceBar)
             //{
             //    GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
@@ -109,7 +153,7 @@ namespace UIInfoSuite.UIElements
 
         private void OnLevelUp(object sender, EventArgsLevelUp e)
         {
-            if (_showLevelUpAnimation)
+            if (_showLevelUpAnimation.IsOn)
             {
                 switch (e.Type)
                 {
@@ -226,7 +270,7 @@ namespace UIInfoSuite.UIElements
                     {
                         ShowExperienceBar();
                         if (experienceEarnedThisLevel - _currentExperience > 0 &&
-                        _showExperienceGain)
+                            _showExperienceGain.IsOn)
                         {
                             _experiencePointDisplays.Add(
                                 new ExperiencePointDisplay(
@@ -277,7 +321,7 @@ namespace UIInfoSuite.UIElements
                     }
 
                     if (_experienceBarShouldBeVisible &&
-                        _showExperienceBar)
+                        _showExperienceBar.IsOn)
                     {
                         int barWidth = (int)(_currentExperience / (experienceRequiredToLevel - experienceFromPreviousLevels) * MaxBarWidth);
                         float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
@@ -380,7 +424,7 @@ namespace UIInfoSuite.UIElements
                                     Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
                         }
 
-                        
+
                     }
                 }
 
@@ -408,7 +452,7 @@ namespace UIInfoSuite.UIElements
 
         private void ShowExperienceBar()
         {
-            if (_allowExperienceBarToFadeOut)
+            if (_allowExperienceBarToFadeOut.IsOn)
             {
                 _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
                 _timeToDisappear.Start();

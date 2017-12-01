@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite
 {
     public static class OptionKeys
     {

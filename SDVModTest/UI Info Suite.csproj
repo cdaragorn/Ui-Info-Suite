@@ -56,10 +56,6 @@
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="LanguageKeys.cs" />
     <Compile Include="ModConfig.cs" />
-    <Compile Include="Options\ModOptionsCheckbox.cs" />
-    <Compile Include="Options\ModOptionsPageButton.cs" />
-    <Compile Include="Options\ModOptionsPageHandler.cs" />
-    <Compile Include="Options\ModOptionsPageIcon.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -69,9 +65,6 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="IconHandler.cs" />
-    <Compile Include="Options\OptionKeys.cs" />
-    <Compile Include="Options\ModOptionsElement.cs" />
-    <Compile Include="Options\ModOptionsPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UIElements\ExperienceBar.cs" />
     <Compile Include="UIElements\ExperiencePointDisplay.cs" />
@@ -90,6 +83,7 @@
     <Compile Include="UIElements\ShowWhenAnimalNeedsPet.cs" />
     <Compile Include="UIElements\SkipIntro.cs" />
     <Compile Include="FeatureController.cs" />
+    <Compile Include="OptionKeys.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="i18n\de.json">

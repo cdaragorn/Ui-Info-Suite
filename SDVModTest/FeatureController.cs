@@ -28,12 +28,14 @@ namespace UIInfoSuite
         private readonly ShowTravelingMerchant _showTravelingMerchant;
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
+        private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
 
-        public FeatureController(ModOptions modOptions, ModConfig modconfig, IModHelper helper)
+        internal FeatureController(ModOptions modOptions, ModConfig modconfig, IModHelper helper)
         {
             _modOptions = modOptions;
             _modConfig = modconfig;
             _helper = helper;
+
 
             // Create Category Label in ModConfigMenu
             Version thisVersion = Assembly.GetAssembly(this.GetType()).GetName().Version;
@@ -83,6 +85,8 @@ namespace UIInfoSuite
             //_optionsElements.Add(new ModOptionsCheckbox("Show when new recipes are available", whichOption++, _showQueenOfSauceIcon.ToggleOption, _options, OptionKeys.ShowWhenNewRecipesAreAvailable));
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(modOptions, helper);
 
+            _showToolUpgradeStatus = new ShowToolUpgradeStatus(modOptions, helper);
+
             var saveButton = new ModOptionTrigger("saveOptions", "Save Options", OptionActionType.OK);
             modOptions.AddModOption(saveButton);
             saveButton.ActionTriggered += (string identifier) =>
@@ -105,7 +109,8 @@ namespace UIInfoSuite
                 _showItemHoverInformation,
                 _showTravelingMerchant,
                 _shopHarvestPrices,
-                _showQueenOfSauceIcon
+                _showQueenOfSauceIcon,
+                _showToolUpgradeStatus
             };
 
         }
