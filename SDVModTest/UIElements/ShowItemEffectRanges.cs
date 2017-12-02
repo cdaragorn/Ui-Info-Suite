@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -16,6 +17,7 @@ namespace UIInfoSuite.UIElements
     {
         private readonly List<Point> _effectiveArea = new List<Point>();
         private readonly ModConfig _modConfig;
+        private readonly ModOptionToggle _showItemEffectRanges;
 
         private static readonly int[][] _junimoHutArray = new int[17][]
         {
@@ -38,13 +40,24 @@ namespace UIInfoSuite.UIElements
             new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
         };
 
-        public ShowItemEffectRanges(ModConfig modConfig)
+        public ShowItemEffectRanges(ModOptions modOptions, ModConfig modConfig)
         {
             _modConfig = modConfig;
+
+            _showItemEffectRanges = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowItemEffectRanges) ?? new ModOptionToggle(OptionKeys.ShowItemEffectRanges, "Show scarecrow and sprinkler range");
+            _showItemEffectRanges.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showItemEffectRanges);
+
+            ToggleOption(_showItemEffectRanges.identifier, _showItemEffectRanges.IsOn);
         }
 
-        public void ToggleOption(bool showItemEffectRanges)
+        public void ToggleOption(string identifier, bool showItemEffectRanges)
         {
+            if (identifier != OptionKeys.ShowItemEffectRanges)
+            {
+                return;
+            }
+
             GraphicsEvents.OnPostRenderEvent -= DrawTileOutlines;
             GameEvents.FourthUpdateTick -= CheckDrawTileOutlines;
 
@@ -57,7 +70,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowItemEffectRanges, false);
         }
 
         private void CheckDrawTileOutlines(object sender, EventArgs e)
