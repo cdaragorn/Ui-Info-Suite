@@ -52,22 +52,22 @@ namespace UIInfoSuite.UIElements
             _showLevelUpAnimation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowLevelUpAnimation) ?? new ModOptionToggle(OptionKeys.ShowLevelUpAnimation, "Show level up animation");
             _showLevelUpAnimation.ValueChanged += ToggleLevelUpAnimation;
             modOptions.AddModOption(_showLevelUpAnimation);
-            optionChanged(_showLevelUpAnimation.identifier, _showLevelUpAnimation.IsOn);
+						ToggleLevelUpAnimation(_showLevelUpAnimation.identifier, _showLevelUpAnimation.IsOn);
 
             _showExperienceBar = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceBar) ?? new ModOptionToggle(OptionKeys.ShowExperienceBar, "Show experience bar");
             _showExperienceBar.ValueChanged += ToggleShowExperienceBar;
             modOptions.AddModOption(_showExperienceBar);
-            optionChanged(_showExperienceBar.identifier, _showExperienceBar.IsOn);
+						ToggleShowExperienceBar(_showExperienceBar.identifier, _showExperienceBar.IsOn);
 
             _allowExperienceBarToFadeOut = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.AllowExperienceBarToFadeOut) ?? new ModOptionToggle(OptionKeys.AllowExperienceBarToFadeOut, "Allow experience bar to fade out");
             _allowExperienceBarToFadeOut.ValueChanged += ToggleExperienceBarFade;
             modOptions.AddModOption(_allowExperienceBarToFadeOut);
-            optionChanged(_allowExperienceBarToFadeOut.identifier, _allowExperienceBarToFadeOut.IsOn);
+						ToggleExperienceBarFade(_allowExperienceBarToFadeOut.identifier, _allowExperienceBarToFadeOut.IsOn);
 
             _showExperienceGain = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceGain) ?? new ModOptionToggle(OptionKeys.ShowExperienceGain, "Show experience gain");
             _showExperienceGain.ValueChanged += ToggleShowExperienceGain;
             modOptions.AddModOption(_showExperienceGain);
-            optionChanged(_showExperienceGain.identifier, _showExperienceGain.IsOn);
+						ToggleShowExperienceGain(_showExperienceGain.identifier, _showExperienceGain.IsOn);
 
             String path = string.Empty;
             try
