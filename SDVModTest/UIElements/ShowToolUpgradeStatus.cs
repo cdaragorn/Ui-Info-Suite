@@ -114,7 +114,7 @@ namespace UIInfoSuite.UIElements
             {
                 _toolBeingUpgraded = null;
             }
-            
+
         }
 
         private void DrawToolUpgradeStatus(object sender, EventArgs e)
@@ -142,7 +142,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowToolUpgradeStatus, false);
             _toolBeingUpgraded = null;
         }
     }
