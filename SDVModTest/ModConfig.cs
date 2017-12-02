@@ -15,6 +15,7 @@ namespace UIInfoSuite
         };
 
         public bool CanRightClickForBarrelAndCropTimes { get; set; } = true;
+        public Dictionary<string, string> Townspeople = new Dictionary<string, string>();
 
         public int[][] Sprinkler { get; set; } = new int[][]
         {

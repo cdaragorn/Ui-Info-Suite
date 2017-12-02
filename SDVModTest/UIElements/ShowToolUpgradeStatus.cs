@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -19,14 +20,26 @@ namespace UIInfoSuite.UIElements
         private Rectangle _toolTexturePosition;
         private String _hoverText;
         private Tool _toolBeingUpgraded;
+        private readonly ModOptionToggle _showToolUpgradeStatus;
 
-        public ShowToolUpgradeStatus(IModHelper helper)
+        public ShowToolUpgradeStatus(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _showToolUpgradeStatus = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowToolUpgradeStatus) ?? new ModOptionToggle(OptionKeys.ShowToolUpgradeStatus, "Show Traveling Merchant");
+            _showToolUpgradeStatus.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showToolUpgradeStatus);
+
+            ToggleOption(_showToolUpgradeStatus.identifier, _showToolUpgradeStatus.IsOn);
         }
 
-        public void ToggleOption(bool showToolUpgradeStatus)
+        public void ToggleOption(string identifier, bool showToolUpgradeStatus)
         {
+            if (OptionKeys.ShowToolUpgradeStatus != identifier)
+            {
+                return;
+            }
+
             GraphicsEvents.OnPreRenderHudEvent -= DrawToolUpgradeStatus;
             TimeEvents.AfterDayStarted -= DayChanged;
             GameEvents.OneSecondTick -= CheckForMidDayChanges;
@@ -101,7 +114,7 @@ namespace UIInfoSuite.UIElements
             {
                 _toolBeingUpgraded = null;
             }
-            
+
         }
 
         private void DrawToolUpgradeStatus(object sender, EventArgs e)
@@ -129,7 +142,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowToolUpgradeStatus, false);
             _toolBeingUpgraded = null;
         }
     }

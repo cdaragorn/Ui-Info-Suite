@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using UIInfoSuite.Extensions;
-using UIInfoSuite.Options;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
@@ -14,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using StardewModdingAPI;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -27,15 +27,23 @@ namespace UIInfoSuite.UIElements
                 3f);
 
         private readonly IModHelper _helper;
+        private readonly ModOptions _modOptions;
+        private readonly ModOptionToggle _displayCalendarAndBillboard;
 
         private Item _hoverItem = null;
 
-        public ShowCalendarAndBillboardOnGameMenuButton(IModHelper helper)
+        public ShowCalendarAndBillboardOnGameMenuButton(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+            _modOptions = modOptions;
+
+            _displayCalendarAndBillboard = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.DisplayCalendarAndBillboard) ?? new ModOptionToggle(OptionKeys.DisplayCalendarAndBillboard, "Show calendar/billboard button");
+            _displayCalendarAndBillboard.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_displayCalendarAndBillboard);
+            ToggleOption(_displayCalendarAndBillboard.identifier, _displayCalendarAndBillboard.IsOn);
         }
 
-        public void ToggleOption(bool showCalendarAndBillboard)
+        public void ToggleOption(string identifier, bool showCalendarAndBillboard)
         {
             GraphicsEvents.OnPostRenderGuiEvent -= RenderButtons;
             ControlEvents.MouseChanged -= OnBillboardIconClick;
@@ -64,7 +72,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.DisplayCalendarAndBillboard, false);
         }
 
         private void OnBillboardIconClick(object sender, EventArgsMouseStateChanged e)

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -26,6 +27,7 @@ namespace UIInfoSuite.UIElements
         private SocialPage _socialPage;
         private List<ClickableTextureComponent> _friendNames;
         private readonly IDictionary<String, String> _options;
+        private readonly ModOptionToggle _showNPCLocationsOnMap;
         private readonly IModHelper _helper;
 
         private static readonly Dictionary<String, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
@@ -84,19 +86,29 @@ namespace UIInfoSuite.UIElements
 
 #endregion
 
-        public LocationOfTownsfolk(IModHelper helper, IDictionary<String, String> options)
+        public LocationOfTownsfolk(ModOptions modOptions, ModConfig config, IModHelper helper)
         {
             _helper = helper;
-            _options = options;
+            _options = config.Townspeople;
+
+            _showNPCLocationsOnMap = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowLocationOfTownsPeople) ?? new ModOptionToggle(OptionKeys.ShowLocationOfTownsPeople, "Show townspeople on map");
+            _showNPCLocationsOnMap.ValueChanged += ToggleShowNPCLocationsOnMap;
+            modOptions.AddModOption(_showNPCLocationsOnMap);
+            ToggleShowNPCLocationsOnMap(_showNPCLocationsOnMap.identifier, _showNPCLocationsOnMap.IsOn);
         }
 
         public void Dispose()
         {
-            ToggleShowNPCLocationsOnMap(false);
+            ToggleShowNPCLocationsOnMap(OptionKeys.ShowLocationOfTownsPeople, false);
         }
 
-        public void ToggleShowNPCLocationsOnMap(bool showLocations)
+        public void ToggleShowNPCLocationsOnMap(string identifier, bool showLocations)
         {
+            if (identifier != OptionKeys.ShowLocationOfTownsPeople)
+            {
+                return;
+            }
+
             OnMenuChange(null, null);
             GraphicsEvents.OnPostRenderGuiEvent -= DrawSocialPageOptions;
             GraphicsEvents.OnPostRenderGuiEvent -= DrawNPCLocationsOnMap;

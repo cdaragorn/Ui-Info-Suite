@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -32,9 +33,24 @@ namespace UIInfoSuite.UIElements
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
+        private readonly ModOptionToggle _showItemHoverInformation;
 
-        public void ToggleOption(bool showItemHoverInformation)
+        public ShowItemHoverInformation(ModOptions modOptions)
         {
+            _showItemHoverInformation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExtraItemInformation) ?? new ModOptionToggle(OptionKeys.ShowExtraItemInformation, "Show Item hover information");
+            _showItemHoverInformation.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showItemHoverInformation);
+
+            ToggleOption(_showItemHoverInformation.identifier, _showItemHoverInformation.IsOn);
+        }
+
+        public void ToggleOption(string identifier, bool showItemHoverInformation)
+        {
+            if (identifier != OptionKeys.ShowExtraItemInformation)
+            {
+                return;
+            }
+
             PlayerEvents.InventoryChanged -= PopulateRequiredBundles;
             GraphicsEvents.OnPostRenderEvent -= DrawAdvancedTooltipForMenu;
             GraphicsEvents.OnPostRenderHudEvent -= DrawAdvancedTooltipForToolbar;
@@ -54,7 +70,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowExtraItemInformation, false);
         }
 
         private void GetHoverItem(object sender, EventArgs e)

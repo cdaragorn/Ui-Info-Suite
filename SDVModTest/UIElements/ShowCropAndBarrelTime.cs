@@ -16,6 +16,7 @@ using StardewValley.Objects;
 using StardewModdingAPI;
 using StardewValley.Locations;
 using StardewValley.Buildings;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -26,14 +27,25 @@ namespace UIInfoSuite.UIElements
         private TerrainFeature _terrain;
         private Building _currentTileBuilding = null;
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _showCropAndBarrelTime;
 
-        public ShowCropAndBarrelTime(IModHelper helper)
+        public ShowCropAndBarrelTime(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+            _showCropAndBarrelTime = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowCropAndBarrelTooltip) ?? new ModOptionToggle(OptionKeys.ShowCropAndBarrelTooltip, "Show crop and barrel times");
+            _showCropAndBarrelTime.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showCropAndBarrelTime);
+
+            ToggleOption(_showCropAndBarrelTime.identifier, _showCropAndBarrelTime.IsOn);
         }
 
-        public void ToggleOption(bool showCropAndBarrelTimes)
+        public void ToggleOption(string identifier, bool showCropAndBarrelTimes)
         {
+            if (identifier != OptionKeys.ShowCropAndBarrelTooltip)
+            {
+                return;
+            }
+
             GraphicsEvents.OnPreRenderHudEvent -= DrawHoverTooltip;
             GameEvents.FourthUpdateTick -= GetTileUnderCursor;
 
@@ -61,7 +73,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowCropAndBarrelTooltip, false);
         }
 
         private void DrawHoverTooltip(object sender, EventArgs e)
