@@ -50,22 +50,22 @@ namespace UIInfoSuite.UIElements
             _helper = helper;
 
             _showLevelUpAnimation = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowLevelUpAnimation) ?? new ModOptionToggle(OptionKeys.ShowLevelUpAnimation, "Show level up animation");
-            _showLevelUpAnimation.ValueChanged += optionChanged;
+            _showLevelUpAnimation.ValueChanged += ToggleLevelUpAnimation;
             modOptions.AddModOption(_showLevelUpAnimation);
             optionChanged(_showLevelUpAnimation.identifier, _showLevelUpAnimation.IsOn);
 
             _showExperienceBar = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceBar) ?? new ModOptionToggle(OptionKeys.ShowExperienceBar, "Show experience bar");
-            _showExperienceBar.ValueChanged += optionChanged;
+            _showExperienceBar.ValueChanged += ToggleShowExperienceBar;
             modOptions.AddModOption(_showExperienceBar);
             optionChanged(_showExperienceBar.identifier, _showExperienceBar.IsOn);
 
             _allowExperienceBarToFadeOut = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.AllowExperienceBarToFadeOut) ?? new ModOptionToggle(OptionKeys.AllowExperienceBarToFadeOut, "Allow experience bar to fade out");
-            _allowExperienceBarToFadeOut.ValueChanged += optionChanged;
+            _allowExperienceBarToFadeOut.ValueChanged += ToggleExperienceBarFade;
             modOptions.AddModOption(_allowExperienceBarToFadeOut);
             optionChanged(_allowExperienceBarToFadeOut.identifier, _allowExperienceBarToFadeOut.IsOn);
 
             _showExperienceGain = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowExperienceGain) ?? new ModOptionToggle(OptionKeys.ShowExperienceGain, "Show experience gain");
-            _showExperienceGain.ValueChanged += optionChanged;
+            _showExperienceGain.ValueChanged += ToggleShowExperienceGain;
             modOptions.AddModOption(_showExperienceGain);
             optionChanged(_showExperienceGain.identifier, _showExperienceGain.IsOn);
 
@@ -97,28 +97,7 @@ namespace UIInfoSuite.UIElements
             _timeToDisappear.Dispose();
         }
 
-        public void optionChanged(string identifier, bool isOn)
-        {
-            switch (identifier)
-            {
-                case OptionKeys.ShowLevelUpAnimation:
-                    ToggleLevelUpAnimation(isOn);
-                    break;
-                case OptionKeys.ShowExperienceBar:
-                    ToggleShowExperienceBar(isOn);
-                    break;
-                case OptionKeys.AllowExperienceBarToFadeOut:
-                    ToggleExperienceBarFade(isOn);
-                    break;
-                case OptionKeys.ShowExperienceGain:
-                    ToggleShowExperienceGain(isOn);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
+        public void ToggleLevelUpAnimation(string identifier, bool showLevelUpAnimation)
         {
             _showLevelUpAnimation.IsOn = showLevelUpAnimation;
             PlayerEvents.LeveledUp -= OnLevelUp;
@@ -129,17 +108,17 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        public void ToggleExperienceBarFade(bool allowExperienceBarToFadeOut)
+        public void ToggleExperienceBarFade(string identifier, bool allowExperienceBarToFadeOut)
         {
             _allowExperienceBarToFadeOut.IsOn = allowExperienceBarToFadeOut;
         }
 
-        public void ToggleShowExperienceGain(bool showExperienceGain)
+        public void ToggleShowExperienceGain(string identifier, bool showExperienceGain)
         {
             _showExperienceGain.IsOn = showExperienceGain;
         }
 
-        public void ToggleShowExperienceBar(bool showExperienceBar)
+        public void ToggleShowExperienceBar(string identifier, bool showExperienceBar)
         {
             //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
             //LocationEvents.CurrentLocationChanged -= RemoveAllExperiencePointDisplays;
