@@ -11,20 +11,33 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
     class ShopHarvestPrices : IDisposable
     {
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _shopHarvestPrices;
 
-        public ShopHarvestPrices(IModHelper helper)
+        public ShopHarvestPrices(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _shopHarvestPrices = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowHarvestPricesInShop) ?? new ModOptionToggle(OptionKeys.ShowHarvestPricesInShop, "Show shop harvest prices");
+            _shopHarvestPrices.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_shopHarvestPrices);
+
+            ToggleOption(_shopHarvestPrices.identifier, _shopHarvestPrices.IsOn);
         }
 
-        public void ToggleOption(bool shopHarvestPrices)
+        public void ToggleOption(string identifier, bool shopHarvestPrices)
         {
+            if (identifier != OptionKeys.ShowHarvestPricesInShop)
+            {
+                return;
+            }
+
             GraphicsEvents.OnPostRenderGuiEvent -= DrawShopHarvestPrices;
 
             if (shopHarvestPrices)
@@ -35,7 +48,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowHarvestPricesInShop, false);
         }
 
         private void DrawShopHarvestPrices(object sender, EventArgs e)
