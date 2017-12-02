@@ -62,7 +62,7 @@ namespace UIInfoSuite
             modOptions.AddModOption(saveButton);
             saveButton.ActionTriggered += (string identifier) =>
             {
-                modOptions.SaveUserSettings();
+                modOptions.SaveCharacterSettings(Constants.SaveFolderName);
                 helper.WriteConfig(_modConfig);
             };
 
