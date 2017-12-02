@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
+using StardewConfigFramework;
 
 namespace UIInfoSuite.UIElements
 {
@@ -24,9 +25,14 @@ namespace UIInfoSuite.UIElements
         private bool _drawQueenOfSauceIcon = false;
         private bool _drawDishOfDayIcon = false;
         private readonly IModHelper _helper;
+        private readonly ModOptionToggle _showQueenOfSauceIcon;
 
-        public void ToggleOption(bool showQueenOfSauceIcon)
+        public void ToggleOption(string identifier, bool showQueenOfSauceIcon)
         {
+            if (OptionKeys.ShowWhenNewRecipesAreAvailable != identifier)
+            {
+                return;
+            }
             GraphicsEvents.OnPreRenderHudEvent -= DrawIcon;
             TimeEvents.AfterDayStarted -= CheckForNewRecipe;
             GameEvents.OneSecondTick -= CheckIfLearnedRecipe;
@@ -48,9 +54,15 @@ namespace UIInfoSuite.UIElements
                 _drawQueenOfSauceIcon = false;
         }
 
-        public ShowQueenOfSauceIcon(IModHelper helper)
+        public ShowQueenOfSauceIcon(ModOptions modOptions, IModHelper helper)
         {
             _helper = helper;
+
+            _showQueenOfSauceIcon = modOptions.GetOptionWithIdentifier<ModOptionToggle>(OptionKeys.ShowWhenNewRecipesAreAvailable) ?? new ModOptionToggle(OptionKeys.ShowWhenNewRecipesAreAvailable, "Show when new recipes are available");
+            _showQueenOfSauceIcon.ValueChanged += ToggleOption;
+            modOptions.AddModOption(_showQueenOfSauceIcon);
+
+            ToggleOption(_showQueenOfSauceIcon.identifier, _showQueenOfSauceIcon.IsOn);
         }
 
         private void LoadRecipes()
@@ -207,7 +219,7 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            ToggleOption(false);
+            ToggleOption(OptionKeys.ShowWhenNewRecipesAreAvailable, false);
         }
 
         private void CheckForNewRecipe(object sender, EventArgs e)
