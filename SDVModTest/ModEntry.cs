@@ -75,14 +75,14 @@ namespace UIInfoSuite
 
         private void SaveModData(object sender, EventArgs e)
         {
-            _modOptions.SaveUserSettings();
+            _modOptions.SaveCharacterSettings(Constants.SaveFolderName);
             Helper.WriteConfig(_modConfig);
         }
 
         private void LoadModData(object sender, EventArgs e)
         {
             var Settings = IModSettingsFramework.Instance;
-            this._modOptions = ModOptions.LoadUserSettings(this);
+            this._modOptions = ModOptions.LoadCharacterSettings(this, Constants.SaveFolderName);
             Settings.AddModOptions(this._modOptions);
 
             try
