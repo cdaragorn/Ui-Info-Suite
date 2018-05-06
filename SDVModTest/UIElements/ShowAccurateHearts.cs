@@ -62,7 +62,8 @@ namespace UIInfoSuite.UIElements
                         int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
                         yOffset += 112;
                         Friendship friendshipValues;
-                        if (Game1.player.friendshipData.TryGetValue(_friendNames[i], out friendshipValues))
+                        String nextName = _friendNames[i];
+                        if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
                         {
                             int friendshipRawValue = friendshipValues.Points;
 
@@ -115,8 +116,9 @@ namespace UIInfoSuite.UIElements
                     if (menu is SocialPage)
                     {
                         _socialPage = menu as SocialPage;
-                        var npcNames = typeof(SocialPage).GetField("npcNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as Dictionary<String, String>;
-                        _friendNames = npcNames.Keys.ToArray();
+                        _friendNames = (typeof(SocialPage).GetField("names", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as List<object>)
+                            .Select(name => name.ToString())
+                            .ToArray();
                         break;
                     }
                 }
@@ -125,7 +127,7 @@ namespace UIInfoSuite.UIElements
 
         private void DrawEachIndividualSquare(int friendshipLevel, int friendshipPoints, int yPosition)
         {
-            int numberOfPointsToDraw = friendshipPoints / 20;
+            int numberOfPointsToDraw = (int)(((double)friendshipPoints) / 12.5);
             int num2;
 
             if (friendshipLevel > 10)

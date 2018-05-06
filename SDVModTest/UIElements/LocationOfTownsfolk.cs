@@ -133,11 +133,9 @@ namespace UIInfoSuite.UIElements
                     if (menu is SocialPage)
                     {
                         _socialPage = menu as SocialPage;
-                        var npcNames = typeof(SocialPage).GetField("npcNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as Dictionary<String, String>;
-                        _friendNames = npcNames.Keys.ToArray();
-                        //_friendNames = typeof(SocialPage)
-                        //    .GetField("npcNames", BindingFlags.Instance | BindingFlags.NonPublic)
-                        //    .GetValue(menu) as List<ClickableTextureComponent>;
+                        _friendNames = (typeof(SocialPage).GetField("names", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as List<object>)
+                            .Select(name => name.ToString())
+                            .ToArray();
                         break;
                     }
                 }
