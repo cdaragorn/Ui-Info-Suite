@@ -14,7 +14,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowAccurateHearts : IDisposable
     {
-        private List<ClickableTextureComponent> _friendNames;
+        private String[] _friendNames;
         private SocialPage _socialPage;
 
         private readonly int[][] _numArray = new int[][]
@@ -57,14 +57,14 @@ namespace UIInfoSuite.UIElements
                             .GetValue(_socialPage);
                     int yOffset = 0;
 
-                    for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Count; ++i)
+                    for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Length; ++i)
                     {
                         int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
                         yOffset += 112;
-                        int[] friendshipValues;
-                        if (Game1.player.friendships.TryGetValue(_friendNames[i].name, out friendshipValues))
+                        Friendship friendshipValues;
+                        if (Game1.player.friendshipData.TryGetValue(_friendNames[i], out friendshipValues))
                         {
-                            int friendshipRawValue = friendshipValues[0];
+                            int friendshipRawValue = friendshipValues.Points;
 
                             if (friendshipRawValue > 0)
                             {
@@ -72,7 +72,7 @@ namespace UIInfoSuite.UIElements
                                 int numHearts = friendshipRawValue / 250;
 
                                 if (friendshipRawValue < 3000 && 
-                                    _friendNames[i].name == Game1.player.spouse || 
+                                    _friendNames[i] == Game1.player.spouse || 
                                     friendshipRawValue < 2500)
                                 {
                                     DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
@@ -115,7 +115,8 @@ namespace UIInfoSuite.UIElements
                     if (menu is SocialPage)
                     {
                         _socialPage = menu as SocialPage;
-                        _friendNames = typeof(SocialPage).GetField("friendNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as List<ClickableTextureComponent>;
+                        var npcNames = typeof(SocialPage).GetField("npcNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as Dictionary<String, String>;
+                        _friendNames = npcNames.Keys.ToArray();
                         break;
                     }
                 }

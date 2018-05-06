@@ -105,7 +105,7 @@ namespace UIInfoSuite
             {
                 try
                 {
-                    _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.name + "_modData.xml");
+                    _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.Name + "_modData.xml");
                 }
                 catch
                 {

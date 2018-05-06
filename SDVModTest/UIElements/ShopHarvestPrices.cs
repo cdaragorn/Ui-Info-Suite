@@ -51,7 +51,7 @@ namespace UIInfoSuite.UIElements
                     bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
 
                     if (hoverItem is StardewValley.Object &&
-                        (hoverItem as StardewValley.Object).type == "Seeds" &&
+                        (hoverItem as StardewValley.Object).Type == "Seeds" &&
                         itemHasPriceInfo &&
                         hoverItem.Name != "Mixed Seeds" &&
                         hoverItem.Name != "Winter Seeds")
@@ -60,21 +60,21 @@ namespace UIInfoSuite.UIElements
                             new StardewValley.Object(
                                 new Debris(
                                     new Crop(
-                                        hoverItem.parentSheetIndex, 
+                                        hoverItem.ParentSheetIndex, 
                                         0, 
                                         0)
-                                        .indexOfHarvest, 
+                                        .indexOfHarvest.Value, 
                                     Game1.player.position, 
-                                    Game1.player.position).chunkType, 
+                                    Game1.player.position).chunkType.Value, 
                                 1);
-                        text = "    " + temp.price;
+                        text = "    " + temp.Price;
                     }
 
                     Item heldItem = typeof(ShopMenu).GetField("heldItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as Item;
                     if (heldItem == null)
                     {
                         int value = 0;
-                        switch (hoverItem.parentSheetIndex)
+                        switch (hoverItem.ParentSheetIndex)
                         {
                             case 628: value = 50; break;
                             case 629: value = 80; break;
@@ -89,7 +89,7 @@ namespace UIInfoSuite.UIElements
                             text = "    " + value;
 
                         if (text != "" &&
-                            (hoverItem as StardewValley.Object).type == "Seeds")
+                            (hoverItem as StardewValley.Object).Type == "Seeds")
                         {
                             String textToRender = _helper.SafeGetString(
                                 LanguageKeys.HarvestPrice);
@@ -148,13 +148,13 @@ namespace UIInfoSuite.UIElements
                                 new Vector2(xPosition, yPosition + 4),
                                 Color.Black * 0.8f);
 
-                            String hoverText = _helper.Reflection.GetPrivateField<String>(menu, "hoverText").GetValue();
-                            String hoverTitle = _helper.Reflection.GetPrivateField<String>(menu, "boldTitleText").GetValue();
-                            Item hoverItem2 = _helper.Reflection.GetPrivateField<Item>(menu, "hoveredItem").GetValue();
-                            int currency = _helper.Reflection.GetPrivateField<int>(menu, "currency").GetValue();
-                            int hoverPrice = _helper.Reflection.GetPrivateField<int>(menu, "hoverPrice").GetValue();
-                            IPrivateMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetPrivateMethod(menu, "getHoveredItemExtraItemIndex");
-                            IPrivateMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetPrivateMethod(menu, "getHoveredItemExtraItemAmount");
+                            String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
+                            String hoverTitle = _helper.Reflection.GetField<String>(menu, "boldTitleText").GetValue();
+                            Item hoverItem2 = _helper.Reflection.GetField<Item>(menu, "hoveredItem").GetValue();
+                            int currency = _helper.Reflection.GetField<int>(menu, "currency").GetValue();
+                            int hoverPrice = _helper.Reflection.GetField<int>(menu, "hoverPrice").GetValue();
+                            IReflectedMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
+                            IReflectedMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
 
                             IClickableMenu.drawToolTip(
                                 Game1.spriteBatch,

@@ -24,7 +24,7 @@ namespace UIInfoSuite.UIElements
         private const int SocialPanelWidth = 190;
         private const int SocialPanelXOffset = 160;
         private SocialPage _socialPage;
-        private List<ClickableTextureComponent> _friendNames;
+        private String[] _friendNames;
         private readonly IDictionary<String, String> _options;
         private readonly IModHelper _helper;
 
@@ -133,9 +133,11 @@ namespace UIInfoSuite.UIElements
                     if (menu is SocialPage)
                     {
                         _socialPage = menu as SocialPage;
-                        _friendNames = typeof(SocialPage)
-                            .GetField("friendNames", BindingFlags.Instance | BindingFlags.NonPublic)
-                            .GetValue(menu) as List<ClickableTextureComponent>;
+                        var npcNames = typeof(SocialPage).GetField("npcNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as Dictionary<String, String>;
+                        _friendNames = npcNames.Keys.ToArray();
+                        //_friendNames = typeof(SocialPage)
+                        //    .GetField("npcNames", BindingFlags.Instance | BindingFlags.NonPublic)
+                        //    .GetValue(menu) as List<ClickableTextureComponent>;
                         break;
                     }
                 }
@@ -144,20 +146,20 @@ namespace UIInfoSuite.UIElements
                 {
                     foreach (var npc in location.characters)
                     {
-                        if (Game1.player.friendships.ContainsKey(npc.name))
+                        if (Game1.player.friendshipData.ContainsKey(npc.Name))
                             _townsfolk.Add(npc);
                     }
                 }
                 _checkboxes.Clear();
                 foreach (var friendName in _friendNames)
                 {
-                    int hashCode = friendName.name.GetHashCode();
+                    int hashCode = friendName.GetHashCode();
                     OptionsCheckbox checkbox = new OptionsCheckbox("", hashCode);
                     _checkboxes.Add(checkbox);
 
                     //default to on
                     bool optionForThisFriend = true;
-                    if (!Game1.player.friendships.ContainsKey(friendName.name))
+                    if (!Game1.player.friendshipData.ContainsKey(friendName))
                     {
                         checkbox.greyedOut = true;
                         optionForThisFriend = false;
@@ -224,7 +226,7 @@ namespace UIInfoSuite.UIElements
                     {
                         try
                         {
-                            int hashCode = character.name.GetHashCode();
+                            int hashCode = character.Name.GetHashCode();
 
                             bool drawCharacter = _options.SafeGet(hashCode.ToString()).SafeParseBool();
 
@@ -232,7 +234,7 @@ namespace UIInfoSuite.UIElements
                             {
                                 KeyValuePair<int, int> location;
                                 location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
-                                String locationName = character.currentLocation?.name ?? character.DefaultMap;
+                                String locationName = character.currentLocation?.Name ?? character.DefaultMap;
 
                                 switch (locationName)
                                 {
@@ -318,17 +320,17 @@ namespace UIInfoSuite.UIElements
                                     Color.Gray : Color.White;
                                 ClickableTextureComponent textureComponent =
                                     new ClickableTextureComponent(
-                                        character.name,
+                                        character.Name,
                                         new Rectangle(x, y, 0, 0),
                                         null,
-                                        character.name,
-                                        character.sprite.Texture,
+                                        character.Name,
+                                        character.Sprite.Texture,
                                         headShot,
                                         2.3f);
 
                                 float headShotScale = 2f;
                                 Game1.spriteBatch.Draw(
-                                    character.sprite.Texture,
+                                    character.Sprite.Texture,
                                     new Vector2(x, y),
                                     new Rectangle?(headShot),
                                     color,
@@ -354,10 +356,10 @@ namespace UIInfoSuite.UIElements
                                         bool isQuestTarget = false;
                                         switch (quest.questType)
                                         {
-                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target == character.name; break;
-                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target == character.name; break;
-                                            case 7: isQuestTarget = (quest as FishingQuest).target == character.name; break;
-                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target == character.name; break;
+                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target == character.Name; break;
+                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target == character.Name; break;
+                                            case 7: isQuestTarget = (quest as FishingQuest).target == character.Name; break;
+                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target == character.Name; break;
                                         }
 
                                         if (isQuestTarget)
@@ -461,7 +463,7 @@ namespace UIInfoSuite.UIElements
                     .GetValue(_socialPage);
                 int yOffset = 0;
 
-                for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Count; ++i)
+                for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Length; ++i)
                 {
                     OptionsCheckbox checkbox = _checkboxes[i];
                     checkbox.bounds.X = Game1.activeClickableMenu.xPositionOnScreen - 60;

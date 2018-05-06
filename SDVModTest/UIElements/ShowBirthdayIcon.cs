@@ -33,13 +33,17 @@ namespace UIInfoSuite.UIElements
 
         private void CheckIfGiftHasBeenGiven(object sender, EventArgs e)
         {
-            if (_birthdayNPC != null)
+            if (_birthdayNPC != null &&
+                Game1.player != null &&
+                Game1.player.friendshipData != null)
             {
-                var birthdayNPCDetails = Game1.player.friendships.SafeGet(_birthdayNPC.name);
+                Friendship birthdayNPCDetails = null;
+                Game1.player.friendshipData.TryGetValue(_birthdayNPC.Name, out birthdayNPCDetails);
+                //var birthdayNPCDetails = Game1.player.friendshipData.SafeGet(_birthdayNPC.name);
 
                 if (birthdayNPCDetails != null)
                 {
-                    if (birthdayNPCDetails[3] == 1)
+                    if (birthdayNPCDetails.GiftsToday == 1)
                         _birthdayNPC = null;
                 }
             }
@@ -71,7 +75,6 @@ namespace UIInfoSuite.UIElements
 
         private void DrawBirthdayIcon(object sender, EventArgs e)
         {
-            var test = Game1.player.friendships;
             if (!Game1.eventUp)
             {
                 if (_birthdayNPC != null)
@@ -93,15 +96,15 @@ namespace UIInfoSuite.UIElements
 
                     ClickableTextureComponent texture =
                         new ClickableTextureComponent(
-                            _birthdayNPC.name,
+                            _birthdayNPC.Name,
                             new Rectangle(
                                 iconPosition.X - 7,
                                 iconPosition.Y - 2,
                                 (int)(16.0 * scale),
                                 (int)(16.0 * scale)),
                             null,
-                            _birthdayNPC.name,
-                            _birthdayNPC.sprite.Texture,
+                            _birthdayNPC.Name,
+                            _birthdayNPC.Sprite.Texture,
                             headShot,
                             2f);
 
@@ -109,7 +112,7 @@ namespace UIInfoSuite.UIElements
 
                     if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                     {
-                        String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.name);
+                        String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,

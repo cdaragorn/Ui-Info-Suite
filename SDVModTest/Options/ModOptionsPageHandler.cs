@@ -120,7 +120,8 @@ namespace UIInfoSuite.Options
             {
                 GraphicsEvents.OnPostRenderGuiEvent -= DrawButton;
                 _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
-                List<IClickableMenu> tabPages = _helper.Reflection.GetPrivateField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
+                
+                List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
                 tabPages.Remove(_modOptionsPage);
             }
         }
@@ -137,8 +138,8 @@ namespace UIInfoSuite.Options
                 GraphicsEvents.OnPostRenderGuiEvent -= DrawButton;
                 GraphicsEvents.OnPostRenderGuiEvent += DrawButton;
                 _modOptionsPageButton.OnLeftClicked += OnButtonLeftClicked;
-                List<IClickableMenu> tabPages = _helper.Reflection.GetPrivateField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
-                
+                List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
+
                 _modOptionsTabPageNumber = tabPages.Count;
                 tabPages.Add(_modOptionsPage);
             }

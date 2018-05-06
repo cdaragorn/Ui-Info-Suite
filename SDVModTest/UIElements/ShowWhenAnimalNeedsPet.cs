@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Characters;
+using StardewValley.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,20 +52,21 @@ namespace UIInfoSuite.UIElements
         private void DrawAnimalHasProduct(object sender, EventArgs e)
         {
             if (!Game1.eventUp &&
-                Game1.activeClickableMenu == null)
+                Game1.activeClickableMenu == null &&
+                Game1.currentLocation != null)
             {
                 var animalsInCurrentLocation = GetAnimalsInCurrentLocation();
                 if (animalsInCurrentLocation != null)
                 {
-                    foreach (var animal in animalsInCurrentLocation)
+                    foreach (var animal in animalsInCurrentLocation.Pairs)
                     {
                         if (!animal.Value.IsEmoting &&
-                            animal.Value.currentProduce != 430 &&
-                            animal.Value.currentProduce > 0 &&
-                            animal.Value.age >= animal.Value.ageWhenMature)
+                            animal.Value.currentProduce.Value != 430 &&
+                            animal.Value.currentProduce.Value > 0 &&
+                            animal.Value.age.Value >= animal.Value.ageWhenMature.Value)
                         {
                             Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
-                            positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + (double)animal.Value.name.GetHashCode()) * 5.0);
+                            positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + (double)animal.Value.Name.GetHashCode()) * 5.0);
                             Game1.spriteBatch.Draw(
                                 Game1.emoteSpriteSheet,
                                 new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y),
@@ -74,7 +77,8 @@ namespace UIInfoSuite.UIElements
                                 4f,
                                 SpriteEffects.None,
                                 1f);
-                            Rectangle sourceRectangle = Game1.currentLocation.getSourceRectForObject(animal.Value.currentProduce);
+
+                            Rectangle sourceRectangle = GameLocation.getSourceRectForObject(animal.Value.currentProduce.Value);
                             Game1.spriteBatch.Draw(
                                 Game1.objectSpriteSheet,
                                 new Vector2(positionAboveAnimal.X + 28f, positionAboveAnimal.Y + 8f),
@@ -150,13 +154,13 @@ namespace UIInfoSuite.UIElements
 
             if (animalsInCurrentLocation != null)
             {
-                foreach (var animal in animalsInCurrentLocation)
+                foreach (var animal in animalsInCurrentLocation.Pairs)
                 {
                     if (!animal.Value.IsEmoting &&
-                        !animal.Value.wasPet)
+                        !animal.Value.wasPet.Value)
                     {
                         Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
-                        String animalType = animal.Value.type.ToLower();
+                        String animalType = animal.Value.type.Value.ToLower();
 
                         if (animalType.Contains("cow") ||
                             animalType.Contains("sheep") ||
@@ -186,7 +190,7 @@ namespace UIInfoSuite.UIElements
             foreach (var character in Game1.currentLocation.characters)
             {
                 if (character is Pet &&
-                    !_helper.Reflection.GetPrivateField<bool>(character, "wasPetToday").GetValue())
+                    !_helper.Reflection.GetField<bool>(character, "wasPetToday").GetValue())
                 {
                     Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
                     positionAboveAnimal.X += 50f;
@@ -211,9 +215,9 @@ namespace UIInfoSuite.UIElements
                 Game1.viewport.Height <= Game1.currentLocation.map.DisplayHeight ? animal.position.Y - Game1.viewport.Y - 34 : animal.position.Y + ((Game1.viewport.Height - Game1.currentLocation.map.DisplayHeight) / 2 - 50));
         }
 
-        private Dictionary<long, FarmAnimal> GetAnimalsInCurrentLocation()
+        private NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> GetAnimalsInCurrentLocation()
         {
-            Dictionary<long, FarmAnimal> animals = null;
+            NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = null;
 
             if (Game1.currentLocation is AnimalHouse)
             {
