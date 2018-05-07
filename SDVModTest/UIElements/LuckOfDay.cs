@@ -21,7 +21,7 @@ namespace UIInfoSuite.UIElements
 
         public void Toggle(bool showLuckOfDay)
         {
-            LocationEvents.CurrentLocationChanged -= AdjustIconXToBlackBorder;
+            PlayerEvents.Warped -= AdjustIconXToBlackBorder;
             GraphicsEvents.OnPreRenderHudEvent -= DrawDiceIcon;
             GraphicsEvents.OnPostRenderHudEvent -= DrawHoverTextOverEverything;
             GameEvents.HalfSecondTick -= CalculateLuck;
@@ -29,7 +29,7 @@ namespace UIInfoSuite.UIElements
             if (showLuckOfDay)
             {
                 AdjustIconXToBlackBorder(null, null);
-                LocationEvents.CurrentLocationChanged += AdjustIconXToBlackBorder;
+                PlayerEvents.Warped += AdjustIconXToBlackBorder;
                 GameEvents.HalfSecondTick += CalculateLuck;
                 GraphicsEvents.OnPreRenderHudEvent += DrawDiceIcon;
                 GraphicsEvents.OnPostRenderHudEvent += DrawHoverTextOverEverything;
@@ -93,7 +93,7 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void AdjustIconXToBlackBorder(object sender, EventArgsCurrentLocationChanged e)
+        private void AdjustIconXToBlackBorder(object sender, EventArgsPlayerWarped e)
         {
             _icon = new ClickableTextureComponent("", 
                 new Rectangle(Tools.GetWidthInPlayArea() - 134, 

@@ -33,13 +33,13 @@ namespace UIInfoSuite.UIElements
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
             _timer.Stop();
-            LocationEvents.CurrentLocationChanged -= OnLocationChange;
+            PlayerEvents.Warped -= OnLocationChange;
             GraphicsEvents.OnPreRenderHudEvent -= DrawAnimalHasProduct;
 
             if (showWhenAnimalNeedsPet)
             {
                 _timer.Start();
-                LocationEvents.CurrentLocationChanged += OnLocationChange;
+                PlayerEvents.Warped += OnLocationChange;
                 GraphicsEvents.OnPreRenderHudEvent += DrawAnimalHasProduct;
             }
         }
@@ -95,7 +95,7 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void OnLocationChange(object sender, EventArgsCurrentLocationChanged e)
+        private void OnLocationChange(object sender, EventArgsPlayerWarped e)
         {
             if (e.NewLocation is AnimalHouse ||
                 e.NewLocation is Farm)
