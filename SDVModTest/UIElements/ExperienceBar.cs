@@ -62,14 +62,14 @@ namespace UIInfoSuite.UIElements
             }
             _timeToDisappear.Elapsed += StopTimerAndFadeBarOut;
             GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
-            LocationEvents.CurrentLocationChanged += RemoveAllExperiencePointDisplays;
+            PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
         }
 
         public void Dispose()
         {
             PlayerEvents.LeveledUp -= OnLevelUp;
             GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
-            LocationEvents.CurrentLocationChanged -= RemoveAllExperiencePointDisplays;
+            PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
             _timeToDisappear.Stop();
             _timeToDisappear.Dispose();
         }
@@ -98,12 +98,12 @@ namespace UIInfoSuite.UIElements
         public void ToggleShowExperienceBar(bool showExperienceBar)
         {
             //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
-            //LocationEvents.CurrentLocationChanged -= RemoveAllExperiencePointDisplays;
+            //PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
             _showExperienceBar = showExperienceBar;
             //if (showExperienceBar)
             //{
             //    GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
-            //    LocationEvents.CurrentLocationChanged += RemoveAllExperiencePointDisplays;
+            //    PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
             //}
         }
 
@@ -161,7 +161,7 @@ namespace UIInfoSuite.UIElements
             _experienceBarShouldBeVisible = false;
         }
 
-        private void RemoveAllExperiencePointDisplays(object sender, EventArgsCurrentLocationChanged e)
+        private void RemoveAllExperiencePointDisplays(object sender, EventArgsPlayerWarped e)
         {
             _experiencePointDisplays.Clear();
         }
