@@ -213,13 +213,13 @@ namespace UIInfoSuite.UIElements
         private void CheckForNewRecipe(object sender, EventArgs e)
         {
             TV tv = new TV();
-            int numRecipesKnown = Game1.player.cookingRecipes.Count;
+            int numRecipesKnown = Game1.player.cookingRecipes.Count();
             String[] recipes = typeof(TV).GetMethod("getWeeklyRecipe", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(tv, null) as String[];
             //String[] recipe = GetTodaysRecipe();
             //_todaysRecipe = recipe[1];
             _todaysRecipe = _recipesByDescription.SafeGet(recipes[0]);
 
-            if (Game1.player.cookingRecipes.Count > numRecipesKnown)
+            if (Game1.player.cookingRecipes.Count() > numRecipesKnown)
                 Game1.player.cookingRecipes.Remove(_todaysRecipe);
 
             _drawQueenOfSauceIcon = (Game1.dayOfMonth % 7 == 0 || (Game1.dayOfMonth - 3) % 7 == 0) &&

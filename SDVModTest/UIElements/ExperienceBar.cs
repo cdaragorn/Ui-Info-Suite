@@ -179,14 +179,14 @@ namespace UIInfoSuite.UIElements
                     _experienceFillColor = new Color(17, 84, 252, 0.63f);
                     _currentLevelIndex = 1;
                     rectangle1.X = 20;
-                    experienceLevel = Game1.player.fishingLevel;
+                    experienceLevel = Game1.player.fishingLevel.Value;
                 }
                 else if (currentItem is Pickaxe)
                 {
                     _experienceFillColor = new Color(145, 104, 63, 0.63f);
                     _currentLevelIndex = 3;
                     rectangle1.X = 30;
-                    experienceLevel = Game1.player.miningLevel;
+                    experienceLevel = Game1.player.miningLevel.Value;
                 }
                 else if (currentItem is MeleeWeapon &&
                     currentItem.Name != "Scythe")
@@ -194,7 +194,7 @@ namespace UIInfoSuite.UIElements
                     _experienceFillColor = new Color(204, 0, 3, 0.63f);
                     _currentLevelIndex = 4;
                     rectangle1.X = 120;
-                    experienceLevel = Game1.player.combatLevel;
+                    experienceLevel = Game1.player.combatLevel.Value;
                 }
                 else if (Game1.currentLocation is Farm &&
                     !(currentItem is Axe))
@@ -202,14 +202,14 @@ namespace UIInfoSuite.UIElements
                     _experienceFillColor = new Color(255, 251, 35, 0.38f);
                     _currentLevelIndex = 0;
                     rectangle1.X = 10;
-                    experienceLevel = Game1.player.farmingLevel;
+                    experienceLevel = Game1.player.farmingLevel.Value;
                 }
                 else
                 {
                     _experienceFillColor = new Color(0, 234, 0, 0.63f);
                     _currentLevelIndex = 2;
                     rectangle1.X = 60;
-                    experienceLevel = Game1.player.foragingLevel;
+                    experienceLevel = Game1.player.foragingLevel.Value;
                 }
 
                 if (experienceLevel <= 9)

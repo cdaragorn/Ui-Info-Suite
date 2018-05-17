@@ -349,15 +349,15 @@ namespace UIInfoSuite.UIElements
 
                                 foreach (var quest in Game1.player.questLog)
                                 {
-                                    if (quest.accepted && quest.dailyQuest && !quest.completed)
+                                    if (quest.accepted.Value && quest.dailyQuest.Value && !quest.completed.Value)
                                     {
                                         bool isQuestTarget = false;
-                                        switch (quest.questType)
+                                        switch (quest.questType.Value)
                                         {
-                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target == character.Name; break;
-                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target == character.Name; break;
-                                            case 7: isQuestTarget = (quest as FishingQuest).target == character.Name; break;
-                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target == character.Name; break;
+                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target.Value == character.Name; break;
+                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target.Value == character.Name; break;
+                                            case 7: isQuestTarget = (quest as FishingQuest).target.Value == character.Name; break;
+                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target.Value == character.Name; break;
                                         }
 
                                         if (isQuestTarget)
@@ -461,7 +461,7 @@ namespace UIInfoSuite.UIElements
                     .GetValue(_socialPage);
                 int yOffset = 0;
 
-                for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Length; ++i)
+                for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
                 {
                     OptionsCheckbox checkbox = _checkboxes[i];
                     checkbox.bounds.X = Game1.activeClickableMenu.xPositionOnScreen - 60;

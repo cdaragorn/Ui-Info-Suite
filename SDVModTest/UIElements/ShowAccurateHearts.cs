@@ -57,7 +57,7 @@ namespace UIInfoSuite.UIElements
                             .GetValue(_socialPage);
                     int yOffset = 0;
 
-                    for (int i = slotPosition; i < slotPosition + 5 && i <= _friendNames.Length; ++i)
+                    for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
                     {
                         int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
                         yOffset += 112;

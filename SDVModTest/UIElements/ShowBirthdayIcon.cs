@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Netcode;
 
 namespace UIInfoSuite.UIElements
 {
@@ -37,10 +38,9 @@ namespace UIInfoSuite.UIElements
                 Game1.player != null &&
                 Game1.player.friendshipData != null)
             {
-                Friendship birthdayNPCDetails = null;
-                Game1.player.friendshipData.TryGetValue(_birthdayNPC.Name, out birthdayNPCDetails);
+                Game1.player.friendshipData.FieldDict.TryGetValue(_birthdayNPC.Name, out var netRef);
                 //var birthdayNPCDetails = Game1.player.friendshipData.SafeGet(_birthdayNPC.name);
-
+                Friendship birthdayNPCDetails = netRef;
                 if (birthdayNPCDetails != null)
                 {
                     if (birthdayNPCDetails.GiftsToday == 1)

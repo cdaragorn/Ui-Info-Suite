@@ -117,7 +117,9 @@ namespace UIInfoSuite.Options
         private void RemoveModOptionsFromMenu(object sender, EventArgsClickableMenuClosed e)
         {
             GraphicsEvents.OnPostRenderGuiEvent -= DrawButton;
-            _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
+
+            if (_modOptionsPageButton != null)
+                _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
             if (Game1.activeClickableMenu is GameMenu)
             {
                 List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
