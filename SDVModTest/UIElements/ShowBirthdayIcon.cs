@@ -34,15 +34,13 @@ namespace UIInfoSuite.UIElements
         private void CheckIfGiftHasBeenGiven(object sender, EventArgs e)
         {
             if (_birthdayNPC != null &&
-                Game1.player != null &&
-                Game1.player.friendshipData != null)
+                Game1.player != null)
             {
-                Game1.player.friendshipData.FieldDict.TryGetValue(_birthdayNPC.Name, out var netRef);
-                //var birthdayNPCDetails = Game1.player.friendshipData.SafeGet(_birthdayNPC.name);
-                Friendship birthdayNPCDetails = netRef;
+                var birthdayNPCDetails = Game1.player.friendships.SafeGet(_birthdayNPC.name);
+
                 if (birthdayNPCDetails != null)
                 {
-                    if (birthdayNPCDetails.GiftsToday == 1)
+                    if (birthdayNPCDetails[3] == 1)
                         _birthdayNPC = null;
                 }
             }
@@ -95,14 +93,14 @@ namespace UIInfoSuite.UIElements
 
                     ClickableTextureComponent texture =
                         new ClickableTextureComponent(
-                            _birthdayNPC.Name,
+                            _birthdayNPC.name,
                             new Rectangle(
                                 iconPosition.X - 7,
                                 iconPosition.Y - 2,
                                 (int)(16.0 * scale),
                                 (int)(16.0 * scale)),
                             null,
-                            _birthdayNPC.Name,
+                            _birthdayNPC.name,
                             _birthdayNPC.Sprite.Texture,
                             headShot,
                             2f);
@@ -111,7 +109,7 @@ namespace UIInfoSuite.UIElements
 
                     if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                     {
-                        String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
+                        String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.name);
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,

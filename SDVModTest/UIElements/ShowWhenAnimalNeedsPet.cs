@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -33,13 +32,13 @@ namespace UIInfoSuite.UIElements
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
             _timer.Stop();
-            PlayerEvents.Warped -= OnLocationChange;
+            LocationEvents.LocationsChanged -= OnLocationChange;
             GraphicsEvents.OnPreRenderHudEvent -= DrawAnimalHasProduct;
 
             if (showWhenAnimalNeedsPet)
             {
                 _timer.Start();
-                PlayerEvents.Warped += OnLocationChange;
+                LocationEvents.LocationsChanged += OnLocationChange;
                 GraphicsEvents.OnPreRenderHudEvent += DrawAnimalHasProduct;
             }
         }
@@ -95,7 +94,7 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void OnLocationChange(object sender, EventArgsPlayerWarped e)
+        private void OnLocationChange(object sender, EventArgsGameLocationsChanged e)
         {
             if (e.NewLocation is AnimalHouse ||
                 e.NewLocation is Farm)
