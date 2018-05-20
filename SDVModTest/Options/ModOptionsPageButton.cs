@@ -104,7 +104,7 @@ namespace UIInfoSuite.Options
             {
                 IClickableMenu.drawHoverText(Game1.spriteBatch, "UI Info Mod Options", Game1.smallFont);
             }
-            drawMouse(b);
+            Tools.DrawMouseCursor();
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)

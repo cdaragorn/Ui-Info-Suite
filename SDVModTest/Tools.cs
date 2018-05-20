@@ -1,4 +1,6 @@
-﻿using StardewValley;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
@@ -63,6 +65,26 @@ namespace UIInfoSuite
 
 
             return truePrice;
+        }
+
+        public static void DrawMouseCursor()
+        {
+            if (!Game1.options.hardwareCursor)
+            {
+                int mouseCursorToRender = Game1.options.gamepadControls ? Game1.mouseCursor + 44 : Game1.mouseCursor;
+                var what = Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, mouseCursorToRender, 16, 16);
+
+                Game1.spriteBatch.Draw(
+                    Game1.mouseCursors,
+                    new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                    what,//new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, Game1.mouseCursor + 32, 16, 16)),
+                    Color.White,
+                    0.0f,
+                    Vector2.Zero,
+                    Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
+                    SpriteEffects.None,
+                    1f);
+            }
         }
 
         public static Item GetHoveredItem()

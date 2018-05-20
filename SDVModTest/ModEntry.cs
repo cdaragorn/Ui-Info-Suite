@@ -42,6 +42,7 @@ namespace UIInfoSuite
         {
             //Helper = helper;
             MonitorObject = Monitor;
+            Monitor.Log("starting.", LogLevel.Debug);
             SaveEvents.AfterLoad += LoadModData;
             SaveEvents.AfterSave += SaveModData;
             SaveEvents.AfterReturnToTitle += ReturnToTitle;
