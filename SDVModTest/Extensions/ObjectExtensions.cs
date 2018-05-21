@@ -56,7 +56,7 @@ namespace UIInfoSuite.Extensions
         public static Rectangle GetHeadShot(this NPC npc)
         {
             int size;
-            if (!_npcHeadShotSize.TryGetValue(npc.Name, out size))
+            if (!_npcHeadShotSize.TryGetValue(npc.name, out size))
                 size = 4;
 
             Rectangle mugShotSourceRect = npc.getMugShotSourceRect();

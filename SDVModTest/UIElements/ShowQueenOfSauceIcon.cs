@@ -77,7 +77,7 @@ namespace UIInfoSuite.UIElements
             {
                 foreach (var npc in location.characters)
                 {
-                    if (npc.Name == "Gus")
+                    if (npc.name == "Gus")
                     {
                         _gus = npc;
                         break;
@@ -180,14 +180,14 @@ namespace UIInfoSuite.UIElements
 
                     ClickableTextureComponent texture =
                         new ClickableTextureComponent(
-                            _gus.Name,
+                            _gus.name,
                             new Rectangle(
                                 iconLocation.X - 7,
                                 iconLocation.Y - 2,
                                 (int)(16.0 * scale),
                                 (int)(16.0 * scale)),
                             null,
-                            _gus.Name,
+                            _gus.name,
                             _gus.Sprite.Texture,
                             _gus.GetHeadShot(),
                             2f);

@@ -76,7 +76,7 @@ namespace UIInfoSuite.UIElements
                         foreach (var nextBuilding in buildableLocation.buildings)
                         {
                             if (nextBuilding is JunimoHut nextHut)
-                                ParseConfigToHighlightedArea(_junimoHutArray, nextHut.tileX.Value + 1, nextHut.tileY.Value + 1);
+                                ParseConfigToHighlightedArea(_junimoHutArray, nextHut.tileX + 1, nextHut.tileY + 1);
                         }
                     }
                 }

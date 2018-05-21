@@ -133,8 +133,8 @@ namespace UIInfoSuite.UIElements
                     if (menu is SocialPage)
                     {
                         _socialPage = menu as SocialPage;
-                        _friendNames = (typeof(SocialPage).GetField("names", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as List<object>)
-                            .Select(name => name.ToString())
+                        _friendNames = (typeof(SocialPage).GetField("friendNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as List<ClickableTextureComponent>)
+                            .Select(name => name.name)
                             .ToArray();
                         break;
                     }
@@ -144,7 +144,7 @@ namespace UIInfoSuite.UIElements
                 {
                     foreach (var npc in location.characters)
                     {
-                        if (Game1.player.friendshipData.ContainsKey(npc.Name))
+                        if (Game1.player.friendships.ContainsKey(npc.name))
                             _townsfolk.Add(npc);
                     }
                 }
@@ -157,7 +157,7 @@ namespace UIInfoSuite.UIElements
 
                     //default to on
                     bool optionForThisFriend = true;
-                    if (!Game1.player.friendshipData.ContainsKey(friendName))
+                    if (!Game1.player.friendships.ContainsKey(friendName))
                     {
                         checkbox.greyedOut = true;
                         optionForThisFriend = false;
@@ -224,7 +224,7 @@ namespace UIInfoSuite.UIElements
                     {
                         try
                         {
-                            int hashCode = character.Name.GetHashCode();
+                            int hashCode = character.name.GetHashCode();
 
                             bool drawCharacter = _options.SafeGet(hashCode.ToString()).SafeParseBool();
 
@@ -318,10 +318,10 @@ namespace UIInfoSuite.UIElements
                                     Color.Gray : Color.White;
                                 ClickableTextureComponent textureComponent =
                                     new ClickableTextureComponent(
-                                        character.Name,
+                                        character.name,
                                         new Rectangle(x, y, 0, 0),
                                         null,
-                                        character.Name,
+                                        character.name,
                                         character.Sprite.Texture,
                                         headShot,
                                         2.3f);
@@ -349,15 +349,15 @@ namespace UIInfoSuite.UIElements
 
                                 foreach (var quest in Game1.player.questLog)
                                 {
-                                    if (quest.accepted.Value && quest.dailyQuest.Value && !quest.completed.Value)
+                                    if (quest.accepted && quest.dailyQuest && !quest.completed)
                                     {
                                         bool isQuestTarget = false;
-                                        switch (quest.questType.Value)
+                                        switch (quest.questType)
                                         {
-                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target.Value == character.Name; break;
-                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target.Value == character.Name; break;
-                                            case 7: isQuestTarget = (quest as FishingQuest).target.Value == character.Name; break;
-                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target.Value == character.Name; break;
+                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target == character.name; break;
+                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target == character.name; break;
+                                            case 7: isQuestTarget = (quest as FishingQuest).target == character.name; break;
+                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target == character.name; break;
                                         }
 
                                         if (isQuestTarget)

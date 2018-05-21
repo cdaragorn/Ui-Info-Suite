@@ -87,14 +87,14 @@ namespace UIInfoSuite.UIElements
             {
                 if (_currentTileBuilding is Mill millBuilding)
                 {
-                    if (millBuilding.input.Value != null)
+                    if (millBuilding.input != null)
                     {
-                        if (!millBuilding.input.Value.isEmpty())
+                        if (!millBuilding.input.isEmpty())
                         {
                             int wheatCount = 0;
                             int beetCount = 0;
 
-                            foreach (var item in millBuilding.input.Value.items)
+                            foreach (var item in millBuilding.input.items)
                             {
                                 if (item != null &&
                                     !String.IsNullOrEmpty(item.Name))
@@ -131,11 +131,11 @@ namespace UIInfoSuite.UIElements
                 }
             }
             else if (_currentTile != null &&
-                (!_currentTile.bigCraftable.Value ||
-                _currentTile.MinutesUntilReady > 0))
+                (!_currentTile.bigCraftable ||
+                _currentTile.minutesUntilReady > 0))
             {
-                if (_currentTile.bigCraftable.Value &&
-                    _currentTile.MinutesUntilReady > 0 &&
+                if (_currentTile.bigCraftable &&
+                    _currentTile.minutesUntilReady > 0 &&
                     _currentTile.Name != "Heater")
                 {
                     StringBuilder hoverText = new StringBuilder();
@@ -144,14 +144,14 @@ namespace UIInfoSuite.UIElements
                     {
                         Cask currentCask = _currentTile as Cask;
 
-                        hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
+                        hoverText.Append((int)(currentCask.daysToMature / currentCask.agingRate))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
                     }
                     else
                     {
-                        int hours = _currentTile.MinutesUntilReady / 60;
-                        int minutes = _currentTile.MinutesUntilReady % 60;
+                        int hours = _currentTile.minutesUntilReady / 60;
+                        int minutes = _currentTile.minutesUntilReady % 60;
                         if (hours > 0)
                             hoverText.Append(hours).Append(" ")
                                 .Append(_helper.SafeGetString(
@@ -173,34 +173,34 @@ namespace UIInfoSuite.UIElements
                 {
                     HoeDirt hoeDirt = _terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
-                        !hoeDirt.crop.dead.Value)
+                        !hoeDirt.crop.dead)
                     {
                         int num = 0;
 
-                        if (hoeDirt.crop.fullyGrown.Value &&
-                            hoeDirt.crop.dayOfCurrentPhase.Value > 0)
+                        if (hoeDirt.crop.fullyGrown &&
+                            hoeDirt.crop.dayOfCurrentPhase > 0)
                         {
-                            num = hoeDirt.crop.dayOfCurrentPhase.Value;
+                            num = hoeDirt.crop.dayOfCurrentPhase;
                         }
                         else
                         {
                             for (int i = 0; i < hoeDirt.crop.phaseDays.Count - 1; ++i)
                             {
-                                if (hoeDirt.crop.currentPhase.Value == i)
-                                    num -= hoeDirt.crop.dayOfCurrentPhase.Value;
+                                if (hoeDirt.crop.currentPhase == i)
+                                    num -= hoeDirt.crop.dayOfCurrentPhase;
 
-                                if (hoeDirt.crop.currentPhase.Value <= i)
+                                if (hoeDirt.crop.currentPhase <= i)
                                     num += hoeDirt.crop.phaseDays[i];
                             }
                         }
 
-                        if (hoeDirt.crop.indexOfHarvest.Value > 0)
+                        if (hoeDirt.crop.indexOfHarvest > 0)
                         {
-                            String hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest.Value);
+                            String hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest);
                             if (String.IsNullOrEmpty(hoverText))
                             {
-                                hoverText = new StardewValley.Object(new Debris(hoeDirt.crop.indexOfHarvest.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
-                                _indexOfCropNames.Add(hoeDirt.crop.indexOfHarvest.Value, hoverText);
+                                hoverText = new StardewValley.Object(new Debris(hoeDirt.crop.indexOfHarvest, Vector2.Zero, Vector2.Zero).chunkType, 1).DisplayName;
+                                _indexOfCropNames.Add(hoeDirt.crop.indexOfHarvest, hoverText);
                             }
 
                             StringBuilder finalHoverText = new StringBuilder();
@@ -227,11 +227,11 @@ namespace UIInfoSuite.UIElements
                 {
                     FruitTree tree = _terrain as FruitTree;
 
-                    if (tree.daysUntilMature.Value > 0)
+                    if (tree.daysUntilMature > 0)
                     {
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
-                            tree.daysUntilMature.Value + " " +
+                            tree.daysUntilMature + " " +
                                 _helper.SafeGetString(
                                     LanguageKeys.DaysToMature),
                             Game1.smallFont);

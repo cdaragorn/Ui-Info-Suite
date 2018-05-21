@@ -61,11 +61,11 @@ namespace UIInfoSuite.UIElements
                     {
                         int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
                         yOffset += 112;
-                        Friendship friendshipValues;
+                        int[] friendshipValues;
                         String nextName = _friendNames[i];
-                        if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
+                        if (Game1.player.friendships.TryGetValue(nextName, out friendshipValues))
                         {
-                            int friendshipRawValue = friendshipValues.Points;
+                            int friendshipRawValue = friendshipValues[0];
 
                             if (friendshipRawValue > 0)
                             {
@@ -116,8 +116,8 @@ namespace UIInfoSuite.UIElements
                     if (menu is SocialPage)
                     {
                         _socialPage = menu as SocialPage;
-                        _friendNames = (typeof(SocialPage).GetField("names", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as List<object>)
-                            .Select(name => name.ToString())
+                        _friendNames = (typeof(SocialPage).GetField("friendNames", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as List<ClickableTextureComponent>)
+                            .Select(name => name.name)
                             .ToArray();
                         break;
                     }

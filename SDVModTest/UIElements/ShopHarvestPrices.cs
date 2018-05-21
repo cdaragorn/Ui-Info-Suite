@@ -60,12 +60,12 @@ namespace UIInfoSuite.UIElements
                             new StardewValley.Object(
                                 new Debris(
                                     new Crop(
-                                        hoverItem.ParentSheetIndex, 
+                                        hoverItem.parentSheetIndex, 
                                         0, 
                                         0)
-                                        .indexOfHarvest.Value, 
+                                        .indexOfHarvest, 
                                     Game1.player.position, 
-                                    Game1.player.position).chunkType.Value, 
+                                    Game1.player.position).chunkType, 
                                 1);
                         text = "    " + temp.Price;
                     }
@@ -74,7 +74,7 @@ namespace UIInfoSuite.UIElements
                     if (heldItem == null)
                     {
                         int value = 0;
-                        switch (hoverItem.ParentSheetIndex)
+                        switch (hoverItem.parentSheetIndex)
                         {
                             case 628: value = 50; break;
                             case 629: value = 80; break;
