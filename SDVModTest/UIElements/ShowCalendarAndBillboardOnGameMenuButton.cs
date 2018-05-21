@@ -29,6 +29,7 @@ namespace UIInfoSuite.UIElements
         private readonly IModHelper _helper;
 
         private Item _hoverItem = null;
+        private Item _heldItem = null;
 
         public ShowCalendarAndBillboardOnGameMenuButton(IModHelper helper)
         {
@@ -40,20 +41,27 @@ namespace UIInfoSuite.UIElements
             GraphicsEvents.OnPostRenderGuiEvent -= RenderButtons;
             ControlEvents.MouseChanged -= OnBillboardIconClick;
             ControlEvents.ControllerButtonPressed -= OnBillboardIconPressed;
-            GraphicsEvents.OnPreRenderEvent -= GetHoverItem;
+            GameEvents.EighthUpdateTick -= GetHoverItem;
 
             if (showCalendarAndBillboard)
             {
                 GraphicsEvents.OnPostRenderGuiEvent += RenderButtons;
                 ControlEvents.MouseChanged += OnBillboardIconClick;
                 ControlEvents.ControllerButtonPressed += OnBillboardIconPressed;
-                GraphicsEvents.OnPreRenderEvent += GetHoverItem;
+                GameEvents.EighthUpdateTick += GetHoverItem;
             }
         }
 
         private void GetHoverItem(object sender, EventArgs e)
         {
             _hoverItem = Tools.GetHoveredItem();
+            if (Game1.activeClickableMenu is GameMenu gameMenu)
+            {
+                List<IClickableMenu> menuList = typeof(GameMenu).GetField("pages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.activeClickableMenu) as List<IClickableMenu>;
+
+                if (menuList[0] is InventoryPage inventory)
+                    _heldItem = typeof(InventoryPage).GetField("heldItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(inventory) as Item;
+            }
         }
 
         private void OnBillboardIconPressed(object sender, EventArgsControllerButtonPressed e)
@@ -79,7 +87,8 @@ namespace UIInfoSuite.UIElements
         {
             if (Game1.activeClickableMenu is GameMenu &&
                 (Game1.activeClickableMenu as GameMenu).currentTab == 0 &&
-                _showBillboardButton.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+                _showBillboardButton.containsPoint(Game1.getMouseX(), Game1.getMouseY())
+                && _heldItem == null)
             {
                 if (Game1.questOfTheDay != null &&
                     String.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
@@ -95,7 +104,8 @@ namespace UIInfoSuite.UIElements
         {
             if (_hoverItem == null &&
                 Game1.activeClickableMenu is GameMenu &&
-                (Game1.activeClickableMenu as GameMenu).currentTab == 0)
+                (Game1.activeClickableMenu as GameMenu).currentTab == 0
+                && _heldItem == null)
             {
                 _showBillboardButton.bounds.X = Game1.activeClickableMenu.xPositionOnScreen + Game1.activeClickableMenu.width - 160;
 
