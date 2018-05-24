@@ -178,7 +178,9 @@ namespace UIInfoSuite.UIElements
                 {
                     if (requiredBundle.Value.Contains(_hoverItem.parentSheetIndex) &&
                         !_hoverItem.Name.Contains("arecrow") &&
-                        _hoverItem.Name != "Chest")
+                        _hoverItem.Name != "Chest" &&
+                        _hoverItem.Name != "Recycling Machine" &&
+                        _hoverItem.Name != "Solid Gold Lewis")
                     {
                         requiredBundleName = requiredBundle.Key;
                         break;
