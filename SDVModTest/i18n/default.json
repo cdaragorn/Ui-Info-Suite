@@ -6,10 +6,10 @@
     "HarvestPrice" : "Harvest price",
     // -- Daily icons --
     "TodaysRecipe" : "Today's recipe: ",
-    "FeelingLucky" : "Luck: Very lucky",
+    "FeelingLucky" : "Luck: very lucky",
     "LuckyButNotTooLucky" : "Luck: lucky",
     "MaybeStayHome" : "Luck: unlucky",
-    "NotFeelingLuckyAtAll" : "Luck: Very unlucky",
+    "NotFeelingLuckyAtAll" : "Luck: very unlucky",
     "TravelingMerchantIsInTown" : "Traveling merchant is in town",
     "DaysUntilToolIsUpgraded" : "{0} days until {1} is finished being upgraded",
     "ToolIsFinishedBeingUpgraded" : "{0} is finished",
