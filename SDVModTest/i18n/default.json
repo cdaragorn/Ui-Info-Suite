@@ -1,36 +1,50 @@
 {
-    "Billboard" : "Billboard",
+    // --- UI Strings ---
+    // -- Menu --
+    "Billboard" : "Bulletin Board",
     "Calendar" : "Calendar",
-    "Days" : "days",
-    "DaysToMature" : "days to mature",
-    "FeelingLucky" : "You're feelin' lucky!!",
     "HarvestPrice" : "Harvest price",
+    // -- Daily icons --
+    "TodaysRecipe" : "Today's recipe: ",
+    "FeelingLucky" : "Luck: Very lucky",
+    "LuckyButNotTooLucky" : "Luck: lucky",
+    "MaybeStayHome" : "Luck: unlucky",
+    "NotFeelingLuckyAtAll" : "Luck: Very unlucky",
+    "TravelingMerchantIsInTown" : "Traveling merchant is in town",
+    "DaysUntilToolIsUpgraded" : "{0} days until {1} is finished being upgraded",
+    "ToolIsFinishedBeingUpgraded" : "{0} is finished",
+    // -- Time units --
+    "Days" : "days",
     "Hours" : "hours",
-    "LevelUp" : "Level Up",
-    "LuckyButNotTooLucky" : "Feelin' lucky... but not too lucky",
-    "MaybeStayHome" : "Maybe you should stay home today...",
     "Minutes" : "minutes",
-    "NotFeelingLuckyAtAll" : "You're not feeling lucky at all today...",
-    "ReadyToHarvest" : "Ready To Harvest!",
-    "TodaysRecipe" : "Today's Recipe: ",
-    "TravelingMerchantIsInTown" : "Traveling merchant is in town!",
-	"DaysUntilToolIsUpgraded" : "{0} days until {1} is finished being upgraded",
-	"ToolIsFinishedBeingUpgraded" : "{0} is finished!",
-	"ShowLuckIcon" : "Show luck icon",
-	"ShowLevelUpAnimation" : "Show level up animation",
-	"ShowExperienceBar" : "Show experience bar",
-	"AllowExperienceBarToFadeOut" : "Allow experience bar to fade out",
-	"ShowExperienceGain" : "Show experience gain",
-	"ShowLocationOfTownsPeople" : "Show townspeople on map",
-	"ShowBirthdayIcon" : "Show Birthday icon",
-	"ShowHeartFills" : "Show heart fills",
-	"ShowAnimalsNeedPets" : "Show when animals need pets",
-	"DisplayCalendarAndBillboard" : "Show calendar/billboard button",
-	"ShowCropAndBarrelTooltip" : "Show crop and barrel times",
-	"ShowItemEffectRanges" : "Show scarecrow and sprinkler range",
-	"ShowExtraItemInformation" : "Show item hover information",
-	"ShowTravelingMerchant" : "Show Traveling Merchant",
-	"ShowHarvestPricesInShop" : "Show shop harvest prices",
-	"ShowWhenNewRecipesAreAvailable" : "Show when new recipes are available",
-	"ShowToolUpgradeStatus" : "Show tool upgrade status"
+    // -- Crop info --
+    "DaysToMature" : "days until maturity",
+    "ReadyToHarvest" : "Ready to harvest",
+    // -- Notifications --
+    "LevelUp" : "Level up!",
+    
+    // --- Config Strings ---
+    // -- Map info --
+    "ShowLocationOfTownsPeople" : "Display townspeople's locations on map",
+    // -- Daily icons --
+    "ShowLuckIcon" : "Display daily luck icon",
+    "ShowBirthdayIcon" : "Display when it is someone's birthday",
+    "ShowWhenNewRecipesAreAvailable" : "Display when new recipes are available",
+    "ShowToolUpgradeStatus" : "Display tool upgrade status",
+    "ShowTravelingMerchant" : "Display traveling merchant availability",
+    // -- Experience info --
+    "ShowExperienceBar" : "Display experience bar",
+    "AllowExperienceBarToFadeOut" : "Allow experience bar to fade out",
+    "ShowExperienceGain" : "Display experience gain numbers",
+    "ShowLevelUpAnimation" : "Display level up animation",
+    // -- Relationship info --
+    "ShowHeartFills" : "Display relationship heart progress",
+    "ShowAnimalsNeedPets" : "Display when animals need petting",
+    // -- Menu --
+    "DisplayCalendarAndBillboard" : "Display calendar and bulletin board button",
+    "ShowExtraItemInformation" : "Display item hover information",
+    "ShowCropAndBarrelTooltip" : "Display crop and barrel times",
+    "ShowHarvestPricesInShop" : "Display shop harvest prices",
+    // -- Building info --
+    "ShowItemEffectRanges" : "Display scarecrow and sprinkler ranges"
 }
