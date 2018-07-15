@@ -60,7 +60,9 @@ namespace UIInfoSuite.UIElements
                 List<IClickableMenu> menuList = typeof(GameMenu).GetField("pages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.activeClickableMenu) as List<IClickableMenu>;
 
                 if (menuList[0] is InventoryPage inventory)
-                    _heldItem = typeof(InventoryPage).GetField("heldItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(inventory) as Item;
+                {
+                    _heldItem = Game1.player.CursorSlotItem;
+                }
             }
         }
 

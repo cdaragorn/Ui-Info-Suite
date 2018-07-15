@@ -42,15 +42,15 @@ namespace UIInfoSuite.UIElements
 
         private void CheckForMidDayChanges(object sender, EventArgs e)
         {
-            if (_toolBeingUpgraded != Game1.player.toolBeingUpgraded)
+            if (_toolBeingUpgraded != Game1.player.toolBeingUpgraded.Value)
                 DayChanged(null, null);
         }
 
         private void DayChanged(object sender, EventArgs e)
         {
-            if (Game1.player.toolBeingUpgraded != null)
+            if (Game1.player.toolBeingUpgraded.Value != null)
             {
-                _toolBeingUpgraded = Game1.player.toolBeingUpgraded;
+                _toolBeingUpgraded = Game1.player.toolBeingUpgraded.Value;
                 _toolTexturePosition = new Rectangle();
 
                 if (_toolBeingUpgraded is StardewValley.Tools.WateringCan)
@@ -86,10 +86,10 @@ namespace UIInfoSuite.UIElements
                     _toolTexturePosition.X -= 333;
                 }
 
-                if (Game1.player.daysLeftForToolUpgrade > 0)
+                if (Game1.player.daysLeftForToolUpgrade.Value > 0)
                 {
                     _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
-                        Game1.player.daysLeftForToolUpgrade, _toolBeingUpgraded.DisplayName);
+                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
                 }
                 else
                 {

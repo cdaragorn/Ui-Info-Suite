@@ -99,6 +99,7 @@ namespace UIInfoSuite.Options
 
         }
 
+
         public void Dispose()
         {
             foreach (var item in _elementsToDispose)
@@ -147,9 +148,7 @@ namespace UIInfoSuite.Options
 
         private void SetActiveClickableMenuToModOptionsPage()
         {
-            GameMenu menu = Game1.activeClickableMenu as GameMenu;
-
-            if (menu != null)
+            if (Game1.activeClickableMenu is GameMenu menu)
                 menu.currentTab = _modOptionsTabPageNumber;
         }
 

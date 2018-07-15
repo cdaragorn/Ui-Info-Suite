@@ -66,7 +66,15 @@ namespace UIInfoSuite.UIElements
                 if (Game1.currentLocation.terrainFeatures == null ||
                     !Game1.currentLocation.terrainFeatures.TryGetValue(Game1.currentCursorTile, out _terrain))
                 {
-                    _terrain = null;
+                    if (_currentTile is IndoorPot pot &&
+                        pot.hoeDirt.Value != null)
+                    {
+                        _terrain = pot.hoeDirt.Value;
+                    }
+                    else
+                    {
+                        _terrain = null;
+                    }
                 }
             }
             else
@@ -139,11 +147,11 @@ namespace UIInfoSuite.UIElements
                     _currentTile.Name != "Heater")
                 {
                     StringBuilder hoverText = new StringBuilder();
+                    hoverText.AppendLine(_currentTile.heldObject.Value.DisplayName);
 
                     if (_currentTile is Cask)
                     {
                         Cask currentCask = _currentTile as Cask;
-
                         hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
@@ -226,16 +234,18 @@ namespace UIInfoSuite.UIElements
                 else if (_terrain is FruitTree)
                 {
                     FruitTree tree = _terrain as FruitTree;
-
+                    var text = new StardewValley.Object(new Debris(tree.indexOfFruit.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                     if (tree.daysUntilMature.Value > 0)
                     {
-                        IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            tree.daysUntilMature.Value + " " +
+                        text += Environment.NewLine + tree.daysUntilMature.Value + " " +
                                 _helper.SafeGetString(
-                                    LanguageKeys.DaysToMature),
-                            Game1.smallFont);
+                                    LanguageKeys.DaysToMature);
+
                     }
+                    IClickableMenu.drawHoverText(
+                            Game1.spriteBatch,
+                            text,
+                            Game1.smallFont);
                 }
             }
         }
