@@ -22,8 +22,9 @@ namespace UIInfoSuite.UIElements
     class ExperienceBar : IDisposable
     {
         private const int MaxBarWidth = 175;
-        private int _currentLevelIndex = 4;
-        private float _currentExperience = 0;
+
+        //private float _currentExperience = 0;
+        private int[] _currentExperience = new int[5];
         private readonly List<ExperiencePointDisplay> _experiencePointDisplays = new List<ExperiencePointDisplay>();
         private GameLocation _currentLocation = new GameLocation();
         private readonly TimeSpan _levelUpPauseTime = TimeSpan.FromSeconds(2);
@@ -92,6 +93,8 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleShowExperienceGain(bool showExperienceGain)
         {
+            for (int i = 0; i < _currentExperience.Length; ++i)
+                _currentExperience[i] = Game1.player.experiencePoints[i];
             _showExperienceGain = showExperienceGain;
         }
 
@@ -172,216 +175,180 @@ namespace UIInfoSuite.UIElements
             {
                 Item currentItem = Game1.player.CurrentItem;
                 Rectangle rectangle1 = new Rectangle(10, 428, 10, 10);
-                int experienceLevel;
+                int experienceLevel = 0;
+                int currentLevelIndex = -1;
+                int experienceRequiredToLevel = -1;
+                int experienceFromPreviousLevels = -1;
+                int experienceEarnedThisLevel = -1;
 
-                if (currentItem is FishingRod)
+
+                for (int i = 0; i < _currentExperience.Length; ++i)
                 {
-                    _experienceFillColor = new Color(17, 84, 252, 0.63f);
-                    _currentLevelIndex = 1;
-                    rectangle1.X = 20;
-                    experienceLevel = Game1.player.fishingLevel;
+                    if (_currentExperience[i] != Game1.player.experiencePoints[i])
+                    {
+                        currentLevelIndex = i;
+                        break;
+                    }
                 }
-                else if (currentItem is Pickaxe)
+
+                if (currentLevelIndex > -1)
                 {
-                    _experienceFillColor = new Color(145, 104, 63, 0.63f);
-                    _currentLevelIndex = 3;
-                    rectangle1.X = 30;
-                    experienceLevel = Game1.player.miningLevel;
-                }
-                else if (currentItem is MeleeWeapon &&
-                    currentItem.Name != "Scythe")
-                {
-                    _experienceFillColor = new Color(204, 0, 3, 0.63f);
-                    _currentLevelIndex = 4;
-                    rectangle1.X = 120;
-                    experienceLevel = Game1.player.combatLevel;
-                }
-                else if (Game1.currentLocation is Farm &&
-                    !(currentItem is Axe))
-                {
-                    _experienceFillColor = new Color(255, 251, 35, 0.38f);
-                    _currentLevelIndex = 0;
-                    rectangle1.X = 10;
-                    experienceLevel = Game1.player.farmingLevel;
+                    switch ((EventArgsLevelUp.LevelType)currentLevelIndex)
+                    {
+                        case EventArgsLevelUp.LevelType.Combat:
+                        {
+                            _experienceFillColor = new Color(204, 0, 3, 0.63f);
+                            rectangle1.X = 120;
+                            experienceLevel = Game1.player.combatLevel;
+                            break;
+                        }
+
+                        case EventArgsLevelUp.LevelType.Farming:
+                        {
+                            _experienceFillColor = new Color(255, 251, 35, 0.38f);
+                            rectangle1.X = 10;
+                            experienceLevel = Game1.player.farmingLevel;
+                            break;
+                        }
+
+                        case EventArgsLevelUp.LevelType.Fishing:
+                        {
+                            _experienceFillColor = new Color(17, 84, 252, 0.63f);
+                            rectangle1.X = 20;
+                            experienceLevel = Game1.player.fishingLevel;
+                            break;
+                        }
+
+                        case EventArgsLevelUp.LevelType.Foraging:
+                        {
+                            _experienceFillColor = new Color(0, 234, 0, 0.63f);
+                            rectangle1.X = 60;
+                            experienceLevel = Game1.player.foragingLevel;
+                            break;
+                        }
+
+                        case EventArgsLevelUp.LevelType.Mining:
+                        {
+                            _experienceFillColor = new Color(145, 104, 63, 0.63f);
+                            rectangle1.X = 30;
+                            experienceLevel = Game1.player.miningLevel;
+                            break;
+                        }
+                    }
+
+                    experienceRequiredToLevel = GetExperienceRequiredToLevel(experienceLevel);
+                    experienceFromPreviousLevels = GetExperienceRequiredToLevel(experienceLevel - 1);
+                    experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - experienceFromPreviousLevels;
+                    int experiencePreviouslyEarnedThisLevel = _currentExperience[currentLevelIndex] - experienceFromPreviousLevels;
+                    _currentExperience[currentLevelIndex] = Game1.player.experiencePoints[currentLevelIndex];
+
+                    ShowExperienceBar();
+                    if (_showExperienceGain)
+                    {
+                        _experiencePointDisplays.Add(
+                            new ExperiencePointDisplay(
+                                experienceEarnedThisLevel - experiencePreviouslyEarnedThisLevel,
+                                Game1.player.getLocalPosition(Game1.viewport)));
+                    }
+
+                    
                 }
                 else
                 {
-                    _experienceFillColor = new Color(0, 234, 0, 0.63f);
-                    _currentLevelIndex = 2;
-                    rectangle1.X = 60;
-                    experienceLevel = Game1.player.foragingLevel;
-                }
+                    if (currentItem is FishingRod)
+                    {
+                        _experienceFillColor = new Color(17, 84, 252, 0.63f);
+                        currentLevelIndex = 1;
+                        rectangle1.X = 20;
+                        experienceLevel = Game1.player.fishingLevel;
+                    }
+                    else if (currentItem is Pickaxe)
+                    {
+                        _experienceFillColor = new Color(145, 104, 63, 0.63f);
+                        currentLevelIndex = 3;
+                        rectangle1.X = 30;
+                        experienceLevel = Game1.player.miningLevel;
+                    }
+                    else if (currentItem is MeleeWeapon &&
+                        currentItem.Name != "Scythe")
+                    {
+                        _experienceFillColor = new Color(204, 0, 3, 0.63f);
+                        currentLevelIndex = 4;
+                        rectangle1.X = 120;
+                        experienceLevel = Game1.player.combatLevel;
+                    }
+                    else if (Game1.currentLocation is Farm &&
+                        !(currentItem is Axe))
+                    {
+                        _experienceFillColor = new Color(255, 251, 35, 0.38f);
+                        currentLevelIndex = 0;
+                        rectangle1.X = 10;
+                        experienceLevel = Game1.player.farmingLevel;
+                    }
+                    else
+                    {
+                        _experienceFillColor = new Color(0, 234, 0, 0.63f);
+                        currentLevelIndex = 2;
+                        rectangle1.X = 60;
+                        experienceLevel = Game1.player.foragingLevel;
+                    }
 
-                if (experienceLevel <= 9)
-                {
-                    int experienceRequiredToLevel = GetExperienceRequiredToLevel(experienceLevel);
-                    int experienceFromPreviousLevels = GetExperienceRequiredToLevel(experienceLevel - 1);
-                    int experienceEarnedThisLevel = Game1.player.experiencePoints[_currentLevelIndex] - experienceFromPreviousLevels;
+                    experienceRequiredToLevel = GetExperienceRequiredToLevel(experienceLevel);
+                    experienceFromPreviousLevels = GetExperienceRequiredToLevel(experienceLevel - 1);
+                    experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - experienceFromPreviousLevels;
 
                     if (_previousItem != currentItem)
-                    {
                         ShowExperienceBar();
-                    }
-                    else if (_currentExperience != experienceEarnedThisLevel)
+                }
+
+                _previousItem = currentItem;
+
+                if (_shouldDrawLevelUp)
+                {
+                    Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
+                    Game1.spriteBatch.Draw(
+                        Game1.mouseCursors,
+                        new Vector2(
+                            playerLocalPosition.X - 74,
+                            playerLocalPosition.Y - 130),
+                        _levelUpIconRectangle,
+                        _iconColor,
+                        0,
+                        Vector2.Zero,
+                        Game1.pixelZoom,
+                        SpriteEffects.None,
+                        0.85f);
+
+                    Game1.drawWithBorder(
+                        _helper.SafeGetString(
+                            LanguageKeys.LevelUp),
+                        Color.DarkSlateGray,
+                        Color.PaleTurquoise,
+                        new Vector2(
+                            playerLocalPosition.X - 28,
+                            playerLocalPosition.Y - 130));
+                }
+
+                for (int i = _experiencePointDisplays.Count - 1; i >= 0; --i)
+                {
+                    if (_experiencePointDisplays[i].IsInvisible)
                     {
-                        ShowExperienceBar();
-                        if (experienceEarnedThisLevel - _currentExperience > 0 &&
-                        _showExperienceGain)
-                        {
-                            _experiencePointDisplays.Add(
-                                new ExperiencePointDisplay(
-                                    experienceEarnedThisLevel - _currentExperience,
-                                    Game1.player.getLocalPosition(Game1.viewport)));
-                        }
+                        _experiencePointDisplays.RemoveAt(i);
                     }
-                    
-                    _previousItem = currentItem;
-                    _currentExperience = experienceEarnedThisLevel;
-
-                    if (_shouldDrawLevelUp)
+                    else
                     {
-                        Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
-                        Game1.spriteBatch.Draw(
-                            Game1.mouseCursors,
-                            new Vector2(
-                                playerLocalPosition.X - 74,
-                                playerLocalPosition.Y - 130),
-                            _levelUpIconRectangle,
-                            _iconColor,
-                            0,
-                            Vector2.Zero,
-                            Game1.pixelZoom,
-                            SpriteEffects.None,
-                            0.85f);
-
-                        Game1.drawWithBorder(
-                            _helper.SafeGetString(
-                                LanguageKeys.LevelUp),
-                            Color.DarkSlateGray,
-                            Color.PaleTurquoise,
-                            new Vector2(
-                                playerLocalPosition.X - 28,
-                                playerLocalPosition.Y - 130));
+                        _experiencePointDisplays[i].Draw();
                     }
+                }
 
-                    for (int i = _experiencePointDisplays.Count - 1; i >= 0; --i)
-                    {
-                        if (_experiencePointDisplays[i].IsInvisible)
-                        {
-                            _experiencePointDisplays.RemoveAt(i);
-                        }
-                        else
-                        {
-                            _experiencePointDisplays[i].Draw();
-                        }
-                    }
+                if (_experienceBarShouldBeVisible &&
+                    _showExperienceBar)
+                {
+                    int experienceDifferenceBetweenLevels = experienceRequiredToLevel - experienceFromPreviousLevels;
+                    int barWidth = (int)((double)experienceEarnedThisLevel / experienceDifferenceBetweenLevels * MaxBarWidth);
 
-                    if (_experienceBarShouldBeVisible &&
-                        _showExperienceBar)
-                    {
-                        int barWidth = (int)(_currentExperience / (experienceRequiredToLevel - experienceFromPreviousLevels) * MaxBarWidth);
-                        float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
+                    DrawExperienceBar(barWidth, experienceEarnedThisLevel, experienceDifferenceBetweenLevels, experienceLevel, rectangle1);
 
-                        if (Game1.isOutdoorMapSmallerThanViewport())
-                        {
-                            int num3 = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;
-                            leftSide += (Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right - num3) / 2;
-                        }
-
-                        Game1.drawDialogueBox(
-                            (int)leftSide,
-                            Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 160,
-                            240,
-                            160,
-                            false,
-                            true);
-
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
-                                barWidth,
-                                31),
-                            _experienceFillColor);
-
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
-                                Math.Min(4, barWidth),
-                                31),
-                            _experienceFillColor);
-
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
-                                barWidth,
-                                4),
-                            _experienceFillColor);
-
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                (int)leftSide + 32,
-                                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 36,
-                                barWidth,
-                                4),
-                            _experienceFillColor);
-
-                        ClickableTextureComponent textureComponent =
-                            new ClickableTextureComponent(
-                                "",
-                                new Rectangle(
-                                    (int)leftSide - 36,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 80,
-                                    260,
-                                    100),
-                                "",
-                                "",
-                                Game1.mouseCursors,
-                                new Rectangle(0, 0, 0, 0),
-                                Game1.pixelZoom);
-
-                        if (textureComponent.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                        {
-                            Game1.drawWithBorder(
-                                _currentExperience + "/" + (experienceRequiredToLevel - experienceFromPreviousLevels),
-                                Color.Black,
-                                Color.Black,
-                                new Vector2(
-                                    leftSide + 33,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
-                        }
-                        else
-                        {
-                            Game1.spriteBatch.Draw(
-                                Game1.mouseCursors,
-                                new Vector2(
-                                    leftSide + 54,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 62),
-                                rectangle1,
-                                _iconColor,
-                                0,
-                                Vector2.Zero,
-                                2.9f,
-                                SpriteEffects.None,
-                                0.85f);
-
-                            Game1.drawWithBorder(
-                                experienceLevel.ToString(),
-                                Color.Black * 0.6f,
-                                Color.Black,
-                                new Vector2(
-                                    leftSide + 33,
-                                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
-                        }
-
-                        
-                    }
                 }
 
             }
@@ -419,6 +386,109 @@ namespace UIInfoSuite.UIElements
             }
 
             _experienceBarShouldBeVisible = true;
+        }
+
+        private void DrawExperienceBar(int barWidth, int experienceGainedThisLevel, int experienceRequiredForNextLevel, int currentLevel, Rectangle iconPosition)
+        {
+            float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
+
+            if (Game1.isOutdoorMapSmallerThanViewport())
+            {
+                int num3 = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;
+                leftSide += (Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right - num3) / 2;
+            }
+
+            Game1.drawDialogueBox(
+                (int)leftSide,
+                Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 160,
+                240,
+                160,
+                false,
+                true);
+
+            Game1.spriteBatch.Draw(
+                Game1.staminaRect,
+                new Rectangle(
+                    (int)leftSide + 32,
+                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
+                    barWidth,
+                    31),
+                _experienceFillColor);
+
+            Game1.spriteBatch.Draw(
+                Game1.staminaRect,
+                new Rectangle(
+                    (int)leftSide + 32,
+                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
+                    Math.Min(4, barWidth),
+                    31),
+                _experienceFillColor);
+
+            Game1.spriteBatch.Draw(
+                Game1.staminaRect,
+                new Rectangle(
+                    (int)leftSide + 32,
+                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 63,
+                    barWidth,
+                    4),
+                _experienceFillColor);
+
+            Game1.spriteBatch.Draw(
+                Game1.staminaRect,
+                new Rectangle(
+                    (int)leftSide + 32,
+                    Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 36,
+                    barWidth,
+                    4),
+                _experienceFillColor);
+
+            ClickableTextureComponent textureComponent =
+                new ClickableTextureComponent(
+                    "",
+                    new Rectangle(
+                        (int)leftSide - 36,
+                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 80,
+                        260,
+                        100),
+                    "",
+                    "",
+                    Game1.mouseCursors,
+                    new Rectangle(0, 0, 0, 0),
+                    Game1.pixelZoom);
+
+            if (textureComponent.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            {
+                Game1.drawWithBorder(
+                    experienceGainedThisLevel + "/" + experienceRequiredForNextLevel,
+                    Color.Black,
+                    Color.Black,
+                    new Vector2(
+                        leftSide + 33,
+                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
+            }
+            else
+            {
+                Game1.spriteBatch.Draw(
+                    Game1.mouseCursors,
+                    new Vector2(
+                        leftSide + 54,
+                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 62),
+                    iconPosition,
+                    _iconColor,
+                    0,
+                    Vector2.Zero,
+                    2.9f,
+                    SpriteEffects.None,
+                    0.85f);
+
+                Game1.drawWithBorder(
+                    currentLevel.ToString(),
+                    Color.Black * 0.6f,
+                    Color.Black,
+                    new Vector2(
+                        leftSide + 33,
+                        Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 70));
+            }
         }
 
     }

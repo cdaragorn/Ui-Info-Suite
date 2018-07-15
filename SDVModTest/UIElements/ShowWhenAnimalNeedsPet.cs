@@ -32,13 +32,13 @@ namespace UIInfoSuite.UIElements
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
             _timer.Stop();
-            LocationEvents.CurrentLocationChanged -= OnLocationChange;
+            LocationEvents.LocationsChanged -= OnLocationChange;
             GraphicsEvents.OnPreRenderHudEvent -= DrawAnimalHasProduct;
 
             if (showWhenAnimalNeedsPet)
             {
                 _timer.Start();
-                LocationEvents.CurrentLocationChanged += OnLocationChange;
+                LocationEvents.LocationsChanged += OnLocationChange;
                 GraphicsEvents.OnPreRenderHudEvent += DrawAnimalHasProduct;
             }
         }
@@ -94,10 +94,10 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void OnLocationChange(object sender, EventArgsCurrentLocationChanged e)
+        private void OnLocationChange(object sender, EventArgsGameLocationsChanged e)
         {
-            if (e.NewLocation is AnimalHouse ||
-                e.NewLocation is Farm)
+            if (Game1.player.currentLocation is AnimalHouse ||
+                Game1.player.currentLocation is Farm)
             {
                 _timer.Interval = 1000;
                 _timer.Start();

@@ -66,7 +66,15 @@ namespace UIInfoSuite.UIElements
                 if (Game1.currentLocation.terrainFeatures == null ||
                     !Game1.currentLocation.terrainFeatures.TryGetValue(Game1.currentCursorTile, out _terrain))
                 {
-                    _terrain = null;
+                    //if (_currentTile is IndoorPot pot &&
+                    //    pot.hoeDirt.Value != null)
+                    //{
+                    //    _terrain = pot.hoeDirt.Value;
+                    //}
+                    //else
+                    //{
+                        _terrain = null;
+                    //}
                 }
             }
             else
@@ -139,6 +147,7 @@ namespace UIInfoSuite.UIElements
                     _currentTile.Name != "Heater")
                 {
                     StringBuilder hoverText = new StringBuilder();
+                    hoverText.AppendLine(_currentTile.heldObject.DisplayName);
 
                     if (_currentTile is Cask)
                     {
@@ -227,15 +236,18 @@ namespace UIInfoSuite.UIElements
                 {
                     FruitTree tree = _terrain as FruitTree;
 
+                    var text = new StardewValley.Object(new Debris(tree.indexOfFruit, Vector2.Zero, Vector2.Zero).chunkType, 1).DisplayName;
                     if (tree.daysUntilMature > 0)
                     {
-                        IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            tree.daysUntilMature + " " +
+                        text += Environment.NewLine + tree.daysUntilMature + " " +
                                 _helper.SafeGetString(
-                                    LanguageKeys.DaysToMature),
-                            Game1.smallFont);
+                                    LanguageKeys.DaysToMature);
+
                     }
+                    IClickableMenu.drawHoverText(
+                            Game1.spriteBatch,
+                            text,
+                            Game1.smallFont);
                 }
             }
         }
