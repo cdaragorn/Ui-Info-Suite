@@ -14,7 +14,7 @@
     "ReadyToHarvest" : "Bereit zum Ernten!",
     "TodaysRecipe" : "Heutiges Rezept: ",
     "TravelingMerchantIsInTown" : "Reisehändler ist in der Stadt!",
-	"DaysUntilToolIsUpgraded" : "{0} dagen totdat {2} klaar is met upgraden",
+	"DaysUntilToolIsUpgraded" : "{0} dagen totdat {1} klaar is met upgraden",
 	"ToolIsFinishedBeingUpgraded" : "{0} is klaar!",
 	"ShowLuckIcon" : "Symbol \"Glück zeigen\"",
 	"ShowLevelUpAnimation" : "Zeige Level-up-Animation",
