@@ -47,7 +47,7 @@ namespace UIInfoSuite.Options
             _helper = helper;
             ModConfig modConfig = _helper.ReadConfig<ModConfig>();
             _luckOfDay = new LuckOfDay(helper);
-			_showBirthdayIcon = new ShowBirthdayIcon(helper);
+            _showBirthdayIcon = new ShowBirthdayIcon(helper);
             _locationOfTownsfolk = new LocationOfTownsfolk(_helper, _options);
             _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(_helper);
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
