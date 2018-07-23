@@ -119,7 +119,7 @@ namespace UIInfoSuite.UIElements
 
                     if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                     {
-						String hoverText = String.Format(_helper.SafeGetString(LanguageKeys.IsNPCsBirthday), _birthdayNPC.displayName);
+                        String hoverText = String.Format(_helper.SafeGetString(LanguageKeys.IsNPCsBirthday), _birthdayNPC.displayName);
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,
