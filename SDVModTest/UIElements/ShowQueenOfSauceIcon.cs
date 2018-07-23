@@ -198,7 +198,7 @@ namespace UIInfoSuite.UIElements
                     {
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
-                            "Gus is selling " + Game1.dishOfTheDay.DisplayName + " recipe today!",
+							String.Format(_helper.SafeGetString(LanguageKeys.GusIsSellingRecipe), Game1.dishOfTheDay.DisplayName),
                             Game1.dialogueFont);
                     }
                 }

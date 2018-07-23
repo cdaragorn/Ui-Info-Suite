@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using UIInfoSuite.Extensions;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
@@ -16,6 +17,12 @@ namespace UIInfoSuite.UIElements
     class ShowBirthdayIcon : IDisposable
     {
         private NPC _birthdayNPC;
+		private readonly IModHelper _helper;
+
+		public ShowBirthdayIcon(IModHelper helper)
+        {
+            _helper = helper;
+        }
 
         public void ToggleOption(bool showBirthdayIcon)
         {
@@ -112,7 +119,7 @@ namespace UIInfoSuite.UIElements
 
                     if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                     {
-                        String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
+						String hoverText = String.Format(_helper.SafeGetString(LanguageKeys.IsNPCsBirthday), _birthdayNPC.displayName);
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,
