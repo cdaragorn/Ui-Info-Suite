@@ -25,7 +25,7 @@ namespace UIInfoSuite.Options
         private int _modOptionsTabPageNumber;
 
         private readonly LuckOfDay _luckOfDay;
-        private readonly ShowBirthdayIcon _showBirthdayIcon = new ShowBirthdayIcon();
+        private readonly ShowBirthdayIcon _showBirthdayIcon;
         private readonly ShowAccurateHearts _showAccurateHearts = new ShowAccurateHearts();
         private readonly LocationOfTownsfolk _locationOfTownsfolk;
         private readonly ShowWhenAnimalNeedsPet _showWhenAnimalNeedsPet;
@@ -47,6 +47,7 @@ namespace UIInfoSuite.Options
             _helper = helper;
             ModConfig modConfig = _helper.ReadConfig<ModConfig>();
             _luckOfDay = new LuckOfDay(helper);
+			_showBirthdayIcon = new ShowBirthdayIcon(helper);
             _locationOfTownsfolk = new LocationOfTownsfolk(_helper, _options);
             _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(_helper);
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
