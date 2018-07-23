@@ -17,9 +17,9 @@ namespace UIInfoSuite.UIElements
     class ShowBirthdayIcon : IDisposable
     {
         private NPC _birthdayNPC;
-		private readonly IModHelper _helper;
+        private readonly IModHelper _helper;
 
-		public ShowBirthdayIcon(IModHelper helper)
+        public ShowBirthdayIcon(IModHelper helper)
         {
             _helper = helper;
         }
