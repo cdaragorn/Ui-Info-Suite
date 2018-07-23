@@ -156,8 +156,7 @@ namespace UIInfoSuite.UIElements
                     {
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
-                            _helper.SafeGetString(
-                                LanguageKeys.TodaysRecipe)+ _todaysRecipe,
+                            _helper.SafeGetString(LanguageKeys.TodaysRecipe)+ _todaysRecipe,
                             Game1.dialogueFont);
                     }
                 }
@@ -198,7 +197,7 @@ namespace UIInfoSuite.UIElements
                     {
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
-							String.Format(_helper.SafeGetString(LanguageKeys.GusIsSellingRecipe), Game1.dishOfTheDay.DisplayName),
+                            String.Format(_helper.SafeGetString(LanguageKeys.GusIsSellingRecipe), Game1.dishOfTheDay.DisplayName),
                             Game1.dialogueFont);
                     }
                 }
