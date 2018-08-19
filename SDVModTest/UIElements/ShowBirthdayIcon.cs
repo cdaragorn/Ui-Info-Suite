@@ -16,11 +16,13 @@ namespace UIInfoSuite.UIElements
     class ShowBirthdayIcon : IDisposable
     {
         private NPC _birthdayNPC;
+        private ClickableTextureComponent _birthdayIcon;
 
         public void ToggleOption(bool showBirthdayIcon)
         {
             TimeEvents.AfterDayStarted -= CheckForBirthday;
             GraphicsEvents.OnPreRenderHudEvent -= DrawBirthdayIcon;
+            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
             GameEvents.HalfSecondTick -= CheckIfGiftHasBeenGiven;
 
             if (showBirthdayIcon)
@@ -28,6 +30,7 @@ namespace UIInfoSuite.UIElements
                 CheckForBirthday(null, null);
                 TimeEvents.AfterDayStarted += CheckForBirthday;
                 GraphicsEvents.OnPreRenderHudEvent += DrawBirthdayIcon;
+                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
                 GameEvents.HalfSecondTick += CheckIfGiftHasBeenGiven;
             }
         }
@@ -94,7 +97,7 @@ namespace UIInfoSuite.UIElements
                         SpriteEffects.None,
                         1f);
 
-                    ClickableTextureComponent texture =
+                    _birthdayIcon =
                         new ClickableTextureComponent(
                             _birthdayNPC.Name,
                             new Rectangle(
@@ -108,17 +111,21 @@ namespace UIInfoSuite.UIElements
                             headShot,
                             2f);
 
-                    texture.draw(Game1.spriteBatch);
-
-                    if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                    {
-                        String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
-                        IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            hoverText,
-                            Game1.dialogueFont);
-                    }
+                    _birthdayIcon.draw(Game1.spriteBatch);
                 }
+            }
+        }
+
+        private void DrawHoverText(object sender, EventArgs e)
+        {
+            if (_birthdayNPC != null &&
+                _birthdayIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            {
+                String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
+                IClickableMenu.drawHoverText(
+                    Game1.spriteBatch,
+                    hoverText,
+                    Game1.dialogueFont);
             }
         }
     }

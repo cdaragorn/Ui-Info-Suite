@@ -23,11 +23,13 @@ namespace UIInfoSuite.UIElements
         private NPC _gus;
         private bool _drawQueenOfSauceIcon = false;
         private bool _drawDishOfDayIcon = false;
+        private ClickableTextureComponent _queenOfSauceIcon;
         private readonly IModHelper _helper;
 
         public void ToggleOption(bool showQueenOfSauceIcon)
         {
             GraphicsEvents.OnPreRenderHudEvent -= DrawIcon;
+            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
             TimeEvents.AfterDayStarted -= CheckForNewRecipe;
             GameEvents.OneSecondTick -= CheckIfLearnedRecipe;
 
@@ -37,6 +39,7 @@ namespace UIInfoSuite.UIElements
                 CheckForNewRecipe(null, null);
                 TimeEvents.AfterDayStarted += CheckForNewRecipe;
                 GraphicsEvents.OnPreRenderHudEvent += DrawIcon;
+                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
                 GameEvents.OneSecondTick += CheckIfLearnedRecipe;
             }
         }
@@ -145,21 +148,12 @@ namespace UIInfoSuite.UIElements
                 {
                     Point iconPosition = IconHandler.Handler.GetNewIconPosition();
 
-                    ClickableTextureComponent texture = new ClickableTextureComponent(
+                    _queenOfSauceIcon = new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
                         Game1.mouseCursors,
                         new Rectangle(609, 361, 28, 28),
                         1.3f);
-                    texture.draw(Game1.spriteBatch);
-
-                    if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                    {
-                        IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            _helper.SafeGetString(
-                                LanguageKeys.TodaysRecipe)+ _todaysRecipe,
-                            Game1.dialogueFont);
-                    }
+                    _queenOfSauceIcon.draw(Game1.spriteBatch);
                 }
 
                 if (_drawDishOfDayIcon)
@@ -202,6 +196,19 @@ namespace UIInfoSuite.UIElements
                             Game1.dialogueFont);
                     }
                 }
+            }
+        }
+
+        private void DrawHoverText(object sender, EventArgs e)
+        {
+            if (_drawQueenOfSauceIcon &&
+                _queenOfSauceIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            {
+                IClickableMenu.drawHoverText(
+                    Game1.spriteBatch,
+                    _helper.SafeGetString(
+                        LanguageKeys.TodaysRecipe) + _todaysRecipe,
+                    Game1.dialogueFont);
             }
         }
 

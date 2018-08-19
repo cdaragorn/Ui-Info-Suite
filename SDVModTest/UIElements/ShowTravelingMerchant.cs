@@ -17,20 +17,24 @@ namespace UIInfoSuite.UIElements
     class ShowTravelingMerchant : IDisposable
     {
         private bool _travelingMerchantIsHere = false;
+        private ClickableTextureComponent _travelingMerchantIcon;
         private readonly IModHelper _helper;
 
         public void ToggleOption(bool showTravelingMerchant)
         {
             GraphicsEvents.OnPreRenderHudEvent -= DrawTravelingMerchant;
+            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
             TimeEvents.AfterDayStarted -= DayChanged;
 
             if (showTravelingMerchant)
             {
                 DayChanged(null, new EventArgsIntChanged(0, Game1.dayOfMonth));
                 GraphicsEvents.OnPreRenderHudEvent += DrawTravelingMerchant;
+                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
                 TimeEvents.AfterDayStarted += DayChanged;
             }
         }
+
 
         public ShowTravelingMerchant(IModHelper helper)
         {
@@ -56,21 +60,26 @@ namespace UIInfoSuite.UIElements
                 _travelingMerchantIsHere)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                ClickableTextureComponent textureComponent = 
+                _travelingMerchantIcon = 
                     new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40), 
                         Game1.mouseCursors, 
                         new Rectangle(192, 1411, 20, 20), 
                         2f);
-                textureComponent.draw(Game1.spriteBatch);
-                if (textureComponent.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                {
-                    string hoverText = _helper.SafeGetString(
-                        LanguageKeys.TravelingMerchantIsInTown);
-                    IClickableMenu.drawHoverText(
-                        Game1.spriteBatch, 
-                        hoverText, Game1.dialogueFont);
-                }
+                _travelingMerchantIcon.draw(Game1.spriteBatch);
+            }
+        }
+
+        private void DrawHoverText(object sender, EventArgs e)
+        {
+            if (_travelingMerchantIsHere &&
+                _travelingMerchantIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            {
+                string hoverText = _helper.SafeGetString(
+                    LanguageKeys.TravelingMerchantIsInTown);
+                IClickableMenu.drawHoverText(
+                    Game1.spriteBatch,
+                    hoverText, Game1.dialogueFont);
             }
         }
     }

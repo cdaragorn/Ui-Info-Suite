@@ -144,11 +144,12 @@ namespace UIInfoSuite.UIElements
             {
                 if (_currentTile.bigCraftable.Value &&
                     _currentTile.MinutesUntilReady > 0 &&
+                    _currentTile.heldObject.Value != null &&
                     _currentTile.Name != "Heater")
                 {
                     StringBuilder hoverText = new StringBuilder();
                     hoverText.AppendLine(_currentTile.heldObject.Value.DisplayName);
-
+                    
                     if (_currentTile is Cask)
                     {
                         Cask currentCask = _currentTile as Cask;

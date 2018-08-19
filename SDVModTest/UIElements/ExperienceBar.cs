@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,15 +22,20 @@ namespace UIInfoSuite.UIElements
 {
     class ExperienceBar : IDisposable
     {
+
+        public interface LevelExtenderEvents
+        {
+            event EventHandler OnXPChanged;
+        }
+
         private const int MaxBarWidth = 175;
 
-        //private float _currentExperience = 0;
         private int[] _currentExperience = new int[5];
         private readonly List<ExperiencePointDisplay> _experiencePointDisplays = new List<ExperiencePointDisplay>();
-        private GameLocation _currentLocation = new GameLocation();
         private readonly TimeSpan _levelUpPauseTime = TimeSpan.FromSeconds(2);
-        private Color _iconColor = Color.White;
+        private readonly Color _iconColor = Color.White;
         private Color _experienceFillColor = Color.Blue;
+        private Rectangle _experienceIconPosition = new Rectangle(10, 428, 10, 10);
         private Item _previousItem = null;
         private bool _experienceBarShouldBeVisible = false;
         private bool _shouldDrawLevelUp = false;
@@ -43,6 +49,13 @@ namespace UIInfoSuite.UIElements
         private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
         private SoundPlayer _player;
+
+        private LevelExtenderInterface _levelExtenderAPI;
+
+        private int _currentSkillLevel = 0;
+        private int _experienceRequiredToLevel = -1;
+        private int _experienceFromPreviousLevels = -1;
+        private int _experienceEarnedThisLevel = -1;
 
         public ExperienceBar(IModHelper helper)
         {
@@ -64,6 +77,40 @@ namespace UIInfoSuite.UIElements
             _timeToDisappear.Elapsed += StopTimerAndFadeBarOut;
             GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
             PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
+
+            //var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
+            try
+            {
+                _levelExtenderAPI = _helper.ModRegistry.GetApi<LevelExtenderInterface>("DevinLematty.LevelExtender");
+            }
+            catch (Exception ex)
+            {
+                int j = 4;
+            }
+            int f = 3;
+
+            //if (something != null)
+            //{
+            //    try
+            //    {
+            //        var methods = something.GetType().GetMethods();
+            //        var currentXPMethod = something.GetType().GetMethod("currentXP");
+
+            //        foreach (var method in methods)
+            //        {
+
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        int f = 3;
+            //    }
+            //}
+        }
+
+        private void LoadModApis(object sender, EventArgs e)
+        {
+
         }
 
         public void Dispose()
@@ -71,8 +118,11 @@ namespace UIInfoSuite.UIElements
             PlayerEvents.LeveledUp -= OnLevelUp;
             GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
             PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
+            GameEvents.QuarterSecondTick -= DetermineIfExperienceHasBeenGained;
+            _timeToDisappear.Elapsed -= StopTimerAndFadeBarOut;
             _timeToDisappear.Stop();
             _timeToDisappear.Dispose();
+            _timeToDisappear = null;
         }
 
         public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
@@ -93,21 +143,29 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleShowExperienceGain(bool showExperienceGain)
         {
+            GameEvents.QuarterSecondTick -= DetermineIfExperienceHasBeenGained;
             for (int i = 0; i < _currentExperience.Length; ++i)
                 _currentExperience[i] = Game1.player.experiencePoints[i];
             _showExperienceGain = showExperienceGain;
+
+            if (showExperienceGain)
+            {
+                GameEvents.QuarterSecondTick += DetermineIfExperienceHasBeenGained;
+            }
         }
 
         public void ToggleShowExperienceBar(bool showExperienceBar)
         {
+            GameEvents.QuarterSecondTick -= DetermineIfExperienceHasBeenGained;
             //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
             //PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
             _showExperienceBar = showExperienceBar;
-            //if (showExperienceBar)
-            //{
-            //    GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
-            //    PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
-            //}
+            if (showExperienceBar)
+            {
+                //GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
+                //PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
+                GameEvents.QuarterSecondTick += DetermineIfExperienceHasBeenGained;
+            }
         }
 
         private void OnLevelUp(object sender, EventArgsLevelUp e)
@@ -123,9 +181,7 @@ namespace UIInfoSuite.UIElements
                     case EventArgsLevelUp.LevelType.Mining: _levelUpIconRectangle.X = 30; break;
                 }
                 _shouldDrawLevelUp = true;
-                _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
-                _timeToDisappear.Start();
-                _experienceBarShouldBeVisible = true;
+                ShowExperienceBar();
 
                 float previousAmbientVolume = Game1.options.ambientVolumeLevel;
                 float previousMusicVolume = Game1.options.musicVolumeLevel;
@@ -160,7 +216,7 @@ namespace UIInfoSuite.UIElements
 
         private void StopTimerAndFadeBarOut(object sender, ElapsedEventArgs e)
         {
-            _timeToDisappear.Stop();
+            _timeToDisappear?.Stop();
             _experienceBarShouldBeVisible = false;
         }
 
@@ -169,141 +225,154 @@ namespace UIInfoSuite.UIElements
             _experiencePointDisplays.Clear();
         }
 
+        private void DetermineIfExperienceHasBeenGained(object sender, EventArgs e)
+        {
+            Item currentItem = Game1.player.CurrentItem;
+
+            int currentLevelIndex = -1;
+
+            for (int i = 0; i < _currentExperience.Length; ++i)
+            {
+                if (_currentExperience[i] != Game1.player.experiencePoints[i])
+                {
+                    currentLevelIndex = i;
+                    break;
+                }
+            }
+
+            if (currentLevelIndex > -1)
+            {
+                switch (currentLevelIndex)
+                {
+                    case 0:
+                        {
+                            _experienceFillColor = new Color(255, 251, 35, 0.38f);
+                            _experienceIconPosition.X = 10;
+                            _currentSkillLevel = Game1.player.farmingLevel.Value;
+                            break;
+                        }
+
+                    case 1:
+                        {
+                            _experienceFillColor = new Color(17, 84, 252, 0.63f);
+                            _experienceIconPosition.X = 20;
+                            _currentSkillLevel = Game1.player.fishingLevel.Value;
+                            break;
+                        }
+
+                    case 2:
+                        {
+                            _experienceFillColor = new Color(0, 234, 0, 0.63f);
+                            _experienceIconPosition.X = 60;
+                            _currentSkillLevel = Game1.player.foragingLevel.Value;
+                            break;
+                        }
+
+                    case 3:
+                        {
+                            _experienceFillColor = new Color(145, 104, 63, 0.63f);
+                            _experienceIconPosition.X = 30;
+                            _currentSkillLevel = Game1.player.miningLevel.Value;
+                            break;
+                        }
+
+                    case 4:
+                        {
+                            _experienceFillColor = new Color(204, 0, 3, 0.63f);
+                            _experienceIconPosition.X = 120;
+                            _currentSkillLevel = Game1.player.combatLevel.Value;
+                            break;
+                        }
+                }
+
+                _experienceRequiredToLevel = GetExperienceRequiredToLevel(_currentSkillLevel);
+                _experienceFromPreviousLevels = GetExperienceRequiredToLevel(_currentSkillLevel - 1);
+                _experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - _experienceFromPreviousLevels;
+                int experiencePreviouslyEarnedThisLevel = _currentExperience[currentLevelIndex] - _experienceFromPreviousLevels;
+
+                if (_experienceRequiredToLevel <= 0 &&
+                    _levelExtenderAPI != null)
+                {
+                    _experienceEarnedThisLevel = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _experienceFromPreviousLevels = _currentExperience[currentLevelIndex] - _experienceEarnedThisLevel;
+                    _experienceRequiredToLevel = _levelExtenderAPI.requiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
+                }
+
+                ShowExperienceBar();
+                if (_showExperienceGain &&
+                    _experienceRequiredToLevel > 0)
+                {
+                    _experiencePointDisplays.Add(
+                        new ExperiencePointDisplay(
+                            Game1.player.experiencePoints[currentLevelIndex] - _currentExperience[currentLevelIndex],
+                            Game1.player.getLocalPosition(Game1.viewport)));
+                }
+
+                _currentExperience[currentLevelIndex] = Game1.player.experiencePoints[currentLevelIndex];
+
+            }
+            else if (_previousItem != currentItem)
+            {
+                if (currentItem is FishingRod)
+                {
+                    _experienceFillColor = new Color(17, 84, 252, 0.63f);
+                    currentLevelIndex = 1;
+                    _experienceIconPosition.X = 20;
+                    _currentSkillLevel = Game1.player.fishingLevel.Value;
+                }
+                else if (currentItem is Pickaxe)
+                {
+                    _experienceFillColor = new Color(145, 104, 63, 0.63f);
+                    currentLevelIndex = 3;
+                    _experienceIconPosition.X = 30;
+                    _currentSkillLevel = Game1.player.miningLevel.Value;
+                }
+                else if (currentItem is MeleeWeapon &&
+                    currentItem.Name != "Scythe")
+                {
+                    _experienceFillColor = new Color(204, 0, 3, 0.63f);
+                    currentLevelIndex = 4;
+                    _experienceIconPosition.X = 120;
+                    _currentSkillLevel = Game1.player.combatLevel.Value;
+                }
+                else if (Game1.currentLocation is Farm &&
+                    !(currentItem is Axe))
+                {
+                    _experienceFillColor = new Color(255, 251, 35, 0.38f);
+                    currentLevelIndex = 0;
+                    _experienceIconPosition.X = 10;
+                    _currentSkillLevel = Game1.player.farmingLevel.Value;
+                }
+                else
+                {
+                    _experienceFillColor = new Color(0, 234, 0, 0.63f);
+                    currentLevelIndex = 2;
+                    _experienceIconPosition.X = 60;
+                    _currentSkillLevel = Game1.player.foragingLevel.Value;
+                }
+
+                _experienceRequiredToLevel = GetExperienceRequiredToLevel(_currentSkillLevel);
+                _experienceFromPreviousLevels = GetExperienceRequiredToLevel(_currentSkillLevel - 1);
+                _experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - _experienceFromPreviousLevels;
+
+                if (_experienceRequiredToLevel <= 0 &&
+                    _levelExtenderAPI != null)
+                {
+                    _experienceEarnedThisLevel = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _experienceFromPreviousLevels = _currentExperience[currentLevelIndex] - _experienceEarnedThisLevel;
+                    _experienceRequiredToLevel = _levelExtenderAPI.requiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
+                }
+
+                ShowExperienceBar();
+                _previousItem = currentItem;
+            }
+
+        }
+
         private void OnPreRenderHudEvent(object sender, EventArgs e)
         {
             if (!Game1.eventUp)
             {
-                Item currentItem = Game1.player.CurrentItem;
-                Rectangle rectangle1 = new Rectangle(10, 428, 10, 10);
-                int experienceLevel = 0;
-                int currentLevelIndex = -1;
-                int experienceRequiredToLevel = -1;
-                int experienceFromPreviousLevels = -1;
-                int experienceEarnedThisLevel = -1;
-
-                
-
-                for (int i = 0; i < _currentExperience.Length; ++i)
-                {
-                    if (_currentExperience[i] != Game1.player.experiencePoints[i])
-                    {
-                        currentLevelIndex = i;
-                        break;
-                    }
-                }
-
-                if (currentLevelIndex > -1)
-                {
-                    switch ((EventArgsLevelUp.LevelType)currentLevelIndex)
-                    {
-                        case EventArgsLevelUp.LevelType.Combat:
-                        {
-                            _experienceFillColor = new Color(204, 0, 3, 0.63f);
-                            rectangle1.X = 120;
-                            experienceLevel = Game1.player.combatLevel.Value;
-                            break;
-                        }
-
-                        case EventArgsLevelUp.LevelType.Farming:
-                        {
-                            _experienceFillColor = new Color(255, 251, 35, 0.38f);
-                            rectangle1.X = 10;
-                            experienceLevel = Game1.player.farmingLevel.Value;
-                            break;
-                        }
-
-                        case EventArgsLevelUp.LevelType.Fishing:
-                        {
-                            _experienceFillColor = new Color(17, 84, 252, 0.63f);
-                            rectangle1.X = 20;
-                            experienceLevel = Game1.player.fishingLevel.Value;
-                            break;
-                        }
-
-                        case EventArgsLevelUp.LevelType.Foraging:
-                        {
-                            _experienceFillColor = new Color(0, 234, 0, 0.63f);
-                            rectangle1.X = 60;
-                            experienceLevel = Game1.player.foragingLevel.Value;
-                            break;
-                        }
-
-                        case EventArgsLevelUp.LevelType.Mining:
-                        {
-                            _experienceFillColor = new Color(145, 104, 63, 0.63f);
-                            rectangle1.X = 30;
-                            experienceLevel = Game1.player.miningLevel.Value;
-                            break;
-                        }
-                    }
-
-                    experienceRequiredToLevel = GetExperienceRequiredToLevel(experienceLevel);
-                    experienceFromPreviousLevels = GetExperienceRequiredToLevel(experienceLevel - 1);
-                    experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - experienceFromPreviousLevels;
-                    int experiencePreviouslyEarnedThisLevel = _currentExperience[currentLevelIndex] - experienceFromPreviousLevels;
-                    _currentExperience[currentLevelIndex] = Game1.player.experiencePoints[currentLevelIndex];
-
-                    ShowExperienceBar();
-                    if (_showExperienceGain)
-                    {
-                        _experiencePointDisplays.Add(
-                            new ExperiencePointDisplay(
-                                experienceEarnedThisLevel - experiencePreviouslyEarnedThisLevel,
-                                Game1.player.getLocalPosition(Game1.viewport)));
-                    }
-
-                    
-                }
-                else
-                {
-                    if (currentItem is FishingRod)
-                    {
-                        _experienceFillColor = new Color(17, 84, 252, 0.63f);
-                        currentLevelIndex = 1;
-                        rectangle1.X = 20;
-                        experienceLevel = Game1.player.fishingLevel.Value;
-                    }
-                    else if (currentItem is Pickaxe)
-                    {
-                        _experienceFillColor = new Color(145, 104, 63, 0.63f);
-                        currentLevelIndex = 3;
-                        rectangle1.X = 30;
-                        experienceLevel = Game1.player.miningLevel.Value;
-                    }
-                    else if (currentItem is MeleeWeapon &&
-                        currentItem.Name != "Scythe")
-                    {
-                        _experienceFillColor = new Color(204, 0, 3, 0.63f);
-                        currentLevelIndex = 4;
-                        rectangle1.X = 120;
-                        experienceLevel = Game1.player.combatLevel.Value;
-                    }
-                    else if (Game1.currentLocation is Farm &&
-                        !(currentItem is Axe))
-                    {
-                        _experienceFillColor = new Color(255, 251, 35, 0.38f);
-                        currentLevelIndex = 0;
-                        rectangle1.X = 10;
-                        experienceLevel = Game1.player.farmingLevel.Value;
-                    }
-                    else
-                    {
-                        _experienceFillColor = new Color(0, 234, 0, 0.63f);
-                        currentLevelIndex = 2;
-                        rectangle1.X = 60;
-                        experienceLevel = Game1.player.foragingLevel.Value;
-                    }
-
-                    experienceRequiredToLevel = GetExperienceRequiredToLevel(experienceLevel);
-                    experienceFromPreviousLevels = GetExperienceRequiredToLevel(experienceLevel - 1);
-                    experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - experienceFromPreviousLevels;
-
-                    if (_previousItem != currentItem)
-                        ShowExperienceBar();
-                }
-
-                _previousItem = currentItem;
-
                 if (_shouldDrawLevelUp)
                 {
                     Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
@@ -342,13 +411,14 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                if (_experienceBarShouldBeVisible &&
+                if (_experienceRequiredToLevel > 0 &&
+                    _experienceBarShouldBeVisible &&
                     _showExperienceBar)
                 {
-                    int experienceDifferenceBetweenLevels = experienceRequiredToLevel - experienceFromPreviousLevels;
-                    int barWidth = (int)((double)experienceEarnedThisLevel / experienceDifferenceBetweenLevels * MaxBarWidth);
+                    int experienceDifferenceBetweenLevels = _experienceRequiredToLevel - _experienceFromPreviousLevels;
+                    int barWidth = (int)((double)_experienceEarnedThisLevel / experienceDifferenceBetweenLevels * MaxBarWidth);
 
-                    DrawExperienceBar(barWidth, experienceEarnedThisLevel, experienceDifferenceBetweenLevels, experienceLevel, rectangle1);
+                    DrawExperienceBar(barWidth, _experienceEarnedThisLevel, experienceDifferenceBetweenLevels, _currentSkillLevel);
 
                 }
 
@@ -358,38 +428,51 @@ namespace UIInfoSuite.UIElements
         private int GetExperienceRequiredToLevel(int currentLevel)
         {
             int amount = 0;
-            switch (currentLevel)
-            {
-                case 0: amount = 100; break;
-                case 1: amount = 380; break;
-                case 2: amount = 770; break;
-                case 3: amount = 1300; break;
-                case 4: amount = 2150; break;
-                case 5: amount = 3300; break;
-                case 6: amount = 4800; break;
-                case 7: amount = 6900; break;
-                case 8: amount = 10000; break;
-                case 9: amount = 15000; break;
-            }
+
+            //if (currentLevel < 10)
+            //{
+                switch (currentLevel)
+                {
+                    case 0: amount = 100; break;
+                    case 1: amount = 380; break;
+                    case 2: amount = 770; break;
+                    case 3: amount = 1300; break;
+                    case 4: amount = 2150; break;
+                    case 5: amount = 3300; break;
+                    case 6: amount = 4800; break;
+                    case 7: amount = 6900; break;
+                    case 8: amount = 10000; break;
+                    case 9: amount = 15000; break;
+                }
+            //}
+            //else if (_levelExtenderAPI != null &&
+            //    currentLevel < 100)
+            //{
+            //    var requiredXP = _levelExtenderAPI.requiredXP();
+            //    amount = requiredXP[currentLevel];
+            //}
             return amount;
         }
 
         private void ShowExperienceBar()
         {
-            if (_allowExperienceBarToFadeOut)
+            if (_timeToDisappear != null)
             {
-                _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
-                _timeToDisappear.Start();
-            }
-            else
-            {
-                _timeToDisappear.Stop();
+                if (_allowExperienceBarToFadeOut)
+                {
+                    _timeToDisappear.Interval = _timeBeforeExperienceBarFades.TotalMilliseconds;
+                    _timeToDisappear.Start();
+                }
+                else
+                {
+                    _timeToDisappear.Stop();
+                }
             }
 
             _experienceBarShouldBeVisible = true;
         }
 
-        private void DrawExperienceBar(int barWidth, int experienceGainedThisLevel, int experienceRequiredForNextLevel, int currentLevel, Rectangle iconPosition)
+        private void DrawExperienceBar(int barWidth, int experienceGainedThisLevel, int experienceRequiredForNextLevel, int currentLevel)
         {
             float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
 
@@ -474,7 +557,7 @@ namespace UIInfoSuite.UIElements
                     new Vector2(
                         leftSide + 54,
                         Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Bottom - 62),
-                    iconPosition,
+                    _experienceIconPosition,
                     _iconColor,
                     0,
                     Vector2.Zero,

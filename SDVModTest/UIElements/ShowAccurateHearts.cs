@@ -50,57 +50,64 @@ namespace UIInfoSuite.UIElements
 
                 if (gameMenu.currentTab == 2)
                 {
-                    int slotPosition = (int)typeof(SocialPage)
-                        .GetField(
-                            "slotPosition", 
-                            BindingFlags.Instance | BindingFlags.NonPublic)
-                            .GetValue(_socialPage);
-                    int yOffset = 0;
-
-                    for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
+                    if (_socialPage != null)
                     {
-                        int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
-                        yOffset += 112;
-                        Friendship friendshipValues;
-                        String nextName = _friendNames[i];
-                        if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
+                        int slotPosition = (int)typeof(SocialPage)
+                            .GetField(
+                                "slotPosition",
+                                BindingFlags.Instance | BindingFlags.NonPublic)
+                                .GetValue(_socialPage);
+                        int yOffset = 0;
+
+                        for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
                         {
-                            int friendshipRawValue = friendshipValues.Points;
-
-                            if (friendshipRawValue > 0)
+                            int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
+                            yOffset += 112;
+                            Friendship friendshipValues;
+                            String nextName = _friendNames[i];
+                            if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
                             {
-                                int pointsToNextHeart = friendshipRawValue % 250;
-                                int numHearts = friendshipRawValue / 250;
+                                int friendshipRawValue = friendshipValues.Points;
 
-                                if (friendshipRawValue < 3000 && 
-                                    _friendNames[i] == Game1.player.spouse || 
-                                    friendshipRawValue < 2500)
+                                if (friendshipRawValue > 0)
                                 {
-                                    DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
-                                    //if (!Game1.options.hardwareCursor)
-                                    //    Game1.spriteBatch.Draw(
-                                    //        Game1.mouseCursors,
-                                    //        new Vector2(Game1.getMouseX(), Game1.getMouseY()),
-                                    //        Game1.getSourceRectForStandardTileSheet(
-                                    //            Game1.mouseCursors, Game1.mouseCursor,
-                                    //            16,
-                                    //            16),
-                                    //        Color.White,
-                                    //        0.0f,
-                                    //        Vector2.Zero,
-                                    //        Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
-                                    //        SpriteEffects.None,
-                                    //        1f);
+                                    int pointsToNextHeart = friendshipRawValue % 250;
+                                    int numHearts = friendshipRawValue / 250;
+
+                                    if (friendshipRawValue < 3000 &&
+                                        _friendNames[i] == Game1.player.spouse ||
+                                        friendshipRawValue < 2500)
+                                    {
+                                        DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
+                                        //if (!Game1.options.hardwareCursor)
+                                        //    Game1.spriteBatch.Draw(
+                                        //        Game1.mouseCursors,
+                                        //        new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                                        //        Game1.getSourceRectForStandardTileSheet(
+                                        //            Game1.mouseCursors, Game1.mouseCursor,
+                                        //            16,
+                                        //            16),
+                                        //        Color.White,
+                                        //        0.0f,
+                                        //        Vector2.Zero,
+                                        //        Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
+                                        //        SpriteEffects.None,
+                                        //        1f);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    String hoverText = typeof(GameMenu).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(gameMenu) as String;
-                    IClickableMenu.drawHoverText(
-                        Game1.spriteBatch,
-                        hoverText,
-                        Game1.smallFont);
+                        String hoverText = typeof(GameMenu).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(gameMenu) as String;
+                        IClickableMenu.drawHoverText(
+                            Game1.spriteBatch,
+                            hoverText,
+                            Game1.smallFont);
+                    }
+                    else
+                    {
+                        OnMenuChange(sender, null);
+                    }
                 }
             }
         }

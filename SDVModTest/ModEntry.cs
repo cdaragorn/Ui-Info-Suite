@@ -20,7 +20,6 @@ namespace UIInfoSuite
 {
     public class ModEntry : Mod
     {
-
         private readonly SkipIntro _skipIntro = new SkipIntro();
 
         private String _modDataFileName;
@@ -36,6 +35,11 @@ namespace UIInfoSuite
         public ModEntry()
         {
             
+        }
+
+        ~ModEntry()
+        {
+
         }
 
         public override void Entry(IModHelper helper)
@@ -70,7 +74,7 @@ namespace UIInfoSuite
 
         private void ReturnToTitle(object sender, EventArgs e)
         {
-            _modOptionsPageHandler.Dispose();
+            _modOptionsPageHandler?.Dispose();
             _modOptionsPageHandler = null;
         }
 

@@ -19,6 +19,7 @@ namespace UIInfoSuite.UIElements
         private Rectangle _toolTexturePosition;
         private String _hoverText;
         private Tool _toolBeingUpgraded;
+        private ClickableTextureComponent _toolUpgradeIcon;
 
         public ShowToolUpgradeStatus(IModHelper helper)
         {
@@ -28,6 +29,7 @@ namespace UIInfoSuite.UIElements
         public void ToggleOption(bool showToolUpgradeStatus)
         {
             GraphicsEvents.OnPreRenderHudEvent -= DrawToolUpgradeStatus;
+            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
             TimeEvents.AfterDayStarted -= DayChanged;
             GameEvents.OneSecondTick -= CheckForMidDayChanges;
 
@@ -35,6 +37,7 @@ namespace UIInfoSuite.UIElements
             {
                 DayChanged(null, new EventArgsIntChanged(0, Game1.dayOfMonth));
                 GraphicsEvents.OnPreRenderHudEvent += DrawToolUpgradeStatus;
+                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
                 TimeEvents.AfterDayStarted += DayChanged;
                 GameEvents.OneSecondTick += CheckForMidDayChanges;
             }
@@ -110,20 +113,24 @@ namespace UIInfoSuite.UIElements
                 _toolBeingUpgraded != null)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                ClickableTextureComponent textureComponent =
+                _toolUpgradeIcon =
                     new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
                         Game1.toolSpriteSheet,
                         _toolTexturePosition,
                         2.5f);
-                textureComponent.draw(Game1.spriteBatch);
+                _toolUpgradeIcon.draw(Game1.spriteBatch);
+            }
+        }
 
-                if (textureComponent.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                {
-                    IClickableMenu.drawHoverText(
+        private void DrawHoverText(object sender, EventArgs e)
+        {
+            if (_toolBeingUpgraded != null &&
+                _toolUpgradeIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            {
+                IClickableMenu.drawHoverText(
                         Game1.spriteBatch,
                         _hoverText, Game1.dialogueFont);
-                }
             }
         }
 
