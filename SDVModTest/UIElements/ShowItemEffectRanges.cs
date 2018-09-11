@@ -121,7 +121,7 @@ namespace UIInfoSuite.UIElements
                         {
                             arrayToUse = _modConfig.QualitySprinkler;
                         }
-						else if (name.Contains("prismatic"))
+			else if (name.Contains("prismatic"))
                         {
                             arrayToUse = _modConfig.PrismaticSprinkler;
                         }
@@ -148,10 +148,10 @@ namespace UIInfoSuite.UIElements
                                 {
                                     arrayToUse = _modConfig.QualitySprinkler;
                                 }
-								else if (name.Contains("prismatic"))
-								{
-									arrayToUse = _modConfig.PrismaticSprinkler;
-								}
+				else if (name.Contains("prismatic"))
+				{
+					arrayToUse = _modConfig.PrismaticSprinkler;
+				}
                                 else
                                 {
                                     arrayToUse = _modConfig.Sprinkler;
