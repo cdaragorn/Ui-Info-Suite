@@ -160,7 +160,14 @@ namespace UIInfoSuite.UIElements
                     else
                     {
                         int hours = _currentTile.MinutesUntilReady / 60;
+                        int days = hours / 24;
+                        hours -= days * 24;
                         int minutes = _currentTile.MinutesUntilReady % 60;
+                        if (days > 0)
+                            hoverText.Append(days).Append(" ")
+                                .Append(_helper.SafeGetString(
+                                    LanguageKeys.Days))
+                                .Append(", ");
                         if (hours > 0)
                             hoverText.Append(hours).Append(" ")
                                 .Append(_helper.SafeGetString(
