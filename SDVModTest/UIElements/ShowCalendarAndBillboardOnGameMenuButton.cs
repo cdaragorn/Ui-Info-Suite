@@ -2,21 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using UIInfoSuite.Extensions;
-using UIInfoSuite.Options;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 
-namespace UIInfoSuite.UIElements
-{
+namespace UIInfoSuite.UIElements {
     class ShowCalendarAndBillboardOnGameMenuButton : IDisposable
     {
         private ClickableTextureComponent _showBillboardButton = 

@@ -1,18 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
 
-namespace UIInfoSuite.UIElements
-{
+namespace UIInfoSuite.UIElements {
     class ShowToolUpgradeStatus : IDisposable
     {
         private readonly IModHelper _helper;
@@ -92,7 +86,7 @@ namespace UIInfoSuite.UIElements
                 if (Game1.player.daysLeftForToolUpgrade.Value > 0)
                 {
                     _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
-                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
+                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName, Game1.player.daysLeftForToolUpgrade.Value == 1 ? LanguageKeys.Day : LanguageKeys.Days);
                 }
                 else
                 {

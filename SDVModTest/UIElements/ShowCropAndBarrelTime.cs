@@ -6,19 +6,13 @@ using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Resources;
-using System.Reflection;
-using System.Globalization;
 using StardewValley.Objects;
 using StardewModdingAPI;
 using StardewValley.Locations;
 using StardewValley.Buildings;
 
-namespace UIInfoSuite.UIElements
-{
+namespace UIInfoSuite.UIElements {
     class ShowCropAndBarrelTime : IDisposable
     {
         private Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
@@ -153,9 +147,10 @@ namespace UIInfoSuite.UIElements
                     if (_currentTile is Cask)
                     {
                         Cask currentCask = _currentTile as Cask;
-                        hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
+                        int num = (int)(currentCask.daysToMature.Value / currentCask.agingRate.Value);
+                        hoverText.Append(num)
                             .Append(" " + _helper.SafeGetString(
-                            LanguageKeys.DaysToMature));
+                            num == 1 ? LanguageKeys.DayToMature : LanguageKeys.DaysToMature));
                     }
                     else
                     {
@@ -166,12 +161,12 @@ namespace UIInfoSuite.UIElements
                         if (days > 0)
                             hoverText.Append(days).Append(" ")
                                 .Append(_helper.SafeGetString(
-                                    LanguageKeys.Days))
+                                    days == 1 ? LanguageKeys.Day : LanguageKeys.Days))
                                 .Append(", ");
                         if (hours > 0)
                             hoverText.Append(hours).Append(" ")
                                 .Append(_helper.SafeGetString(
-                                    LanguageKeys.Hours))
+                                    hours == 1 ? LanguageKeys.Hours : LanguageKeys.Hours))
                                 .Append(", ");
                         hoverText.Append(minutes).Append(" ")
                             .Append(_helper.SafeGetString(
@@ -225,7 +220,7 @@ namespace UIInfoSuite.UIElements
                             {
                                 finalHoverText.Append(num).Append(" ")
                                     .Append(_helper.SafeGetString(
-                                        LanguageKeys.Days));
+                                        num == 1 ? LanguageKeys.Day : LanguageKeys.Days));
                             }
                             else
                             {
@@ -247,7 +242,7 @@ namespace UIInfoSuite.UIElements
                     {
                         text += Environment.NewLine + tree.daysUntilMature.Value + " " +
                                 _helper.SafeGetString(
-                                    LanguageKeys.DaysToMature);
+                                    tree.daysUntilMature.Value == 1 ? LanguageKeys.DayToMature : LanguageKeys.DaysToMature);
 
                     }
                     IClickableMenu.drawHoverText(

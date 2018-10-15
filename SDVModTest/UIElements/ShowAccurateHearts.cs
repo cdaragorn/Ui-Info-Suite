@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
@@ -7,11 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UIInfoSuite.UIElements
-{
+namespace UIInfoSuite.UIElements {
     class ShowAccurateHearts : IDisposable
     {
         private String[] _friendNames;

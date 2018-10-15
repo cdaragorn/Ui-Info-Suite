@@ -9,13 +9,8 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UIInfoSuite.UIElements
-{
+namespace UIInfoSuite.UIElements {
     class ShowItemHoverInformation : IDisposable
     {
         private readonly Dictionary<String, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();

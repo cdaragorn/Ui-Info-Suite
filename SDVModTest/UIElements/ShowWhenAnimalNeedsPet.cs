@@ -7,14 +7,9 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Network;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
-namespace UIInfoSuite.UIElements
-{
+namespace UIInfoSuite.UIElements {
     class ShowWhenAnimalNeedsPet : IDisposable
     {
         private readonly StardewValley.Object _wool = new StardewValley.Object(440, 1);
