@@ -86,7 +86,7 @@ namespace UIInfoSuite.UIElements {
                 if (Game1.player.daysLeftForToolUpgrade.Value > 0)
                 {
                     _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
-                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName, Game1.player.daysLeftForToolUpgrade.Value == 1 ? LanguageKeys.Day : LanguageKeys.Days);
+                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName, _helper.SafeGetString(Game1.player.daysLeftForToolUpgrade.Value == 1 ? LanguageKeys.Day : LanguageKeys.Days));
                 }
                 else
                 {
