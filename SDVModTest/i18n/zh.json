@@ -1,5 +1,5 @@
 {
-    "Billboard" : "公告栏",
+    "Billboard" : "布告栏",
     "Calendar" : "日历",
     "Days" : "天",
     "DaysToMature" : "天后成熟",
@@ -25,7 +25,7 @@
 	"ShowBirthdayIcon" : "显示NPC生日图标",
 	"ShowHeartFills" : "显示关系的爱心填充",
 	"ShowAnimalsNeedPets" : "显示动物需要关爱的图标",
-	"DisplayCalendarAndBillboard" : "显示日历与公告栏按钮",
+	"DisplayCalendarAndBillboard" : "显示日历与布告栏按钮",
 	"ShowCropAndBarrelTooltip" : "显示作物与桶的剩余时间",
 	"ShowItemEffectRanges" : "显示稻草人与洒水器的范围",
 	"ShowExtraItemInformation" : "鼠标悬停时显示物品信息",
