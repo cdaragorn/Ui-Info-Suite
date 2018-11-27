@@ -17,7 +17,7 @@
 	"DaysUntilToolIsUpgraded" : "{0} Tage bis {1} fertig verbessert wurde",
 	"ToolIsFinishedBeingUpgraded" : "{0} ist fertig!",
 	"ShowLuckIcon" : "Zeige Glücksymbol",
-	"ShowLevelUpAnimation" : "Zeige Aufstiegsanimationanimation",
+	"ShowLevelUpAnimation" : "Zeige Aufstiegsanimation",
 	"ShowExperienceBar" : "Zeige Erfahrungsleiste",
 	"AllowExperienceBarToFadeOut" : "Erlauben verblassende Erfahrungsleiste",
 	"ShowExperienceGain" : "Zeige Erfahrungsgewinn",
