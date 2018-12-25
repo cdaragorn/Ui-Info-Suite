@@ -55,7 +55,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.1.0" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -109,33 +109,15 @@
     <Compile Include="UIElements\SkipIntro.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="i18n\de.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\default.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\es.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\ja.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\pt.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\ru.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\th.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="i18n\zh.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="manifest.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="i18n\de.json" />
+    <None Include="i18n\default.json" />
+    <None Include="i18n\es.json" />
+    <None Include="i18n\ja.json" />
+    <None Include="i18n\pt.json" />
+    <None Include="i18n\ru.json" />
+    <None Include="i18n\th.json" />
+    <None Include="i18n\zh.json" />
+    <None Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LevelUp license.txt">
@@ -152,13 +134,4 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <PropertyGroup>
-      <ModPath>$(GamePath)\Mods\$(TargetName)</ModPath>
-    </PropertyGroup>
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll.mdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).dll.mdb')" />
-    <Copy SourceFiles="$(ProjectDir)manifest.json" DestinationFolder="$(ModPath)" />
-  </Target>
 </Project>
