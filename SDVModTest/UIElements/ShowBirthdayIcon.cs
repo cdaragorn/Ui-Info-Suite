@@ -5,11 +5,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Netcode;
 
 namespace UIInfoSuite.UIElements
 {
@@ -17,29 +12,37 @@ namespace UIInfoSuite.UIElements
     {
         private NPC _birthdayNPC;
         private ClickableTextureComponent _birthdayIcon;
+        private readonly IModEvents _events;
+
+        public ShowBirthdayIcon(IModEvents events)
+        {
+            _events = events;
+        }
 
         public void ToggleOption(bool showBirthdayIcon)
         {
-            TimeEvents.AfterDayStarted -= CheckForBirthday;
-            GraphicsEvents.OnPreRenderHudEvent -= DrawBirthdayIcon;
-            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
-            GameEvents.HalfSecondTick -= CheckIfGiftHasBeenGiven;
+            _events.GameLoop.DayStarted -= OnDayStarted;
+            _events.Display.RenderingHud -= OnRenderingHud;
+            _events.Display.RenderedHud -= OnRenderedHud;
+            _events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showBirthdayIcon)
             {
-                CheckForBirthday(null, null);
-                TimeEvents.AfterDayStarted += CheckForBirthday;
-                GraphicsEvents.OnPreRenderHudEvent += DrawBirthdayIcon;
-                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
-                GameEvents.HalfSecondTick += CheckIfGiftHasBeenGiven;
+                CheckForBirthday();
+                _events.GameLoop.DayStarted += OnDayStarted;
+                _events.Display.RenderingHud += OnRenderingHud;
+                _events.Display.RenderedHud += OnRenderedHud;
+                _events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
-        private void CheckIfGiftHasBeenGiven(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (_birthdayNPC != null &&
-                Game1.player != null &&
-                Game1.player.friendshipData != null)
+            // check if gift has been given
+            if (e.IsOneSecond && _birthdayNPC != null && Game1.player?.friendshipData != null)
             {
                 Game1.player.friendshipData.FieldDict.TryGetValue(_birthdayNPC.Name, out var netRef);
                 //var birthdayNPCDetails = Game1.player.friendshipData.SafeGet(_birthdayNPC.name);
@@ -57,7 +60,15 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void CheckForBirthday(object sender, EventArgs e)
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            CheckForBirthday();
+        }
+
+        private void CheckForBirthday()
         {
             _birthdayNPC = null;
             foreach (var location in Game1.locations)
@@ -76,8 +87,12 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void DrawBirthdayIcon(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud(object sender, EventArgs e)
         {
+            // draw birthday icon
             if (!Game1.eventUp)
             {
                 if (_birthdayNPC != null)
@@ -116,10 +131,13 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void DrawHoverText(object sender, EventArgs e)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (_birthdayNPC != null &&
-                _birthdayIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            // draw hover text
+            if (_birthdayNPC != null && _birthdayIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
                 String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
                 IClickableMenu.drawHoverText(

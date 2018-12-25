@@ -6,9 +6,6 @@ using StardewValley.Buildings;
 using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.UIElements
 {
@@ -16,6 +13,7 @@ namespace UIInfoSuite.UIElements
     {
         private readonly List<Point> _effectiveArea = new List<Point>();
         private readonly ModConfig _modConfig;
+        private readonly IModEvents _events;
 
         private static readonly int[][] _junimoHutArray = new int[17][]
         {
@@ -38,20 +36,21 @@ namespace UIInfoSuite.UIElements
             new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
         };
 
-        public ShowItemEffectRanges(ModConfig modConfig)
+        public ShowItemEffectRanges(ModConfig modConfig, IModEvents events)
         {
             _modConfig = modConfig;
+            _events = events;
         }
 
         public void ToggleOption(bool showItemEffectRanges)
         {
-            GraphicsEvents.OnPostRenderEvent -= DrawTileOutlines;
-            GameEvents.FourthUpdateTick -= CheckDrawTileOutlines;
+            _events.Display.Rendered -= OnRendered;
+            _events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showItemEffectRanges)
             {
-                GraphicsEvents.OnPostRenderEvent += DrawTileOutlines;
-                GameEvents.FourthUpdateTick += CheckDrawTileOutlines;
+                _events.Display.Rendered += OnRendered;
+                _events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
@@ -60,10 +59,16 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void CheckDrawTileOutlines(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            _effectiveArea.Clear();
+            if (!e.IsMultipleOf(4))
+                return;
 
+            // check draw tile outlines
+            _effectiveArea.Clear();
             if (Game1.activeClickableMenu == null &&
                 !Game1.eventUp)
             {
@@ -163,8 +168,12 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void DrawTileOutlines(object sender, EventArgs e)
+        /// <summary>Raised after the game draws to the sprite patch in a draw tick, just before the final sprite batch is rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRendered(object sender, RenderedEventArgs e)
         {
+            // draw tile outlines
             foreach (Point point in _effectiveArea)
                 Game1.spriteBatch.Draw(
                     Game1.mouseCursors,

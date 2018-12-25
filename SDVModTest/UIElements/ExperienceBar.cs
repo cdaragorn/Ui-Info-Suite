@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using StardewModdingAPI.Enums;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
@@ -9,10 +9,7 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Media;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -75,8 +72,8 @@ namespace UIInfoSuite.UIElements
                 ModEntry.MonitorObject.Log("Error loading sound file from " + path + ": " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
             }
             _timeToDisappear.Elapsed += StopTimerAndFadeBarOut;
-            GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
-            PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
+            helper.Events.Display.RenderingHud += OnRenderingHud;
+            helper.Events.Player.Warped += OnWarped_RemoveAllExperiencePointDisplays;
 
             //var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
             try
@@ -115,10 +112,10 @@ namespace UIInfoSuite.UIElements
 
         public void Dispose()
         {
-            PlayerEvents.LeveledUp -= OnLevelUp;
-            GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
-            PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
-            GameEvents.QuarterSecondTick -= DetermineIfExperienceHasBeenGained;
+            _helper.Events.Player.LevelChanged -= OnLevelChanged;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud;
+            _helper.Events.Player.Warped -= OnWarped_RemoveAllExperiencePointDisplays;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             _timeToDisappear.Elapsed -= StopTimerAndFadeBarOut;
             _timeToDisappear.Stop();
             _timeToDisappear.Dispose();
@@ -128,11 +125,11 @@ namespace UIInfoSuite.UIElements
         public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
         {
             _showLevelUpAnimation = showLevelUpAnimation;
-            PlayerEvents.LeveledUp -= OnLevelUp;
+            _helper.Events.Player.LevelChanged -= OnLevelChanged;
 
             if (_showLevelUpAnimation)
             {
-                PlayerEvents.LeveledUp += OnLevelUp;
+                _helper.Events.Player.LevelChanged += OnLevelChanged;
             }
         }
 
@@ -143,20 +140,20 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleShowExperienceGain(bool showExperienceGain)
         {
-            GameEvents.QuarterSecondTick -= DetermineIfExperienceHasBeenGained;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             for (int i = 0; i < _currentExperience.Length; ++i)
                 _currentExperience[i] = Game1.player.experiencePoints[i];
             _showExperienceGain = showExperienceGain;
 
             if (showExperienceGain)
             {
-                GameEvents.QuarterSecondTick += DetermineIfExperienceHasBeenGained;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             }
         }
 
         public void ToggleShowExperienceBar(bool showExperienceBar)
         {
-            GameEvents.QuarterSecondTick -= DetermineIfExperienceHasBeenGained;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
             //PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
             _showExperienceBar = showExperienceBar;
@@ -164,21 +161,24 @@ namespace UIInfoSuite.UIElements
             {
                 //GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
                 //PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
-                GameEvents.QuarterSecondTick += DetermineIfExperienceHasBeenGained;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             }
         }
 
-        private void OnLevelUp(object sender, EventArgsLevelUp e)
+        /// <summary>Raised after a player skill level changes. This happens as soon as they level up, not when the game notifies the player after their character goes to bed.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnLevelChanged(object sender, LevelChangedEventArgs e)
         {
-            if (_showLevelUpAnimation)
+            if (_showLevelUpAnimation && e.IsLocalPlayer)
             {
-                switch (e.Type)
+                switch (e.Skill)
                 {
-                    case EventArgsLevelUp.LevelType.Combat: _levelUpIconRectangle.X = 120; break;
-                    case EventArgsLevelUp.LevelType.Farming: _levelUpIconRectangle.X = 10; break;
-                    case EventArgsLevelUp.LevelType.Fishing: _levelUpIconRectangle.X = 20; break;
-                    case EventArgsLevelUp.LevelType.Foraging: _levelUpIconRectangle.X = 60; break;
-                    case EventArgsLevelUp.LevelType.Mining: _levelUpIconRectangle.X = 30; break;
+                    case SkillType.Combat: _levelUpIconRectangle.X = 120; break;
+                    case SkillType.Farming: _levelUpIconRectangle.X = 10; break;
+                    case SkillType.Fishing: _levelUpIconRectangle.X = 20; break;
+                    case SkillType.Foraging: _levelUpIconRectangle.X = 60; break;
+                    case SkillType.Mining: _levelUpIconRectangle.X = 30; break;
                 }
                 _shouldDrawLevelUp = true;
                 ShowExperienceBar();
@@ -220,13 +220,23 @@ namespace UIInfoSuite.UIElements
             _experienceBarShouldBeVisible = false;
         }
 
-        private void RemoveAllExperiencePointDisplays(object sender, EventArgsPlayerWarped e)
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnWarped_RemoveAllExperiencePointDisplays(object sender, WarpedEventArgs e)
         {
-            _experiencePointDisplays.Clear();
+            if (e.IsLocalPlayer)
+                _experiencePointDisplays.Clear();
         }
 
-        private void DetermineIfExperienceHasBeenGained(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked_DetermineIfExperienceHasBeenGained(object sender, UpdateTickedEventArgs e)
         {
+            if (!e.IsMultipleOf(15)) // quarter second
+                return;
+
             Item currentItem = Game1.player.CurrentItem;
 
             int currentLevelIndex = -1;
@@ -369,7 +379,10 @@ namespace UIInfoSuite.UIElements
 
         }
 
-        private void OnPreRenderHudEvent(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
             if (!Game1.eventUp)
             {

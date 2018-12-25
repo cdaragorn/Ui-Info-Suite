@@ -1,18 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using UIInfoSuite.Extensions;
-using UIInfoSuite.Options;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
@@ -38,22 +33,24 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleOption(bool showCalendarAndBillboard)
         {
-            GraphicsEvents.OnPostRenderGuiEvent -= RenderButtons;
-            ControlEvents.MouseChanged -= OnBillboardIconClick;
-            ControlEvents.ControllerButtonPressed -= OnBillboardIconPressed;
-            GameEvents.EighthUpdateTick -= GetHoverItem;
+            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu;
+            _helper.Events.Input.ButtonPressed -= OnButtonPressed;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showCalendarAndBillboard)
             {
-                GraphicsEvents.OnPostRenderGuiEvent += RenderButtons;
-                ControlEvents.MouseChanged += OnBillboardIconClick;
-                ControlEvents.ControllerButtonPressed += OnBillboardIconPressed;
-                GameEvents.EighthUpdateTick += GetHoverItem;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu;
+                _helper.Events.Input.ButtonPressed += OnButtonPressed;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
-        private void GetHoverItem(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, EventArgs e)
         {
+            // get hover item
             _hoverItem = Tools.GetHoveredItem();
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
@@ -66,23 +63,20 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void OnBillboardIconPressed(object sender, EventArgsControllerButtonPressed e)
-        {
-            if (e.ButtonPressed == Buttons.A)
-                ActivateBillboard();
-        }
-
         public void Dispose()
         {
             ToggleOption(false);
         }
 
-        private void OnBillboardIconClick(object sender, EventArgsMouseStateChanged e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.NewState.LeftButton == ButtonState.Pressed)
-            {
+            if (e.Button == SButton.MouseLeft)
                 ActivateBillboard();
-            }
+            else if (e.Button == SButton.ControllerA)
+                ActivateBillboard();
         }
 
         private void ActivateBillboard()
@@ -102,11 +96,14 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void RenderButtons(object sender, EventArgs e)
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedActiveMenu(object sender, EventArgs e)
         {
             if (_hoverItem == null &&
-                Game1.activeClickableMenu is GameMenu &&
-                (Game1.activeClickableMenu as GameMenu).currentTab == 0
+                Game1.activeClickableMenu is GameMenu gameMenu &&
+                gameMenu.currentTab == 0
                 && _heldItem == null)
             {
                 _showBillboardButton.bounds.X = Game1.activeClickableMenu.xPositionOnScreen + Game1.activeClickableMenu.width - 160;

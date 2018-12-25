@@ -6,10 +6,7 @@ using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using StardewValley.Objects;
 using StardewModdingAPI;
 using StardewValley.Locations;
@@ -19,7 +16,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowCropAndBarrelTime : IDisposable
     {
-        private Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
+        private readonly Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
         private StardewValley.Object _currentTile;
         private TerrainFeature _terrain;
         private Building _currentTileBuilding = null;
@@ -32,27 +29,28 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleOption(bool showCropAndBarrelTimes)
         {
-            GraphicsEvents.OnPreRenderHudEvent -= DrawHoverTooltip;
-            GameEvents.FourthUpdateTick -= GetTileUnderCursor;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showCropAndBarrelTimes)
             {
-                GraphicsEvents.OnPreRenderHudEvent += DrawHoverTooltip;
-                GameEvents.FourthUpdateTick += GetTileUnderCursor;
+                _helper.Events.Display.RenderingHud += OnRenderingHud;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
-        private void GetTileUnderCursor(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (Game1.currentLocation is BuildableGameLocation buildableLocation)
-            {
-                _currentTileBuilding = buildableLocation.getBuildingAt(Game1.currentCursorTile);
-            }
-            else
-            {
-                _currentTileBuilding = null;
-            }
+            if (!e.IsMultipleOf(4))
+                return;
 
+            // get tile under cursor
+            _currentTileBuilding = Game1.currentLocation is BuildableGameLocation buildableLocation
+                ? buildableLocation.getBuildingAt(Game1.currentCursorTile)
+                : null;
             if (Game1.currentLocation != null)
             {
                 if (Game1.currentLocation.Objects == null ||
@@ -87,8 +85,12 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void DrawHoverTooltip(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
+            // draw hover tooltip
             if (_currentTileBuilding != null)
             {
                 if (_currentTileBuilding is Mill millBuilding)

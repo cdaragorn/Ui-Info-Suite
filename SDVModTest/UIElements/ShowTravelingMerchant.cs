@@ -1,15 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
 
 namespace UIInfoSuite.UIElements
@@ -22,16 +16,16 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleOption(bool showTravelingMerchant)
         {
-            GraphicsEvents.OnPreRenderHudEvent -= DrawTravelingMerchant;
-            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
-            TimeEvents.AfterDayStarted -= DayChanged;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud;
+            _helper.Events.Display.RenderedHud -= OnRenderedHud;
+            _helper.Events.GameLoop.DayStarted -= OnDayStarted;
 
             if (showTravelingMerchant)
             {
-                DayChanged(null, new EventArgsIntChanged(0, Game1.dayOfMonth));
-                GraphicsEvents.OnPreRenderHudEvent += DrawTravelingMerchant;
-                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
-                TimeEvents.AfterDayStarted += DayChanged;
+                UpdateTravelingMerchant();
+                _helper.Events.Display.RenderingHud -= OnRenderingHud;
+                _helper.Events.Display.RenderedHud -= OnRenderedHud;
+                _helper.Events.GameLoop.DayStarted -= OnDayStarted;
             }
         }
 
@@ -46,18 +40,27 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void DayChanged(object sender, EventArgs e)
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, EventArgs e)
         {
+            UpdateTravelingMerchant();
+        }
 
+        private void UpdateTravelingMerchant()
+        {
             int dayOfWeek = Game1.dayOfMonth % 7;
             _travelingMerchantIsHere = dayOfWeek == 0 || dayOfWeek == 5;
         }
 
-        private void DrawTravelingMerchant(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
-
-            if (!Game1.eventUp &&
-                _travelingMerchantIsHere)
+            // draw traveling merchant
+            if (!Game1.eventUp && _travelingMerchantIsHere)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
                 _travelingMerchantIcon = 
@@ -70,10 +73,13 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void DrawHoverText(object sender, EventArgs e)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (_travelingMerchantIsHere &&
-                _travelingMerchantIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            // draw hover text
+            if (_travelingMerchantIsHere && _travelingMerchantIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
                 string hoverText = _helper.SafeGetString(
                     LanguageKeys.TravelingMerchantIsInTown);

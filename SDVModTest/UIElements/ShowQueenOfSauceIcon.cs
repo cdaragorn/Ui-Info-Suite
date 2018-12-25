@@ -7,10 +7,7 @@ using StardewValley.Menus;
 using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
 
 namespace UIInfoSuite.UIElements
@@ -28,26 +25,29 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleOption(bool showQueenOfSauceIcon)
         {
-            GraphicsEvents.OnPreRenderHudEvent -= DrawIcon;
-            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
-            TimeEvents.AfterDayStarted -= CheckForNewRecipe;
-            GameEvents.OneSecondTick -= CheckIfLearnedRecipe;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud;
+            _helper.Events.Display.RenderedHud -= OnRenderedHud;
+            _helper.Events.GameLoop.DayStarted -= OnDayStarted;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showQueenOfSauceIcon)
             {
                 LoadRecipes();
-                CheckForNewRecipe(null, null);
-                TimeEvents.AfterDayStarted += CheckForNewRecipe;
-                GraphicsEvents.OnPreRenderHudEvent += DrawIcon;
-                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
-                GameEvents.OneSecondTick += CheckIfLearnedRecipe;
+                CheckForNewRecipe();
+                _helper.Events.GameLoop.DayStarted += OnDayStarted;
+                _helper.Events.Display.RenderingHud += OnRenderingHud;
+                _helper.Events.Display.RenderedHud += OnRenderedHud;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
-        private void CheckIfLearnedRecipe(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (_drawQueenOfSauceIcon &&
-                Game1.player.knowsRecipe(_todaysRecipe))
+            // check if learned recipe
+            if (e.IsOneSecond && _drawQueenOfSauceIcon && Game1.player.knowsRecipe(_todaysRecipe))
                 _drawQueenOfSauceIcon = false;
         }
 
@@ -140,8 +140,12 @@ namespace UIInfoSuite.UIElements
             return array1;
         }
 
-        private void DrawIcon(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
+            // draw icon
             if (!Game1.eventUp)
             {
                 if (_drawQueenOfSauceIcon)
@@ -199,8 +203,12 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void DrawHoverText(object sender, EventArgs e)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
+            // draw hover text
             if (_drawQueenOfSauceIcon &&
                 _queenOfSauceIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
@@ -217,7 +225,15 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void CheckForNewRecipe(object sender, EventArgs e)
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            this.CheckForNewRecipe();
+        }
+
+        private void CheckForNewRecipe()
         {
             TV tv = new TV();
             int numRecipesKnown = Game1.player.cookingRecipes.Count();

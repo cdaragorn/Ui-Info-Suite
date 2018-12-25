@@ -5,11 +5,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UIInfoSuite.Extensions;
 
 namespace UIInfoSuite.UIElements
@@ -25,11 +21,11 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleOption(bool shopHarvestPrices)
         {
-            GraphicsEvents.OnPostRenderGuiEvent -= DrawShopHarvestPrices;
+            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu;
 
             if (shopHarvestPrices)
             {
-                GraphicsEvents.OnPostRenderGuiEvent += DrawShopHarvestPrices;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu;
             }
         }
 
@@ -38,14 +34,15 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void DrawShopHarvestPrices(object sender, EventArgs e)
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+/// <param name="sender">The event sender.</param>
+/// <param name="e">The event arguments.</param>
+        private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (Game1.activeClickableMenu is ShopMenu)
+            // draw shop harvest prices
+            if (Game1.activeClickableMenu is ShopMenu menu)
             {
-                ShopMenu menu = Game1.activeClickableMenu as ShopMenu;
-                Item hoverItem = typeof(ShopMenu).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as Item;
-
-                if (hoverItem != null)
+                if (typeof(ShopMenu).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) is Item hoverItem)
                 {
                     String text = string.Empty;
                     bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
