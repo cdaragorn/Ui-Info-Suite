@@ -11,9 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Globalization;
-using static StardewValley.LocalizedContentManager;
-using System.Resources;
 using System.Reflection;
 
 namespace UIInfoSuite
@@ -26,21 +23,8 @@ namespace UIInfoSuite
         private readonly Dictionary<String, String> _options = new Dictionary<string, string>();
 
         public static IMonitor MonitorObject { get; private set; }
-        public static CultureInfo SpecificCulture { get; private set; }
-        //public static ResourceManager Resources { get; private set; }
-        //public static IModHelper Helper { get; private set; }
 
         private ModOptionsPageHandler _modOptionsPageHandler;
-
-        public ModEntry()
-        {
-            
-        }
-
-        ~ModEntry()
-        {
-
-        }
 
         public override void Entry(IModHelper helper)
         {
@@ -51,8 +35,6 @@ namespace UIInfoSuite
             SaveEvents.AfterSave += SaveModData;
             SaveEvents.AfterReturnToTitle += ReturnToTitle;
             GraphicsEvents.OnPreRenderEvent += IconHandler.Handler.Reset;
-            LocalizedContentManager.OnLanguageChange += LocalizedContentManager_OnLanguageChange;
-            LocalizedContentManager_OnLanguageChange(LocalizedContentManager.CurrentLanguageCode);
 
             //Resources = new ResourceManager("UIInfoSuite.Resource.strings", Assembly.GetAssembly(typeof(ModEntry)));
             //try
@@ -64,12 +46,6 @@ namespace UIInfoSuite
             //{
             //    Resources = Properties.Resources.ResourceManager;
             //}
-        }
-
-        private void LocalizedContentManager_OnLanguageChange(LanguageCode code)
-        {
-            String cultureString = code.ToString();
-            SpecificCulture = CultureInfo.CreateSpecificCulture(cultureString);
         }
 
         private void ReturnToTitle(object sender, EventArgs e)

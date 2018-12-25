@@ -121,7 +121,7 @@ namespace UIInfoSuite.UIElements
                     splitValues = craftingRecipesValue.Split('/');
             }
 
-            string languageRecipeName = (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.en) ?
+            string languageRecipeName = (_helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en) ?
                 key : splitValues[splitValues.Length - 1];
 
             array1[1] = languageRecipeName;
