@@ -9,10 +9,6 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.UIElements
 {
@@ -32,23 +28,30 @@ namespace UIInfoSuite.UIElements
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
+        private readonly IModEvents _events;
+
+        public ShowItemHoverInformation(IModEvents events)
+        {
+            _events = events;
+        }
 
         public void ToggleOption(bool showItemHoverInformation)
         {
-            PlayerEvents.InventoryChanged -= PopulateRequiredBundles;
-            GraphicsEvents.OnPostRenderEvent -= DrawAdvancedTooltipForMenu;
-            GraphicsEvents.OnPostRenderHudEvent -= DrawAdvancedTooltipForToolbar;
-            GraphicsEvents.OnPreRenderEvent -= GetHoverItem;
+            _events.Player.InventoryChanged -= OnInventoryChanged;
+            _events.Display.Rendered -= OnRendered;
+            _events.Display.RenderedHud -= OnRenderedHud;
+            _events.Display.Rendering -= OnRendering;
 
             if (showItemHoverInformation)
             {
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
                 _bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
-                PopulateRequiredBundles(null, null);
-                PlayerEvents.InventoryChanged += PopulateRequiredBundles;
-                GraphicsEvents.OnPostRenderEvent += DrawAdvancedTooltipForMenu;
-                GraphicsEvents.OnPostRenderHudEvent += DrawAdvancedTooltipForToolbar;
-                GraphicsEvents.OnPreRenderEvent += GetHoverItem;
+                PopulateRequiredBundles();
+
+                _events.Player.InventoryChanged += OnInventoryChanged;
+                _events.Display.Rendered += OnRendered;
+                _events.Display.RenderedHud += OnRenderedHud;
+                _events.Display.Rendering += OnRendering;
             }
         }
 
@@ -57,28 +60,46 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void GetHoverItem(object sender, EventArgs e)
+        /// <summary>Raised before the game draws anything to the screen in a draw tick, as soon as the sprite batch is opened.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRendering(object sender, EventArgs e)
         {
             _hoverItem = Tools.GetHoveredItem();
         }
 
-        private void DrawAdvancedTooltipForToolbar(object sender, EventArgs e)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear over the HUD.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedHud(object sender, EventArgs e)
         {
             if (Game1.activeClickableMenu == null)
             {
-                DrawAdvancedTooltip(sender, e);
+                DrawAdvancedTooltip();
             }
         }
 
-        private void DrawAdvancedTooltipForMenu(object sender, EventArgs e)
+        /// <summary>Raised after the game draws to the sprite patch in a draw tick, just before the final sprite batch is rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRendered(object sender, EventArgs e)
         {
             if (Game1.activeClickableMenu != null)
             {
-                DrawAdvancedTooltip(sender, e);
+                DrawAdvancedTooltip();
             }
         }
 
-        private void PopulateRequiredBundles(object sender, EventArgsInventoryChanged e)
+        /// <summary>Raised after items are added or removed to a player's inventory. NOTE: this event is currently only raised for the current player.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
+        {
+            if (e.IsLocalPlayer)
+                this.PopulateRequiredBundles();
+        }
+
+        private void PopulateRequiredBundles()
         {
             _prunedRequiredBundles.Clear();
             foreach (var bundle in _bundleData)
@@ -122,7 +143,7 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void DrawAdvancedTooltip(object sender, EventArgs e)
+        private void DrawAdvancedTooltip()
         {
             if (_hoverItem != null &&
                 _hoverItem.Name != "Scythe" &&

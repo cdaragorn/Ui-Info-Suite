@@ -5,9 +5,6 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using UIInfoSuite.Extensions;
 
@@ -25,15 +22,15 @@ namespace UIInfoSuite.Options
         private int _modOptionsTabPageNumber;
 
         private readonly LuckOfDay _luckOfDay;
-        private readonly ShowBirthdayIcon _showBirthdayIcon = new ShowBirthdayIcon();
-        private readonly ShowAccurateHearts _showAccurateHearts = new ShowAccurateHearts();
+        private readonly ShowBirthdayIcon _showBirthdayIcon;
+        private readonly ShowAccurateHearts _showAccurateHearts;
         private readonly LocationOfTownsfolk _locationOfTownsfolk;
         private readonly ShowWhenAnimalNeedsPet _showWhenAnimalNeedsPet;
         private readonly ShowCalendarAndBillboardOnGameMenuButton _showCalendarAndBillboardOnGameMenuButton;
         private readonly ShowCropAndBarrelTime _showCropAndBarrelTime;
         private readonly ShowItemEffectRanges _showScarecrowAndSprinklerRange;
         private readonly ExperienceBar _experienceBar;
-        private readonly ShowItemHoverInformation _showItemHoverInformation = new ShowItemHoverInformation();
+        private readonly ShowItemHoverInformation _showItemHoverInformation;
         private readonly ShowTravelingMerchant _showTravelingMerchant;
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
@@ -42,16 +39,18 @@ namespace UIInfoSuite.Options
         public ModOptionsPageHandler(IModHelper helper, IDictionary<String, String> options)
         {
             _options = options;
-            MenuEvents.MenuChanged += AddModOptionsToMenu;
-            MenuEvents.MenuClosed += RemoveModOptionsFromMenu;
+            helper.Events.Display.MenuChanged += ToggleModOptions;
             _helper = helper;
             ModConfig modConfig = _helper.ReadConfig<ModConfig>();
             _luckOfDay = new LuckOfDay(helper);
-            _locationOfTownsfolk = new LocationOfTownsfolk(_helper, _options);
-            _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(_helper);
+            _showBirthdayIcon = new ShowBirthdayIcon(helper.Events);
+            _showAccurateHearts = new ShowAccurateHearts(helper.Events);
+            _locationOfTownsfolk = new LocationOfTownsfolk(helper, _options);
+            _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
-            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modConfig);
+            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modConfig, helper.Events);
             _experienceBar = new ExperienceBar(helper);
+            _showItemHoverInformation = new ShowItemHoverInformation(helper.Events);
             _shopHarvestPrices = new ShopHarvestPrices(helper);
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
             _showTravelingMerchant = new ShowTravelingMerchant(helper);
@@ -115,31 +114,37 @@ namespace UIInfoSuite.Options
             }
         }
 
-        private void RemoveModOptionsFromMenu(object sender, EventArgsClickableMenuClosed e)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void ToggleModOptions(object sender, MenuChangedEventArgs e)
         {
-            GraphicsEvents.OnPostRenderGuiEvent -= DrawButton;
-
-            if (_modOptionsPageButton != null)
-                _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
-            if (Game1.activeClickableMenu is GameMenu)
+            // remove from old menu
+            if (e.OldMenu != null)
             {
-                List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
-                tabPages.Remove(_modOptionsPage);
-            }
-        }
+                _helper.Events.Display.RenderedActiveMenu -= DrawButton;
+                if (_modOptionsPageButton != null)
+                    _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
 
-        private void AddModOptionsToMenu(object sender, EventArgsClickableMenuChanged e)
-        {
-            if (Game1.activeClickableMenu is GameMenu)
+                if (e.OldMenu is GameMenu)
+                {
+                    List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(e.OldMenu, "pages").GetValue();
+                    tabPages.Remove(_modOptionsPage);
+                }
+            }
+
+            // add to new menu
+            if (e.NewMenu is GameMenu newMenu)
             {
                 if (_modOptionsPageButton == null)
                 {
-                    _modOptionsPage = new ModOptionsPage(_optionsElements);
-                    _modOptionsPageButton = new ModOptionsPageButton();
+                    _modOptionsPage = new ModOptionsPage(_optionsElements, _helper.Events);
+                    _modOptionsPageButton = new ModOptionsPageButton(_helper.Events);
                 }
-                GraphicsEvents.OnPostRenderGuiEvent += DrawButton;
+
+                _helper.Events.Display.RenderedActiveMenu += DrawButton;
                 _modOptionsPageButton.OnLeftClicked += OnButtonLeftClicked;
-                List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(Game1.activeClickableMenu, "pages").GetValue();
+                List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(newMenu, "pages").GetValue();
 
                 _modOptionsTabPageNumber = tabPages.Count;
                 tabPages.Add(_modOptionsPage);

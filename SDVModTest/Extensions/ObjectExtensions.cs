@@ -3,10 +3,6 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.Extensions
 {
@@ -76,32 +72,6 @@ namespace UIInfoSuite.Extensions
             }
 
             return result;
-        }
-
-        public static String SafeGetString(this ResourceManager manager, String key)
-        {
-            String result = string.Empty;
-
-            if (!String.IsNullOrEmpty(key))
-            {
-                try
-                {
-                    result = manager.GetString(key, ModEntry.SpecificCulture);
-                }
-                catch
-                {
-                    try
-                    {
-                        result = Properties.Resources.ResourceManager.GetString(key);
-                    }
-                    catch
-                    {
-
-                    }
-                }
-            }
-
-            return result ?? String.Empty;
         }
     }
 }

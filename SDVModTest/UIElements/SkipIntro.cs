@@ -1,40 +1,45 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.UIElements
 {
     class SkipIntro
     {
+        private readonly IModEvents _events;
         //private bool _skipIntro = false;
 
-        public SkipIntro()
+        public SkipIntro(IModEvents events)
         {
+            _events = events;
+
             //GameEvents.QuarterSecondTick += CheckForSkip;
-            ControlEvents.KeyPressed += ControlEvents_KeyPressed;
-            SaveEvents.AfterLoad += StopCheckingForSkipKey;
+            events.Input.ButtonPressed += OnButtonPressed;
+            events.GameLoop.SaveLoaded += OnSaveLoaded;
             //MenuEvents.MenuChanged += SkipToTitleButtons;
         }
 
-        private void StopCheckingForSkipKey(object sender, EventArgs e)
+        /// <summary>Raised after the player loads a save slot and the world is initialised.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, EventArgs e)
         {
-            ControlEvents.KeyPressed -= ControlEvents_KeyPressed;
-            SaveEvents.AfterLoad -= StopCheckingForSkipKey;
+            // stop checking for skip key
+            _events.Input.ButtonPressed -= OnButtonPressed;
+            _events.GameLoop.SaveLoaded -= OnSaveLoaded;
         }
 
-        private void ControlEvents_KeyPressed(object sender, EventArgsKeyPressed e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (Game1.activeClickableMenu is TitleMenu &&
-                e.KeyPressed == Keys.Escape)
+            if (Game1.activeClickableMenu is TitleMenu menu && e.Button == SButton.Escape)
             {
-                (Game1.activeClickableMenu as TitleMenu)?.skipToTitleButtons();
-                ControlEvents.KeyPressed -= ControlEvents_KeyPressed;
+                menu.skipToTitleButtons();
+                _events.Input.ButtonPressed -= OnButtonPressed;
             }
         }
 

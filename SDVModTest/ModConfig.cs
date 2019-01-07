@@ -1,9 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StardewModdingAPI;
 
 namespace UIInfoSuite
 {
@@ -11,7 +6,7 @@ namespace UIInfoSuite
     {
         public string[] KeysForBarrelAndCropTimes { get; set; } = new string[]
         {
-            Keys.LeftShift.ToString()
+            SButton.LeftShift.ToString()
         };
 
         public bool CanRightClickForBarrelAndCropTimes { get; set; } = true;

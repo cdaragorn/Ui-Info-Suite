@@ -5,6 +5,6 @@
    "Description": "Adds a lot of useful information to the user interface. This is based on Demiacle's excellent UIModSuite.",
    "UniqueID": "Cdaragorn.UiInfoSuite",
    "EntryDll": "UIInfoSuite.dll",
-   "MinimumApiVersion" : "2.6",
+   "MinimumApiVersion" : "2.9.3",
    "UpdateKeys": [ "Nexus:1150" ]
 }

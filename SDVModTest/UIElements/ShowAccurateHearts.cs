@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
@@ -7,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.UIElements
 {
@@ -16,6 +13,7 @@ namespace UIInfoSuite.UIElements
     {
         private String[] _friendNames;
         private SocialPage _socialPage;
+        private IModEvents _events;
 
         private readonly int[][] _numArray = new int[][]
         {
@@ -25,15 +23,20 @@ namespace UIInfoSuite.UIElements
             new int[] { 0, 0, 1, 0, 0 }
         };
 
+        public ShowAccurateHearts(IModEvents events)
+        {
+            _events = events;
+        }
+
         public void ToggleOption(bool showAccurateHearts)
         {
-            MenuEvents.MenuChanged -= OnMenuChange;
-            GraphicsEvents.OnPostRenderGuiEvent -= DrawHeartFills;
+            _events.Display.MenuChanged -= OnMenuChanged;
+            _events.Display.RenderedActiveMenu -= OnRenderedActiveMenu;
 
             if (showAccurateHearts)
             {
-                MenuEvents.MenuChanged += OnMenuChange;
-                GraphicsEvents.OnPostRenderGuiEvent += DrawHeartFills;
+                _events.Display.MenuChanged += OnMenuChanged;
+                _events.Display.RenderedActiveMenu += OnRenderedActiveMenu;
             }
         }
 
@@ -42,12 +45,14 @@ namespace UIInfoSuite.UIElements
             ToggleOption(false);
         }
 
-        private void DrawHeartFills(object sender, EventArgs e)
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            // draw heart fills
+            if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                GameMenu gameMenu = Game1.activeClickableMenu as GameMenu;
-
                 if (gameMenu.currentTab == 2)
                 {
                     if (_socialPage != null)
@@ -106,13 +111,21 @@ namespace UIInfoSuite.UIElements
                     }
                     else
                     {
-                        OnMenuChange(sender, null);
+                        ExtendMenuIfNeeded();
                     }
                 }
             }
         }
 
-        private void OnMenuChange(object sender, EventArgsClickableMenuChanged e)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            ExtendMenuIfNeeded();
+        }
+
+        private void ExtendMenuIfNeeded()
         {
             if (Game1.activeClickableMenu is GameMenu)
             {
@@ -120,9 +133,9 @@ namespace UIInfoSuite.UIElements
 
                 foreach (var menu in menuList)
                 {
-                    if (menu is SocialPage)
+                    if (menu is SocialPage page)
                     {
-                        _socialPage = menu as SocialPage;
+                        _socialPage = page;
                         _friendNames = (typeof(SocialPage).GetField("names", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage) as List<object>)
                             .Select(name => name.ToString())
                             .ToArray();
