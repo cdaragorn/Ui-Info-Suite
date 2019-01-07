@@ -495,22 +495,25 @@ namespace UIInfoSuite.UIElements
                                 4),
                             Color.BurlyWood);
                     }
-                    //Game1.spriteBatch.Draw(
-                    //    Game1.mouseCursors,
-                    //    new Vector2(
-                    //        Game1.getMouseX(),
-                    //        Game1.getMouseY()),
-                    //    Game1.getSourceRectForStandardTileSheet(
-                    //        Game1.mouseCursors,
-                    //        Game1.mouseCursor,
-                    //        16,
-                    //        16),
-                    //    Color.White,
-                    //    0.0f,
-                    //    Vector2.Zero,
-                    //    Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
-                    //    SpriteEffects.None,
-                    //    1f);
+                    if (!Game1.options.hardwareCursor)
+                    {
+                        Game1.spriteBatch.Draw(
+                            Game1.mouseCursors,
+                            new Vector2(
+                                Game1.getMouseX(),
+                                Game1.getMouseY()),
+                            Game1.getSourceRectForStandardTileSheet(
+                                Game1.mouseCursors,
+                                Game1.mouseCursor,
+                                16,
+                                16),
+                            Color.White,
+                            0.0f,
+                            Vector2.Zero,
+                            Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
+                            SpriteEffects.None,
+                            1f);
+                    }
 
                     if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()))
                         IClickableMenu.drawHoverText(

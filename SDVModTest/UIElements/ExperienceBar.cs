@@ -28,6 +28,7 @@ namespace UIInfoSuite.UIElements
         private const int MaxBarWidth = 175;
 
         private int[] _currentExperience = new int[5];
+        private int[] _currentLevelExtenderExperience = new int[5];
         private readonly List<ExperiencePointDisplay> _experiencePointDisplays = new List<ExperiencePointDisplay>();
         private readonly TimeSpan _levelUpPauseTime = TimeSpan.FromSeconds(2);
         private readonly Color _iconColor = Color.White;
@@ -75,7 +76,7 @@ namespace UIInfoSuite.UIElements
             helper.Events.Display.RenderingHud += OnRenderingHud;
             helper.Events.Player.Warped += OnWarped_RemoveAllExperiencePointDisplays;
 
-            //var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
+            var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
             try
             {
                 _levelExtenderAPI = _helper.ModRegistry.GetApi<LevelExtenderInterface>("DevinLematty.LevelExtender");
@@ -145,11 +146,18 @@ namespace UIInfoSuite.UIElements
                 _currentExperience[i] = Game1.player.experiencePoints[i];
             _showExperienceGain = showExperienceGain;
 
+            if (_levelExtenderAPI != null)
+            {
+                for (int i = 0; i < _currentLevelExtenderExperience.Length; ++i)
+                    _currentLevelExtenderExperience[i] = _levelExtenderAPI.currentXP()[i];
+            }
+
             if (showExperienceGain)
             {
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             }
         }
+
 
         public void ToggleShowExperienceBar(bool showExperienceBar)
         {
@@ -241,9 +249,15 @@ namespace UIInfoSuite.UIElements
 
             int currentLevelIndex = -1;
 
+            int[] levelExtenderExperience = null;
+            if (_levelExtenderAPI != null)
+                levelExtenderExperience = _levelExtenderAPI.currentXP();
+
             for (int i = 0; i < _currentExperience.Length; ++i)
             {
-                if (_currentExperience[i] != Game1.player.experiencePoints[i])
+                if (_currentExperience[i] != Game1.player.experiencePoints[i] ||
+                    (_levelExtenderAPI != null &&
+                    _currentLevelExtenderExperience[i] != levelExtenderExperience[i]))
                 {
                     currentLevelIndex = i;
                     break;
@@ -312,13 +326,30 @@ namespace UIInfoSuite.UIElements
                 if (_showExperienceGain &&
                     _experienceRequiredToLevel > 0)
                 {
-                    _experiencePointDisplays.Add(
-                        new ExperiencePointDisplay(
-                            Game1.player.experiencePoints[currentLevelIndex] - _currentExperience[currentLevelIndex],
-                            Game1.player.getLocalPosition(Game1.viewport)));
+                    int currentExperienceToUse = Game1.player.experiencePoints[currentLevelIndex];
+                    int previousExperienceToUse = _currentExperience[currentLevelIndex];
+                    if (_levelExtenderAPI != null &&
+                        _currentSkillLevel > 9)
+                    {
+                        currentExperienceToUse = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                        previousExperienceToUse = _currentLevelExtenderExperience[currentLevelIndex];
+                    }
+
+                    int experienceGain = currentExperienceToUse - previousExperienceToUse;
+
+                    if (experienceGain > 0)
+                    {
+                        _experiencePointDisplays.Add(
+                            new ExperiencePointDisplay(
+                                experienceGain,
+                                Game1.player.getLocalPosition(Game1.viewport)));
+                    }
                 }
 
                 _currentExperience[currentLevelIndex] = Game1.player.experiencePoints[currentLevelIndex];
+
+                if (_levelExtenderAPI != null)
+                    _currentLevelExtenderExperience[currentLevelIndex] = _levelExtenderAPI.currentXP()[currentLevelIndex];
 
             }
             else if (_previousItem != currentItem)

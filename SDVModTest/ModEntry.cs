@@ -79,6 +79,7 @@ namespace UIInfoSuite
                         writer.WriteEndElement();
                     }
                     writer.WriteEndElement();
+                    writer.Close();
                 }
             }
         }
