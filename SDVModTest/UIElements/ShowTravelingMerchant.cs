@@ -23,9 +23,9 @@ namespace UIInfoSuite.UIElements
             if (showTravelingMerchant)
             {
                 UpdateTravelingMerchant();
-                _helper.Events.Display.RenderingHud -= OnRenderingHud;
-                _helper.Events.Display.RenderedHud -= OnRenderedHud;
-                _helper.Events.GameLoop.DayStarted -= OnDayStarted;
+                _helper.Events.Display.RenderingHud += OnRenderingHud;
+                _helper.Events.Display.RenderedHud += OnRenderedHud;
+                _helper.Events.GameLoop.DayStarted += OnDayStarted;
             }
         }
 

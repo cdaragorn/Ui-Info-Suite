@@ -137,7 +137,8 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_birthdayNPC != null && _birthdayIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            if (_birthdayNPC != null && 
+                (_birthdayIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
                 IClickableMenu.drawHoverText(
