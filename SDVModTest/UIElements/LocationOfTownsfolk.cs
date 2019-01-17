@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using UIInfoSuite.Extensions;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -57,6 +56,7 @@ namespace UIInfoSuite.UIElements {
             { "Sewer", new KeyValuePair<int, int>(380, 596) },
             { "WizardHouse", new KeyValuePair<int, int>(196, 352) },
             { "Trailer", new KeyValuePair<int, int>(780, 360) },
+            { "pamHouseUpgrade", new KeyValuePair<int, int>(780, 360) },
             { "Forest", new KeyValuePair<int, int>(80, 272) },
             { "Woods", new KeyValuePair<int, int>(100, 272) },
             { "WitchSwamp", new KeyValuePair<int, int>(0, 0) },
@@ -95,30 +95,30 @@ namespace UIInfoSuite.UIElements {
 
         public void ToggleShowNPCLocationsOnMap(bool showLocations)
         {
-            OnMenuChange(null, null);
-            GraphicsEvents.OnPostRenderGuiEvent -= DrawSocialPageOptions;
-            GraphicsEvents.OnPostRenderGuiEvent -= DrawNPCLocationsOnMap;
-            ControlEvents.MouseChanged -= HandleClickForSocialPage;
-            ControlEvents.ControllerButtonPressed -= HandleGamepadPressForSocialPage;
-            MenuEvents.MenuChanged -= OnMenuChange;
+            ExtendMenuIfNeeded();
+            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawSocialPageOptions;
+            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawNPCLocationsOnMap;
+            _helper.Events.Input.ButtonPressed -= OnButtonPressed_ForSocialPage;
+            _helper.Events.Display.MenuChanged -= OnMenuChanged;
 
             if (showLocations)
             {
-                GraphicsEvents.OnPostRenderGuiEvent += DrawSocialPageOptions;
-                GraphicsEvents.OnPostRenderGuiEvent += DrawNPCLocationsOnMap;
-                ControlEvents.MouseChanged += HandleClickForSocialPage;
-                ControlEvents.ControllerButtonPressed += HandleGamepadPressForSocialPage;
-                MenuEvents.MenuChanged += OnMenuChange;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawSocialPageOptions;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawNPCLocationsOnMap;
+                _helper.Events.Input.ButtonPressed += OnButtonPressed_ForSocialPage;
+                _helper.Events.Display.MenuChanged += OnMenuChanged;
             }
         }
 
-        private void HandleGamepadPressForSocialPage(object sender, EventArgsControllerButtonPressed e)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.ButtonPressed == Buttons.A)
-                CheckSelectedBox();
+            ExtendMenuIfNeeded();
         }
 
-        private void OnMenuChange(object sender, EventArgsClickableMenuChanged e)
+        private void ExtendMenuIfNeeded()
         {
             if (Game1.activeClickableMenu is GameMenu)
             {
@@ -178,11 +178,12 @@ namespace UIInfoSuite.UIElements {
             }
         }
 
-        private void HandleClickForSocialPage(object sender, EventArgsMouseStateChanged e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonPressed_ForSocialPage(object sender, ButtonPressedEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu &&
-                e.PriorState.LeftButton != ButtonState.Pressed &&
-                e.NewState.LeftButton == ButtonState.Pressed)
+            if (Game1.activeClickableMenu is GameMenu && (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA))
             {
                 CheckSelectedBox();
             }
@@ -210,11 +211,13 @@ namespace UIInfoSuite.UIElements {
             }
         }
 
-        private void DrawNPCLocationsOnMap(object sender, EventArgs e)
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedActiveMenu_DrawNPCLocationsOnMap(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                GameMenu gameMenu = Game1.activeClickableMenu as GameMenu;
                 if (gameMenu.currentTab == 3)
                 {
                     List<String> namesToShow = new List<string>();
@@ -228,8 +231,7 @@ namespace UIInfoSuite.UIElements {
 
                             if (drawCharacter)
                             {
-                                KeyValuePair<int, int> location;
-                                location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
+                                KeyValuePair<int, int> location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
                                 String locationName = character.currentLocation?.Name ?? character.DefaultMap;
 
                                 switch (locationName)
@@ -431,10 +433,12 @@ namespace UIInfoSuite.UIElements {
             }
         }
 
-        private void DrawSocialPageOptions(object sender, EventArgs e)
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedActiveMenu_DrawSocialPageOptions(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu &&
-                (Game1.activeClickableMenu as GameMenu).currentTab == 2)
+            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 2)
             {
                 Game1.drawDialogueBox(
                     Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset, 
@@ -491,22 +495,25 @@ namespace UIInfoSuite.UIElements {
                                 4),
                             Color.BurlyWood);
                     }
-                    //Game1.spriteBatch.Draw(
-                    //    Game1.mouseCursors,
-                    //    new Vector2(
-                    //        Game1.getMouseX(),
-                    //        Game1.getMouseY()),
-                    //    Game1.getSourceRectForStandardTileSheet(
-                    //        Game1.mouseCursors,
-                    //        Game1.mouseCursor,
-                    //        16,
-                    //        16),
-                    //    Color.White,
-                    //    0.0f,
-                    //    Vector2.Zero,
-                    //    Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
-                    //    SpriteEffects.None,
-                    //    1f);
+                    if (!Game1.options.hardwareCursor)
+                    {
+                        Game1.spriteBatch.Draw(
+                            Game1.mouseCursors,
+                            new Vector2(
+                                Game1.getMouseX(),
+                                Game1.getMouseY()),
+                            Game1.getSourceRectForStandardTileSheet(
+                                Game1.mouseCursors,
+                                Game1.mouseCursor,
+                                16,
+                                16),
+                            Color.White,
+                            0.0f,
+                            Vector2.Zero,
+                            Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
+                            SpriteEffects.None,
+                            1f);
+                    }
 
                     if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()))
                         IClickableMenu.drawHoverText(

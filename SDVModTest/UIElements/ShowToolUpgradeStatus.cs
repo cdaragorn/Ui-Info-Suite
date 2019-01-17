@@ -22,29 +22,41 @@ namespace UIInfoSuite.UIElements {
 
         public void ToggleOption(bool showToolUpgradeStatus)
         {
-            GraphicsEvents.OnPreRenderHudEvent -= DrawToolUpgradeStatus;
-            GraphicsEvents.OnPostRenderHudEvent -= DrawHoverText;
-            TimeEvents.AfterDayStarted -= DayChanged;
-            GameEvents.OneSecondTick -= CheckForMidDayChanges;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud;
+            _helper.Events.Display.RenderedHud -= OnRenderedHud;
+            _helper.Events.GameLoop.DayStarted -= OnDayStarted;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showToolUpgradeStatus)
             {
-                DayChanged(null, new EventArgsIntChanged(0, Game1.dayOfMonth));
-                GraphicsEvents.OnPreRenderHudEvent += DrawToolUpgradeStatus;
-                GraphicsEvents.OnPostRenderHudEvent += DrawHoverText;
-                TimeEvents.AfterDayStarted += DayChanged;
-                GameEvents.OneSecondTick += CheckForMidDayChanges;
+                UpdateToolInfo();
+                _helper.Events.Display.RenderingHud += OnRenderingHud;
+                _helper.Events.Display.RenderedHud += OnRenderedHud;
+                _helper.Events.GameLoop.DayStarted += OnDayStarted;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
-        private void CheckForMidDayChanges(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (_toolBeingUpgraded != Game1.player.toolBeingUpgraded.Value)
-                DayChanged(null, null);
+            if (e.IsOneSecond && _toolBeingUpgraded != Game1.player.toolBeingUpgraded.Value)
+                UpdateToolInfo();
         }
 
-        private void DayChanged(object sender, EventArgs e)
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
+            this.UpdateToolInfo();
+        }
+
+        private void UpdateToolInfo()
+        {
+            // 
             if (Game1.player.toolBeingUpgraded.Value != null)
             {
                 _toolBeingUpgraded = Game1.player.toolBeingUpgraded.Value;
@@ -101,10 +113,13 @@ namespace UIInfoSuite.UIElements {
             
         }
 
-        private void DrawToolUpgradeStatus(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear under the HUD.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
-            if (!Game1.eventUp &&
-                _toolBeingUpgraded != null)
+            // draw tool upgrade status
+            if (!Game1.eventUp && _toolBeingUpgraded != null)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
                 _toolUpgradeIcon =
@@ -117,10 +132,13 @@ namespace UIInfoSuite.UIElements {
             }
         }
 
-        private void DrawHoverText(object sender, EventArgs e)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (_toolBeingUpgraded != null &&
-                _toolUpgradeIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            // draw hover text
+            if (_toolBeingUpgraded != null && _toolUpgradeIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
                 IClickableMenu.drawHoverText(
                         Game1.spriteBatch,

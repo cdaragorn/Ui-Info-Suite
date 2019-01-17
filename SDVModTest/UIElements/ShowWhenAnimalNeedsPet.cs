@@ -12,9 +12,7 @@ using System.Timers;
 namespace UIInfoSuite.UIElements {
     class ShowWhenAnimalNeedsPet : IDisposable
     {
-        private readonly StardewValley.Object _wool = new StardewValley.Object(440, 1);
         private readonly Timer _timer = new Timer();
-        private float _scale;
         private float _yMovementPerDraw;
         private float _alpha;
         private readonly IModHelper _helper;
@@ -28,14 +26,14 @@ namespace UIInfoSuite.UIElements {
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
             _timer.Stop();
-            PlayerEvents.Warped -= OnLocationChange;
-            GraphicsEvents.OnPreRenderHudEvent -= DrawAnimalHasProduct;
+            _helper.Events.Player.Warped -= OnWarped;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawAnimalHasProduct;
 
             if (showWhenAnimalNeedsPet)
             {
                 _timer.Start();
-                PlayerEvents.Warped += OnLocationChange;
-                GraphicsEvents.OnPreRenderHudEvent += DrawAnimalHasProduct;
+                _helper.Events.Player.Warped += OnWarped;
+                _helper.Events.Display.RenderingHud += OnRenderingHud_DrawAnimalHasProduct;
             }
         }
 
@@ -44,7 +42,10 @@ namespace UIInfoSuite.UIElements {
             ToggleOption(false);
         }
 
-        private void DrawAnimalHasProduct(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud_DrawAnimalHasProduct(object sender, RenderingHudEventArgs e)
         {
             if (!Game1.eventUp &&
                 Game1.activeClickableMenu == null &&
@@ -90,25 +91,32 @@ namespace UIInfoSuite.UIElements {
             }
         }
 
-        private void OnLocationChange(object sender, EventArgsPlayerWarped e)
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.NewLocation is AnimalHouse ||
-                e.NewLocation is Farm)
+            if (e.IsLocalPlayer)
             {
-                _timer.Interval = 1000;
-                _timer.Start();
-            }
-            else
-            {
-                _timer.Stop();
-                StopDrawingPetNeeds();
+                if (e.NewLocation is AnimalHouse || e.NewLocation is Farm)
+                {
+                    _timer.Interval = 1000;
+                    _timer.Start();
+                }
+                else
+                {
+                    _timer.Stop();
+                    StopDrawingPetNeeds();
+                }
             }
         }
 
-        private void DrawNeedsPetTooltip(object sender, EventArgs e)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderingHud_DrawNeedsPetTooltip(object sender, RenderingHudEventArgs e)
         {
-            if (!Game1.eventUp &&
-                Game1.activeClickableMenu == null)
+            if (!Game1.eventUp && Game1.activeClickableMenu == null)
             {
                 DrawIconForFarmAnimals();
                 DrawIconForPets();
@@ -118,28 +126,33 @@ namespace UIInfoSuite.UIElements {
         private void StartDrawingPetNeeds(object sender, ElapsedEventArgs e)
         {
             _timer.Stop();
-            GraphicsEvents.OnPreRenderHudEvent += DrawNeedsPetTooltip;
-            GameEvents.SecondUpdateTick += UpdatePetDraw;
-            _scale = 4f;
+            _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
+            _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
             _yMovementPerDraw = -3f;
             _alpha = 1f;
         }
 
         private void StopDrawingPetNeeds()
         {
-            GraphicsEvents.OnPreRenderHudEvent -= DrawNeedsPetTooltip;
-            GameEvents.SecondUpdateTick -= UpdatePetDraw;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawNeedsPetTooltip;
+            _helper.Events.GameLoop.UpdateTicked -= UpdateTicked;
         }
 
-        private void UpdatePetDraw(object sender, EventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            _scale += 0.01f;
-            _yMovementPerDraw += 0.3f;
-            _alpha -= 0.014f;
-            if (_alpha < 0.1f)
+            // update pet draw
+            if (e.IsMultipleOf(2))
             {
-                StopDrawingPetNeeds();
-                _timer.Start();
+                _yMovementPerDraw += 0.3f;
+                _alpha -= 0.014f;
+                if (_alpha < 0.1f)
+                {
+                    StopDrawingPetNeeds();
+                    _timer.Start();
+                }
             }
         }
 

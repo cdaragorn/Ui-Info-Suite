@@ -1,13 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace UIInfoSuite.Options
@@ -21,7 +17,7 @@ namespace UIInfoSuite.Options
 
         public event EventHandler OnLeftClicked;
 
-        public ModOptionsPageButton()
+        public ModOptionsPageButton(IModEvents events)
         {
             //_optionsPageHandler = optionsPageHandler;
             width = 64;
@@ -31,39 +27,37 @@ namespace UIInfoSuite.Options
             xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
             yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
             Bounds = new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height);
-            ControlEvents.MouseChanged += OnMouseChanged;
-            ControlEvents.ControllerButtonPressed += ControlEvents_ControllerButtonPressed;
-            MenuEvents.MenuChanged += MenuEvents_MenuChanged;
+            events.Input.ButtonPressed += OnButtonPressed;
+            events.Display.MenuChanged += OnMenuChanged;
         }
 
-        private void MenuEvents_MenuChanged(object sender, EventArgsClickableMenuChanged e)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            if (e.NewMenu is GameMenu menu)
             {
-                GameMenu menu = Game1.activeClickableMenu as GameMenu;
                 xPositionOnScreen = menu.xPositionOnScreen + menu.width - 200;
             }
         }
 
-        private void ControlEvents_ControllerButtonPressed(object sender, EventArgsControllerButtonPressed e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.ButtonPressed == Buttons.A &&
-                isWithinBounds(Game1.getMouseX(), Game1.getMouseY()))
+            if (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA)
             {
-                receiveLeftClick(Game1.getMouseX(), Game1.getMouseY());
-                OnLeftClicked?.Invoke(this, null);
+                int x = (int)e.Cursor.ScreenPixels.X;
+                int y = (int)e.Cursor.ScreenPixels.Y;
+                if (isWithinBounds(x, y))
+                {
+                    receiveLeftClick(x, y);
+                    OnLeftClicked?.Invoke(this, null);
+                }
             }
-        }
 
-        public void OnMouseChanged(object sender, EventArgsMouseStateChanged e)
-        {
-            if (e.PriorState.LeftButton != ButtonState.Pressed &&
-                e.NewState.LeftButton == ButtonState.Pressed &&
-                isWithinBounds(e.NewPosition.X, e.NewPosition.Y))
-            {
-                receiveLeftClick(e.NewPosition.X, e.NewPosition.Y);
-                OnLeftClicked?.Invoke(this, null);
-            }
             //if (e.NewState.LeftButton != ButtonState.Pressed || !(Game1.activeClickableMenu is GameMenu))
             //{
             //    _hasClicked = false;
@@ -73,7 +67,7 @@ namespace UIInfoSuite.Options
             //    !_hasClicked)
             //{
             //    receiveLeftClick(e.NewPosition.X, e.NewPosition.Y);
-                
+
             //}
         }
 

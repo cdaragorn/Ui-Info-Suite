@@ -4,9 +4,6 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 
@@ -27,7 +24,7 @@ namespace UIInfoSuite.Options
         private ClickableTextureComponent _scrollBar;
         private Rectangle _scrollBarRunner;
 
-        public ModOptionsPage(List<ModOptionsElement> options)
+        public ModOptionsPage(List<ModOptionsElement> options, IModEvents events)
             : base(Game1.activeClickableMenu.xPositionOnScreen, Game1.activeClickableMenu.yPositionOnScreen + 10, Width, Game1.activeClickableMenu.height)
         {
             _options = options;
@@ -75,12 +72,15 @@ namespace UIInfoSuite.Options
                         (height - Game1.tileSize * 2) / 7 + Game1.pixelZoom),
                     i.ToString()));
 
-            MenuEvents.MenuChanged += MenuEvents_MenuChanged;
+            events.Display.MenuChanged += OnMenuChanged;
         }
 
-        private void MenuEvents_MenuChanged(object sender, EventArgsClickableMenuChanged e)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            if (e.NewMenu is GameMenu)
             {
                 xPositionOnScreen = Game1.activeClickableMenu.xPositionOnScreen;
                 yPositionOnScreen = Game1.activeClickableMenu.yPositionOnScreen + 10;

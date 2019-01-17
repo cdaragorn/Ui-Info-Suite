@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Input;
+﻿using StardewModdingAPI;
 
 namespace UIInfoSuite {
     class ModConfig
     {
         public string[] KeysForBarrelAndCropTimes { get; set; } = new string[]
         {
-            Keys.LeftShift.ToString()
+            SButton.LeftShift.ToString()
         };
 
         public bool CanRightClickForBarrelAndCropTimes { get; set; } = true;
@@ -51,6 +52,21 @@ namespace UIInfoSuite {
             new int[] { 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 },
             new int[] { 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 },
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+        };
+		
+		public int[][] PrismaticSprinkler { get; set; } = new int[][]
+        {
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+            new int[] { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
         };
