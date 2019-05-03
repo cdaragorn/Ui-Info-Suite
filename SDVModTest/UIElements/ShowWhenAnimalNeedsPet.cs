@@ -135,8 +135,8 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            // update pet draw
-            _yMovementPerDraw = -4f + 4f * (float)Math.Sin(e.Ticks / 20.0);
+            // Bob up and down in a sin wave each draw
+            _yMovementPerDraw = -6f + 6f * (float)Math.Sin(e.Ticks / 20.0);
         }
 
         private void DrawIconForFarmAnimals()
