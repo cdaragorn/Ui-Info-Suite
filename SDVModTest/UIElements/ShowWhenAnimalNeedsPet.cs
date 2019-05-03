@@ -13,26 +13,22 @@ namespace UIInfoSuite.UIElements
 {
     class ShowWhenAnimalNeedsPet : IDisposable
     {
-        private readonly Timer _timer = new Timer();
-        private float _yMovementPerDraw;
-        private float _alpha;
+        private float _yMovementPerDraw = 0f;
+        private float _alpha = 1f;
         private readonly IModHelper _helper;
 
         public ShowWhenAnimalNeedsPet(IModHelper helper)
         {
-            _timer.Elapsed += StartDrawingPetNeeds;
             _helper = helper;
         }
 
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
-            _timer.Stop();
             _helper.Events.Player.Warped -= OnWarped;
             _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawAnimalHasProduct;
 
             if (showWhenAnimalNeedsPet)
             {
-                _timer.Start();
                 _helper.Events.Player.Warped += OnWarped;
                 _helper.Events.Display.RenderingHud += OnRenderingHud_DrawAnimalHasProduct;
             }
@@ -101,12 +97,10 @@ namespace UIInfoSuite.UIElements
             {
                 if (e.NewLocation is AnimalHouse || e.NewLocation is Farm)
                 {
-                    _timer.Interval = 1000;
-                    _timer.Start();
+                    StartDrawingPetNeeds();
                 }
                 else
                 {
-                    _timer.Stop();
                     StopDrawingPetNeeds();
                 }
             }
@@ -124,13 +118,10 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void StartDrawingPetNeeds(object sender, ElapsedEventArgs e)
+        private void StartDrawingPetNeeds()
         {
-            _timer.Stop();
             _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
             _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
-            _yMovementPerDraw = -3f;
-            _alpha = 1f;
         }
 
         private void StopDrawingPetNeeds()
@@ -145,16 +136,7 @@ namespace UIInfoSuite.UIElements
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             // update pet draw
-            if (e.IsMultipleOf(2))
-            {
-                _yMovementPerDraw += 0.3f;
-                _alpha -= 0.014f;
-                if (_alpha < 0.1f)
-                {
-                    StopDrawingPetNeeds();
-                    _timer.Start();
-                }
-            }
+            _yMovementPerDraw = -4f + 4f * (float)Math.Sin(e.Ticks / 20.0);
         }
 
         private void DrawIconForFarmAnimals()
