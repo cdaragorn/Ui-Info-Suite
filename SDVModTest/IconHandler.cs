@@ -28,7 +28,7 @@ namespace UIInfoSuite
         public Point GetNewIconPosition()
         {
             int yPos = Game1.options.zoomButtons ? 290 : 260;
-            int xPosition = (int)Tools.GetWidthInPlayArea() - 134 - 46 * _amountOfVisibleIcons;
+            int xPosition = (int)Tools.GetWidthInPlayArea() - 75 - 48 * _amountOfVisibleIcons;
             ++_amountOfVisibleIcons;
             return new Point(xPosition, yPos);
         }
