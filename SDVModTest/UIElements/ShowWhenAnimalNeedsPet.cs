@@ -136,7 +136,9 @@ namespace UIInfoSuite.UIElements
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             // Bob up and down in a sin wave each draw
-            _yMovementPerDraw = -6f + 6f * (float)Math.Sin(e.Ticks / 20.0);
+            float sine = (float)Math.Sin(e.Ticks / 20.0);
+            _yMovementPerDraw = -6f + 6f * sine;
+            _alpha = 0.8f + 0.2f * sine;
         }
 
         private void DrawIconForFarmAnimals()
@@ -148,7 +150,8 @@ namespace UIInfoSuite.UIElements
                 foreach (var animal in animalsInCurrentLocation.Pairs)
                 {
                     if (!animal.Value.IsEmoting &&
-                        !animal.Value.wasPet.Value)
+                        !animal.Value.wasPet.Value &&
+                        animal.Value.friendshipTowardFarmer.Value < 1000)
                     {
                         Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
                         String animalType = animal.Value.type.Value.ToLower();
@@ -181,7 +184,8 @@ namespace UIInfoSuite.UIElements
             foreach (var character in Game1.currentLocation.characters)
             {
                 if (character is Pet &&
-                    !_helper.Reflection.GetField<bool>(character, "wasPetToday").GetValue())
+                    !_helper.Reflection.GetField<bool>(character, "wasPetToday").GetValue() && 
+                    _helper.Reflection.GetField<int>(npc, "friendshipTowardFarmer", true).GetValue() < 1000)
                 {
                     Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
                     positionAboveAnimal.X += 50f;
