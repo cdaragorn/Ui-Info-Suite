@@ -166,9 +166,9 @@ namespace UIInfoSuite.UIElements
                     //    spaces.Append(" ");
                     //}
                     //text = "\n" + spaces.ToString() + (truePrice / 2);
-                    if (_hoverItem.getStack() > 1)
+                    if (_hoverItem.Stack > 1)
                     {
-                        stackPrice = (itemPrice * _hoverItem.getStack());
+                        stackPrice = (itemPrice * _hoverItem.Stack);
                         //text += " (" + (truePrice / 2 * _hoverItem.getStack()) + ")";
                     }
                 }

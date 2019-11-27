@@ -52,13 +52,13 @@ namespace UIInfoSuite.UIElements
             {
                 _color = new Color(Color.White.ToVector4());
 
-                if (Game1.dailyLuck < -0.04)
+                if (Game1.player.DailyLuck < -0.04)
                 {
                     _hoverText = _helper.SafeGetString(LanguageKeys.MaybeStayHome);
                     _color.B = 155;
                     _color.G = 155;
                 }
-                else if (Game1.dailyLuck < 0)
+                else if (Game1.player.DailyLuck < 0)
                 {
                     _hoverText = _helper.SafeGetString(LanguageKeys.NotFeelingLuckyAtAll);
                     _color.B = 165;
@@ -66,7 +66,7 @@ namespace UIInfoSuite.UIElements
                     _color.R = 165;
                     _color *= 0.8f;
                 }
-                else if (Game1.dailyLuck <= 0.04)
+                else if (Game1.player.DailyLuck <= 0.04)
                 {
                     _hoverText = _helper.SafeGetString(LanguageKeys.LuckyButNotTooLucky);
                 }
