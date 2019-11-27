@@ -79,7 +79,7 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_travelingMerchantIsHere && _travelingMerchantIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            if (_travelingMerchantIsHere && (_travelingMerchantIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 string hoverText = _helper.SafeGetString(
                     LanguageKeys.TravelingMerchantIsInTown);
