@@ -54,7 +54,7 @@ namespace UIInfoSuite.UIElements
             _hoverItem = Tools.GetHoveredItem();
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                List<IClickableMenu> menuList = typeof(GameMenu).GetField("pages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.activeClickableMenu) as List<IClickableMenu>;
+                List<IClickableMenu> menuList = gameMenu.pages;
 
                 if (menuList[0] is InventoryPage inventory)
                 {

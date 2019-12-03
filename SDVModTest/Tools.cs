@@ -102,23 +102,23 @@ namespace UIInfoSuite
                 }
             }
 
-            if (Game1.activeClickableMenu is GameMenu)
+            if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                List<IClickableMenu> menuList = typeof(GameMenu).GetField("pages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.activeClickableMenu) as List<IClickableMenu>;
-                foreach (var menu in menuList)
+                foreach (var menu in gameMenu.pages)
                 {
-                    if (menu is InventoryPage)
+                    if (menu is InventoryPage inventory)
                     {
                         FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                        hoverItem = hoveredItemField.GetValue(menu) as Item;
+                        hoverItem = hoveredItemField.GetValue(inventory) as Item;
                         //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
                     }
                 }
             }
 
-            if (Game1.activeClickableMenu is ItemGrabMenu)
+            if (Game1.activeClickableMenu is ItemGrabMenu itemMenu)
             {
-                hoverItem = (Game1.activeClickableMenu as MenuWithInventory).hoveredItem;
+                
+                hoverItem = itemMenu.hoveredItem;
                 //(Game1.activeClickableMenu as MenuWithInventory).hoveredItem = null;
             }
 

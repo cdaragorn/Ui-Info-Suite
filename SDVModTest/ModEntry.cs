@@ -34,6 +34,7 @@ namespace UIInfoSuite
             helper.Events.GameLoop.Saved += OnSaved;
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
+            helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
 
             //Resources = new ResourceManager("UIInfoSuite.Resource.strings", Assembly.GetAssembly(typeof(ModEntry)));
             //try
@@ -45,6 +46,11 @@ namespace UIInfoSuite
             //{
             //    Resources = Properties.Resources.ResourceManager;
             //}
+        }
+
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+
         }
 
         /// <summary>Raised after the game returns to the title screen.</summary>

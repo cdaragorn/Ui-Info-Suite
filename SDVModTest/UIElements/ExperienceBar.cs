@@ -81,11 +81,11 @@ namespace UIInfoSuite.UIElements
             {
                 _levelExtenderAPI = _helper.ModRegistry.GetApi<LevelExtenderInterface>("DevinLematty.LevelExtender");
             }
-            catch (Exception ex)
+            catch
             {
-                int j = 4;
+
             }
-            int f = 3;
+
 
             //if (something != null)
             //{

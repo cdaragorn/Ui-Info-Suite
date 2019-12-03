@@ -6,6 +6,7 @@ using StardewValley.Buildings;
 using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace UIInfoSuite.UIElements
 {
@@ -14,6 +15,8 @@ namespace UIInfoSuite.UIElements
         private readonly List<Point> _effectiveArea = new List<Point>();
         private readonly ModConfig _modConfig;
         private readonly IModEvents _events;
+
+        private readonly Mutex _mutex = new Mutex();
 
         private static readonly int[][] _junimoHutArray = new int[17][]
         {
@@ -67,10 +70,21 @@ namespace UIInfoSuite.UIElements
             if (!e.IsMultipleOf(4))
                 return;
 
-            // check draw tile outlines
-            _effectiveArea.Clear();
+            if (_mutex.WaitOne())
+            {
+                try
+                {
+                    // check draw tile outlines
+                    _effectiveArea.Clear();
+                }
+                finally
+                {
+                    _mutex.ReleaseMutex();
+                }
+
+            }
             if (Game1.activeClickableMenu == null &&
-                !Game1.eventUp)
+                        !Game1.eventUp)
             {
                 if (Game1.currentLocation is BuildableGameLocation buildableLocation)
                 {
@@ -126,7 +140,7 @@ namespace UIInfoSuite.UIElements
                         {
                             arrayToUse = _modConfig.QualitySprinkler;
                         }
-			else if (name.Contains("prismatic"))
+                        else if (name.Contains("prismatic"))
                         {
                             arrayToUse = _modConfig.PrismaticSprinkler;
                         }
@@ -153,10 +167,10 @@ namespace UIInfoSuite.UIElements
                                 {
                                     arrayToUse = _modConfig.QualitySprinkler;
                                 }
-				else if (name.Contains("prismatic"))
-				{
-					arrayToUse = _modConfig.PrismaticSprinkler;
-				}
+                                else if (name.Contains("prismatic"))
+                                {
+                                    arrayToUse = _modConfig.PrismaticSprinkler;
+                                }
                                 else
                                 {
                                     arrayToUse = _modConfig.Sprinkler;
@@ -174,6 +188,7 @@ namespace UIInfoSuite.UIElements
 
                 }
             }
+
         }
 
         /// <summary>Raised after the game draws to the sprite patch in a draw tick, just before the final sprite batch is rendered to the screen.</summary>
@@ -181,30 +196,51 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRendered(object sender, RenderedEventArgs e)
         {
-            // draw tile outlines
-            foreach (Point point in _effectiveArea)
-                Game1.spriteBatch.Draw(
-                    Game1.mouseCursors,
-                    Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
-                    new Rectangle(194, 388, 16, 16),
-                    Color.White * 0.7f,
-                    0.0f,
-                    Vector2.Zero,
-                    Game1.pixelZoom,
-                    SpriteEffects.None,
-                    0.01f);
+            if (_mutex.WaitOne(0))
+            {
+                try
+                {
+                    // draw tile outlines
+                    foreach (Point point in _effectiveArea)
+                        Game1.spriteBatch.Draw(
+                            Game1.mouseCursors,
+                            Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
+                            new Rectangle(194, 388, 16, 16),
+                            Color.White * 0.7f,
+                            0.0f,
+                            Vector2.Zero,
+                            Game1.pixelZoom,
+                            SpriteEffects.None,
+                            0.01f);
+                }
+                finally
+                {
+                    _mutex.ReleaseMutex();
+                }
+            }
         }
 
         private void ParseConfigToHighlightedArea(int[][] highlightedLocation, int xPos, int yPos)
         {
             int xOffset = highlightedLocation.Length / 2;
-            for (int i = 0; i < highlightedLocation.Length; ++i)
+
+            if (_mutex.WaitOne())
             {
-                int yOffset = highlightedLocation[i].Length / 2;
-                for (int j = 0; j < highlightedLocation[i].Length; ++j)
+                try
                 {
-                    if (highlightedLocation[i][j] == 1)
-                        _effectiveArea.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
+                    for (int i = 0; i < highlightedLocation.Length; ++i)
+                    {
+                        int yOffset = highlightedLocation[i].Length / 2;
+                        for (int j = 0; j < highlightedLocation[i].Length; ++j)
+                        {
+                            if (highlightedLocation[i][j] == 1)
+                                _effectiveArea.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
+                        }
+                    }
+                }
+                finally
+                {
+                    _mutex.ReleaseMutex();
                 }
             }
         }

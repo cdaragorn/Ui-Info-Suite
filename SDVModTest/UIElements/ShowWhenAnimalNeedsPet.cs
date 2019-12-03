@@ -7,6 +7,7 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Network;
 using System;
+using System.Linq;
 using System.Timers;
 
 namespace UIInfoSuite.UIElements
@@ -198,8 +199,8 @@ namespace UIInfoSuite.UIElements
         {
             foreach (var character in Game1.currentLocation.characters)
             {
-                if (character is Pet &&
-                    !_helper.Reflection.GetField<bool>(character, "wasPetToday").GetValue())
+                if (character is Pet pet &&
+                    !pet.lastPetDay.Values.Any(day => day == Game1.Date.TotalDays))
                 {
                     Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
                     positionAboveAnimal.X += 50f;

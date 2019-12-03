@@ -139,7 +139,8 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_toolBeingUpgraded != null && _toolUpgradeIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            if (_toolBeingUpgraded != null && 
+                (_toolUpgradeIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 IClickableMenu.drawHoverText(
                         Game1.spriteBatch,

@@ -126,9 +126,9 @@ namespace UIInfoSuite.Options
                 if (_modOptionsPageButton != null)
                     _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
 
-                if (e.OldMenu is GameMenu)
+                if (e.OldMenu is GameMenu gameMenu)
                 {
-                    List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(e.OldMenu, "pages").GetValue();
+                    List<IClickableMenu> tabPages = gameMenu.pages;
                     tabPages.Remove(_modOptionsPage);
                 }
             }
@@ -144,7 +144,7 @@ namespace UIInfoSuite.Options
 
                 _helper.Events.Display.RenderedActiveMenu += DrawButton;
                 _modOptionsPageButton.OnLeftClicked += OnButtonLeftClicked;
-                List<IClickableMenu> tabPages = _helper.Reflection.GetField<List<IClickableMenu>>(newMenu, "pages").GetValue();
+                List<IClickableMenu> tabPages = newMenu.pages;
 
                 _modOptionsTabPageNumber = tabPages.Count;
                 tabPages.Add(_modOptionsPage);
@@ -159,10 +159,10 @@ namespace UIInfoSuite.Options
 
         private void DrawButton(object sender, EventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu &&
-                (Game1.activeClickableMenu as GameMenu).currentTab != 3) //don't render when the map is showing
+            if (Game1.activeClickableMenu is GameMenu gameMenu &&
+                gameMenu.currentTab != 3) //don't render when the map is showing
             {
-                if ((Game1.activeClickableMenu as GameMenu).currentTab == _modOptionsTabPageNumber)
+                if (gameMenu.currentTab == _modOptionsTabPageNumber)
                 {
                     _modOptionsPageButton.yPositionOnScreen = Game1.activeClickableMenu.yPositionOnScreen + 24;
                 }

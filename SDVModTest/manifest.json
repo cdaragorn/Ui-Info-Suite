@@ -1,10 +1,10 @@
 ﻿{
    "Name": "UI Info Suite",
    "Author": "Cdaragorn",
-   "Version": "1.7.23",
+   "Version": "1.8.3",
    "Description": "Adds a lot of useful information to the user interface. This is based on Demiacle's excellent UIModSuite.",
    "UniqueID": "Cdaragorn.UiInfoSuite",
    "EntryDll": "UIInfoSuite.dll",
-   "MinimumApiVersion" : "2.9.3",
+   "MinimumApiVersion" : "3.0.0",
    "UpdateKeys": [ "Nexus:1150" ]
 }
