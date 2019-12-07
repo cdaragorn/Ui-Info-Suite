@@ -42,7 +42,8 @@ namespace UIInfoSuite.UIElements
             // draw shop harvest prices
             if (Game1.activeClickableMenu is ShopMenu menu)
             {
-                if (typeof(ShopMenu).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) is Item hoverItem)
+                if (typeof(ShopMenu).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic) != null 
+                    && typeof(ShopMenu).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) is Item hoverItem)
                 {
                     String text = string.Empty;
                     bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
