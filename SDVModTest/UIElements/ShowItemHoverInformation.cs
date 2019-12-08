@@ -372,7 +372,7 @@ namespace UIInfoSuite.UIElements
                     int num1 = (int)windowPos.X - 30;
                     int num2 = (int)windowPos.Y - 10;
                     int num3 = num1 + 52;
-                    int y3 = num2 - 2;
+                    int y3 = num2 + 2;
                     int num4 = 288;
                     int height = 36;
                     int num5 = 36;
@@ -395,7 +395,7 @@ namespace UIInfoSuite.UIElements
                         Color.White);
 
                     _bundleIcon.bounds.X = num1 + 16;
-                    _bundleIcon.bounds.Y = num2;
+                    _bundleIcon.bounds.Y = num2 - 10;
                     _bundleIcon.scale = 3;
                     _bundleIcon.draw(Game1.spriteBatch);
                 }
