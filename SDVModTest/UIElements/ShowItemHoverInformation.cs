@@ -24,26 +24,16 @@ namespace UIInfoSuite.UIElements
                 Game1.mouseCursors, 
                 new Rectangle(331, 374, 15, 14), 
                 Game1.pixelZoom);
-        private readonly ClickableTextureComponent _artifactIcon =
-			new ClickableTextureComponent(
-				"",
-				new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-				"",
-				Game1.content.LoadString("Strings\\UI:Collections_Artifacts", new object[0]),
-				Game1.mouseCursors,
-                new Rectangle(656, 64, 16, 16), 
-				Game1.pixelZoom);
-        private readonly ClickableTextureComponent _mineralIcon =
-			new ClickableTextureComponent(
-				"",
-				new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-				"",
-				Game1.content.LoadString("Strings\\UI:Collections_Minerals", new object[0]),
-				Game1.mouseCursors,
-				new Rectangle(672, 64, 16, 16),
-				Game1.pixelZoom);
+		private readonly ClickableTextureComponent _museumIcon = new ClickableTextureComponent(
+	        "",
+	        new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+	        "",
+	        Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate", new object[0]),
+	        Game1.getCharacterFromName("Gunther").Sprite.Texture,
+	        Game1.getCharacterFromName("Gunther").GetHeadShot(),
+	        Game1.pixelZoom);
 
-        private Item _hoverItem;
+		private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
 		private LibraryMuseum _libraryMuseum;
@@ -390,21 +380,10 @@ namespace UIInfoSuite.UIElements
 
                 if (_libraryMuseum.isItemSuitableForDonation(_hoverItem))
                 {
-	                ClickableTextureComponent museumIcon = _bundleIcon;
-	                switch (_hoverItem.getCategoryName())
-	                {
-		                case "Artifact":
-			                museumIcon = _artifactIcon;
-			                break;
-		                case "Mineral":
-			                museumIcon = _mineralIcon;
-			                break;
-	                }
-
-	                museumIcon.bounds.X = (int)windowPos.X - 44;
-	                museumIcon.bounds.Y = (int)windowPos.Y + 6;
-	                museumIcon.scale = 3;
-	                museumIcon.draw(Game1.spriteBatch);
+	                _museumIcon.bounds.X = (int)windowPos.X - 30;
+	                _museumIcon.bounds.Y = (int)windowPos.Y - 60 + windowHeight;
+	                _museumIcon.scale = 2;
+	                _museumIcon.draw(Game1.spriteBatch);
                 }
 
 				if (!String.IsNullOrEmpty(requiredBundleName))
