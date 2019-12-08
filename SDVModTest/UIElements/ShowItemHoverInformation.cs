@@ -24,11 +24,30 @@ namespace UIInfoSuite.UIElements
                 Game1.mouseCursors, 
                 new Rectangle(331, 374, 15, 14), 
                 Game1.pixelZoom);
+        private readonly ClickableTextureComponent _artifactIcon =
+			new ClickableTextureComponent(
+				"",
+				new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+				"",
+				Game1.content.LoadString("Strings\\UI:Collections_Artifacts", new object[0]),
+				Game1.mouseCursors,
+                new Rectangle(656, 64, 16, 16), 
+				Game1.pixelZoom);
+        private readonly ClickableTextureComponent _mineralIcon =
+			new ClickableTextureComponent(
+				"",
+				new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+				"",
+				Game1.content.LoadString("Strings\\UI:Collections_Minerals", new object[0]),
+				Game1.mouseCursors,
+				new Rectangle(672, 64, 16, 16),
+				Game1.pixelZoom);
 
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
-        private readonly IModEvents _events;
+		private LibraryMuseum _libraryMuseum;
+		private readonly IModEvents _events;
 
         public ShowItemHoverInformation(IModEvents events)
         {
@@ -48,7 +67,9 @@ namespace UIInfoSuite.UIElements
                 _bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
                 PopulateRequiredBundles();
 
-                _events.Player.InventoryChanged += OnInventoryChanged;
+				_libraryMuseum = Game1.getLocationFromName("ArchaeologyHouse") as LibraryMuseum;
+
+				_events.Player.InventoryChanged += OnInventoryChanged;
                 _events.Display.Rendered += OnRendered;
                 _events.Display.RenderedHud += OnRenderedHud;
                 _events.Display.Rendering += OnRendering;
@@ -367,7 +388,26 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                if (!String.IsNullOrEmpty(requiredBundleName))
+                if (_libraryMuseum.isItemSuitableForDonation(_hoverItem))
+                {
+	                ClickableTextureComponent museumIcon = _bundleIcon;
+	                switch (_hoverItem.getCategoryName())
+	                {
+		                case "Artifact":
+			                museumIcon = _artifactIcon;
+			                break;
+		                case "Mineral":
+			                museumIcon = _mineralIcon;
+			                break;
+	                }
+
+	                museumIcon.bounds.X = (int)windowPos.X - 44;
+	                museumIcon.bounds.Y = (int)windowPos.Y + 6;
+	                museumIcon.scale = 3;
+	                museumIcon.draw(Game1.spriteBatch);
+                }
+
+				if (!String.IsNullOrEmpty(requiredBundleName))
                 {
                     int num1 = (int)windowPos.X - 30;
                     int num2 = (int)windowPos.Y - 10;
