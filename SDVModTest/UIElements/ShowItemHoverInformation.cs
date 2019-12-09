@@ -24,8 +24,26 @@ namespace UIInfoSuite.UIElements
                 Game1.mouseCursors, 
                 new Rectangle(331, 374, 15, 14), 
                 Game1.pixelZoom);
+        private readonly ClickableTextureComponent _shippingBottomIcon =
+	        new ClickableTextureComponent(
+		        "",
+		        new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+		        "",
+		        "",
+		        Game1.mouseCursors,
+		        new Rectangle(526, 218, 30, 22),
+				Game1.pixelZoom);
+        private readonly ClickableTextureComponent _shippingTopIcon =
+	        new ClickableTextureComponent(
+		        "",
+		        new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+		        "",
+		        "",
+		        Game1.mouseCursors,
+		        new Rectangle(134, 236, 30, 15),
+				Game1.pixelZoom);
 
-        private Item _hoverItem;
+		private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
         private readonly IModEvents _events;
@@ -398,6 +416,25 @@ namespace UIInfoSuite.UIElements
                     _bundleIcon.bounds.Y = num2;
                     _bundleIcon.scale = 3;
                     _bundleIcon.draw(Game1.spriteBatch);
+                }
+
+                if (_hoverItem is StardewValley.Object obj)
+                {
+	                if (obj.countsForShippedCollection() && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex))
+					{
+						int num1 = (int)windowPos.X + windowWidth - 66;
+						int num2 = (int)windowPos.Y - 27;
+
+						_shippingBottomIcon.bounds.X = num1;
+						_shippingBottomIcon.bounds.Y = num2 - 8;
+						_shippingBottomIcon.scale = 1.2f;
+						_shippingBottomIcon.draw(Game1.spriteBatch);
+
+						_shippingTopIcon.bounds.X = num1;
+						_shippingTopIcon.bounds.Y = num2;
+						_shippingTopIcon.scale = 1.2f;
+						_shippingTopIcon.draw(Game1.spriteBatch);
+					}
                 }
                 //RestoreMenuState();
             }
