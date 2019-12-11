@@ -136,12 +136,6 @@ namespace UIInfoSuite
             return hoverItem;
         }
 
-        public static void DrawStringWithShadow(SpriteFont font, String text, SpriteBatch spriteBatch, int x, int y)
-        {
-			spriteBatch.DrawString(font, text, new Vector2(x + 2, y + 2), Game1.textShadowColor);
-			spriteBatch.DrawString(font, text, new Vector2(x, y), Game1.textColor);
-		}
-
         public static int AdjustPriceForQuality(int price, Quality quality)
         {
 	        int ret = price;

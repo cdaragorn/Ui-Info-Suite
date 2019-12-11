@@ -102,11 +102,13 @@ namespace UIInfoSuite.UIElements
                     Color.White);
 				// Title "Harvest Price"
 				String textToRender = _helper.SafeGetString(LanguageKeys.HarvestPrice);
-				Tools.DrawStringWithShadow(Game1.dialogueFont, 
-					textToRender, 
-					Game1.spriteBatch, 
-					xPosition + 32,
-					yPosition - 40);
+				Utility.drawTextWithShadow(
+					Game1.spriteBatch,
+					textToRender,
+					Game1.dialogueFont,
+					new Vector2(xPosition + 32, yPosition - 40),
+					Game1.textColor
+				);
 
 				//Calculate price with skill
 				if (Game1.player.professions.Contains(Farmer.tiller)) value = (int)(value * 1.1f);
@@ -176,11 +178,13 @@ namespace UIInfoSuite.UIElements
 			// Star
 			DrawQualityStar(quality, xPosition, yPosition + 22);
 	        // Price
-	        Tools.DrawStringWithShadow(Game1.dialogueFont,
-		        "    " + Tools.AdjustPriceForQuality(price, quality),
-		        Game1.spriteBatch,
-		        xPosition,
-		        yPosition + 2);
+			Utility.drawTextWithShadow(
+				Game1.spriteBatch,
+				"    " + Tools.AdjustPriceForQuality(price,quality),
+				Game1.dialogueFont,
+				new Vector2(xPosition, yPosition + 2),
+				Game1.textColor
+				);
 		}
 
 		private static void DrawQualityStar(Tools.Quality quality, int xPosition, int yPosition)
