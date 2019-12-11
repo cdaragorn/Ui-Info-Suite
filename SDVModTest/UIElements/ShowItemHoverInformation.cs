@@ -208,11 +208,17 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                int largestTextWidth = 0;
-                int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
+
+                int bundleTextWidth = 0;
+                if (!String.IsNullOrEmpty(requiredBundleName))
+                {
+	                bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
+	                bundleTextWidth -= 30; //Text offset from left
+                }
+				int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
                 int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
-                largestTextWidth = (stackTextWidth > itemTextWidth) ? stackTextWidth : itemTextWidth;
-                int windowWidth = Math.Max(largestTextWidth + 90, String.IsNullOrEmpty(requiredBundleName) ? 100 : 300);
+	            int largestTextWidth = Math.Max(bundleTextWidth,Math.Max(stackTextWidth, itemTextWidth));
+	            int windowWidth = largestTextWidth + 90;
 
                 int windowHeight = 75;
 
@@ -370,16 +376,15 @@ namespace UIInfoSuite.UIElements
                 if (!String.IsNullOrEmpty(requiredBundleName))
                 {
                     int num1 = (int)windowPos.X - 30;
-                    int num2 = (int)windowPos.Y - 10;
+                    int num2 = (int)windowPos.Y - 14;
                     int num3 = num1 + 52;
-                    int y3 = num2 + 2;
-                    int num4 = 288;
+                    int y3 = num2 + 4;
                     int height = 36;
                     int num5 = 36;
-                    int width = num4 / num5;
+                    int width = (bundleTextWidth+90) / num5;
                     int num6 = 6;
 
-                    for (int i = 0; i < 36; ++i)
+                    for (int i = 0; i < num5; ++i)
                     {
                         float num7 = (float)(i >= num6 ? 0.92 - (i - num6) * (1.0 / (num5 - num6)) : 0.92f);
                         Game1.spriteBatch.Draw(
@@ -387,7 +392,7 @@ namespace UIInfoSuite.UIElements
                             new Rectangle(num3 + width * i, y3, width, height),
                             Color.Crimson * num7);
                     }
-
+					
                     Game1.spriteBatch.DrawString(
                         Game1.dialogueFont,
                         requiredBundleName,
@@ -395,7 +400,7 @@ namespace UIInfoSuite.UIElements
                         Color.White);
 
                     _bundleIcon.bounds.X = num1 + 16;
-                    _bundleIcon.bounds.Y = num2 - 10;
+                    _bundleIcon.bounds.Y = num2 - 6;
                     _bundleIcon.scale = 3;
                     _bundleIcon.draw(Game1.spriteBatch);
                 }
