@@ -45,7 +45,6 @@ namespace UIInfoSuite.UIElements
 			// draw shop harvest prices
             bool isSeeds = hoverItem is StardewValley.Object hoverObject && hoverObject.Type == "Seeds";
             bool isSapling = hoverItem.Name.EndsWith("Sapling");
-
             int value = 0;
             if (isSeeds 
 				&& hoverItem.Name != "Mixed Seeds"
@@ -108,6 +107,9 @@ namespace UIInfoSuite.UIElements
 					Game1.spriteBatch, 
 					xPosition + 32,
 					yPosition - 40);
+
+				//Calculate price with skill
+				if (Game1.player.professions.Contains(Farmer.tiller)) value = (int)(value * 1.1f);
 
 				// Draw normal price
 				xPosition += 80;
