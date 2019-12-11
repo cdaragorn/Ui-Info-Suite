@@ -12,7 +12,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShopHarvestPrices : IDisposable
     {
-        private readonly IModHelper _helper;
+	    private readonly IModHelper _helper;
 
         public ShopHarvestPrices(IModHelper helper)
         {
@@ -35,8 +35,8 @@ namespace UIInfoSuite.UIElements
         }
 
         /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
-/// <param name="sender">The event sender.</param>
-/// <param name="e">The event arguments.</param>
+        /// <param name="sender">The event sender.</param>
+		/// <param name="e">The event arguments.</param>
         private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
 	        if (!(Game1.activeClickableMenu is ShopMenu menu)) return;
@@ -93,65 +93,42 @@ namespace UIInfoSuite.UIElements
             {
                 int xPosition = menu.xPositionOnScreen - 30;
                 int yPosition = menu.yPositionOnScreen + 580;
-                IClickableMenu.drawTextureBox(
+                int height = isSapling ? 258 : 208;
+					IClickableMenu.drawTextureBox(
                     Game1.spriteBatch,
                     xPosition + 20,
                     yPosition - 52,
                     264,
-                    108,
+                    height,
                     Color.White);
 				// Title "Harvest Price"
 				String textToRender = _helper.SafeGetString(LanguageKeys.HarvestPrice);
-				Game1.spriteBatch.DrawString(
-                    Game1.dialogueFont,
-                    textToRender,
-                    new Vector2(xPosition + 30, yPosition - 38),
-                    Color.Black * 0.2f);
-                Game1.spriteBatch.DrawString(
-                    Game1.dialogueFont,
-                    textToRender,
-                    new Vector2(xPosition + 32, yPosition - 40),
-                    Color.Black * 0.8f);
-				// Tree Icon
+				Tools.DrawStringWithShadow(Game1.dialogueFont, 
+					textToRender, 
+					Game1.spriteBatch, 
+					xPosition + 32,
+					yPosition - 40);
+
+				// Draw normal price
 				xPosition += 80;
-				Game1.spriteBatch.Draw(
-                    Game1.mouseCursors,
-                    new Vector2(xPosition, yPosition),
-                    new Rectangle(60, 428, 10, 10),
-                    Color.White,
-                    0,
-                    Vector2.Zero,
-                    Game1.pixelZoom,
-                    SpriteEffects.None,
-                    0.85f);
-				//  Coin
-                Game1.spriteBatch.Draw(
-                    Game1.debrisSpriteSheet,
-                    new Vector2(xPosition + 32, yPosition + 10),
-                    Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-                    Color.White,
-                    0,
-                    new Vector2(8, 8),
-                    4,
-                    SpriteEffects.None,
-                    0.95f);
-				// Price
-				String text = "    " + value;
-                Game1.spriteBatch.DrawString(
-                    Game1.dialogueFont,
-                    text,
-                    new Vector2(xPosition - 2, yPosition + 6),
-                    Color.Black * 0.2f);
-                Game1.spriteBatch.DrawString(
-                    Game1.dialogueFont,
-                    text,
-                    new Vector2(xPosition, yPosition + 4),
-                    Color.Black * 0.8f);
-				/*
-				 * I have no Idea why this is here...
-				 * As far as I can see it only overrides the existing Tooltip with a price that is 500 coins higher?
-				 *
-                String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
+				yPosition += 6;
+				DrawPrice(value, xPosition, yPosition, Tools.Quality.Normal);
+				// Draw silver price
+				yPosition += 46;
+				DrawPrice(value, xPosition, yPosition, Tools.Quality.Silver);
+				// Draw gold price
+				yPosition += 46;
+				DrawPrice(value, xPosition, yPosition, Tools.Quality.Gold);
+				// Draw iridium price
+				if (isSapling)
+				{
+					yPosition += 48;
+					DrawPrice(value, xPosition, yPosition, Tools.Quality.Iridium);
+				}
+
+
+				// Found out what this was for: Redraw the tooltip so it doesn't get overlapped by harvest price
+				String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
                 String hoverTitle = _helper.Reflection.GetField<String>(menu, "boldTitleText").GetValue();
                 IReflectedMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
                 IReflectedMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
@@ -167,8 +144,75 @@ namespace UIInfoSuite.UIElements
                     getHoveredItemExtraItemAmount.Invoke<int>(new object[0]),
                     null,
                     menu.hoverPrice);
-				*/
             }
-        }
+		}
+
+        private static void DrawPrice(int price, int xPosition, int yPosition, Tools.Quality quality = Tools.Quality.Normal)
+        {
+	        // Tree Icon
+	        Game1.spriteBatch.Draw(
+		        Game1.mouseCursors,
+		        new Vector2(xPosition, yPosition),
+		        new Rectangle(60, 428, 10, 10),
+		        Color.White,
+		        0,
+		        Vector2.Zero,
+		        Game1.pixelZoom,
+		        SpriteEffects.None,
+		        0.85f);
+	        //  Coin
+	        Game1.spriteBatch.Draw(
+		        Game1.debrisSpriteSheet,
+		        new Vector2(xPosition + 32, yPosition + 10),
+		        Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
+		        Color.White,
+		        0,
+		        new Vector2(8, 8),
+		        4,
+		        SpriteEffects.None,
+		        0.95f);
+			// Star
+			DrawQualityStar(quality, xPosition, yPosition + 22);
+	        // Price
+	        Tools.DrawStringWithShadow(Game1.dialogueFont,
+		        "    " + Tools.AdjustPriceForQuality(price, quality),
+		        Game1.spriteBatch,
+		        xPosition,
+		        yPosition + 2);
+		}
+
+		private static void DrawQualityStar(Tools.Quality quality, int xPosition, int yPosition)
+		{
+			int iconX;
+			int iconY;
+	        switch (quality)
+	        {
+		        case Tools.Quality.Silver:
+			        iconX = 338;
+			        iconY = 400;
+			        break;
+		        case Tools.Quality.Gold:
+			        iconX = 346;
+			        iconY = 400;
+					break;
+		        case Tools.Quality.Iridium:
+			        iconX = 346;
+			        iconY = 392;
+					break;
+		        case Tools.Quality.Normal:
+				default:
+			        return;
+			}
+	        Game1.spriteBatch.Draw(
+		        Game1.mouseCursors,
+		        new Vector2(xPosition, yPosition),
+		        new Rectangle(iconX, iconY, 8, 8),
+		        Color.White,
+		        0,
+		        Vector2.Zero,
+		        2.5f,
+		        SpriteEffects.None,
+		        0.95f);
+		}
     }
 }

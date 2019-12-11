@@ -14,8 +14,19 @@ namespace UIInfoSuite
 {
     static class Tools
     {
+		public enum Quality
+		{
+			Normal,
+			Silver,
+			Gold,
+			Iridium
+		}
 
-        public static void CreateSafeDelayedDialogue(String dialogue, int timer)
+		private const float QualityModSilver = 1.25f;
+		private const float QualityModGold = 1.5f;
+		private const float QualityModIridium = 2f;
+
+		public static void CreateSafeDelayedDialogue(String dialogue, int timer)
         {
             Task.Factory.StartNew(() =>
             {
@@ -123,6 +134,34 @@ namespace UIInfoSuite
             }
 
             return hoverItem;
+        }
+
+        public static void DrawStringWithShadow(SpriteFont font, String text, SpriteBatch spriteBatch, int x, int y)
+        {
+			spriteBatch.DrawString(font, text, new Vector2(x + 2, y + 2), Game1.textShadowColor);
+			spriteBatch.DrawString(font, text, new Vector2(x, y), Game1.textColor);
+		}
+
+        public static int AdjustPriceForQuality(int price, Quality quality)
+        {
+	        int ret = price;
+	        switch (quality)
+	        {
+		        case Quality.Silver:
+			        ret = (int) (price * QualityModSilver);
+			        break;
+		        case Quality.Gold:
+			        ret = (int)(price * QualityModGold);
+					break;
+		        case Quality.Iridium:
+			        ret = (int)(price * QualityModIridium);
+					break;
+		        case Quality.Normal:
+				default:
+					break;
+	        }
+
+	        return ret;
         }
     }
 }
