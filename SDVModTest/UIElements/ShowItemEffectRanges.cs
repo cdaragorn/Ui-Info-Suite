@@ -110,25 +110,18 @@ namespace UIInfoSuite.UIElements
 
                     if (name.Contains("arecrow"))
                     {
-                        arrayToUse = new int[17][];
-                        for (int i = 0; i < 17; ++i)
-                        {
-                            arrayToUse[i] = new int[17];
-                            for (int j = 0; j < 17; ++j)
-                            {
-                                arrayToUse[i][j] = (Math.Abs(i - 8) + Math.Abs(j - 8) <= 12) ? 1 : 0;
-                            }
-                        }
+                        arrayToUse = name.Contains("eluxe") ? _modConfig.DeluxeScarecrow : _modConfig.Scarecrow;
+
                         ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
                         objects = GetObjectsInLocationOfSimilarName("arecrow");
                         if (objects != null)
                         {
                             foreach (StardewValley.Object next in objects)
                             {
-                                ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                                var objectArrayToUse = next.Name.ToLower().Contains("eluxe") ? _modConfig.DeluxeScarecrow : _modConfig.Scarecrow;
+                                ParseConfigToHighlightedArea(objectArrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
                             }
                         }
-
                     }
                     else if (name.Contains("sprinkler"))
                     {
