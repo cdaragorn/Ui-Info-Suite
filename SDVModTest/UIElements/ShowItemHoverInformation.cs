@@ -212,13 +212,13 @@ namespace UIInfoSuite.UIElements
                 int bundleTextWidth = 0;
                 if (!String.IsNullOrEmpty(requiredBundleName))
                 {
-	                bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
-	                bundleTextWidth -= 30; //Text offset from left
+                    bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
+                    bundleTextWidth -= 30; //Text offset from left
                 }
-				int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
+                int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
                 int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
-	            int largestTextWidth = Math.Max(bundleTextWidth,Math.Max(stackTextWidth, itemTextWidth));
-	            int windowWidth = largestTextWidth + 90;
+                int largestTextWidth = Math.Max(bundleTextWidth,Math.Max(stackTextWidth, itemTextWidth));
+                int windowWidth = largestTextWidth + 90;
 
                 int windowHeight = 75;
 
@@ -392,7 +392,7 @@ namespace UIInfoSuite.UIElements
                             new Rectangle(num3 + width * i, y3, width, height),
                             Color.Crimson * num7);
                     }
-					
+                    
                     Game1.spriteBatch.DrawString(
                         Game1.dialogueFont,
                         requiredBundleName,
