@@ -42,7 +42,7 @@ namespace UIInfoSuite.UIElements
             // draw shop harvest prices
             if (Game1.activeClickableMenu is ShopMenu menu)
             {
-                if (typeof(ShopMenu).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) is Item hoverItem)
+                if (menu.hoveredItem is Item hoverItem)
                 {
                     String text = string.Empty;
                     bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
@@ -66,8 +66,8 @@ namespace UIInfoSuite.UIElements
                                 1);
                         text = "    " + temp.Price;
                     }
-
-                    Item heldItem = typeof(ShopMenu).GetField("heldItem", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu) as Item;
+                    
+                    var heldItem = menu.heldItem as Item;
                     if (heldItem == null)
                     {
                         int value = 0;
@@ -144,12 +144,10 @@ namespace UIInfoSuite.UIElements
                                 text,
                                 new Vector2(xPosition, yPosition + 4),
                                 Color.Black * 0.8f);
-
+                            
                             String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
                             String hoverTitle = _helper.Reflection.GetField<String>(menu, "boldTitleText").GetValue();
-                            Item hoverItem2 = _helper.Reflection.GetField<Item>(menu, "hoveredItem").GetValue();
                             int currency = _helper.Reflection.GetField<int>(menu, "currency").GetValue();
-                            int hoverPrice = _helper.Reflection.GetField<int>(menu, "hoverPrice").GetValue();
                             IReflectedMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
                             IReflectedMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
 
@@ -157,14 +155,14 @@ namespace UIInfoSuite.UIElements
                                 Game1.spriteBatch,
                                 hoverText,
                                 hoverTitle,
-                                hoverItem2,
+                                hoverItem,
                                 heldItem != null,
                                 -1,
                                 currency,
                                 getHoveredItemExtraItemIndex.Invoke<int>(new object[0]),
                                 getHoveredItemExtraItemAmount.Invoke<int>(new object[0]),
                                 null,
-                                hoverPrice);
+                                menu.hoverPrice);
                         }
                     }
                 }
