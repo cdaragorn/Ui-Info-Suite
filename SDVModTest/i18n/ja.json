@@ -26,7 +26,7 @@
 	"ShowHeartFills" : "ハートフィルを表示する",
 	"ShowAnimalsNeedPets" : "動物がペットを必要とするときを表示する",
 	"DisplayCalendarAndBillboard" : "カレンダー/掲示板ボタンを表示する",
-	"ShowCropAndBarrelTooltip" : "作物と樽の時間を表示する",
+	"ShowCropAndBarrelTooltip" : "作物とタルの時間を表示する",
 	"ShowItemEffectRanges" : "かかしとスプリンクラーの範囲を表示する",
 	"ShowExtraItemInformation" : "アイテムのホバー情報を表示する",
 	"ShowTravelingMerchant" : "旅行中の商人を表示する",

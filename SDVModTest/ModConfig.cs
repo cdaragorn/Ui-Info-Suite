@@ -4,12 +4,6 @@ namespace UIInfoSuite
 {
     class ModConfig
     {
-        public string[] KeysForBarrelAndCropTimes { get; set; } = new string[]
-        {
-            SButton.LeftShift.ToString()
-        };
-
-        public bool CanRightClickForBarrelAndCropTimes { get; set; } = true;
 
         public int[][] Sprinkler { get; set; } = new int[][]
         {
