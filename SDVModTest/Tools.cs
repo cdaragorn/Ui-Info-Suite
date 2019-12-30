@@ -124,5 +124,21 @@ namespace UIInfoSuite
 
             return hoverItem;
         }
+
+        public static int[][] CalculateScarecrowEffectRange(int size)
+        {
+            var oneSideLength = (size - 1) / 2;
+            var oneSideLengthPlusHalf = (oneSideLength / 2) + oneSideLength;
+            var arrayToUse = new int[size][];
+            for (int i = 0; i < size; ++i)
+            {
+                arrayToUse[i] = new int[size];
+                for (int j = 0; j < size; ++j)
+                {
+                    arrayToUse[i][j] = (Math.Abs(i - oneSideLength) + Math.Abs(j - oneSideLength) <= oneSideLengthPlusHalf) ? 1 : 0;
+                }
+            }
+            return arrayToUse;
+        }
     }
 }
