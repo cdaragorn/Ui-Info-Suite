@@ -32,7 +32,7 @@ namespace UIInfoSuite
             if (Game1.player.questLog.Any())
             {
                 xPosition -= 65;
-	        }
+            }
             ++_amountOfVisibleIcons;
             return new Point(xPosition, yPos);
         }
