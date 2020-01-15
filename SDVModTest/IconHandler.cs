@@ -31,7 +31,7 @@ namespace UIInfoSuite
             int xPosition = (int)Tools.GetWidthInPlayArea() - 70 - 48 * _amountOfVisibleIcons;
             if (Game1.player.questLog.Any())
             {
-                x -= 65;
+                xPosition -= 65;
 	        }
             ++_amountOfVisibleIcons;
             return new Point(xPosition, yPos);
