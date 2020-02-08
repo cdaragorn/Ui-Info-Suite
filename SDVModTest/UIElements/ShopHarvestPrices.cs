@@ -42,8 +42,7 @@ namespace UIInfoSuite.UIElements
             // draw shop harvest prices
             if (Game1.activeClickableMenu is ShopMenu menu)
             {
-                object item = _helper.Reflection.GetField<object>(menu, "hoveredItem").GetValue();
-                if (item is Item hoverItem)
+                if (menu.hoveredItem is Item hoverItem)
                 {
                     String text = string.Empty;
                     bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
@@ -68,8 +67,7 @@ namespace UIInfoSuite.UIElements
                         text = "    " + temp.Price;
                     }
 
-                    item = _helper.Reflection.GetField<object>(menu, "heldItem").GetValue();
-                    var heldItem = item as Item;
+                    var heldItem = menu.heldItem as Item;
                     if (heldItem == null)
                     {
                         int value = 0;
@@ -164,7 +162,7 @@ namespace UIInfoSuite.UIElements
                                 getHoveredItemExtraItemIndex.Invoke<int>(new object[0]),
                                 getHoveredItemExtraItemAmount.Invoke<int>(new object[0]),
                                 null,
-                                _helper.Reflection.GetField<Int32>(menu, "hoverPrice").GetValue());
+                                menu.hoverPrice);
                         }
                     }
                 }
