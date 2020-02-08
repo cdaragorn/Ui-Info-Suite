@@ -215,7 +215,7 @@ namespace UIInfoSuite.UIElements
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                if (gameMenu.currentTab == 3)
+                if (gameMenu.currentTab == (Constants.TargetPlatform == GamePlatform.Android ? 4 : 3))
                 {
                     List<String> namesToShow = new List<string>();
                     foreach (var character in _townsfolk)

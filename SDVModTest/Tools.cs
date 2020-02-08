@@ -90,15 +90,17 @@ namespace UIInfoSuite
         public static Item GetHoveredItem()
         {
             Item hoverItem = null;
-
-            for (int i = 0; i < Game1.onScreenMenus.Count; ++i)
+            if (Game1.onScreenMenus != null)
             {
-                Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
-                if (onScreenMenu != null)
+                for (int i = 0; i < Game1.onScreenMenus.Count; ++i)
                 {
-                    FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                    hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
-                    //hoverItemField.SetValue(onScreenMenu, null);
+                    Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
+                    if (onScreenMenu != null)
+                    {
+                        FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                        hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
+                        //hoverItemField.SetValue(onScreenMenu, null);
+                    }
                 }
             }
 

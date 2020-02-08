@@ -103,7 +103,7 @@ namespace UIInfoSuite.UIElements
                             }
                         }
 
-                        String hoverText = gameMenu.hoverText;
+                        String hoverText = (string)gameMenu.GetType().GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)?.GetValue(gameMenu);
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,
