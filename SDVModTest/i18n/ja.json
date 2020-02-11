@@ -14,7 +14,7 @@
     "ReadyToHarvest" : "収穫準備！",
     "TodaysRecipe" : "今日のレシピ： ",
     "TravelingMerchantIsInTown" : "旅行中の商人が町にいる！",
-	"DaysUntilToolIsUpgraded" : "{1}日が終わるまで{0}日間",
+	"DaysUntilToolIsUpgraded" : "{1}のアップグレード完了まで{0}日",
 	"ToolIsFinishedBeingUpgraded" : "{0}が終わった！",
 	"ShowLuckIcon" : "幸運アイコンを表示する",
 	"ShowLevelUpAnimation" : "レベルアップアニメーションを表示する",
