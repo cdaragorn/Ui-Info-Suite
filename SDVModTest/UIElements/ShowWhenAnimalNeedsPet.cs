@@ -221,6 +221,11 @@ namespace UIInfoSuite.UIElements
 
         private Vector2 GetPetPositionAboveAnimal(Character animal)
         {
+            if(Constants.TargetPlatform == GamePlatform.Android)
+            {
+                return new Vector2(Game1.viewport.Width <= Game1.currentLocation.map.DisplayWidth ? (animal.position.X - Game1.viewport.X + 16) * Game1.options.zoomLevel : (animal.position.X + ((Game1.viewport.Width - Game1.currentLocation.map.DisplayWidth) / 2 + 18)) * Game1.options.zoomLevel,
+                    Game1.viewport.Height <= Game1.currentLocation.map.DisplayHeight ? (animal.position.Y - Game1.viewport.Y - 34) * Game1.options.zoomLevel : (animal.position.Y + ((Game1.viewport.Height - Game1.currentLocation.map.DisplayHeight) / 2 - 50)) * Game1.options.zoomLevel);
+            }
             return new Vector2(Game1.viewport.Width <= Game1.currentLocation.map.DisplayWidth ? animal.position.X - Game1.viewport.X + 16 : animal.position.X + ((Game1.viewport.Width - Game1.currentLocation.map.DisplayWidth) / 2 + 18),
                 Game1.viewport.Height <= Game1.currentLocation.map.DisplayHeight ? animal.position.Y - Game1.viewport.Y - 34 : animal.position.Y + ((Game1.viewport.Height - Game1.currentLocation.map.DisplayHeight) / 2 - 50));
         }

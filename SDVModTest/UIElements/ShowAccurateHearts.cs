@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
@@ -64,45 +65,95 @@ namespace UIInfoSuite.UIElements
                                 .GetValue(_socialPage);
                         int yOffset = 0;
 
-                        for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
+                        if (Constants.TargetPlatform != GamePlatform.Android)
                         {
-                            int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
-                            yOffset += 112;
-                            Friendship friendshipValues;
-                            String nextName = _friendNames[i];
-                            if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
+                            for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
                             {
-                                int friendshipRawValue = friendshipValues.Points;
-
-                                if (friendshipRawValue > 0)
+                                int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
+                                yOffset += 112;
+                                Friendship friendshipValues;
+                                String nextName = _friendNames[i];
+                                if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
                                 {
-                                    int pointsToNextHeart = friendshipRawValue % 250;
-                                    int numHearts = friendshipRawValue / 250;
+                                    int friendshipRawValue = friendshipValues.Points;
 
-                                    if (friendshipRawValue < 3000 &&
-                                        _friendNames[i] == Game1.player.spouse ||
-                                        friendshipRawValue < 2500)
+                                    if (friendshipRawValue > 0)
                                     {
-                                        DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
-                                        //if (!Game1.options.hardwareCursor)
-                                        //    Game1.spriteBatch.Draw(
-                                        //        Game1.mouseCursors,
-                                        //        new Vector2(Game1.getMouseX(), Game1.getMouseY()),
-                                        //        Game1.getSourceRectForStandardTileSheet(
-                                        //            Game1.mouseCursors, Game1.mouseCursor,
-                                        //            16,
-                                        //            16),
-                                        //        Color.White,
-                                        //        0.0f,
-                                        //        Vector2.Zero,
-                                        //        Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
-                                        //        SpriteEffects.None,
-                                        //        1f);
+                                        int pointsToNextHeart = friendshipRawValue % 250;
+                                        int numHearts = friendshipRawValue / 250;
+
+                                        if (friendshipRawValue < 3000 &&
+                                            _friendNames[i] == Game1.player.spouse ||
+                                            friendshipRawValue < 2500)
+                                        {
+                                            DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
+                                            //if (!Game1.options.hardwareCursor)
+                                            //    Game1.spriteBatch.Draw(
+                                            //        Game1.mouseCursors,
+                                            //        new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                                            //        Game1.getSourceRectForStandardTileSheet(
+                                            //            Game1.mouseCursors, Game1.mouseCursor,
+                                            //            16,
+                                            //            16),
+                                            //        Color.White,
+                                            //        0.0f,
+                                            //        Vector2.Zero,
+                                            //        Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
+                                            //        SpriteEffects.None,
+                                            //        1f);
+                                        }
                                     }
                                 }
                             }
                         }
+                        else
+                        {
+                            List<ClickableTextureComponent> sprites = (List<ClickableTextureComponent>)_socialPage.GetType().GetField("sprites", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_socialPage);
+                            for (int i = 0; i < _friendNames.Length; ++i)
+                            {
+                                if(sprites[i].bounds.Y < 40)
+                                {
+                                    continue;
+                                }
+                                if(sprites[i].bounds.Y > _socialPage.height)
+                                {
+                                    break;
+                                }
+                                Friendship friendshipValues;
+                                String nextName = _friendNames[i];
+                                if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
+                                {
+                                    int friendshipRawValue = friendshipValues.Points;
 
+                                    if (friendshipRawValue > 0)
+                                    {
+                                        int pointsToNextHeart = friendshipRawValue % 250;
+                                        int numHearts = friendshipRawValue / 250;
+
+                                        if (friendshipRawValue < 3000 &&
+                                            _friendNames[i] == Game1.player.spouse ||
+                                            friendshipRawValue < 2500)
+                                        {
+                                            DrawEachIndividualSquare(numHearts, pointsToNextHeart, sprites[i].bounds.Y + 40);
+                                            //if (!Game1.options.hardwareCursor)
+                                            //    Game1.spriteBatch.Draw(
+                                            //        Game1.mouseCursors,
+                                            //        new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                                            //        Game1.getSourceRectForStandardTileSheet(
+                                            //            Game1.mouseCursors, Game1.mouseCursor,
+                                            //            16,
+                                            //            16),
+                                            //        Color.White,
+                                            //        0.0f,
+                                            //        Vector2.Zero,
+                                            //        Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
+                                            //        SpriteEffects.None,
+                                            //        1f);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         String hoverText = gameMenu.hoverText;
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
@@ -164,14 +215,30 @@ namespace UIInfoSuite.UIElements
                 {
                     if (_numArray[i][j] == 1)
                     {
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                Game1.activeClickableMenu.xPositionOnScreen + 316 + num2 + j * 4,
-                                yPosition + 14 + i * 4,
-                                4,
-                                4),
-                            Color.Crimson);
+                        if(Constants.TargetPlatform != GamePlatform.Android)
+                        {
+                            Game1.spriteBatch.Draw(
+                                Game1.staminaRect,
+                                new Rectangle(
+                                    Game1.activeClickableMenu.xPositionOnScreen + 316 + num2 + j * 4,
+                                    yPosition + 14 + i * 4,
+                                    4,
+                                    4),
+                                Color.Crimson);
+                        }
+                        else
+                        {
+                            int heartsX = (int)_socialPage.GetType().GetField("heartsX", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_socialPage);
+                            float widthMod = (float)_socialPage.GetType().GetField("widthMod", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_socialPage);
+                            Game1.spriteBatch.Draw(
+                                Game1.staminaRect,
+                                new Rectangle(
+                                    Game1.activeClickableMenu.xPositionOnScreen + heartsX + (int)(num2 * widthMod) + 24 + j * 4,
+                                    yPosition + i * 4,
+                                    4,
+                                    4),
+                                Color.Crimson);
+                        }
                     }
                 }
             }
