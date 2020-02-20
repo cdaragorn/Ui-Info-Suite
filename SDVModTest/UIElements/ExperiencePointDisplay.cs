@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,18 @@ namespace UIInfoSuite.UIElements
         {
             _position.Y -= 0.5f;
             --_alpha;
+            if(Constants.TargetPlatform == GamePlatform.Android)
+            {
+                Game1.drawWithBorder(
+                    "Exp " + _experiencePoints,
+                    Color.DarkSlateGray * ((float)_alpha / 100f),
+                    Color.PaleTurquoise * ((float)_alpha / 100f),
+                    new Vector2(_position.X - 28, _position.Y - 130) * Game1.options.zoomLevel,
+                    0.0f,
+                    0.8f,
+                    0.0f);
+                return;
+            }
             Game1.drawWithBorder(
                 "Exp " + _experiencePoints,
                 Color.DarkSlateGray * ((float)_alpha / 100f),

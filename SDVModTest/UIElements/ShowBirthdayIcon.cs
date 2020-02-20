@@ -5,6 +5,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
+using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
 {
@@ -137,6 +138,20 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (_birthdayNPC != null &&
+                    (_birthdayIcon?.containsPoint((int)(Game1.getMouseX() * Game1.options.zoomLevel), (int)(Game1.getMouseY() * Game1.options.zoomLevel)) ?? false))
+                {
+                    String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
+                    IClickableMenu.drawHoverText(
+                        Game1.spriteBatch,
+                        hoverText,
+                        Game1.dialogueFont);
+                }
+                return;
+            }
+
             if (_birthdayNPC != null && 
                 (_birthdayIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {

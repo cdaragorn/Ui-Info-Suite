@@ -192,6 +192,17 @@ namespace UIInfoSuite.UIElements
 
                     texture.draw(Game1.spriteBatch);
 
+                    if(Constants.TargetPlatform == GamePlatform.Android)
+                    {
+                        if (texture.containsPoint((int)(Game1.getMouseX() * Game1.options.zoomLevel), (int)(Game1.getMouseY() * Game1.options.zoomLevel)))
+                        {
+                            IClickableMenu.drawHoverText(
+                                Game1.spriteBatch,
+                                "Gus is selling " + Game1.dishOfTheDay.DisplayName + " recipe today!",
+                                Game1.dialogueFont);
+                        }
+                        return;
+                    }
                     if (texture.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                     {
                         IClickableMenu.drawHoverText(
@@ -209,6 +220,19 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (_drawQueenOfSauceIcon &&
+                    _queenOfSauceIcon.containsPoint((int)(Game1.getMouseX() * Game1.options.zoomLevel), (int)(Game1.getMouseY() * Game1.options.zoomLevel)))
+                {
+                    IClickableMenu.drawHoverText(
+                        Game1.spriteBatch,
+                        _helper.SafeGetString(
+                            LanguageKeys.TodaysRecipe) + _todaysRecipe,
+                        Game1.dialogueFont);
+                }
+                return;
+            }
             if (_drawQueenOfSauceIcon &&
                 _queenOfSauceIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {

@@ -519,6 +519,15 @@ namespace UIInfoSuite.UIElements
         {
             float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
 
+            if(Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (this._helper.Reflection.GetField<bool>(Game1.options, "verticalToolbar", true).GetValue())
+                {
+                    Toolbar toolbar = this._helper.Reflection.GetField<Toolbar>(typeof(Game1), "toolbar", true).GetValue();
+                    leftSide += this._helper.Reflection.GetField<int>(typeof(Game1), "toolbarPaddingX", true).GetValue() + this._helper.Reflection.GetProperty<int>(toolbar, "itemSlotSize", true).GetValue();
+                }
+            }
+
             if (Game1.isOutdoorMapSmallerThanViewport())
             {
                 int num3 = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;

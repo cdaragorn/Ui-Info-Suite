@@ -79,6 +79,19 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (_travelingMerchantIsHere && (_travelingMerchantIcon?.containsPoint((int)(Game1.getMouseX() * Game1.options.zoomLevel), (int)(Game1.getMouseY() * Game1.options.zoomLevel)) ?? false))
+                {
+                    string hoverText = _helper.SafeGetString(
+                        LanguageKeys.TravelingMerchantIsInTown);
+                    IClickableMenu.drawHoverText(
+                        Game1.spriteBatch,
+                        hoverText, Game1.dialogueFont);
+                }
+                return;
+            }
+
             if (_travelingMerchantIsHere && (_travelingMerchantIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 string hoverText = _helper.SafeGetString(
