@@ -66,7 +66,7 @@ namespace UIInfoSuite.UIElements
                                 1);
                         text = "    " + temp.Price;
                     }
-                    
+
                     var heldItem = menu.heldItem as Item;
                     if (heldItem == null)
                     {

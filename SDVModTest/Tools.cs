@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -90,27 +91,51 @@ namespace UIInfoSuite
         public static Item GetHoveredItem()
         {
             Item hoverItem = null;
-
-            for (int i = 0; i < Game1.onScreenMenus.Count; ++i)
+            if (Game1.onScreenMenus != null)
             {
-                Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
-                if (onScreenMenu != null)
+                for (int i = 0; i < Game1.onScreenMenus.Count; ++i)
                 {
-                    FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                    hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
-                    //hoverItemField.SetValue(onScreenMenu, null);
+                    Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
+                    if (onScreenMenu != null)
+                    {
+                        FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                        hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
+                        //hoverItemField.SetValue(onScreenMenu, null);
+                    }
                 }
             }
 
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                foreach (var menu in gameMenu.pages)
+                if (Constants.TargetPlatform != GamePlatform.Android)
                 {
-                    if (menu is InventoryPage inventory)
+                    foreach (var menu in gameMenu.pages)
                     {
-                        FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                        hoverItem = hoveredItemField.GetValue(inventory) as Item;
-                        //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
+                        if (menu is InventoryPage inventory)
+                        {
+                            FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                            hoverItem = hoveredItemField.GetValue(inventory) as Item;
+                            //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
+                        }
+                    }
+                }
+                else
+                {
+                    if (gameMenu.pages[gameMenu.currentTab] is InventoryPage inventory)
+                    {
+                        FieldInfo heldItemField = typeof(InventoryPage).GetField("heldItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                        Item heldItem = heldItemField.GetValue(inventory) as Item;
+                        int x = Game1.getMousePosition().X;
+                        int y = Game1.getMousePosition().Y;
+                        foreach (ClickableComponent component in inventory.inventory.inventory)
+                        {
+                            int num = Convert.ToInt32(component.name);
+                            if (component.containsPoint(x, y) && (num < inventory.inventory.actualInventory.Count) && (inventory.inventory.actualInventory[num] != null))
+                            {
+                                hoverItem = inventory.inventory.actualInventory[num];
+                                break;
+                            }
+                        }
                     }
                 }
             }

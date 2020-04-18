@@ -139,6 +139,18 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (_toolBeingUpgraded != null &&
+                    (_toolUpgradeIcon?.containsPoint((int)(Game1.getMouseX() * Game1.options.zoomLevel), (int)(Game1.getMouseY() * Game1.options.zoomLevel)) ?? false))
+                {
+                    IClickableMenu.drawHoverText(
+                            Game1.spriteBatch,
+                            _hoverText, Game1.dialogueFont);
+                }
+                return;
+            }
+
             if (_toolBeingUpgraded != null && 
                 (_toolUpgradeIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {

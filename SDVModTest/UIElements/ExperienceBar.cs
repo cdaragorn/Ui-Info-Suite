@@ -9,7 +9,6 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -46,7 +45,7 @@ namespace UIInfoSuite.UIElements
         private bool _showLevelUpAnimation = true;
         private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
-        private SoundPlayer _player;
+        private object _player;
 
         private LevelExtenderInterface _levelExtenderAPI;
 
@@ -62,7 +61,7 @@ namespace UIInfoSuite.UIElements
             try
             {
                 path = Path.Combine(_helper.DirectoryPath, "LevelUp.wav");
-                _player = new SoundPlayer(path);
+                _player = Type.GetType("System.Media.SoundPlayer")?.GetConstructor(new Type[] { }).Invoke(new object[] { });
                 //path = path.Replace(Environment.CurrentDirectory, "");
                 //path = path.TrimStart(Path.DirectorySeparatorChar);
                 //_soundEffect = SoundEffect.FromStream(TitleContainer.OpenStream(path)).CreateInstance();
@@ -209,7 +208,7 @@ namespace UIInfoSuite.UIElements
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(100);
-                    _player.Play();
+                    Type.GetType("System.Media.SoundPlayer")?.GetMethod("Play").Invoke(this._player, new object[] { });
                 });
 
                 Task.Factory.StartNew(() =>
@@ -519,6 +518,15 @@ namespace UIInfoSuite.UIElements
         private void DrawExperienceBar(int barWidth, int experienceGainedThisLevel, int experienceRequiredForNextLevel, int currentLevel)
         {
             float leftSide = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Left;
+
+            if(Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (this._helper.Reflection.GetField<bool>(Game1.options, "verticalToolbar", true).GetValue())
+                {
+                    Toolbar toolbar = this._helper.Reflection.GetField<Toolbar>(typeof(Game1), "toolbar", true).GetValue();
+                    leftSide += this._helper.Reflection.GetField<int>(typeof(Game1), "toolbarPaddingX", true).GetValue() + this._helper.Reflection.GetProperty<int>(toolbar, "itemSlotSize", true).GetValue();
+                }
+            }
 
             if (Game1.isOutdoorMapSmallerThanViewport())
             {
