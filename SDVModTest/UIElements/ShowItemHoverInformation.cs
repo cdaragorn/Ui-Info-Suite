@@ -9,6 +9,7 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
 {
@@ -213,6 +214,7 @@ namespace UIInfoSuite.UIElements
                 int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
                 largestTextWidth = (stackTextWidth > itemTextWidth) ? stackTextWidth : itemTextWidth;
                 int windowWidth = Math.Max(largestTextWidth + 90, String.IsNullOrEmpty(requiredBundleName) ? 100 : 300);
+                float layerDepth = Constants.TargetPlatform != GamePlatform.Android ? 0.95f : 0f;
 
                 int windowHeight = 75;
 
@@ -264,7 +266,7 @@ namespace UIInfoSuite.UIElements
                         new Vector2(8, 8),
                         Game1.pixelZoom,
                         SpriteEffects.None,
-                        0.95f);
+                        layerDepth);
 
                     Game1.spriteBatch.DrawString(
                         Game1.smallFont,
@@ -291,7 +293,7 @@ namespace UIInfoSuite.UIElements
                             new Vector2(8, 8),
                             Game1.pixelZoom,
                             SpriteEffects.None,
-                            0.95f);
+                            layerDepth);
 
                         Game1.spriteBatch.Draw(
                             Game1.debrisSpriteSheet,
@@ -302,7 +304,7 @@ namespace UIInfoSuite.UIElements
                             new Vector2(8, 8),
                             Game1.pixelZoom,
                             SpriteEffects.None,
-                            0.95f);
+                            layerDepth);
 
                         Game1.spriteBatch.DrawString(
                             Game1.smallFont,
@@ -328,7 +330,7 @@ namespace UIInfoSuite.UIElements
                     //    new Vector2(8, 8),
                     //    Game1.pixelZoom,
                     //    SpriteEffects.None,
-                    //    0.95f);
+                    //    layerDepth);
 
                     if (cropPrice > 0)
                     {

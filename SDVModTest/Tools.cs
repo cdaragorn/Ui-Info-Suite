@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -106,13 +107,35 @@ namespace UIInfoSuite
 
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                foreach (var menu in gameMenu.pages)
+                if (Constants.TargetPlatform != GamePlatform.Android)
                 {
-                    if (menu is InventoryPage inventory)
+                    foreach (var menu in gameMenu.pages)
                     {
-                        FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                        hoverItem = hoveredItemField.GetValue(inventory) as Item;
-                        //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
+                        if (menu is InventoryPage inventory)
+                        {
+                            FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                            hoverItem = hoveredItemField.GetValue(inventory) as Item;
+                            //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
+                        }
+                    }
+                }
+                else
+                {
+                    if (gameMenu.pages[gameMenu.currentTab] is InventoryPage inventory)
+                    {
+                        FieldInfo heldItemField = typeof(InventoryPage).GetField("heldItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                        Item heldItem = heldItemField.GetValue(inventory) as Item;
+                        int x = Game1.getMousePosition().X;
+                        int y = Game1.getMousePosition().Y;
+                        foreach (ClickableComponent component in inventory.inventory.inventory)
+                        {
+                            int num = Convert.ToInt32(component.name);
+                            if (component.containsPoint(x, y) && (num < inventory.inventory.actualInventory.Count) && (inventory.inventory.actualInventory[num] != null))
+                            {
+                                hoverItem = inventory.inventory.actualInventory[num];
+                                break;
+                            }
+                        }
                     }
                 }
             }
