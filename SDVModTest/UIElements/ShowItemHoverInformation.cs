@@ -24,10 +24,19 @@ namespace UIInfoSuite.UIElements
                 Game1.mouseCursors, 
                 new Rectangle(331, 374, 15, 14), 
                 Game1.pixelZoom);
+        private readonly ClickableTextureComponent _museumIcon = new ClickableTextureComponent(
+            "",
+            new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+            "",
+            Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate", new object[0]),
+            Game1.getCharacterFromName("Gunther").Sprite.Texture,
+            Game1.getCharacterFromName("Gunther").GetHeadShot(),
+            Game1.pixelZoom);
 
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
+        private LibraryMuseum _libraryMuseum;
         private readonly IModEvents _events;
 
         public ShowItemHoverInformation(IModEvents events)
@@ -47,6 +56,8 @@ namespace UIInfoSuite.UIElements
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
                 _bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
                 PopulateRequiredBundles();
+
+                _libraryMuseum = Game1.getLocationFromName("ArchaeologyHouse") as LibraryMuseum;
 
                 _events.Player.InventoryChanged += OnInventoryChanged;
                 _events.Display.Rendered += OnRendered;
@@ -371,6 +382,14 @@ namespace UIInfoSuite.UIElements
                             new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
                             Game1.textColor);
                     }
+                }
+
+                if (_libraryMuseum.isItemSuitableForDonation(_hoverItem))
+                {
+                    _museumIcon.bounds.X = (int)windowPos.X - 30;
+                    _museumIcon.bounds.Y = (int)windowPos.Y - 60 + windowHeight;
+                    _museumIcon.scale = 2;
+                    _museumIcon.draw(Game1.spriteBatch);
                 }
 
                 if (!String.IsNullOrEmpty(requiredBundleName))
