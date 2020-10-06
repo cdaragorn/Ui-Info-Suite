@@ -132,43 +132,46 @@ namespace UIInfoSuite.UIElements
         private void PopulateRequiredBundles()
         {
             _prunedRequiredBundles.Clear();
-            foreach (var bundle in _bundleData)
+            if (!_communityCenter.areAllAreasComplete() && !Game1.player.mailReceived.Contains("JojaMember"))
             {
-                String[] bundleRoomInfo = bundle.Key.Split('/');
-                String bundleRoom = bundleRoomInfo[0];
-                int roomNum;
-
-                switch(bundleRoom)
+                foreach (var bundle in _bundleData)
                 {
-                    case "Pantry": roomNum = 0; break;
-                    case "Crafts Room": roomNum = 1; break;
-                    case "Fish Tank": roomNum = 2; break;
-                    case "Boiler Room": roomNum = 3; break;
-                    case "Vault": roomNum = 4; break;
-                    case "Bulletin Board": roomNum = 5; break;
-                    default: continue;
-                }
+                    String[] bundleRoomInfo = bundle.Key.Split('/');
+                    String bundleRoom = bundleRoomInfo[0];
+                    int roomNum;
 
-                if (_communityCenter.shouldNoteAppearInArea(roomNum))
-                {
-                    int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
-                    string[] bundleInfo = bundle.Value.Split('/');
-                    string bundleName = bundleInfo[0];
-                    string[] bundleValues = bundleInfo[2].Split(' ');
-                    List<int> source = new List<int>();
-
-                    for (int i = 0; i < bundleValues.Length; i += 3)
+                    switch (bundleRoom)
                     {
-                        int bundleValue = bundleValues[i].SafeParseInt32();
-                        if (bundleValue != -1 &&
-                            !_communityCenter.bundles[bundleNumber][i / 3])
-                        {
-                            source.Add(bundleValue);
-                        }
+                        case "Pantry": roomNum = 0; break;
+                        case "Crafts Room": roomNum = 1; break;
+                        case "Fish Tank": roomNum = 2; break;
+                        case "Boiler Room": roomNum = 3; break;
+                        case "Vault": roomNum = 4; break;
+                        case "Bulletin Board": roomNum = 5; break;
+                        default: continue;
                     }
 
-                    if (source.Count > 0)
-                        _prunedRequiredBundles.Add(bundleName, source);
+                    if (_communityCenter.shouldNoteAppearInArea(roomNum))
+                    {
+                        int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
+                        string[] bundleInfo = bundle.Value.Split('/');
+                        string bundleName = bundleInfo[0];
+                        string[] bundleValues = bundleInfo[2].Split(' ');
+                        List<int> source = new List<int>();
+
+                        for (int i = 0; i < bundleValues.Length; i += 3)
+                        {
+                            int bundleValue = bundleValues[i].SafeParseInt32();
+                            if (bundleValue != -1 &&
+                                !_communityCenter.bundles[bundleNumber][i / 3])
+                            {
+                                source.Add(bundleValue);
+                            }
+                        }
+
+                        if (source.Count > 0)
+                            _prunedRequiredBundles.Add(bundleName, source);
+                    }
                 }
             }
         }
