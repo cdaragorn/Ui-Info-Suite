@@ -14,26 +14,22 @@ namespace UIInfoSuite.UIElements
 {
     class ShowWhenAnimalNeedsPet : IDisposable
     {
-        private readonly Timer _timer = new Timer();
-        private float _yMovementPerDraw;
-        private float _alpha;
+        private float _yMovementPerDraw = 0f;
+        private float _alpha = 1f;
         private readonly IModHelper _helper;
 
         public ShowWhenAnimalNeedsPet(IModHelper helper)
         {
-            _timer.Elapsed += StartDrawingPetNeeds;
             _helper = helper;
         }
 
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
-            _timer.Stop();
             _helper.Events.Player.Warped -= OnWarped;
             _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawAnimalHasProduct;
 
             if (showWhenAnimalNeedsPet)
             {
-                _timer.Start();
                 _helper.Events.Player.Warped += OnWarped;
                 _helper.Events.Display.RenderingHud += OnRenderingHud_DrawAnimalHasProduct;
             }
@@ -102,12 +98,10 @@ namespace UIInfoSuite.UIElements
             {
                 if (e.NewLocation is AnimalHouse || e.NewLocation is Farm)
                 {
-                    _timer.Interval = 1000;
-                    _timer.Start();
+                    StartDrawingPetNeeds();
                 }
                 else
                 {
-                    _timer.Stop();
                     StopDrawingPetNeeds();
                 }
             }
@@ -125,13 +119,10 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void StartDrawingPetNeeds(object sender, ElapsedEventArgs e)
+        private void StartDrawingPetNeeds()
         {
-            _timer.Stop();
             _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
             _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
-            _yMovementPerDraw = -3f;
-            _alpha = 1f;
         }
 
         private void StopDrawingPetNeeds()
@@ -145,17 +136,10 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            // update pet draw
-            if (e.IsMultipleOf(2))
-            {
-                _yMovementPerDraw += 0.3f;
-                _alpha -= 0.014f;
-                if (_alpha < 0.1f)
-                {
-                    StopDrawingPetNeeds();
-                    _timer.Start();
-                }
-            }
+            // Bob up and down in a sin wave each draw
+            float sine = (float)Math.Sin(e.Ticks / 20.0);
+            _yMovementPerDraw = -6f + 6f * sine;
+            _alpha = 0.8f + 0.2f * sine;
         }
 
         private void DrawIconForFarmAnimals()
@@ -167,7 +151,8 @@ namespace UIInfoSuite.UIElements
                 foreach (var animal in animalsInCurrentLocation.Pairs)
                 {
                     if (!animal.Value.IsEmoting &&
-                        !animal.Value.wasPet.Value)
+                        !animal.Value.wasPet.Value &&
+                        animal.Value.friendshipTowardFarmer.Value < 1000)
                     {
                         Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
                         String animalType = animal.Value.type.Value.ToLower();
@@ -199,22 +184,27 @@ namespace UIInfoSuite.UIElements
         {
             foreach (var character in Game1.currentLocation.characters)
             {
-                if (character is Pet pet &&
-                    !pet.lastPetDay.Values.Any(day => day == Game1.Date.TotalDays))
+                if (character is Pet)
                 {
-                    Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
-                    positionAboveAnimal.X += 50f;
-                    positionAboveAnimal.Y -= 20f;
-                    Game1.spriteBatch.Draw(
-                        Game1.mouseCursors,
-                        new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
-                        new Rectangle(32, 0, 16, 16),
-                        Color.White * _alpha,
-                        0.0f,
-                        Vector2.Zero,
-                        4f,
-                        SpriteEffects.None,
-                        1f);
+                    Pet pet = character as Pet;
+
+                    if ((!pet.lastPetDay.ContainsKey(Game1.player.UniqueMultiplayerID) || pet.lastPetDay[Game1.player.UniqueMultiplayerID] != Game1.Date.TotalDays)
+                        && pet.friendshipTowardFarmer.Value < 1000)
+                    {
+                        Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
+                        positionAboveAnimal.X += 50f;
+                        positionAboveAnimal.Y -= 20f;
+                        Game1.spriteBatch.Draw(
+                            Game1.mouseCursors,
+                            new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
+                            new Rectangle(32, 0, 16, 16),
+                            Color.White * _alpha,
+                            0.0f,
+                            Vector2.Zero,
+                            4f,
+                            SpriteEffects.None,
+                            1f);
+                    }
                 }
             }
         }
