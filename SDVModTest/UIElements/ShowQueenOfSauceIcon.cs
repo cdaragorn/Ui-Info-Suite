@@ -8,15 +8,16 @@ using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UIInfoSuite.Extensions;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
     class ShowQueenOfSauceIcon : IDisposable
     {
-        private Dictionary<String, String> _recipesByDescription = new Dictionary<string, string>();
-        private Dictionary<String, String> _recipes = new Dictionary<String, string>();
-        private String _todaysRecipe;
+        private Dictionary<string, string> _recipesByDescription = new Dictionary<string, string>();
+        private Dictionary<string, string> _recipes = new Dictionary<string, string>();
+        private string _todaysRecipe;
         private NPC _gus;
         private bool _drawQueenOfSauceIcon = false;
         private bool _drawDishOfDayIcon = false;
@@ -60,7 +61,7 @@ namespace UIInfoSuite.UIElements
         {
             if (_recipes.Count == 0)
             {
-                _recipes = Game1.content.Load<Dictionary<String, String>>("Data\\TV\\CookingChannel");
+                _recipes = Game1.content.Load<Dictionary<string, string>>("Data\\TV\\CookingChannel");
 
                 foreach (var next in _recipes)
                 {
@@ -93,16 +94,16 @@ namespace UIInfoSuite.UIElements
 
         private string[] GetTodaysRecipe()
         {
-            String[] array1 = new string[2];
+            string[] array1 = new string[2];
             int recipeNum = (int)(Game1.stats.DaysPlayed % 224 / 7);
-            //var recipes = Game1.content.Load<Dictionary<String, String>>("Data\\TV\\CookingChannel");
+            //var recipes = Game1.content.Load<Dictionary<string, string>>("Data\\TV\\CookingChannel");
 
-            String recipeValue = _recipes.SafeGet(recipeNum.ToString());
-            String[] splitValues = null;
-            String key = null;
+            string recipeValue = _recipes.SafeGet(recipeNum.ToString());
+            string[] splitValues = null;
+            string key = null;
             bool checkCraftingRecipes = true;
-            
-            if (String.IsNullOrEmpty(recipeValue))
+
+            if (string.IsNullOrEmpty(recipeValue))
             {
                 recipeValue = _recipes["1"];
                 checkCraftingRecipes = false;
@@ -116,8 +117,8 @@ namespace UIInfoSuite.UIElements
             array1[0] = key;
             if (checkCraftingRecipes)
             {
-                String craftingRecipesValue = CraftingRecipe.cookingRecipes.SafeGet(key);
-                if (!String.IsNullOrEmpty(craftingRecipesValue))
+                string craftingRecipesValue = CraftingRecipe.cookingRecipes.SafeGet(key);
+                if (!string.IsNullOrEmpty(craftingRecipesValue))
                     splitValues = craftingRecipesValue.Split('/');
             }
 
@@ -126,7 +127,7 @@ namespace UIInfoSuite.UIElements
 
             array1[1] = languageRecipeName;
 
-            //String str = null;
+            //string str = null;
             //if (!Game1.player.cookingRecipes.ContainsKey(key))
             //{
             //    str = Game1.content.LoadString(@"Strings\StringsFromCSFiles:TV.cs.13153", languageRecipeName);
@@ -237,8 +238,8 @@ namespace UIInfoSuite.UIElements
         {
             TV tv = new TV();
             int numRecipesKnown = Game1.player.cookingRecipes.Count();
-            String[] recipes = typeof(TV).GetMethod("getWeeklyRecipe", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(tv, null) as String[];
-            //String[] recipe = GetTodaysRecipe();
+            string[] recipes = typeof(TV).GetMethod("getWeeklyRecipe", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(tv, null) as string[];
+            //string[] recipe = GetTodaysRecipe();
             //_todaysRecipe = recipe[1];
             _todaysRecipe = _recipesByDescription.SafeGet(recipes[0]);
 
@@ -246,7 +247,7 @@ namespace UIInfoSuite.UIElements
                 Game1.player.cookingRecipes.Remove(_todaysRecipe);
 
             _drawQueenOfSauceIcon = (Game1.dayOfMonth % 7 == 0 || (Game1.dayOfMonth - 3) % 7 == 0) &&
-                Game1.stats.DaysPlayed > 5 && 
+                Game1.stats.DaysPlayed > 5 &&
                 !Game1.player.knowsRecipe(_todaysRecipe);
             //_drawDishOfDayIcon = !Game1.player.knowsRecipe(Game1.dishOfTheDay.Name);
         }

@@ -4,7 +4,8 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using UIInfoSuite.Extensions;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
@@ -12,7 +13,7 @@ namespace UIInfoSuite.UIElements
     {
         private readonly IModHelper _helper;
         private Rectangle _toolTexturePosition;
-        private String _hoverText;
+        private string _hoverText;
         private Tool _toolBeingUpgraded;
         private ClickableTextureComponent _toolUpgradeIcon;
 
@@ -98,12 +99,12 @@ namespace UIInfoSuite.UIElements
 
                 if (Game1.player.daysLeftForToolUpgrade.Value > 0)
                 {
-                    _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
+                    _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
                         Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
                 }
                 else
                 {
-                    _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
+                    _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
                         _toolBeingUpgraded.DisplayName);
                 }
             }
@@ -111,7 +112,7 @@ namespace UIInfoSuite.UIElements
             {
                 _toolBeingUpgraded = null;
             }
-            
+
         }
 
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear under the HUD.</summary>
@@ -139,7 +140,7 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_toolBeingUpgraded != null && 
+            if (_toolBeingUpgraded != null &&
                 (_toolUpgradeIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 IClickableMenu.drawHoverText(

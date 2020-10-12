@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using UIInfoSuite.Extensions;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -11,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
@@ -22,11 +23,11 @@ namespace UIInfoSuite.UIElements
         private const int SocialPanelWidth = 190;
         private const int SocialPanelXOffset = 160;
         private SocialPage _socialPage;
-        private String[] _friendNames;
-        private readonly IDictionary<String, String> _options;
+        private string[] _friendNames;
+        private readonly IDictionary<string, string> _options;
         private readonly IModHelper _helper;
 
-        private static readonly Dictionary<String, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
+        private static readonly Dictionary<string, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
         {
             { "HarveyRoom", new KeyValuePair<int, int>(677, 304) },
             { "BathHouse_Pool", new KeyValuePair<int, int>(576, 60) },
@@ -81,9 +82,9 @@ namespace UIInfoSuite.UIElements
             { "Club", new KeyValuePair<int, int>(60, 92) }
         };
 
-#endregion
+        #endregion
 
-        public LocationOfTownsfolk(IModHelper helper, IDictionary<String, String> options)
+        public LocationOfTownsfolk(IModHelper helper, IDictionary<string, string> options)
         {
             _helper = helper;
             _options = options;
@@ -159,9 +160,9 @@ namespace UIInfoSuite.UIElements
                     }
                     else
                     {
-                        String optionValue = _options.SafeGet(hashCode.ToString());
+                        string optionValue = _options.SafeGet(hashCode.ToString());
 
-                        if (String.IsNullOrEmpty(optionValue))
+                        if (string.IsNullOrEmpty(optionValue))
                         {
                             _options[hashCode.ToString()] = optionForThisFriend.ToString();
                         }
@@ -217,7 +218,7 @@ namespace UIInfoSuite.UIElements
             {
                 if (gameMenu.currentTab == 3)
                 {
-                    List<String> namesToShow = new List<string>();
+                    List<string> namesToShow = new List<string>();
                     foreach (var character in _townsfolk)
                     {
                         try
@@ -229,7 +230,7 @@ namespace UIInfoSuite.UIElements
                             if (drawCharacter)
                             {
                                 KeyValuePair<int, int> location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
-                                String locationName = character.currentLocation?.Name ?? character.DefaultMap;
+                                string locationName = character.currentLocation?.Name ?? character.DefaultMap;
 
                                 switch (locationName)
                                 {
@@ -284,7 +285,7 @@ namespace UIInfoSuite.UIElements
 
                                 //if (character.currentLocation.Name == "Town")
                                 //{
-                                //    String locationName = character.currentLocation.Name;
+                                //    string locationName = character.currentLocation.Name;
                                 //    xTile.Map map = character.currentLocation.Map;
                                 //    int xStart = 595;
                                 //    int yStart = 163;
@@ -382,7 +383,7 @@ namespace UIInfoSuite.UIElements
                     {
                         StringBuilder text = new StringBuilder();
                         int longestLength = 0;
-                        foreach (String name in namesToShow)
+                        foreach (string name in namesToShow)
                         {
                             text.AppendLine(name);
                             longestLength = Math.Max(longestLength, (int)Math.Ceiling(Game1.smallFont.MeasureString(name).Length()));
@@ -414,7 +415,7 @@ namespace UIInfoSuite.UIElements
                     //The cursor needs to show up in front of the character faces
                     Tools.DrawMouseCursor();
 
-                    String hoverText = (String)typeof(MapPage)
+                    string hoverText = (string)typeof(MapPage)
                         .GetField(
                             "hoverText",
                             BindingFlags.Instance | BindingFlags.NonPublic)
@@ -436,11 +437,11 @@ namespace UIInfoSuite.UIElements
             if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 2)
             {
                 Game1.drawDialogueBox(
-                    Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset, 
-                    Game1.activeClickableMenu.yPositionOnScreen, 
-                    SocialPanelWidth, 
-                    Game1.activeClickableMenu.height, 
-                    false, 
+                    Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset,
+                    Game1.activeClickableMenu.yPositionOnScreen,
+                    SocialPanelWidth,
+                    Game1.activeClickableMenu.height,
+                    false,
                     true);
 
                 int slotPosition = (int)typeof(SocialPage)
@@ -460,25 +461,25 @@ namespace UIInfoSuite.UIElements
                     Color color = checkbox.isChecked ? Color.White : Color.Gray;
 
                     Game1.spriteBatch.Draw(
-                        Game1.mouseCursors, 
-                        new Vector2(checkbox.bounds.X - 50, checkbox.bounds.Y), 
-                        new Rectangle(80, 0, 16, 16), 
+                        Game1.mouseCursors,
+                        new Vector2(checkbox.bounds.X - 50, checkbox.bounds.Y),
+                        new Rectangle(80, 0, 16, 16),
                         color,
-                        0.0f, 
-                        Vector2.Zero, 
-                        3f, 
-                        SpriteEffects.None, 
+                        0.0f,
+                        Vector2.Zero,
+                        3f,
+                        SpriteEffects.None,
                         1f);
 
                     if (yOffset != 560)
                     {
                         Game1.spriteBatch.Draw(
-                            Game1.staminaRect, 
+                            Game1.staminaRect,
                             new Rectangle(
-                                checkbox.bounds.X - 50, 
-                                checkbox.bounds.Y + 72, 
-                                SocialPanelWidth / 2 - 6, 
-                                4), 
+                                checkbox.bounds.X - 50,
+                                checkbox.bounds.Y + 72,
+                                SocialPanelWidth / 2 - 6,
+                                4),
                             Color.SaddleBrown);
 
                         Game1.spriteBatch.Draw(

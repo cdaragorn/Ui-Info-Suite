@@ -13,13 +13,14 @@ using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using UIInfoSuite.Extensions;
+using UIInfoSuite.Compatibility;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
-    class ExperienceBar : IDisposable
+    public class ExperienceBar : IDisposable
     {
-
         public interface LevelExtenderEvents
         {
             event EventHandler OnXPChanged;
@@ -46,9 +47,9 @@ namespace UIInfoSuite.UIElements
         private bool _showLevelUpAnimation = true;
         private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
-        private SoundPlayer _player;
+        private readonly SoundPlayer _soundPlayer;
 
-        private LevelExtenderInterface _levelExtenderAPI;
+        private readonly ILevelExtenderInterface _levelExtenderAPI;
 
         private int _currentSkillLevel = 0;
         private int _experienceRequiredToLevel = -1;
@@ -58,15 +59,11 @@ namespace UIInfoSuite.UIElements
         public ExperienceBar(IModHelper helper)
         {
             _helper = helper;
-            String path = string.Empty;
+            string path = string.Empty;
             try
             {
-                path = Path.Combine(_helper.DirectoryPath, "LevelUp.wav");
-                _player = new SoundPlayer(path);
-                //path = path.Replace(Environment.CurrentDirectory, "");
-                //path = path.TrimStart(Path.DirectorySeparatorChar);
-                //_soundEffect = SoundEffect.FromStream(TitleContainer.OpenStream(path)).CreateInstance();
-                //_soundEffect.Volume = 1f;
+                path = Path.Combine(_helper.DirectoryPath, "assets", "LevelUp.wav");
+                _soundPlayer = new SoundPlayer(path);
             }
             catch (Exception ex)
             {
@@ -79,31 +76,12 @@ namespace UIInfoSuite.UIElements
             var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
             try
             {
-                _levelExtenderAPI = _helper.ModRegistry.GetApi<LevelExtenderInterface>("DevinLematty.LevelExtender");
+                _levelExtenderAPI = _helper.ModRegistry.GetApi<ILevelExtenderInterface>("DevinLematty.LevelExtender");
             }
             catch
             {
 
             }
-
-
-            //if (something != null)
-            //{
-            //    try
-            //    {
-            //        var methods = something.GetType().GetMethods();
-            //        var currentXPMethod = something.GetType().GetMethod("currentXP");
-
-            //        foreach (var method in methods)
-            //        {
-
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        int f = 3;
-            //    }
-            //}
         }
 
         private void LoadModApis(object sender, EventArgs e)
@@ -149,7 +127,7 @@ namespace UIInfoSuite.UIElements
             if (_levelExtenderAPI != null)
             {
                 for (int i = 0; i < _currentLevelExtenderExperience.Length; ++i)
-                    _currentLevelExtenderExperience[i] = _levelExtenderAPI.currentXP()[i];
+                    _currentLevelExtenderExperience[i] = _levelExtenderAPI.CurrentXP()[i];
             }
 
             if (showExperienceGain)
@@ -209,7 +187,7 @@ namespace UIInfoSuite.UIElements
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(100);
-                    _player.Play();
+                    _soundPlayer.Play();
                 });
 
                 Task.Factory.StartNew(() =>
@@ -251,7 +229,7 @@ namespace UIInfoSuite.UIElements
 
             int[] levelExtenderExperience = null;
             if (_levelExtenderAPI != null)
-                levelExtenderExperience = _levelExtenderAPI.currentXP();
+                levelExtenderExperience = _levelExtenderAPI.CurrentXP();
 
             for (int i = 0; i < _currentExperience.Length; ++i)
             {
@@ -317,9 +295,9 @@ namespace UIInfoSuite.UIElements
                 if (_experienceRequiredToLevel <= 0 &&
                     _levelExtenderAPI != null)
                 {
-                    _experienceEarnedThisLevel = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _experienceEarnedThisLevel = _levelExtenderAPI.CurrentXP()[currentLevelIndex];
                     _experienceFromPreviousLevels = _currentExperience[currentLevelIndex] - _experienceEarnedThisLevel;
-                    _experienceRequiredToLevel = _levelExtenderAPI.requiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
+                    _experienceRequiredToLevel = _levelExtenderAPI.RequiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
                 }
 
                 ShowExperienceBar();
@@ -331,7 +309,7 @@ namespace UIInfoSuite.UIElements
                     if (_levelExtenderAPI != null &&
                         _currentSkillLevel > 9)
                     {
-                        currentExperienceToUse = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                        currentExperienceToUse = _levelExtenderAPI.CurrentXP()[currentLevelIndex];
                         previousExperienceToUse = _currentLevelExtenderExperience[currentLevelIndex];
                     }
 
@@ -349,7 +327,7 @@ namespace UIInfoSuite.UIElements
                 _currentExperience[currentLevelIndex] = Game1.player.experiencePoints[currentLevelIndex];
 
                 if (_levelExtenderAPI != null)
-                    _currentLevelExtenderExperience[currentLevelIndex] = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _currentLevelExtenderExperience[currentLevelIndex] = _levelExtenderAPI.CurrentXP()[currentLevelIndex];
 
             }
             else if (_previousItem != currentItem)
@@ -399,9 +377,9 @@ namespace UIInfoSuite.UIElements
                 if (_experienceRequiredToLevel <= 0 &&
                     _levelExtenderAPI != null)
                 {
-                    _experienceEarnedThisLevel = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _experienceEarnedThisLevel = _levelExtenderAPI.CurrentXP()[currentLevelIndex];
                     _experienceFromPreviousLevels = _currentExperience[currentLevelIndex] - _experienceEarnedThisLevel;
-                    _experienceRequiredToLevel = _levelExtenderAPI.requiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
+                    _experienceRequiredToLevel = _levelExtenderAPI.RequiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
                 }
 
                 ShowExperienceBar();
@@ -475,19 +453,19 @@ namespace UIInfoSuite.UIElements
 
             //if (currentLevel < 10)
             //{
-                switch (currentLevel)
-                {
-                    case 0: amount = 100; break;
-                    case 1: amount = 380; break;
-                    case 2: amount = 770; break;
-                    case 3: amount = 1300; break;
-                    case 4: amount = 2150; break;
-                    case 5: amount = 3300; break;
-                    case 6: amount = 4800; break;
-                    case 7: amount = 6900; break;
-                    case 8: amount = 10000; break;
-                    case 9: amount = 15000; break;
-                }
+            switch (currentLevel)
+            {
+                case 0: amount = 100; break;
+                case 1: amount = 380; break;
+                case 2: amount = 770; break;
+                case 3: amount = 1300; break;
+                case 4: amount = 2150; break;
+                case 5: amount = 3300; break;
+                case 6: amount = 4800; break;
+                case 7: amount = 6900; break;
+                case 8: amount = 10000; break;
+                case 9: amount = 15000; break;
+            }
             //}
             //else if (_levelExtenderAPI != null &&
             //    currentLevel < 100)

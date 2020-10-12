@@ -102,7 +102,7 @@ namespace UIInfoSuite.UIElements
 
                 if (Game1.player.CurrentItem != null)
                 {
-                    String name = Game1.player.CurrentItem.Name.ToLower();
+                    string name = Game1.player.CurrentItem.Name.ToLower();
                     Item currentItem = Game1.player.CurrentItem;
                     List<StardewValley.Object> objects = null;
 
@@ -191,9 +191,6 @@ namespace UIInfoSuite.UIElements
 
         }
 
-        /// <summary>Raised after the game draws to the sprite patch in a draw tick, just before the final sprite batch is rendered to the screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnRendered(object sender, RenderedEventArgs e)
         {
             if (_mutex.WaitOne(0))
@@ -255,11 +252,11 @@ namespace UIInfoSuite.UIElements
             get { return (Game1.getMouseY() + Game1.viewport.Y) / Game1.tileSize; }
         }
 
-        private List<StardewValley.Object> GetObjectsInLocationOfSimilarName(String nameContains)
+        private List<StardewValley.Object> GetObjectsInLocationOfSimilarName(string nameContains)
         {
             List<StardewValley.Object> result = new List<StardewValley.Object>();
 
-            if (!String.IsNullOrEmpty(nameContains))
+            if (!string.IsNullOrEmpty(nameContains))
             {
                 nameContains = nameContains.ToLower();
                 var objects = Game1.currentLocation.Objects;

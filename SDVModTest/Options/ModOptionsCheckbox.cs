@@ -1,13 +1,10 @@
-﻿using UIInfoSuite.Extensions;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using StardewValley.Menus;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.Options
 {
@@ -17,17 +14,17 @@ namespace UIInfoSuite.Options
 
         private readonly Action<bool> _toggleOptionsDelegate;
         private bool _isChecked;
-        private readonly IDictionary<String, String> _options;
-        private readonly String _optionKey;
+        private readonly IDictionary<string, string> _options;
+        private readonly string _optionKey;
 
         public ModOptionsCheckbox(
-            String label, 
-            int whichOption, 
-            Action<bool> toggleOptionDelegate, 
-            IDictionary<String, String> options, 
-            String optionKey, 
-            bool defaultValue = true, 
-            int x = -1, 
+            string label,
+            int whichOption,
+            Action<bool> toggleOptionDelegate,
+            IDictionary<string, string> options,
+            string optionKey,
+            bool defaultValue = true,
+            int x = -1,
             int y = -1)
             : base(label, x, y, PixelSize * Game1.pixelZoom, PixelSize * Game1.pixelZoom, whichOption)
         {

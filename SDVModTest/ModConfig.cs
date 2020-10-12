@@ -1,10 +1,7 @@
-﻿using StardewModdingAPI;
-
-namespace UIInfoSuite
+﻿namespace UIInfoSuite
 {
     class ModConfig
     {
-
         public int[][] Sprinkler { get; set; } = new int[][]
         {
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -49,8 +46,8 @@ namespace UIInfoSuite
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
         };
-		
-		public int[][] PrismaticSprinkler { get; set; } = new int[][]
+
+        public int[][] PrismaticSprinkler { get; set; } = new int[][]
         {
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

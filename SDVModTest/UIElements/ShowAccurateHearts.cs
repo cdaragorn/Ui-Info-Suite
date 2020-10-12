@@ -3,7 +3,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -11,7 +10,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowAccurateHearts : IDisposable
     {
-        private String[] _friendNames;
+        private string[] _friendNames;
         private SocialPage _socialPage;
         private IModEvents _events;
 
@@ -69,7 +68,7 @@ namespace UIInfoSuite.UIElements
                             int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
                             yOffset += 112;
                             Friendship friendshipValues;
-                            String nextName = _friendNames[i];
+                            string nextName = _friendNames[i];
                             if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
                             {
                                 int friendshipRawValue = friendshipValues.Points;
@@ -103,7 +102,7 @@ namespace UIInfoSuite.UIElements
                             }
                         }
 
-                        String hoverText = gameMenu.hoverText;
+                        string hoverText = gameMenu.hoverText;
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,

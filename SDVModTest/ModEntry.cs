@@ -1,98 +1,52 @@
-﻿using UIInfoSuite.Options;
-using UIInfoSuite.UIElements;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using UIInfoSuite.AdditionalFeatures;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Options;
 
 namespace UIInfoSuite
 {
     public class ModEntry : Mod
     {
-        private SkipIntro _skipIntro;
 
-        private String _modDataFileName;
-        private readonly Dictionary<String, String> _options = new Dictionary<string, string>();
-
+        #region Properties
         public static IMonitor MonitorObject { get; private set; }
 
-        private ModOptionsPageHandler _modOptionsPageHandler;
+        private SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
+        private string _modDataFileName;
+        private readonly Dictionary<string, string> _options = new Dictionary<string, string>();
 
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        private ModOptionsPageHandler _modOptionsPageHandler;
+        #endregion
+
+
+        #region Entry
         public override void Entry(IModHelper helper)
         {
-            //Helper = helper;
             MonitorObject = Monitor;
             _skipIntro = new SkipIntro(helper.Events);
 
-            Monitor.Log("starting.", LogLevel.Debug);
+            helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.Saved += OnSaved;
-            helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
-            helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
-
-            //Resources = new ResourceManager("UIInfoSuite.Resource.strings", Assembly.GetAssembly(typeof(ModEntry)));
-            //try
-            //{
-            //    //Test to make sure the culture specific files are there
-            //    Resources.GetString(LanguageKeys.Days, ModEntry.SpecificCulture);
-            //}
-            //catch
-            //{
-            //    Resources = Properties.Resources.ResourceManager;
-            //}
         }
+        #endregion
 
-        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
-        {
 
-        }
-
-        /// <summary>Raised after the game returns to the title screen.</summary>
-        /// <param name="sender">The event sender.</param>
+        #region Event subscriptions
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             _modOptionsPageHandler?.Dispose();
             _modOptionsPageHandler = null;
         }
 
-        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnSaved(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrWhiteSpace(_modDataFileName))
-            {
-                if (File.Exists(_modDataFileName))
-                    File.Delete(_modDataFileName);
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "  ";
-                using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
-                {
-                    writer.WriteStartElement("options");
-
-                    foreach (var option in _options)
-                    {
-                        writer.WriteStartElement("option");
-                        writer.WriteAttributeString("name", option.Key);
-                        writer.WriteValue(option.Value);
-                        writer.WriteEndElement();
-                    }
-                    writer.WriteEndElement();
-                    writer.Close();
-                }
-            }
-        }
-
-        /// <summary>Raised after the player loads a save slot and the world is initialised.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             try
@@ -111,19 +65,16 @@ namespace UIInfoSuite
                 if (File.Exists(_modDataFileName))
                 {
                     XmlDocument document = new XmlDocument();
-
                     document.Load(_modDataFileName);
-                    XmlNodeList nodes = document.GetElementsByTagName("option");
 
-                    foreach (XmlNode node in nodes)
+                    foreach (XmlNode node in document.GetElementsByTagName("option"))
                     {
-                        String key = node.Attributes["name"]?.Value;
-                        String value = node.InnerText;
+                        string key = node.Attributes["name"]?.Value;
+                        string value = node.InnerText;
 
                         if (key != null)
                             _options[key] = value;
                     }
-
                 }
             }
             catch (Exception ex)
@@ -134,6 +85,35 @@ namespace UIInfoSuite
             _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _options);
         }
 
-       
+        private void OnSaved(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(_modDataFileName))
+            {
+                if (File.Exists(_modDataFileName))
+                {
+                    File.Delete(_modDataFileName);
+                }
+
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.IndentChars = "  ";
+
+                using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
+                {
+                    writer.WriteStartElement("options");
+
+                    foreach (var option in _options)
+                    {
+                        writer.WriteStartElement("option");
+                        writer.WriteAttributeString("name", option.Key);
+                        writer.WriteValue(option.Value);
+                        writer.WriteEndElement();
+                    }
+                    writer.WriteEndElement();
+                }
+            }
+        } 
+        #endregion
+
     }
 }

@@ -1,12 +1,12 @@
-﻿using UIInfoSuite.UIElements;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UIInfoSuite.Extensions;
+using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite.UIElements;
 
 namespace UIInfoSuite.Options
 {
@@ -14,7 +14,7 @@ namespace UIInfoSuite.Options
     {
         private List<ModOptionsElement> _optionsElements = new List<ModOptionsElement>();
         private readonly List<IDisposable> _elementsToDispose;
-        private readonly IDictionary<string, String> _options;
+        private readonly IDictionary<string, string> _options;
         private ModOptionsPageButton _modOptionsPageButton;
         private ModOptionsPage _modOptionsPage;
         private readonly IModHelper _helper;
@@ -36,7 +36,7 @@ namespace UIInfoSuite.Options
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
 
-        public ModOptionsPageHandler(IModHelper helper, IDictionary<String, String> options)
+        public ModOptionsPageHandler(IModHelper helper, IDictionary<string, string> options)
         {
             _options = options;
             helper.Events.Display.MenuChanged += ToggleModOptions;

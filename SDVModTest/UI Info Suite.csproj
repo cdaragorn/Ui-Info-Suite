@@ -67,20 +67,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\CollectionExtensions.cs" />
-    <Compile Include="Extensions\ObjectExtensions.cs" />
-    <Compile Include="LanguageKeys.cs" />
-    <Compile Include="LEEvents.cs" />
-    <Compile Include="LevelExtenderInterface.cs" />
+    <Compile Include="Infrastucture\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Infrastucture\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Infrastucture\LanguageKeys.cs" />
+    <Compile Include="Compatibility\LevelExtenderInterface.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Options\ModOptionsCheckbox.cs" />
     <Compile Include="Options\ModOptionsPageButton.cs" />
     <Compile Include="Options\ModOptionsPageHandler.cs" />
     <Compile Include="Options\ModOptionsPageIcon.cs" />
-    <Compile Include="Tools.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Infrastucture\Tools.cs" />
+    <Compile Include="Infrastucture\Extensions\StringExtensions.cs" />
     <Compile Include="ModEntry.cs" />
-    <Compile Include="IconHandler.cs" />
+    <Compile Include="Infrastucture\IconHandler.cs" />
     <Compile Include="Options\OptionKeys.cs" />
     <Compile Include="Options\ModOptionsElement.cs" />
     <Compile Include="Options\ModOptionsPage.cs" />
@@ -100,7 +99,7 @@
     <Compile Include="UIElements\ShowToolUpgradeStatus.cs" />
     <Compile Include="UIElements\ShowTravelingMerchant.cs" />
     <Compile Include="UIElements\ShowWhenAnimalNeedsPet.cs" />
-    <Compile Include="UIElements\SkipIntro.cs" />
+    <Compile Include="AdditionalFeatures\SkipIntro.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="i18n\de.json" />
@@ -114,10 +113,10 @@
     <None Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LevelUp license.txt">
+    <Content Include="Assets\LevelUp license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="LevelUp.wav">
+    <Content Include="Assets\LevelUp.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using UIInfoSuite.Extensions;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
@@ -9,12 +8,14 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
     class ShowItemHoverInformation : IDisposable
     {
-        private readonly Dictionary<String, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();
+        private readonly Dictionary<string, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();
         private readonly ClickableTextureComponent _bundleIcon =
             new ClickableTextureComponent(
                 "",
@@ -24,7 +25,7 @@ namespace UIInfoSuite.UIElements
                 Game1.mouseCursors,
                 new Rectangle(331, 374, 15, 14),
                 Game1.pixelZoom);
-        private readonly ClickableTextureComponent _museumIcon = 
+        private readonly ClickableTextureComponent _museumIcon =
             new ClickableTextureComponent(
                 "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
@@ -54,7 +55,7 @@ namespace UIInfoSuite.UIElements
 
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
-        private Dictionary<String, String> _bundleData;
+        private Dictionary<string, string> _bundleData;
         private LibraryMuseum _libraryMuseum;
         private readonly IModEvents _events;
 
@@ -73,7 +74,7 @@ namespace UIInfoSuite.UIElements
             if (showItemHoverInformation)
             {
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
-                _bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
+                _bundleData = Game1.content.Load<Dictionary<string, string>>("Data\\Bundles");
                 PopulateRequiredBundles();
 
                 _libraryMuseum = Game1.getLocationFromName("ArchaeologyHouse") as LibraryMuseum;
@@ -136,8 +137,8 @@ namespace UIInfoSuite.UIElements
             {
                 foreach (var bundle in _bundleData)
                 {
-                    String[] bundleRoomInfo = bundle.Key.Split('/');
-                    String bundleRoom = bundleRoomInfo[0];
+                    string[] bundleRoomInfo = bundle.Key.Split('/');
+                    string bundleRoom = bundleRoomInfo[0];
                     int roomNum;
 
                     switch (bundleRoom)
@@ -183,7 +184,7 @@ namespace UIInfoSuite.UIElements
         //private int lastCropPrice;
         //private int lastTruePrice;
         //private int lastWindowWidth;
-        //private String lastRequiredBundleName;
+        //private string lastRequiredBundleName;
 
         private void DrawAdvancedTooltip()
         {
@@ -197,56 +198,56 @@ namespace UIInfoSuite.UIElements
                 int cropPrice = 0;
                 int truePrice = Tools.GetTruePrice(_hoverItem);
                 int windowWidth;
-                String requiredBundleName = null;
+                string requiredBundleName = null;
 
                 //if (_lastHoverItem == null || _hoverItem.Name != _lastHoverItem.Name || _hoverItem.Stack != lastStackSize)
                 //{
-                    if (truePrice > 0)
-                    {
-                        itemPrice = truePrice / 2;
+                if (truePrice > 0)
+                {
+                    itemPrice = truePrice / 2;
 
-                        if (_hoverItem.Stack > 1)
-                        {
-                            stackPrice = (itemPrice * _hoverItem.Stack);
-                        }
-                    }
-
-                    if (_hoverItem is StardewValley.Object
-                        && itemPrice > 0
-                        && (_hoverItem as StardewValley.Object).Type == "Seeds"
-                        && (_hoverItem.Name != "Mixed Seeds" || _hoverItem.Name != "Winter Seeds"))
+                    if (_hoverItem.Stack > 1)
                     {
-                        StardewValley.Object itemObject = new StardewValley.Object(
-                                new Debris(new Crop(_hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value,
-                                Game1.player.position,
-                                Game1.player.position).chunkType.Value,
-                                1);
-                        cropPrice = itemObject.Price;
+                        stackPrice = (itemPrice * _hoverItem.Stack);
                     }
+                }
 
-                    foreach (var requiredBundle in _prunedRequiredBundles)
-                    {
-                        if (requiredBundle.Value.Contains(_hoverItem.ParentSheetIndex)
-                            && !_hoverItem.Name.Contains("arecrow")
-                            && _hoverItem.Name != "Chest"
-                            && _hoverItem.Name != "Recycling Machine"
-                            && _hoverItem.Name != "Solid Gold Lewis")
-                        {
-                            requiredBundleName = requiredBundle.Key;
-                            break;
-                        }
-                    }
+                if (_hoverItem is StardewValley.Object
+                    && itemPrice > 0
+                    && (_hoverItem as StardewValley.Object).Type == "Seeds"
+                    && (_hoverItem.Name != "Mixed Seeds" || _hoverItem.Name != "Winter Seeds"))
+                {
+                    StardewValley.Object itemObject = new StardewValley.Object(
+                            new Debris(new Crop(_hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value,
+                            Game1.player.position,
+                            Game1.player.position).chunkType.Value,
+                            1);
+                    cropPrice = itemObject.Price;
+                }
 
-                    int bundleTextWidth = 0;
-                    if (!String.IsNullOrEmpty(requiredBundleName))
+                foreach (var requiredBundle in _prunedRequiredBundles)
+                {
+                    if (requiredBundle.Value.Contains(_hoverItem.ParentSheetIndex)
+                        && !_hoverItem.Name.Contains("arecrow")
+                        && _hoverItem.Name != "Chest"
+                        && _hoverItem.Name != "Recycling Machine"
+                        && _hoverItem.Name != "Solid Gold Lewis")
                     {
-                        bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
-                        bundleTextWidth -= 30; //Text offset from left
+                        requiredBundleName = requiredBundle.Key;
+                        break;
                     }
-                    int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
-                    int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
-                    int largestTextWidth = Math.Max(bundleTextWidth, Math.Max(stackTextWidth, itemTextWidth));
-                    windowWidth = largestTextWidth + 90;
+                }
+
+                int bundleTextWidth = 0;
+                if (!string.IsNullOrEmpty(requiredBundleName))
+                {
+                    bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
+                    bundleTextWidth -= 30; //Text offset from left
+                }
+                int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
+                int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
+                int largestTextWidth = Math.Max(bundleTextWidth, Math.Max(stackTextWidth, itemTextWidth));
+                windowWidth = largestTextWidth + 90;
                 //}
                 //else
                 //{
@@ -395,7 +396,7 @@ namespace UIInfoSuite.UIElements
                     _museumIcon.draw(Game1.spriteBatch);
                 }
 
-                if (!String.IsNullOrEmpty(requiredBundleName))
+                if (!string.IsNullOrEmpty(requiredBundleName))
                 {
                     int num1 = (int)windowPos.X - 30;
                     int num2 = (int)windowPos.Y - 14;
@@ -414,7 +415,7 @@ namespace UIInfoSuite.UIElements
                             new Rectangle(num3 + width * i, y3, width, height),
                             Color.Crimson * num7);
                     }
-                    
+
                     Game1.spriteBatch.DrawString(
                         Game1.dialogueFont,
                         requiredBundleName,
@@ -445,7 +446,7 @@ namespace UIInfoSuite.UIElements
                         _shippingTopIcon.draw(Game1.spriteBatch);
                     }
                 }
-                
+
                 //memorize the result to save processing time when calling again with same values
                 //_lastHoverItem = (_lastHoverItem != _hoverItem) ? _hoverItem : _lastHoverItem;
                 //lastItemPrice = (itemPrice != lastItemPrice) ? itemPrice : lastItemPrice;
@@ -467,7 +468,7 @@ namespace UIInfoSuite.UIElements
         }
 
 
-        private static Vector2 DrawTooltip(SpriteBatch batch, String hoverText, String hoverTitle, Item hoveredItem)
+        private static Vector2 DrawTooltip(SpriteBatch batch, string hoverText, string hoverTitle, Item hoveredItem)
         {
             bool flag = hoveredItem != null &&
                 hoveredItem is StardewValley.Object &&
@@ -477,7 +478,7 @@ namespace UIInfoSuite.UIElements
             string[] buffIconsToDisplay = null;
             if (flag)
             {
-                String objectInfo = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex];
+                string objectInfo = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex];
                 if (Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex].Split('/').Length >= 7)
                 {
                     buffIconsToDisplay = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex].Split('/')[6].Split('^');
@@ -487,17 +488,17 @@ namespace UIInfoSuite.UIElements
             return DrawHoverText(batch, hoverText, Game1.smallFont, -1, -1, -1, hoverTitle, -1, buffIconsToDisplay, hoveredItem);
         }
 
-        private static Vector2 DrawHoverText(SpriteBatch batch, String text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, String boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null)
+        private static Vector2 DrawHoverText(SpriteBatch batch, string text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, string boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null)
         {
             Vector2 result = Vector2.Zero;
 
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 result = Vector2.Zero;
             }
             else
             {
-                if (String.IsNullOrEmpty(boldTitleText))
+                if (string.IsNullOrEmpty(boldTitleText))
                     boldTitleText = null;
 
                 int num1 = 20;
@@ -515,7 +516,7 @@ namespace UIInfoSuite.UIElements
                     extraInfoBackgroundHeight += 4;
                 }
 
-                String categoryName = null;
+                string categoryName = null;
                 if (hoveredItem != null)
                 {
                     extraInfoBackgroundHeight += (Game1.tileSize + 4) * hoveredItem.attachmentSlots();
@@ -755,7 +756,7 @@ namespace UIInfoSuite.UIElements
                                 false,
                                 1);
                             bool flag = meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value < -8 : meleeWeapon.speed.Value < 0;
-                            String speedText = ((meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value + 8 : meleeWeapon.speed.Value) / 2).ToString();
+                            string speedText = ((meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value + 8 : meleeWeapon.speed.Value) / 2).ToString();
                             Utility.drawTextWithShadow(
                                 batch,
                                 Game1.content.LoadString("Strings\\UI:ItemHover_Speed", new object[] { (meleeWeapon.speed.Value > 0 ? "+" : "") + speedText }),
@@ -937,7 +938,7 @@ namespace UIInfoSuite.UIElements
                 {
                     for (int i = 0; i < buffIconsToDisplay.Length; ++i)
                     {
-                        String buffIcon = buffIconsToDisplay[i];
+                        string buffIcon = buffIconsToDisplay[i];
                         if (buffIcon != "0")
                         {
                             Utility.drawWithShadow(

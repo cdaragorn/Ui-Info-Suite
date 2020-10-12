@@ -7,8 +7,6 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Network;
 using System;
-using System.Linq;
-using System.Timers;
 
 namespace UIInfoSuite.UIElements
 {
@@ -155,7 +153,7 @@ namespace UIInfoSuite.UIElements
                         animal.Value.friendshipTowardFarmer.Value < 1000)
                     {
                         Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
-                        String animalType = animal.Value.type.Value.ToLower();
+                        string animalType = animal.Value.type.Value.ToLower();
 
                         if (animalType.Contains("cow") ||
                             animalType.Contains("sheep") ||

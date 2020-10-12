@@ -1,24 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using UIInfoSuite.Extensions;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using StardewModdingAPI;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
     class ShowCalendarAndBillboardOnGameMenuButton : IDisposable
     {
-        private ClickableTextureComponent _showBillboardButton = 
+        private ClickableTextureComponent _showBillboardButton =
             new ClickableTextureComponent(
-                new Rectangle(0, 0, 99, 60), 
-                Game1.content.Load<Texture2D>(Path.Combine("Maps", "summer_town")), 
-                new Rectangle(122, 291, 35, 20), 
+                new Rectangle(0, 0, 99, 60),
+                Game1.content.Load<Texture2D>(Path.Combine("Maps", "summer_town")),
+                new Rectangle(122, 291, 35, 20),
                 3f);
 
         private readonly IModHelper _helper;
@@ -87,7 +87,7 @@ namespace UIInfoSuite.UIElements
                 && _heldItem == null)
             {
                 if (Game1.questOfTheDay != null &&
-                    String.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
+                    string.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
                     Game1.questOfTheDay.currentObjective = "wat?";
 
                 Game1.activeClickableMenu =
@@ -112,8 +112,8 @@ namespace UIInfoSuite.UIElements
                 _showBillboardButton.draw(Game1.spriteBatch);
                 if (_showBillboardButton.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                 {
-                    String hoverText = Game1.getMouseX() < 
-                        _showBillboardButton.bounds.X + _showBillboardButton.bounds.Width / 2 ? 
+                    string hoverText = Game1.getMouseX() <
+                        _showBillboardButton.bounds.X + _showBillboardButton.bounds.Width / 2 ?
                         LanguageKeys.Calendar : LanguageKeys.Billboard;
                     IClickableMenu.drawHoverText(
                         Game1.spriteBatch,

@@ -1,22 +1,23 @@
 using Microsoft.Xna.Framework;
-using UIInfoSuite.Extensions;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Locations;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using StardewValley.Objects;
-using StardewModdingAPI;
-using StardewValley.Locations;
-using StardewValley.Buildings;
+using UIInfoSuite.Infrastructure;
+using UIInfoSuite.Infrastructure.Extensions;
 
 namespace UIInfoSuite.UIElements
 {
     class ShowCropAndBarrelTime : IDisposable
     {
-        private readonly Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _indexOfCropNames = new Dictionary<int, string>();
         private StardewValley.Object _currentTile;
         private TerrainFeature _terrain;
         private Building _currentTileBuilding = null;
@@ -105,7 +106,7 @@ namespace UIInfoSuite.UIElements
                             foreach (var item in millBuilding.input.Value.items)
                             {
                                 if (item != null &&
-                                    !String.IsNullOrEmpty(item.Name))
+                                    !string.IsNullOrEmpty(item.Name))
                                 {
                                     switch (item.Name)
                                     {
@@ -149,7 +150,7 @@ namespace UIInfoSuite.UIElements
                 {
                     StringBuilder hoverText = new StringBuilder();
                     hoverText.AppendLine(_currentTile.heldObject.Value.DisplayName);
-                    
+
                     if (_currentTile is Cask)
                     {
                         Cask currentCask = _currentTile as Cask;
@@ -166,12 +167,13 @@ namespace UIInfoSuite.UIElements
                         string shortText = LanguageKeys.Minutes;
 
                         // 1600 minutes per day if you go to bed at 2am, more if you sleep early.
-                        if (timeLeft >= 1600) {
+                        if (timeLeft >= 1600)
+                        {
                             // Unlike crops and casks, this is only an approximate number of days
                             // because of how time works while sleeping. It's close enough though.
                             longText = LanguageKeys.Days;
                             longTime = timeLeft / 1600;
-                            
+
                             shortText = LanguageKeys.Hours;
                             shortTime = (timeLeft % 1600);
 
@@ -232,8 +234,8 @@ namespace UIInfoSuite.UIElements
 
                         if (hoeDirt.crop.indexOfHarvest.Value > 0)
                         {
-                            String hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest.Value);
-                            if (String.IsNullOrEmpty(hoverText))
+                            string hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest.Value);
+                            if (string.IsNullOrEmpty(hoverText))
                             {
                                 hoverText = new StardewValley.Object(new Debris(hoeDirt.crop.indexOfHarvest.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                                 _indexOfCropNames.Add(hoeDirt.crop.indexOfHarvest.Value, hoverText);
