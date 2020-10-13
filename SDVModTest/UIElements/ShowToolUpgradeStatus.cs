@@ -11,15 +11,25 @@ namespace UIInfoSuite.UIElements
 {
     class ShowToolUpgradeStatus : IDisposable
     {
-        private readonly IModHelper _helper;
-        private Rectangle _toolTexturePosition;
-        private string _hoverText;
+        #region Properties
         private Tool _toolBeingUpgraded;
+        private Rectangle _toolTexturePosition;
         private ClickableTextureComponent _toolUpgradeIcon;
+        private string _hoverText;
 
+        private readonly IModHelper _helper;
+        #endregion
+
+        #region Life cycle
         public ShowToolUpgradeStatus(IModHelper helper)
         {
             _helper = helper;
+        }
+
+        public void Dispose()
+        {
+            ToggleOption(false);
+            _toolBeingUpgraded = null;
         }
 
         public void ToggleOption(bool showToolUpgradeStatus)
@@ -38,89 +48,126 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
+        #endregion
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
+        #region Logic
+        private void UpdateToolInfo()
+        {
+            if (Game1.player.toolBeingUpgraded.Value != null)
+            {
+                _toolBeingUpgraded = Game1.player.toolBeingUpgraded.Value;
+                _toolTexturePosition = new Rectangle();
+
+                SetToolSprite();
+
+                UpdateToolSpriteWithLevel();
+
+                SetToolHoverText();
+            }
+            else
+            {
+                _toolBeingUpgraded = null;
+            }
+        }
+
+        private void SetToolSprite()
+        {
+            // Height : different for watering can and trash can
+            if (_toolBeingUpgraded is StardewValley.Tools.Hoe || _toolBeingUpgraded is StardewValley.Tools.Pickaxe
+                || _toolBeingUpgraded is StardewValley.Tools.Axe)
+            {
+                _toolTexturePosition.Width = 16;
+                _toolTexturePosition.Height = 16;
+            }
+            else if (_toolBeingUpgraded is StardewValley.Tools.WateringCan)
+            {
+                _toolTexturePosition.Width = 16;
+                _toolTexturePosition.Height = 11;
+            }
+            else
+            {
+                _toolTexturePosition.Width = 16;
+                _toolTexturePosition.Height = 16;
+            }
+
+            // Position : default generic case is trash can, because that does not have a type in StardewValley.Tools
+            if (_toolBeingUpgraded is StardewValley.Tools.WateringCan)
+            {
+                _toolTexturePosition.X = 32;
+                _toolTexturePosition.Y = 228;
+            }
+            else if (_toolBeingUpgraded is StardewValley.Tools.Hoe)
+            {
+                _toolTexturePosition.X = 81;
+                _toolTexturePosition.Y = 31;
+            }
+            else if (_toolBeingUpgraded is StardewValley.Tools.Pickaxe)
+            {
+                _toolTexturePosition.X = 81;
+                _toolTexturePosition.Y = 31 + 64;
+            }
+            else if (_toolBeingUpgraded is StardewValley.Tools.Axe)
+            {
+                _toolTexturePosition.X = 81;
+                _toolTexturePosition.Y = 31 + 64 + 64;
+            }
+            else if (_toolBeingUpgraded is StardewValley.Tools.GenericTool)
+            {
+                _toolTexturePosition.X = 208;
+                _toolTexturePosition.Y = 0;
+            }
+        }
+
+        private void UpdateToolSpriteWithLevel()
+        {
+            // Need to handle trash can separately
+            if (_toolBeingUpgraded is StardewValley.Tools.WateringCan || _toolBeingUpgraded is StardewValley.Tools.Hoe
+                || _toolBeingUpgraded is StardewValley.Tools.Axe || _toolBeingUpgraded is StardewValley.Tools.Pickaxe)
+            {
+                _toolTexturePosition.X += (111 * _toolBeingUpgraded.UpgradeLevel);
+            }
+            else if (_toolBeingUpgraded is StardewValley.Tools.GenericTool)
+            {
+                _toolTexturePosition.X += (16 * (Game1.player.trashCanLevel + 2));
+            }
+
+            // Break into new line
+            if (_toolTexturePosition.X > Game1.toolSpriteSheet.Width)
+            {
+                _toolTexturePosition.Y += 32;
+                _toolTexturePosition.X -= 333;
+            }
+        }
+
+        private void SetToolHoverText()
+        {
+            if (Game1.player.daysLeftForToolUpgrade.Value > 0)
+            {
+                _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
+                    Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
+            }
+            else
+            {
+                _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
+                    _toolBeingUpgraded.DisplayName);
+            }
+        }
+        #endregion
+
+        #region Event subscriptions
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (e.IsOneSecond && _toolBeingUpgraded != Game1.player.toolBeingUpgraded.Value)
                 UpdateToolInfo();
         }
 
-        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            this.UpdateToolInfo();
+            UpdateToolInfo();
         }
 
-        private void UpdateToolInfo()
-        {
-            // 
-            if (Game1.player.toolBeingUpgraded.Value != null)
-            {
-                _toolBeingUpgraded = Game1.player.toolBeingUpgraded.Value;
-                _toolTexturePosition = new Rectangle();
-
-                if (_toolBeingUpgraded is StardewValley.Tools.WateringCan)
-                {
-                    _toolTexturePosition.X = 32;
-                    _toolTexturePosition.Y = 228;
-                    _toolTexturePosition.Width = 16;
-                    _toolTexturePosition.Height = 11;
-                }
-                else
-                {
-                    _toolTexturePosition.Width = 16;
-                    _toolTexturePosition.Height = 16;
-                    _toolTexturePosition.X = 81;
-                    _toolTexturePosition.Y = 31;
-
-                    if (!(_toolBeingUpgraded is StardewValley.Tools.Hoe))
-                    {
-                        _toolTexturePosition.Y += 64;
-
-                        if (!(_toolBeingUpgraded is StardewValley.Tools.Pickaxe))
-                        {
-                            _toolTexturePosition.Y += 64;
-                        }
-                    }
-                }
-
-                _toolTexturePosition.X += (111 * _toolBeingUpgraded.UpgradeLevel);
-
-                if (_toolTexturePosition.X > Game1.toolSpriteSheet.Width)
-                {
-                    _toolTexturePosition.Y += 32;
-                    _toolTexturePosition.X -= 333;
-                }
-
-                if (Game1.player.daysLeftForToolUpgrade.Value > 0)
-                {
-                    _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
-                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
-                }
-                else
-                {
-                    _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
-                        _toolBeingUpgraded.DisplayName);
-                }
-            }
-            else
-            {
-                _toolBeingUpgraded = null;
-            }
-
-        }
-
-        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear under the HUD.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
-            // draw tool upgrade status
             if (!Game1.eventUp && _toolBeingUpgraded != null)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
@@ -134,25 +181,15 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            // draw hover text
             if (_toolBeingUpgraded != null &&
                 (_toolUpgradeIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
-                IClickableMenu.drawHoverText(
-                        Game1.spriteBatch,
+                IClickableMenu.drawHoverText(Game1.spriteBatch,
                         _hoverText, Game1.dialogueFont);
             }
         }
-
-        public void Dispose()
-        {
-            ToggleOption(false);
-            _toolBeingUpgraded = null;
-        }
+        #endregion
     }
 }
