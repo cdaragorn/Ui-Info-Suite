@@ -20,6 +20,7 @@ namespace UIInfoSuite.UIElements
         private readonly IModHelper _helper;
         #endregion
 
+
         #region Lifecycle
         public ShowItemEffectRanges(IModHelper helper)
         {
@@ -43,6 +44,7 @@ namespace UIInfoSuite.UIElements
             }
         }
         #endregion
+
 
         #region Event subscriptions
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -94,6 +96,7 @@ namespace UIInfoSuite.UIElements
             }
         }
         #endregion
+
 
         #region Logic
         private void UpdateEffectiveArea()

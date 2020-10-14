@@ -20,6 +20,7 @@ namespace UIInfoSuite.UIElements
         private readonly IModHelper _helper;
         #endregion
 
+
         #region Life cycle
         public ShowToolUpgradeStatus(IModHelper helper)
         {
@@ -49,6 +50,50 @@ namespace UIInfoSuite.UIElements
             }
         }
         #endregion
+
+
+        #region Event subscriptions
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            if (e.IsOneSecond && _toolBeingUpgraded != Game1.player.toolBeingUpgraded.Value)
+                UpdateToolInfo();
+        }
+
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            UpdateToolInfo();
+        }
+
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
+        {
+            // Draw icon
+            if (!Game1.eventUp && _toolBeingUpgraded != null)
+            {
+                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
+                _toolUpgradeIcon =
+                    new ClickableTextureComponent(
+                        new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
+                        Game1.toolSpriteSheet,
+                        _toolTexturePosition,
+                        2.5f);
+                _toolUpgradeIcon.draw(Game1.spriteBatch);
+            }
+        }
+
+        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
+        {
+            // Show text on hover
+            if (_toolBeingUpgraded != null && (_toolUpgradeIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
+            {
+                IClickableMenu.drawHoverText(
+                    Game1.spriteBatch,
+                    _hoverText, 
+                    Game1.dialogueFont
+                );
+            }
+        }
+        #endregion
+
 
         #region Logic
         private void UpdateToolInfo()
@@ -150,44 +195,6 @@ namespace UIInfoSuite.UIElements
             {
                 _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
                     _toolBeingUpgraded.DisplayName);
-            }
-        }
-        #endregion
-
-        #region Event subscriptions
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
-        {
-            if (e.IsOneSecond && _toolBeingUpgraded != Game1.player.toolBeingUpgraded.Value)
-                UpdateToolInfo();
-        }
-
-        private void OnDayStarted(object sender, DayStartedEventArgs e)
-        {
-            UpdateToolInfo();
-        }
-
-        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
-        {
-            if (!Game1.eventUp && _toolBeingUpgraded != null)
-            {
-                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                _toolUpgradeIcon =
-                    new ClickableTextureComponent(
-                        new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
-                        Game1.toolSpriteSheet,
-                        _toolTexturePosition,
-                        2.5f);
-                _toolUpgradeIcon.draw(Game1.spriteBatch);
-            }
-        }
-
-        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
-        {
-            if (_toolBeingUpgraded != null &&
-                (_toolUpgradeIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
-            {
-                IClickableMenu.drawHoverText(Game1.spriteBatch,
-                        _hoverText, Game1.dialogueFont);
             }
         }
         #endregion
