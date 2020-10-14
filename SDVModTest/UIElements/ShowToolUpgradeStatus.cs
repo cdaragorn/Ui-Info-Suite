@@ -173,7 +173,7 @@ namespace UIInfoSuite.UIElements
             }
             else if (_toolBeingUpgraded is StardewValley.Tools.GenericTool)
             {
-                _toolTexturePosition.X += (16 * (Game1.player.trashCanLevel + 2));
+                _toolTexturePosition.X += (16 * (Game1.player.trashCanLevel));
             }
 
             // Break into new line
