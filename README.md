@@ -24,3 +24,7 @@ The current features include:
 - Display an icon for items that can be donated to the museum for the Complete Collection achievement
 - Display an icon for items that can be shipped for the Full Shipment achievement
 - ... and also a new tab added to the options menu that allows turning each individual mod on or off whenever you want.
+
+Compatibility is assured with:
+- Bigger Backpack by spacechase0
+- Level Extender by DevinLematty (probably?)
