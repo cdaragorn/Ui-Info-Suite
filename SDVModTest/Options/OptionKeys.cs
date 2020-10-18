@@ -11,6 +11,7 @@
         public const string ShowLocationOfTownsPeople = "ShowLocationOfTownsPeople";
         public const string ShowLuckIcon = "ShowLuckIcon";
         public const string ShowTravelingMerchant = "ShowTravelingMerchant";
+        public const string ShowRainyDay = "ShowRainyDay";
         public const string ShowLocationOfTownsPeopleShowQuestIcon = "ShowLocationOfTownsPeopleShowQuestIcon";
         public const string ShowCropAndBarrelTooltip = "ShowCropAndBarrelTooltip";
         public const string ShowBirthdayIcon = "ShowBirthdayIcon";

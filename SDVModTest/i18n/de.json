@@ -19,7 +19,7 @@
   "ShowLuckIcon" : "Zeige Glücksymbol",
   "ShowLevelUpAnimation" : "Zeige Aufstiegsanimation",
   "ShowExperienceBar" : "Zeige Erfahrungsleiste",
-  "AllowExperienceBarToFadeOut" : "Erlauben verblassende Erfahrungsleiste",s
+  "AllowExperienceBarToFadeOut" : "Erlauben verblassende Erfahrungsleiste",
   "ShowExperienceGain" : "Zeige Erfahrungsgewinn",
   "ShowLocationOfTownsPeople" : "Zeige Bewohner auf der Karte",
   "ShowBirthdayIcon" : "Zeige Geburtstagssymbol",
@@ -30,6 +30,7 @@
   "ShowItemEffectRanges" : "Zeige Vogelscheuche und Sprinkler-Bereich",
   "ShowExtraItemInformation" : "Zeige schwebende Info für Gegenstände",
   "ShowTravelingMerchant" : "Zeige reisenden Händler",
+  "ShowRainyDay": "Show rainy days",                          // TODO
   "ShowHarvestPricesInShop" : "Zeige Erntewerte",
   "ShowWhenNewRecipesAreAvailable" : "Zeige, wenn neue Rezepte verfügbar sind",
   "ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt"

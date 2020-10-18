@@ -13,6 +13,9 @@
         public const string LuckyButNotTooLucky = "LuckyButNotTooLucky";
         public const string FeelingLucky = "FeelingLucky";
         public const string TravelingMerchantIsInTown = "TravelingMerchantIsInTown";
+        public const string RainNextDay = "RainNextDay";
+        public const string ThunderstormNextDay = "ThunderstormNextDay";
+        public const string SnowNextDay = "SnowNextDay";
         public const string HarvestPrice = "HarvestPrice";
         public const string LevelUp = "LevelUp";
         public const string Calendar = "Calendar";

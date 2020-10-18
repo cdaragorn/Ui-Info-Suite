@@ -32,6 +32,7 @@ namespace UIInfoSuite.Options
         private readonly ExperienceBar _experienceBar;
         private readonly ShowItemHoverInformation _showItemHoverInformation;
         private readonly ShowTravelingMerchant _showTravelingMerchant;
+        private readonly ShowRainyDayIcon _showRainyDayIcon;
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
@@ -53,6 +54,7 @@ namespace UIInfoSuite.Options
             _shopHarvestPrices = new ShopHarvestPrices(helper);
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
             _showTravelingMerchant = new ShowTravelingMerchant(helper);
+            _showRainyDayIcon = new ShowRainyDayIcon(helper);
             _showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
             _showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
 
@@ -68,6 +70,7 @@ namespace UIInfoSuite.Options
                 _experienceBar,
                 _showItemHoverInformation,
                 _showTravelingMerchant,
+                _showRainyDayIcon,
                 _shopHarvestPrices,
                 _showQueenOfSauceIcon,
                 _showToolUpgradeStatus
@@ -91,6 +94,7 @@ namespace UIInfoSuite.Options
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowItemEffectRanges), whichOption++, _showScarecrowAndSprinklerRange.ToggleOption, _options, OptionKeys.ShowItemEffectRanges));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowExtraItemInformation), whichOption++, _showItemHoverInformation.ToggleOption, _options, OptionKeys.ShowExtraItemInformation));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowTravelingMerchant), whichOption++, _showTravelingMerchant.ToggleOption, _options, OptionKeys.ShowTravelingMerchant));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowRainyDay), whichOption++, _showRainyDayIcon.ToggleOption, _options, OptionKeys.ShowRainyDay));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowHarvestPricesInShop), whichOption++, _shopHarvestPrices.ToggleOption, _options, OptionKeys.ShowHarvestPricesInShop));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowWhenNewRecipesAreAvailable), whichOption++, _showQueenOfSauceIcon.ToggleOption, _options, OptionKeys.ShowWhenNewRecipesAreAvailable));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowToolUpgradeStatus), whichOption++, _showToolUpgradeStatus.ToggleOption, _options, OptionKeys.ShowToolUpgradeStatus));
