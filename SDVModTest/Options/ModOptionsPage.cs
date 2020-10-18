@@ -334,27 +334,6 @@ namespace UIInfoSuite.Options
             }
             if (_hoverText != "")
                 IClickableMenu.drawHoverText(batch, _hoverText, Game1.smallFont);
-
-            //if (Game1.options.hardwareCursor)
-            //{
-            //    Game1.spriteBatch.Draw(
-            //        Game1.mouseCursors,
-            //        new Vector2(
-            //            Game1.getMouseX(),
-            //            Game1.getMouseY()),
-            //        new Rectangle?(
-            //            Game1.getSourceRectForStandardTileSheet(
-            //                Game1.mouseCursors,
-            //                Game1.mouseCursor,
-            //                16,
-            //                16)),
-            //        Color.White,
-            //        0.0f,
-            //        Vector2.Zero,
-            //        (float)(Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0)),
-            //        SpriteEffects.None,
-            //        1f);
-            //}
         }
     }
 }

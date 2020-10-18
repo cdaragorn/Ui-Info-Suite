@@ -58,18 +58,6 @@ namespace UIInfoSuite.Options
                     OnLeftClicked?.Invoke(this, null);
                 }
             }
-
-            //if (e.NewState.LeftButton != ButtonState.Pressed || !(Game1.activeClickableMenu is GameMenu))
-            //{
-            //    _hasClicked = false;
-            //}
-            //else if ((Game1.activeClickableMenu as GameMenu).currentTab != 3 && 
-            //    isWithinBounds(e.NewPosition.X, e.NewPosition.Y) && 
-            //    !_hasClicked)
-            //{
-            //    receiveLeftClick(e.NewPosition.X, e.NewPosition.Y);
-
-            //}
         }
 
         public override void draw(SpriteBatch b)

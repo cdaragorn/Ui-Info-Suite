@@ -110,19 +110,17 @@ namespace UIInfoSuite.Options
 
         private void OnButtonLeftClicked(object sender, EventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            if (Game1.activeClickableMenu is GameMenu
+                && !GameMenu.forcePreventClose) // Do not activate when an action is being remapped
             {
                 SetActiveClickableMenuToModOptionsPage();
                 Game1.playSound("smallSelect");
             }
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void ToggleModOptions(object sender, MenuChangedEventArgs e)
         {
-            // remove from old menu
+            // Remove from old menu
             if (e.OldMenu != null)
             {
                 _helper.Events.Display.RenderedActiveMenu -= DrawButton;
@@ -136,7 +134,7 @@ namespace UIInfoSuite.Options
                 }
             }
 
-            // add to new menu
+            // Add to new menu
             if (e.NewMenu is GameMenu newMenu)
             {
                 if (_modOptionsPageButton == null)
@@ -163,7 +161,8 @@ namespace UIInfoSuite.Options
         private void DrawButton(object sender, EventArgs e)
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu &&
-                gameMenu.currentTab != 3) //don't render when the map is showing
+                gameMenu.currentTab != 3 // Do not render when the map is showing
+                && !GameMenu.forcePreventClose) // Do not render when an action is being remapped
             {
                 if (gameMenu.currentTab == _modOptionsTabPageNumber)
                 {
