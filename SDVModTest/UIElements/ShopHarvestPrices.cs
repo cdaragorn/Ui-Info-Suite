@@ -35,138 +35,190 @@ namespace UIInfoSuite.UIElements
         }
 
         /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
-/// <param name="sender">The event sender.</param>
-/// <param name="e">The event arguments.</param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
+            if (!(Game1.activeClickableMenu is ShopMenu menu)) return;
+            if (!(menu.hoveredItem is Item hoverItem)) return;
+
             // draw shop harvest prices
-            if (Game1.activeClickableMenu is ShopMenu menu)
+            bool isSeeds = hoverItem is StardewValley.Object hoverObject && hoverObject.Type == "Seeds";
+            bool isSapling = hoverItem.Name.EndsWith("Sapling");
+            int value = 0;
+            if (isSeeds 
+                && hoverItem.Name != "Mixed Seeds"
+                && hoverItem.Name != "Winter Seeds")
             {
-                if (menu.hoveredItem is Item hoverItem)
+
+                bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
+                if (itemHasPriceInfo)
                 {
-                    String text = string.Empty;
-                    bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
-
-                    if (hoverItem is StardewValley.Object &&
-                        (hoverItem as StardewValley.Object).Type == "Seeds" &&
-                        itemHasPriceInfo &&
-                        hoverItem.Name != "Mixed Seeds" &&
-                        hoverItem.Name != "Winter Seeds")
-                    {
-                        StardewValley.Object temp = 
-                            new StardewValley.Object(
-                                new Debris(
-                                    new Crop(
-                                        hoverItem.ParentSheetIndex, 
-                                        0, 
+                    StardewValley.Object temp =
+                        new StardewValley.Object(
+                            new Debris(
+                                new Crop(
+                                        hoverItem.ParentSheetIndex,
+                                        0,
                                         0)
-                                        .indexOfHarvest.Value, 
-                                    Game1.player.position, 
-                                    Game1.player.position).chunkType.Value, 
-                                1);
-                        text = "    " + temp.Price;
-                    }
-                    
-                    var heldItem = menu.heldItem as Item;
-                    if (heldItem == null)
+                                    .indexOfHarvest.Value,
+                                Game1.player.position,
+                                Game1.player.position).chunkType.Value,
+                            1);
+                    value = temp.Price;
+                }
+                else
+                {
+                    switch (hoverItem.ParentSheetIndex)
                     {
-                        int value = 0;
-                        switch (hoverItem.ParentSheetIndex)
-                        {
-                            case 628: value = 50; break;
-                            case 629: value = 80; break;
-                            case 630:
-                            case 633: value = 100; break;
-
-                            case 631:
-                            case 632: value = 140; break;
-                        }
-
-                        if (value > 0)
-                            text = "    " + value;
-
-                        if (text != "" &&
-                            (hoverItem as StardewValley.Object).Type == "Seeds")
-                        {
-                            String textToRender = _helper.SafeGetString(
-                                LanguageKeys.HarvestPrice);
-                            int xPosition = menu.xPositionOnScreen - 30;
-                            int yPosition = menu.yPositionOnScreen + 580;
-                            IClickableMenu.drawTextureBox(
-                                Game1.spriteBatch,
-                                xPosition + 20,
-                                yPosition - 52,
-                                264,
-                                108,
-                                Color.White);
-                            Game1.spriteBatch.DrawString(
-                                Game1.dialogueFont,
-                                textToRender,
-                                new Vector2(xPosition + 30, yPosition - 38),
-                                Color.Black * 0.2f);
-                            Game1.spriteBatch.DrawString(
-                                Game1.dialogueFont,
-                                textToRender,
-                                new Vector2(xPosition + 32, yPosition - 40),
-                                Color.Black * 0.8f);
-                            xPosition += 80;
-
-                            Game1.spriteBatch.Draw(
-                                Game1.mouseCursors,
-                                new Vector2(xPosition, yPosition),
-                                new Rectangle(60, 428, 10, 10),
-                                Color.White,
-                                0,
-                                Vector2.Zero,
-                                Game1.pixelZoom,
-                                SpriteEffects.None,
-                                0.85f);
-
-                            Game1.spriteBatch.Draw(
-                                Game1.debrisSpriteSheet,
-                                new Vector2(xPosition + 32, yPosition + 10),
-                                Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-                                Color.White,
-                                0,
-                                new Vector2(8, 8),
-                                4,
-                                SpriteEffects.None,
-                                0.95f);
-
-                            Game1.spriteBatch.DrawString(
-                                Game1.dialogueFont,
-                                text,
-                                new Vector2(xPosition - 2, yPosition + 6),
-                                Color.Black * 0.2f);
-
-                            Game1.spriteBatch.DrawString(
-                                Game1.dialogueFont,
-                                text,
-                                new Vector2(xPosition, yPosition + 4),
-                                Color.Black * 0.8f);
-                            
-                            String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
-                            String hoverTitle = _helper.Reflection.GetField<String>(menu, "boldTitleText").GetValue();
-                            int currency = _helper.Reflection.GetField<int>(menu, "currency").GetValue();
-                            IReflectedMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
-                            IReflectedMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
-
-                            IClickableMenu.drawToolTip(
-                                Game1.spriteBatch,
-                                hoverText,
-                                hoverTitle,
-                                hoverItem,
-                                heldItem != null,
-                                -1,
-                                currency,
-                                getHoveredItemExtraItemIndex.Invoke<int>(new object[0]),
-                                getHoveredItemExtraItemAmount.Invoke<int>(new object[0]),
-                                null,
-                                menu.hoverPrice);
-                        }
+                        case 802: value = 75; break;    // Cactus
                     }
                 }
             }
+            else if (isSapling)
+            {
+                switch (hoverItem.ParentSheetIndex)
+                {
+                    case 628: value = 50; break;    // Cherry
+                    case 629: value = 80; break;    // Apricot
+                    case 630:                        // Orange
+                    case 633: value = 100; break;    // Apple
+                    case 631:                        // Peach
+                    case 632: value = 140; break;    // Pomegranate
+                }
+            }
+
+            if (value > 0)
+            {
+                int xPosition = menu.xPositionOnScreen - 30;
+                int yPosition = menu.yPositionOnScreen + 580;
+                int height = isSapling ? 258 : 208;
+                    IClickableMenu.drawTextureBox(
+                    Game1.spriteBatch,
+                    xPosition + 20,
+                    yPosition - 52,
+                    264,
+                    height,
+                    Color.White);
+                // Title "Harvest Price"
+                String textToRender = _helper.SafeGetString(LanguageKeys.HarvestPrice);
+                Utility.drawTextWithShadow(
+                    Game1.spriteBatch,
+                    textToRender,
+                    Game1.dialogueFont,
+                    new Vector2(xPosition + 32, yPosition - 40),
+                    Game1.textColor
+                );
+
+                //Calculate price with skill
+                if (Game1.player.professions.Contains(Farmer.tiller)) value = (int)(value * 1.1f);
+
+                // Draw normal price
+                xPosition += 80;
+                yPosition += 6;
+                DrawPrice(value, xPosition, yPosition, Tools.Quality.Normal);
+                // Draw silver price
+                yPosition += 46;
+                DrawPrice(value, xPosition, yPosition, Tools.Quality.Silver);
+                // Draw gold price
+                yPosition += 46;
+                DrawPrice(value, xPosition, yPosition, Tools.Quality.Gold);
+                // Draw iridium price
+                if (isSapling)
+                {
+                    yPosition += 48;
+                    DrawPrice(value, xPosition, yPosition, Tools.Quality.Iridium);
+                }
+
+
+                // Found out what this was for: Redraw the tooltip so it doesn't get overlapped by harvest price
+                String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
+                String hoverTitle = _helper.Reflection.GetField<String>(menu, "boldTitleText").GetValue();
+                IReflectedMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
+                IReflectedMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
+                IClickableMenu.drawToolTip(
+                    Game1.spriteBatch,
+                    hoverText,
+                    hoverTitle,
+                    hoverItem,
+                    menu.heldItem != null,
+                    -1,
+                    menu.currency,
+                    getHoveredItemExtraItemIndex.Invoke<int>(new object[0]),
+                    getHoveredItemExtraItemAmount.Invoke<int>(new object[0]),
+                    null,
+                    menu.hoverPrice);
+            }
+        }
+
+        private static void DrawPrice(int price, int xPosition, int yPosition, Tools.Quality quality = Tools.Quality.Normal)
+        {
+            // Tree Icon
+            Game1.spriteBatch.Draw(
+                Game1.mouseCursors,
+                new Vector2(xPosition, yPosition),
+                new Rectangle(60, 428, 10, 10),
+                Color.White,
+                0,
+                Vector2.Zero,
+                Game1.pixelZoom,
+                SpriteEffects.None,
+                0.85f);
+            //  Coin
+            Game1.spriteBatch.Draw(
+                Game1.debrisSpriteSheet,
+                new Vector2(xPosition + 32, yPosition + 10),
+                Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
+                Color.White,
+                0,
+                new Vector2(8, 8),
+                4,
+                SpriteEffects.None,
+                0.95f);
+            // Star
+            DrawQualityStar(quality, xPosition, yPosition + 22);
+            // Price
+            Utility.drawTextWithShadow(
+                Game1.spriteBatch,
+                "    " + Tools.AdjustPriceForQuality(price,quality),
+                Game1.dialogueFont,
+                new Vector2(xPosition, yPosition + 2),
+                Game1.textColor
+                );
+        }
+
+        private static void DrawQualityStar(Tools.Quality quality, int xPosition, int yPosition)
+        {
+            int iconX;
+            int iconY;
+            switch (quality)
+            {
+                case Tools.Quality.Silver:
+                    iconX = 338;
+                    iconY = 400;
+                    break;
+                case Tools.Quality.Gold:
+                    iconX = 346;
+                    iconY = 400;
+                    break;
+                case Tools.Quality.Iridium:
+                    iconX = 346;
+                    iconY = 392;
+                    break;
+                case Tools.Quality.Normal:
+                default:
+                    return;
+            }
+            Game1.spriteBatch.Draw(
+                Game1.mouseCursors,
+                new Vector2(xPosition, yPosition),
+                new Rectangle(iconX, iconY, 8, 8),
+                Color.White,
+                0,
+                Vector2.Zero,
+                2.5f,
+                SpriteEffects.None,
+                0.95f);
         }
     }
 }

@@ -14,6 +14,17 @@ namespace UIInfoSuite
 {
     static class Tools
     {
+        public enum Quality
+        {
+            Normal,
+            Silver,
+            Gold,
+            Iridium
+        }
+
+        private const float QualityModSilver = 1.25f;
+        private const float QualityModGold = 1.5f;
+        private const float QualityModIridium = 2f;
 
         public static void CreateSafeDelayedDialogue(String dialogue, int timer)
         {
@@ -123,6 +134,28 @@ namespace UIInfoSuite
             }
 
             return hoverItem;
+        }
+
+        public static int AdjustPriceForQuality(int price, Quality quality)
+        {
+            int ret = price;
+            switch (quality)
+            {
+                case Quality.Silver:
+                    ret = (int) (price * QualityModSilver);
+                    break;
+                case Quality.Gold:
+                    ret = (int)(price * QualityModGold);
+                    break;
+                case Quality.Iridium:
+                    ret = (int)(price * QualityModIridium);
+                    break;
+                case Quality.Normal:
+                default:
+                    break;
+            }
+
+            return ret;
         }
     }
 }
