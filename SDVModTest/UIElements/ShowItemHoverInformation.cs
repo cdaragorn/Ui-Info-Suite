@@ -24,6 +24,7 @@ namespace UIInfoSuite.UIElements
                 Game1.mouseCursors, 
                 new Rectangle(331, 374, 15, 14), 
                 Game1.pixelZoom);
+
         private readonly ClickableTextureComponent _shippingBottomIcon =
             new ClickableTextureComponent(
                 "",
@@ -43,9 +44,20 @@ namespace UIInfoSuite.UIElements
                 new Rectangle(134, 236, 30, 15),
                 Game1.pixelZoom);
 
+        private readonly ClickableTextureComponent _museumIcon = new ClickableTextureComponent(
+            "",
+            new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+            "",
+            Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate", new object[0]),
+            Game1.getCharacterFromName("Gunther").Sprite.Texture,
+            Game1.getCharacterFromName("Gunther").GetHeadShot(),
+            Game1.pixelZoom);
+
+
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
+        private LibraryMuseum _libraryMuseum;
         private readonly IModEvents _events;
 
         public ShowItemHoverInformation(IModEvents events)
@@ -65,6 +77,8 @@ namespace UIInfoSuite.UIElements
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
                 _bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
                 PopulateRequiredBundles();
+
+                _libraryMuseum = Game1.getLocationFromName("ArchaeologyHouse") as LibraryMuseum;
 
                 _events.Player.InventoryChanged += OnInventoryChanged;
                 _events.Display.Rendered += OnRendered;
@@ -120,43 +134,46 @@ namespace UIInfoSuite.UIElements
         private void PopulateRequiredBundles()
         {
             _prunedRequiredBundles.Clear();
-            foreach (var bundle in _bundleData)
+            if (!_communityCenter.areAllAreasComplete() && !Game1.player.mailReceived.Contains("JojaMember"))
             {
-                String[] bundleRoomInfo = bundle.Key.Split('/');
-                String bundleRoom = bundleRoomInfo[0];
-                int roomNum;
-
-                switch(bundleRoom)
+                foreach (var bundle in _bundleData)
                 {
-                    case "Pantry": roomNum = 0; break;
-                    case "Crafts Room": roomNum = 1; break;
-                    case "Fish Tank": roomNum = 2; break;
-                    case "Boiler Room": roomNum = 3; break;
-                    case "Vault": roomNum = 4; break;
-                    case "Bulletin Board": roomNum = 5; break;
-                    default: continue;
-                }
+                    String[] bundleRoomInfo = bundle.Key.Split('/');
+                    String bundleRoom = bundleRoomInfo[0];
+                    int roomNum;
 
-                if (_communityCenter.shouldNoteAppearInArea(roomNum))
-                {
-                    int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
-                    string[] bundleInfo = bundle.Value.Split('/');
-                    string bundleName = bundleInfo[0];
-                    string[] bundleValues = bundleInfo[2].Split(' ');
-                    List<int> source = new List<int>();
-
-                    for (int i = 0; i < bundleValues.Length; i += 3)
+                    switch (bundleRoom)
                     {
-                        int bundleValue = bundleValues[i].SafeParseInt32();
-                        if (bundleValue != -1 &&
-                            !_communityCenter.bundles[bundleNumber][i / 3])
-                        {
-                            source.Add(bundleValue);
-                        }
+                        case "Pantry": roomNum = 0; break;
+                        case "Crafts Room": roomNum = 1; break;
+                        case "Fish Tank": roomNum = 2; break;
+                        case "Boiler Room": roomNum = 3; break;
+                        case "Vault": roomNum = 4; break;
+                        case "Bulletin Board": roomNum = 5; break;
+                        default: continue;
                     }
 
-                    if (source.Count > 0)
-                        _prunedRequiredBundles.Add(bundleName, source);
+                    if (_communityCenter.shouldNoteAppearInArea(roomNum))
+                    {
+                        int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
+                        string[] bundleInfo = bundle.Value.Split('/');
+                        string bundleName = bundleInfo[0];
+                        string[] bundleValues = bundleInfo[2].Split(' ');
+                        List<int> source = new List<int>();
+
+                        for (int i = 0; i < bundleValues.Length; i += 3)
+                        {
+                            int bundleValue = bundleValues[i].SafeParseInt32();
+                            if (bundleValue != -1 &&
+                                !_communityCenter.bundles[bundleNumber][i / 3])
+                            {
+                                source.Add(bundleValue);
+                            }
+                        }
+
+                        if (source.Count > 0)
+                            _prunedRequiredBundles.Add(bundleName, source);
+                    }
                 }
             }
         }
@@ -226,11 +243,17 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                int largestTextWidth = 0;
+
+                int bundleTextWidth = 0;
+                if (!String.IsNullOrEmpty(requiredBundleName))
+                {
+                    bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
+                    bundleTextWidth -= 30; //Text offset from left
+                }
                 int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
                 int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
-                largestTextWidth = (stackTextWidth > itemTextWidth) ? stackTextWidth : itemTextWidth;
-                int windowWidth = Math.Max(largestTextWidth + 90, String.IsNullOrEmpty(requiredBundleName) ? 100 : 300);
+                int largestTextWidth = Math.Max(bundleTextWidth,Math.Max(stackTextWidth, itemTextWidth));
+                int windowWidth = largestTextWidth + 90;
 
                 int windowHeight = 75;
 
@@ -385,19 +408,26 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
+                if (_libraryMuseum.isItemSuitableForDonation(_hoverItem))
+                {
+                    _museumIcon.bounds.X = (int)windowPos.X - 30;
+                    _museumIcon.bounds.Y = (int)windowPos.Y - 60 + windowHeight;
+                    _museumIcon.scale = 2;
+                    _museumIcon.draw(Game1.spriteBatch);
+                }
+
                 if (!String.IsNullOrEmpty(requiredBundleName))
                 {
                     int num1 = (int)windowPos.X - 30;
-                    int num2 = (int)windowPos.Y - 10;
+                    int num2 = (int)windowPos.Y - 14;
                     int num3 = num1 + 52;
-                    int y3 = num2 - 2;
-                    int num4 = 288;
+                    int y3 = num2 + 4;
                     int height = 36;
                     int num5 = 36;
-                    int width = num4 / num5;
+                    int width = (bundleTextWidth+90) / num5;
                     int num6 = 6;
 
-                    for (int i = 0; i < 36; ++i)
+                    for (int i = 0; i < num5; ++i)
                     {
                         float num7 = (float)(i >= num6 ? 0.92 - (i - num6) * (1.0 / (num5 - num6)) : 0.92f);
                         Game1.spriteBatch.Draw(
@@ -405,7 +435,7 @@ namespace UIInfoSuite.UIElements
                             new Rectangle(num3 + width * i, y3, width, height),
                             Color.Crimson * num7);
                     }
-
+                    
                     Game1.spriteBatch.DrawString(
                         Game1.dialogueFont,
                         requiredBundleName,
@@ -413,7 +443,7 @@ namespace UIInfoSuite.UIElements
                         Color.White);
 
                     _bundleIcon.bounds.X = num1 + 16;
-                    _bundleIcon.bounds.Y = num2;
+                    _bundleIcon.bounds.Y = num2 - 6;
                     _bundleIcon.scale = 3;
                     _bundleIcon.draw(Game1.spriteBatch);
                 }
