@@ -100,15 +100,13 @@ namespace UIInfoSuite.UIElements
         {
             if (e.IsLocalPlayer)
             {
+                _timer.Stop();
+                StopDrawingPetNeeds();
+
                 if (e.NewLocation is AnimalHouse || e.NewLocation is Farm)
                 {
                     _timer.Interval = 1000;
                     _timer.Start();
-                }
-                else
-                {
-                    _timer.Stop();
-                    StopDrawingPetNeeds();
                 }
             }
         }
