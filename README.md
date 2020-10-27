@@ -23,6 +23,7 @@ The current features include:
 - Display an icon when Clint is upgrading one of your tools. Icon will tell you how long until the tool is finished and shows you which tool you are upgrading.
 - Display an icon for items that can be donated to the museum for the Complete Collection achievement
 - Display an icon for items that can be shipped for the Full Shipment achievement
+- Display an icon for the next day's weather conditions
 - ... and also a new tab added to the options menu that allows turning each individual mod on or off whenever you want.
 
 Compatibility is assured with:
