@@ -11,8 +11,8 @@
     <ProjectGuid>{B6DD0C36-999B-44FD-9316-C0AA6D5A6E7A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UIInfoSuite</RootNamespace>
-    <AssemblyName>UIInfoSuite</AssemblyName>
+    <RootNamespace>UIInfoSuite2</RootNamespace>
+    <AssemblyName>UIInfoSuite2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -103,10 +103,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="i18n\de.json" />
+    <None Include="i18n\fr.json" />
     <None Include="i18n\hu.json" />
     <None Include="i18n\default.json" />
     <None Include="i18n\es.json" />
     <None Include="i18n\ja.json" />
+    <None Include="i18n\ko.json" />
     <None Include="i18n\pt.json" />
     <None Include="i18n\ru.json" />
     <None Include="i18n\th.json" />

@@ -1,10 +1,10 @@
 ﻿{
-   "Name": "UI Info Suite",
-   "Author": "Cdaragorn",
-   "Version": "1.8.4",
-   "Description": "Adds a lot of useful information to the user interface. This is based on Demiacle's excellent UIModSuite.",
-   "UniqueID": "Cdaragorn.UiInfoSuite",
-   "EntryDll": "UIInfoSuite.dll",
-   "MinimumApiVersion" : "3.0.0",
-   "UpdateKeys": [ "Nexus:1150" ]
+  "Name": "UI Info Suite 2",
+  "Author": "Annosz",
+  "Version": "2.0.0",
+  "Description": "Adds a useful information to the user interface. Based on Cdaragorn's excellent UI Info Suite.",
+  "UniqueID": "Annosz.UiInfoSuite2",
+  "EntryDll": "UIInfoSuite2.dll",
+  "MinimumApiVersion": "3.0.0",
+  "UpdateKeys": [ "Nexus:7098" ]
 }
