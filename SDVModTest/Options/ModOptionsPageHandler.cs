@@ -107,7 +107,8 @@ namespace UIInfoSuite.Options
 
         private void OnButtonLeftClicked(object sender, EventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            if (Game1.activeClickableMenu is GameMenu
+                && !GameMenu.forcePreventClose) // Don't activate when an action is being remapped
             {
                 SetActiveClickableMenuToModOptionsPage();
                 Game1.playSound("smallSelect");
@@ -159,8 +160,9 @@ namespace UIInfoSuite.Options
 
         private void DrawButton(object sender, EventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu gameMenu &&
-                gameMenu.currentTab != 3) //don't render when the map is showing
+            if (Game1.activeClickableMenu is GameMenu gameMenu
+                && gameMenu.currentTab != 3 // Don't render when the map is showing
+                && !GameMenu.forcePreventClose) // Don't render when an action is being remapped
             {
                 if (gameMenu.currentTab == _modOptionsTabPageNumber)
                 {
