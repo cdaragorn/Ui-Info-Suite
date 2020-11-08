@@ -125,10 +125,12 @@ namespace UIInfoSuite.UIElements
                         {
                             foreach (StardewValley.Object next in objects)
                             {
-                                ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                                if (!next.name.ToLower().Contains("sprinkler"))
+                                {
+                                    ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                                }
                             }
                         }
-
                     }
                     else if (name.Contains("sprinkler"))
                     {
