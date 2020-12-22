@@ -22,11 +22,11 @@ namespace UIInfoSuite.UIElements
         private const int SocialPanelWidth = 190;
         private const int SocialPanelXOffset = 160;
         private SocialPage _socialPage;
-        private String[] _friendNames;
-        private readonly IDictionary<String, String> _options;
+        private string[] _friendNames;
+        private readonly IDictionary<string, string> _options;
         private readonly IModHelper _helper;
 
-        private static readonly Dictionary<String, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
+        private static readonly Dictionary<string, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
         {
             { "HarveyRoom", new KeyValuePair<int, int>(677, 304) },
             { "BathHouse_Pool", new KeyValuePair<int, int>(576, 60) },
@@ -83,7 +83,7 @@ namespace UIInfoSuite.UIElements
 
 #endregion
 
-        public LocationOfTownsfolk(IModHelper helper, IDictionary<String, String> options)
+        public LocationOfTownsfolk(IModHelper helper, IDictionary<string, string> options)
         {
             _helper = helper;
             _options = options;
@@ -146,12 +146,12 @@ namespace UIInfoSuite.UIElements
                 _checkboxes.Clear();
                 foreach (var friendName in _friendNames)
                 {
-                    int hashCode = friendName.GetHashCode();
-                    OptionsCheckbox checkbox = new OptionsCheckbox("", hashCode);
+                    var hashCode = friendName.GetHashCode();
+                    var checkbox = new OptionsCheckbox("", hashCode);
                     _checkboxes.Add(checkbox);
 
                     //default to on
-                    bool optionForThisFriend = true;
+                    var optionForThisFriend = true;
                     if (!Game1.player.friendshipData.ContainsKey(friendName))
                     {
                         checkbox.greyedOut = true;
@@ -159,9 +159,9 @@ namespace UIInfoSuite.UIElements
                     }
                     else
                     {
-                        String optionValue = _options.SafeGet(hashCode.ToString());
+                        var optionValue = _options.SafeGet(hashCode.ToString());
 
-                        if (String.IsNullOrEmpty(optionValue))
+                        if (string.IsNullOrEmpty(optionValue))
                         {
                             _options[hashCode.ToString()] = optionForThisFriend.ToString();
                         }
@@ -190,13 +190,13 @@ namespace UIInfoSuite.UIElements
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                int slotPosition = (int)typeof(SocialPage)
+                var slotPosition = (int)typeof(SocialPage)
                     .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
                     .GetValue(_socialPage);
 
-                for (int i = slotPosition; i < slotPosition + 5; ++i)
+                for (var i = slotPosition; i < slotPosition + 5; ++i)
                 {
-                    OptionsCheckbox checkbox = _checkboxes[i];
+                    var checkbox = _checkboxes[i];
                     if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()) &&
                         !checkbox.greyedOut)
                     {
@@ -217,29 +217,29 @@ namespace UIInfoSuite.UIElements
             {
                 if (gameMenu.currentTab == 3)
                 {
-                    List<String> namesToShow = new List<string>();
+                    var namesToShow = new List<string>();
                     foreach (var character in _townsfolk)
                     {
                         try
                         {
-                            int hashCode = character.Name.GetHashCode();
+                            var hashCode = character.Name.GetHashCode();
 
-                            bool drawCharacter = _options.SafeGet(hashCode.ToString()).SafeParseBool();
+                            var drawCharacter = _options.SafeGet(hashCode.ToString()).SafeParseBool();
 
                             if (drawCharacter)
                             {
-                                KeyValuePair<int, int> location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
-                                String locationName = character.currentLocation?.Name ?? character.DefaultMap;
+                                var location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
+                                var locationName = character.currentLocation?.Name ?? character.DefaultMap;
 
                                 switch (locationName)
                                 {
                                     case "Town":
                                     case "Forest":
                                         {
-                                            int xStart = 0;
-                                            int yStart = 0;
-                                            int areaWidth = 0;
-                                            int areaHeight = 0;
+                                            var xStart = 0;
+                                            var yStart = 0;
+                                            var areaWidth = 0;
+                                            var areaHeight = 0;
 
                                             switch (locationName)
                                             {
@@ -261,15 +261,15 @@ namespace UIInfoSuite.UIElements
                                                         break;
                                                     }
                                             }
-                                            xTile.Map map = character.currentLocation.Map;
+                                            var map = character.currentLocation.Map;
 
-                                            float xScale = (float)areaWidth / (float)map.DisplayWidth;
-                                            float yScale = (float)areaHeight / (float)map.DisplayHeight;
+                                            var xScale = areaWidth / (float)map.DisplayWidth;
+                                            var yScale = areaHeight / (float)map.DisplayHeight;
 
-                                            float scaledX = character.position.X * xScale;
-                                            float scaledY = character.position.Y * yScale;
-                                            int xPos = (int)scaledX + xStart;
-                                            int yPos = (int)scaledY + yStart;
+                                            var scaledX = character.position.X * xScale;
+                                            var scaledY = character.position.Y * yScale;
+                                            var xPos = (int)scaledX + xStart;
+                                            var yPos = (int)scaledY + yStart;
                                             location = new KeyValuePair<int, int>(xPos, yPos);
 
                                             break;
@@ -304,16 +304,16 @@ namespace UIInfoSuite.UIElements
                                 //{
                                 //    _mapLocations.TryGetValue(character.currentLocation.name, out location);
                                 //}
-                                Rectangle headShot = character.GetHeadShot();
-                                int xBase = Game1.activeClickableMenu.xPositionOnScreen - 158;
-                                int yBase = Game1.activeClickableMenu.yPositionOnScreen - 40;
+                                var headShot = character.GetHeadShot();
+                                var xBase = Game1.activeClickableMenu.xPositionOnScreen - 158;
+                                var yBase = Game1.activeClickableMenu.yPositionOnScreen - 40;
 
-                                int x = xBase + location.Key;
-                                int y = yBase + location.Value;
+                                var x = xBase + location.Key;
+                                var y = yBase + location.Value;
 
-                                Color color = character.CurrentDialogue.Count <= 0 ?
+                                var color = character.CurrentDialogue.Count <= 0 ?
                                     Color.Gray : Color.White;
-                                ClickableTextureComponent textureComponent =
+                                var textureComponent =
                                     new ClickableTextureComponent(
                                         character.Name,
                                         new Rectangle(x, y, 0, 0),
@@ -323,7 +323,7 @@ namespace UIInfoSuite.UIElements
                                         headShot,
                                         2.3f);
 
-                                float headShotScale = 2f;
+                                var headShotScale = 2f;
                                 Game1.spriteBatch.Draw(
                                     character.Sprite.Texture,
                                     new Vector2(x, y),
@@ -335,8 +335,8 @@ namespace UIInfoSuite.UIElements
                                     SpriteEffects.None,
                                     1f);
 
-                                int mouseX = Game1.getMouseX();
-                                int mouseY = Game1.getMouseY();
+                                var mouseX = Game1.getMouseX();
+                                var mouseY = Game1.getMouseY();
 
                                 if (mouseX >= x && mouseX <= x + headShot.Width * headShotScale &&
                                     mouseY >= y && mouseY <= y + headShot.Height * headShotScale)
@@ -348,7 +348,7 @@ namespace UIInfoSuite.UIElements
                                 {
                                     if (quest.accepted.Value && quest.dailyQuest.Value && !quest.completed.Value)
                                     {
-                                        bool isQuestTarget = false;
+                                        var isQuestTarget = false;
                                         switch (quest.questType.Value)
                                         {
                                             case 3: isQuestTarget = (quest as ItemDeliveryQuest).target.Value == character.Name; break;
@@ -380,16 +380,16 @@ namespace UIInfoSuite.UIElements
 
                     if (namesToShow.Count > 0)
                     {
-                        StringBuilder text = new StringBuilder();
-                        int longestLength = 0;
-                        foreach (String name in namesToShow)
+                        var text = new StringBuilder();
+                        var longestLength = 0;
+                        foreach (var name in namesToShow)
                         {
                             text.AppendLine(name);
                             longestLength = Math.Max(longestLength, (int)Math.Ceiling(Game1.smallFont.MeasureString(name).Length()));
                         }
 
-                        int windowHeight = Game1.smallFont.LineSpacing * namesToShow.Count + 25;
-                        Vector2 windowPos = new Vector2(Game1.getMouseX() + 40, Game1.getMouseY() - windowHeight);
+                        var windowHeight = Game1.smallFont.LineSpacing * namesToShow.Count + 25;
+                        var windowPos = new Vector2(Game1.getMouseX() + 40, Game1.getMouseY() - windowHeight);
                         IClickableMenu.drawTextureBox(
                             Game1.spriteBatch,
                             (int)windowPos.X,
@@ -414,7 +414,7 @@ namespace UIInfoSuite.UIElements
                     //The cursor needs to show up in front of the character faces
                     Tools.DrawMouseCursor();
 
-                    String hoverText = (String)typeof(MapPage)
+                    var hoverText = (string)typeof(MapPage)
                         .GetField(
                             "hoverText",
                             BindingFlags.Instance | BindingFlags.NonPublic)
@@ -443,21 +443,21 @@ namespace UIInfoSuite.UIElements
                     false, 
                     true);
 
-                int slotPosition = (int)typeof(SocialPage)
+                var slotPosition = (int)typeof(SocialPage)
                     .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
                     .GetValue(_socialPage);
-                int yOffset = 0;
+                var yOffset = 0;
 
-                for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
+                for (var i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
                 {
-                    OptionsCheckbox checkbox = _checkboxes[i];
+                    var checkbox = _checkboxes[i];
                     checkbox.bounds.X = Game1.activeClickableMenu.xPositionOnScreen - 60;
 
                     checkbox.bounds.Y = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
 
                     checkbox.draw(Game1.spriteBatch, 0, 0);
                     yOffset += 112;
-                    Color color = checkbox.isChecked ? Color.White : Color.Gray;
+                    var color = checkbox.isChecked ? Color.White : Color.Gray;
 
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors, 

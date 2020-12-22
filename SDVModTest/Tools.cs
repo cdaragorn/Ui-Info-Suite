@@ -3,19 +3,16 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace UIInfoSuite
 {
-    static class Tools
+    internal static class Tools
     {
 
-        public static void CreateSafeDelayedDialogue(String dialogue, int timer)
+        public static void CreateSafeDelayedDialogue(string dialogue, int timer)
         {
             Task.Factory.StartNew(() =>
             {
@@ -32,13 +29,13 @@ namespace UIInfoSuite
 
         public static int GetWidthInPlayArea()
         {
-            int result = 0;
+            var result = 0;
 
             if (Game1.isOutdoorMapSmallerThanViewport())
             {
-                int right = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right;
-                int totalWidth = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;
-                int someOtherWidth = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right - totalWidth;
+                var right = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right;
+                var totalWidth = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;
+                var someOtherWidth = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right - totalWidth;
 
                 result = right - someOtherWidth / 2;
             }
@@ -52,15 +49,16 @@ namespace UIInfoSuite
 
         public static int GetTruePrice(Item item)
         {
-            int truePrice = 0;
+            var truePrice = 0;
 
-            if (item is StardewValley.Object objectItem)
+            switch (item)
             {
-                truePrice = objectItem.sellToStorePrice() * 2;
-            }
-            else if (item is StardewValley.Item thing)
-            {
-                truePrice = thing.salePrice();
+                case StardewValley.Object objectItem:
+                    truePrice = objectItem.sellToStorePrice() * 2;
+                    break;
+                case StardewValley.Item thing:
+                    truePrice = thing.salePrice();
+                    break;
             }
 
 
@@ -71,7 +69,7 @@ namespace UIInfoSuite
         {
             if (!Game1.options.hardwareCursor)
             {
-                int mouseCursorToRender = Game1.options.gamepadControls ? Game1.mouseCursor + 44 : Game1.mouseCursor;
+                var mouseCursorToRender = Game1.options.gamepadControls ? Game1.mouseCursor + 44 : Game1.mouseCursor;
                 var what = Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, mouseCursorToRender, 16, 16);
 
                 Game1.spriteBatch.Draw(
@@ -91,27 +89,22 @@ namespace UIInfoSuite
         {
             Item hoverItem = null;
 
-            for (int i = 0; i < Game1.onScreenMenus.Count; ++i)
+            foreach (var t in Game1.onScreenMenus)
             {
-                Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
-                if (onScreenMenu != null)
-                {
-                    FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                    hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
-                    //hoverItemField.SetValue(onScreenMenu, null);
-                }
+                if (!(t is Toolbar onScreenMenu)) continue;
+                var hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (!(hoverItemField is null)) hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
+                //hoverItemField.SetValue(onScreenMenu, null);
             }
 
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
                 foreach (var menu in gameMenu.pages)
                 {
-                    if (menu is InventoryPage inventory)
-                    {
-                        FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                        hoverItem = hoveredItemField.GetValue(inventory) as Item;
-                        //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
-                    }
+                    if (!(menu is InventoryPage inventory)) continue;
+                    var hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (!(hoveredItemField is null)) hoverItem = hoveredItemField.GetValue(inventory) as Item;
+                    //typeof(InventoryPage).GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(menu, "");
                 }
             }
 

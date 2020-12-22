@@ -88,7 +88,7 @@ namespace UIInfoSuite.UIElements
             {
                 if (Game1.currentLocation is BuildableGameLocation buildableLocation)
                 {
-                    Building building = buildableLocation.getBuildingAt(Game1.currentCursorTile);
+                    var building = buildableLocation.getBuildingAt(Game1.currentCursorTile);
 
                     if (building is JunimoHut)
                     {
@@ -102,8 +102,8 @@ namespace UIInfoSuite.UIElements
 
                 if (Game1.player.CurrentItem != null)
                 {
-                    String name = Game1.player.CurrentItem.Name.ToLower();
-                    Item currentItem = Game1.player.CurrentItem;
+                    var name = Game1.player.CurrentItem.Name.ToLower();
+                    var currentItem = Game1.player.CurrentItem;
                     List<StardewValley.Object> objects = null;
 
                     int[][] arrayToUse = null;
@@ -111,10 +111,10 @@ namespace UIInfoSuite.UIElements
                     if (name.Contains("arecrow"))
                     {
                         arrayToUse = new int[17][];
-                        for (int i = 0; i < 17; ++i)
+                        for (var i = 0; i < 17; ++i)
                         {
                             arrayToUse[i] = new int[17];
-                            for (int j = 0; j < 17; ++j)
+                            for (var j = 0; j < 17; ++j)
                             {
                                 arrayToUse[i][j] = (Math.Abs(i - 8) + Math.Abs(j - 8) <= 12) ? 1 : 0;
                             }
@@ -123,7 +123,7 @@ namespace UIInfoSuite.UIElements
                         objects = GetObjectsInLocationOfSimilarName("arecrow");
                         if (objects != null)
                         {
-                            foreach (StardewValley.Object next in objects)
+                            foreach (var next in objects)
                             {
                                 ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
                             }
@@ -156,9 +156,9 @@ namespace UIInfoSuite.UIElements
 
                         if (objects != null)
                         {
-                            foreach (StardewValley.Object next in objects)
+                            foreach (var next in objects)
                             {
-                                string objectName = next.name.ToLower();
+                                var objectName = next.name.ToLower();
                                 if (objectName.Contains("iridium"))
                                 {
                                     arrayToUse = _modConfig.IridiumSprinkler;
@@ -201,7 +201,7 @@ namespace UIInfoSuite.UIElements
                 try
                 {
                     // draw tile outlines
-                    foreach (Point point in _effectiveArea)
+                    foreach (var point in _effectiveArea)
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
                             Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
@@ -222,16 +222,16 @@ namespace UIInfoSuite.UIElements
 
         private void ParseConfigToHighlightedArea(int[][] highlightedLocation, int xPos, int yPos)
         {
-            int xOffset = highlightedLocation.Length / 2;
+            var xOffset = highlightedLocation.Length / 2;
 
             if (_mutex.WaitOne())
             {
                 try
                 {
-                    for (int i = 0; i < highlightedLocation.Length; ++i)
+                    for (var i = 0; i < highlightedLocation.Length; ++i)
                     {
-                        int yOffset = highlightedLocation[i].Length / 2;
-                        for (int j = 0; j < highlightedLocation[i].Length; ++j)
+                        var yOffset = highlightedLocation[i].Length / 2;
+                        for (var j = 0; j < highlightedLocation[i].Length; ++j)
                         {
                             if (highlightedLocation[i][j] == 1)
                                 _effectiveArea.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
@@ -255,11 +255,11 @@ namespace UIInfoSuite.UIElements
             get { return (Game1.getMouseY() + Game1.viewport.Y) / Game1.tileSize; }
         }
 
-        private List<StardewValley.Object> GetObjectsInLocationOfSimilarName(String nameContains)
+        private List<StardewValley.Object> GetObjectsInLocationOfSimilarName(string nameContains)
         {
-            List<StardewValley.Object> result = new List<StardewValley.Object>();
+            var result = new List<StardewValley.Object>();
 
-            if (!String.IsNullOrEmpty(nameContains))
+            if (!string.IsNullOrEmpty(nameContains))
             {
                 nameContains = nameContains.ToLower();
                 var objects = Game1.currentLocation.Objects;

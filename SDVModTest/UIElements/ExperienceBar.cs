@@ -48,7 +48,7 @@ namespace UIInfoSuite.UIElements
         private readonly IModHelper _helper;
         private SoundPlayer _player;
 
-        private LevelExtenderInterface _levelExtenderAPI;
+        private ILevelExtenderInterface _levelExtenderAPI;
 
         private int _currentSkillLevel = 0;
         private int _experienceRequiredToLevel = -1;
@@ -58,7 +58,7 @@ namespace UIInfoSuite.UIElements
         public ExperienceBar(IModHelper helper)
         {
             _helper = helper;
-            String path = string.Empty;
+            var path = string.Empty;
             try
             {
                 path = Path.Combine(_helper.DirectoryPath, "LevelUp.wav");
@@ -79,7 +79,7 @@ namespace UIInfoSuite.UIElements
             var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
             try
             {
-                _levelExtenderAPI = _helper.ModRegistry.GetApi<LevelExtenderInterface>("DevinLematty.LevelExtender");
+                _levelExtenderAPI = _helper.ModRegistry.GetApi<ILevelExtenderInterface>("DevinLematty.LevelExtender");
             }
             catch
             {
@@ -142,14 +142,14 @@ namespace UIInfoSuite.UIElements
         public void ToggleShowExperienceGain(bool showExperienceGain)
         {
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_DetermineIfExperienceHasBeenGained;
-            for (int i = 0; i < _currentExperience.Length; ++i)
+            for (var i = 0; i < _currentExperience.Length; ++i)
                 _currentExperience[i] = Game1.player.experiencePoints[i];
             _showExperienceGain = showExperienceGain;
 
             if (_levelExtenderAPI != null)
             {
-                for (int i = 0; i < _currentLevelExtenderExperience.Length; ++i)
-                    _currentLevelExtenderExperience[i] = _levelExtenderAPI.currentXP()[i];
+                for (var i = 0; i < _currentLevelExtenderExperience.Length; ++i)
+                    _currentLevelExtenderExperience[i] = _levelExtenderAPI.CurrentXp()[i];
             }
 
             if (showExperienceGain)
@@ -191,8 +191,8 @@ namespace UIInfoSuite.UIElements
                 _shouldDrawLevelUp = true;
                 ShowExperienceBar();
 
-                float previousAmbientVolume = Game1.options.ambientVolumeLevel;
-                float previousMusicVolume = Game1.options.musicVolumeLevel;
+                var previousAmbientVolume = Game1.options.ambientVolumeLevel;
+                var previousMusicVolume = Game1.options.musicVolumeLevel;
 
                 //if (_soundEffect != null)
                 //    _soundEffect.Volume = previousMusicVolume <= 0.01f ? 0 : Math.Min(1, previousMusicVolume + 0.3f);
@@ -245,15 +245,15 @@ namespace UIInfoSuite.UIElements
             if (!e.IsMultipleOf(15)) // quarter second
                 return;
 
-            Item currentItem = Game1.player.CurrentItem;
+            var currentItem = Game1.player.CurrentItem;
 
-            int currentLevelIndex = -1;
+            var currentLevelIndex = -1;
 
             int[] levelExtenderExperience = null;
             if (_levelExtenderAPI != null)
-                levelExtenderExperience = _levelExtenderAPI.currentXP();
+                levelExtenderExperience = _levelExtenderAPI.CurrentXp();
 
-            for (int i = 0; i < _currentExperience.Length; ++i)
+            for (var i = 0; i < _currentExperience.Length; ++i)
             {
                 if (_currentExperience[i] != Game1.player.experiencePoints[i] ||
                     (_levelExtenderAPI != null &&
@@ -312,30 +312,30 @@ namespace UIInfoSuite.UIElements
                 _experienceRequiredToLevel = GetExperienceRequiredToLevel(_currentSkillLevel);
                 _experienceFromPreviousLevels = GetExperienceRequiredToLevel(_currentSkillLevel - 1);
                 _experienceEarnedThisLevel = Game1.player.experiencePoints[currentLevelIndex] - _experienceFromPreviousLevels;
-                int experiencePreviouslyEarnedThisLevel = _currentExperience[currentLevelIndex] - _experienceFromPreviousLevels;
+                var experiencePreviouslyEarnedThisLevel = _currentExperience[currentLevelIndex] - _experienceFromPreviousLevels;
 
                 if (_experienceRequiredToLevel <= 0 &&
                     _levelExtenderAPI != null)
                 {
-                    _experienceEarnedThisLevel = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _experienceEarnedThisLevel = _levelExtenderAPI.CurrentXp()[currentLevelIndex];
                     _experienceFromPreviousLevels = _currentExperience[currentLevelIndex] - _experienceEarnedThisLevel;
-                    _experienceRequiredToLevel = _levelExtenderAPI.requiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
+                    _experienceRequiredToLevel = _levelExtenderAPI.RequiredXp()[currentLevelIndex] + _experienceFromPreviousLevels;
                 }
 
                 ShowExperienceBar();
                 if (_showExperienceGain &&
                     _experienceRequiredToLevel > 0)
                 {
-                    int currentExperienceToUse = Game1.player.experiencePoints[currentLevelIndex];
-                    int previousExperienceToUse = _currentExperience[currentLevelIndex];
+                    var currentExperienceToUse = Game1.player.experiencePoints[currentLevelIndex];
+                    var previousExperienceToUse = _currentExperience[currentLevelIndex];
                     if (_levelExtenderAPI != null &&
                         _currentSkillLevel > 9)
                     {
-                        currentExperienceToUse = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                        currentExperienceToUse = _levelExtenderAPI.CurrentXp()[currentLevelIndex];
                         previousExperienceToUse = _currentLevelExtenderExperience[currentLevelIndex];
                     }
 
-                    int experienceGain = currentExperienceToUse - previousExperienceToUse;
+                    var experienceGain = currentExperienceToUse - previousExperienceToUse;
 
                     if (experienceGain > 0)
                     {
@@ -349,7 +349,7 @@ namespace UIInfoSuite.UIElements
                 _currentExperience[currentLevelIndex] = Game1.player.experiencePoints[currentLevelIndex];
 
                 if (_levelExtenderAPI != null)
-                    _currentLevelExtenderExperience[currentLevelIndex] = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _currentLevelExtenderExperience[currentLevelIndex] = _levelExtenderAPI.CurrentXp()[currentLevelIndex];
 
             }
             else if (_previousItem != currentItem)
@@ -399,9 +399,9 @@ namespace UIInfoSuite.UIElements
                 if (_experienceRequiredToLevel <= 0 &&
                     _levelExtenderAPI != null)
                 {
-                    _experienceEarnedThisLevel = _levelExtenderAPI.currentXP()[currentLevelIndex];
+                    _experienceEarnedThisLevel = _levelExtenderAPI.CurrentXp()[currentLevelIndex];
                     _experienceFromPreviousLevels = _currentExperience[currentLevelIndex] - _experienceEarnedThisLevel;
-                    _experienceRequiredToLevel = _levelExtenderAPI.requiredXP()[currentLevelIndex] + _experienceFromPreviousLevels;
+                    _experienceRequiredToLevel = _levelExtenderAPI.RequiredXp()[currentLevelIndex] + _experienceFromPreviousLevels;
                 }
 
                 ShowExperienceBar();
@@ -419,7 +419,7 @@ namespace UIInfoSuite.UIElements
             {
                 if (_shouldDrawLevelUp)
                 {
-                    Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
+                    var playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors,
                         new Vector2(
@@ -443,7 +443,7 @@ namespace UIInfoSuite.UIElements
                             playerLocalPosition.Y - 130));
                 }
 
-                for (int i = _experiencePointDisplays.Count - 1; i >= 0; --i)
+                for (var i = _experiencePointDisplays.Count - 1; i >= 0; --i)
                 {
                     if (_experiencePointDisplays[i].IsInvisible)
                     {
@@ -459,8 +459,8 @@ namespace UIInfoSuite.UIElements
                     _experienceBarShouldBeVisible &&
                     _showExperienceBar)
                 {
-                    int experienceDifferenceBetweenLevels = _experienceRequiredToLevel - _experienceFromPreviousLevels;
-                    int barWidth = (int)((double)_experienceEarnedThisLevel / experienceDifferenceBetweenLevels * MaxBarWidth);
+                    var experienceDifferenceBetweenLevels = _experienceRequiredToLevel - _experienceFromPreviousLevels;
+                    var barWidth = (int)((double)_experienceEarnedThisLevel / experienceDifferenceBetweenLevels * MaxBarWidth);
 
                     DrawExperienceBar(barWidth, _experienceEarnedThisLevel, experienceDifferenceBetweenLevels, _currentSkillLevel);
 
@@ -471,7 +471,7 @@ namespace UIInfoSuite.UIElements
 
         private int GetExperienceRequiredToLevel(int currentLevel)
         {
-            int amount = 0;
+            var amount = 0;
 
             //if (currentLevel < 10)
             //{
@@ -522,7 +522,7 @@ namespace UIInfoSuite.UIElements
 
             if (Game1.isOutdoorMapSmallerThanViewport())
             {
-                int num3 = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;
+                var num3 = Game1.currentLocation.map.Layers[0].LayerWidth * Game1.tileSize;
                 leftSide += (Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right - num3) / 2;
             }
 
@@ -570,7 +570,7 @@ namespace UIInfoSuite.UIElements
                     4),
                 _experienceFillColor);
 
-            ClickableTextureComponent textureComponent =
+            var textureComponent =
                 new ClickableTextureComponent(
                     "",
                     new Rectangle(

@@ -12,7 +12,7 @@ namespace UIInfoSuite.UIElements
     {
         private readonly IModHelper _helper;
         private Rectangle _toolTexturePosition;
-        private String _hoverText;
+        private string _hoverText;
         private Tool _toolBeingUpgraded;
         private ClickableTextureComponent _toolUpgradeIcon;
 
@@ -98,12 +98,12 @@ namespace UIInfoSuite.UIElements
 
                 if (Game1.player.daysLeftForToolUpgrade.Value > 0)
                 {
-                    _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
+                    _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
                         Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
                 }
                 else
                 {
-                    _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
+                    _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
                         _toolBeingUpgraded.DisplayName);
                 }
             }
@@ -122,7 +122,7 @@ namespace UIInfoSuite.UIElements
             // draw tool upgrade status
             if (!Game1.eventUp && _toolBeingUpgraded != null)
             {
-                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
+                var iconPosition = IconHandler.Handler.GetNewIconPosition();
                 _toolUpgradeIcon =
                     new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),

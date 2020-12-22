@@ -22,7 +22,7 @@ namespace UIInfoSuite.Options
             //_optionsPageHandler = optionsPageHandler;
             width = 64;
             height = 64;
-            GameMenu activeClickableMenu = Game1.activeClickableMenu as GameMenu;
+            var activeClickableMenu = Game1.activeClickableMenu as GameMenu;
 
             xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
             yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
@@ -49,8 +49,8 @@ namespace UIInfoSuite.Options
         {
             if (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA)
             {
-                int x = (int)e.Cursor.ScreenPixels.X;
-                int y = (int)e.Cursor.ScreenPixels.Y;
+                var x = (int)e.Cursor.ScreenPixels.X;
+                var y = (int)e.Cursor.ScreenPixels.Y;
                 if (isWithinBounds(x, y))
                 {
                     receiveLeftClick(x, y);

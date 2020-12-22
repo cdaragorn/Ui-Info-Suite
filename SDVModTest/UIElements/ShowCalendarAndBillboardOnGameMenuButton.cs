@@ -5,9 +5,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
@@ -54,7 +52,7 @@ namespace UIInfoSuite.UIElements
             _hoverItem = Tools.GetHoveredItem();
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
-                List<IClickableMenu> menuList = gameMenu.pages;
+                var menuList = gameMenu.pages;
 
                 if (menuList[0] is InventoryPage inventory)
                 {
@@ -87,7 +85,7 @@ namespace UIInfoSuite.UIElements
                 && _heldItem == null)
             {
                 if (Game1.questOfTheDay != null &&
-                    String.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
+                    string.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
                     Game1.questOfTheDay.currentObjective = "wat?";
 
                 Game1.activeClickableMenu =
@@ -112,8 +110,8 @@ namespace UIInfoSuite.UIElements
                 _showBillboardButton.draw(Game1.spriteBatch);
                 if (_showBillboardButton.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
                 {
-                    String hoverText = Game1.getMouseX() < 
-                        _showBillboardButton.bounds.X + _showBillboardButton.bounds.Width / 2 ? 
+                    var hoverText = Game1.getMouseX() < 
+                                    _showBillboardButton.bounds.X + _showBillboardButton.bounds.Width / 2 ? 
                         LanguageKeys.Calendar : LanguageKeys.Billboard;
                     IClickableMenu.drawHoverText(
                         Game1.spriteBatch,

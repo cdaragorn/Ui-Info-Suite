@@ -14,8 +14,8 @@ namespace UIInfoSuite
     {
         private SkipIntro _skipIntro;
 
-        private String _modDataFileName;
-        private readonly Dictionary<String, String> _options = new Dictionary<string, string>();
+        private string _modDataFileName;
+        private readonly Dictionary<string, string> _options = new Dictionary<string, string>();
 
         public static IMonitor MonitorObject { get; private set; }
 
@@ -55,6 +55,7 @@ namespace UIInfoSuite
 
         /// <summary>Raised after the game returns to the title screen.</summary>
         /// <param name="sender">The event sender.</param>
+        /// <param name="e"></param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             _modOptionsPageHandler?.Dispose();
@@ -66,27 +67,25 @@ namespace UIInfoSuite
         /// <param name="e">The event arguments.</param>
         private void OnSaved(object sender, EventArgs e)
         {
-            if (!String.IsNullOrWhiteSpace(_modDataFileName))
+            if (string.IsNullOrWhiteSpace(_modDataFileName)) return;
+            if (File.Exists(_modDataFileName))
+                File.Delete(_modDataFileName);
+            var settings = new XmlWriterSettings {Indent = true, IndentChars = "  "};
+            using (var writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
             {
-                if (File.Exists(_modDataFileName))
-                    File.Delete(_modDataFileName);
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "  ";
-                using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
-                {
-                    writer.WriteStartElement("options");
+                if (writer == null) return;
+                writer.WriteStartElement("options");
 
-                    foreach (var option in _options)
-                    {
-                        writer.WriteStartElement("option");
-                        writer.WriteAttributeString("name", option.Key);
-                        writer.WriteValue(option.Value);
-                        writer.WriteEndElement();
-                    }
+                foreach (var option in _options)
+                {
+                    writer.WriteStartElement("option");
+                    writer.WriteAttributeString("name", option.Key);
+                    writer.WriteValue(option.Value);
                     writer.WriteEndElement();
-                    writer.Close();
                 }
+
+                writer.WriteEndElement();
+                writer.Close();
             }
         }
 
@@ -110,15 +109,16 @@ namespace UIInfoSuite
 
                 if (File.Exists(_modDataFileName))
                 {
-                    XmlDocument document = new XmlDocument();
+                    var document = new XmlDocument();
 
                     document.Load(_modDataFileName);
-                    XmlNodeList nodes = document.GetElementsByTagName("option");
+                    var nodes = document.GetElementsByTagName("option");
 
                     foreach (XmlNode node in nodes)
                     {
-                        String key = node.Attributes["name"]?.Value;
-                        String value = node.InnerText;
+                        if (node.Attributes == null) continue;
+                        var key = node.Attributes["name"]?.Value;
+                        var value = node.InnerText;
 
                         if (key != null)
                             _options[key] = value;

@@ -14,9 +14,9 @@ namespace UIInfoSuite.UIElements
 {
     class ShowQueenOfSauceIcon : IDisposable
     {
-        private Dictionary<String, String> _recipesByDescription = new Dictionary<string, string>();
-        private Dictionary<String, String> _recipes = new Dictionary<String, string>();
-        private String _todaysRecipe;
+        private Dictionary<string, string> _recipesByDescription = new Dictionary<string, string>();
+        private Dictionary<string, string> _recipes = new Dictionary<string, string>();
+        private string _todaysRecipe;
         private NPC _gus;
         private bool _drawQueenOfSauceIcon = false;
         private bool _drawDishOfDayIcon = false;
@@ -60,11 +60,11 @@ namespace UIInfoSuite.UIElements
         {
             if (_recipes.Count == 0)
             {
-                _recipes = Game1.content.Load<Dictionary<String, String>>("Data\\TV\\CookingChannel");
+                _recipes = Game1.content.Load<Dictionary<string, string>>("Data\\TV\\CookingChannel");
 
                 foreach (var next in _recipes)
                 {
-                    string[] values = next.Value.Split('/');
+                    var values = next.Value.Split('/');
 
                     if (values.Length > 1)
                     {
@@ -93,16 +93,16 @@ namespace UIInfoSuite.UIElements
 
         private string[] GetTodaysRecipe()
         {
-            String[] array1 = new string[2];
-            int recipeNum = (int)(Game1.stats.DaysPlayed % 224 / 7);
+            var array1 = new string[2];
+            var recipeNum = (int)(Game1.stats.DaysPlayed % 224 / 7);
             //var recipes = Game1.content.Load<Dictionary<String, String>>("Data\\TV\\CookingChannel");
 
-            String recipeValue = _recipes.SafeGet(recipeNum.ToString());
-            String[] splitValues = null;
-            String key = null;
-            bool checkCraftingRecipes = true;
+            var recipeValue = _recipes.SafeGet(recipeNum.ToString());
+            string[] splitValues = null;
+            string key = null;
+            var checkCraftingRecipes = true;
             
-            if (String.IsNullOrEmpty(recipeValue))
+            if (string.IsNullOrEmpty(recipeValue))
             {
                 recipeValue = _recipes["1"];
                 checkCraftingRecipes = false;
@@ -116,12 +116,12 @@ namespace UIInfoSuite.UIElements
             array1[0] = key;
             if (checkCraftingRecipes)
             {
-                String craftingRecipesValue = CraftingRecipe.cookingRecipes.SafeGet(key);
-                if (!String.IsNullOrEmpty(craftingRecipesValue))
+                var craftingRecipesValue = CraftingRecipe.cookingRecipes.SafeGet(key);
+                if (!string.IsNullOrEmpty(craftingRecipesValue))
                     splitValues = craftingRecipesValue.Split('/');
             }
 
-            string languageRecipeName = (_helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en) ?
+            var languageRecipeName = (_helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en) ?
                 key : splitValues[splitValues.Length - 1];
 
             array1[1] = languageRecipeName;
@@ -150,7 +150,7 @@ namespace UIInfoSuite.UIElements
             {
                 if (_drawQueenOfSauceIcon)
                 {
-                    Point iconPosition = IconHandler.Handler.GetNewIconPosition();
+                    var iconPosition = IconHandler.Handler.GetNewIconPosition();
 
                     _queenOfSauceIcon = new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
@@ -162,8 +162,8 @@ namespace UIInfoSuite.UIElements
 
                 if (_drawDishOfDayIcon)
                 {
-                    Point iconLocation = IconHandler.Handler.GetNewIconPosition();
-                    float scale = 2.9f;
+                    var iconLocation = IconHandler.Handler.GetNewIconPosition();
+                    var scale = 2.9f;
 
                     Game1.spriteBatch.Draw(
                         Game1.objectSpriteSheet,
@@ -176,7 +176,7 @@ namespace UIInfoSuite.UIElements
                         SpriteEffects.None,
                         1f);
 
-                    ClickableTextureComponent texture =
+                    var texture =
                         new ClickableTextureComponent(
                             _gus.Name,
                             new Rectangle(
@@ -235,9 +235,9 @@ namespace UIInfoSuite.UIElements
 
         private void CheckForNewRecipe()
         {
-            TV tv = new TV();
-            int numRecipesKnown = Game1.player.cookingRecipes.Count();
-            String[] recipes = typeof(TV).GetMethod("getWeeklyRecipe", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(tv, null) as String[];
+            var tv = new TV();
+            var numRecipesKnown = Game1.player.cookingRecipes.Count();
+            var recipes = typeof(TV).GetMethod("getWeeklyRecipe", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(tv, null) as string[];
             //String[] recipe = GetTodaysRecipe();
             //_todaysRecipe = recipe[1];
             _todaysRecipe = _recipesByDescription.SafeGet(recipes[0]);

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UIInfoSuite
+﻿namespace UIInfoSuite
 {
-    static class LanguageKeys
+    internal static class LanguageKeys
     {
         public const string Days = "Days";
         public const string DaysToMature = "DaysToMature";

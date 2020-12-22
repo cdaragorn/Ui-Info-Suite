@@ -63,8 +63,8 @@ namespace UIInfoSuite.UIElements
                             animal.Value.currentProduce.Value > 0 &&
                             animal.Value.age.Value >= animal.Value.ageWhenMature.Value)
                         {
-                            Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
-                            positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + (double)animal.Value.Name.GetHashCode()) * 5.0);
+                            var positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
+                            positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + animal.Value.Name.GetHashCode()) * 5.0);
                             Game1.spriteBatch.Draw(
                                 Game1.emoteSpriteSheet,
                                 new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y),
@@ -76,7 +76,7 @@ namespace UIInfoSuite.UIElements
                                 SpriteEffects.None,
                                 1f);
 
-                            Rectangle sourceRectangle = GameLocation.getSourceRectForObject(animal.Value.currentProduce.Value);
+                            var sourceRectangle = GameLocation.getSourceRectForObject(animal.Value.currentProduce.Value);
                             Game1.spriteBatch.Draw(
                                 Game1.objectSpriteSheet,
                                 new Vector2(positionAboveAnimal.X + 28f, positionAboveAnimal.Y + 8f),
@@ -169,8 +169,8 @@ namespace UIInfoSuite.UIElements
                     if (!animal.Value.IsEmoting &&
                         !animal.Value.wasPet.Value)
                     {
-                        Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
-                        String animalType = animal.Value.type.Value.ToLower();
+                        var positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
+                        var animalType = animal.Value.type.Value.ToLower();
 
                         if (animalType.Contains("cow") ||
                             animalType.Contains("sheep") ||
@@ -202,7 +202,7 @@ namespace UIInfoSuite.UIElements
                 if (character is Pet pet &&
                     !pet.lastPetDay.Values.Any(day => day == Game1.Date.TotalDays))
                 {
-                    Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
+                    var positionAboveAnimal = GetPetPositionAboveAnimal(character);
                     positionAboveAnimal.X += 50f;
                     positionAboveAnimal.Y -= 20f;
                     Game1.spriteBatch.Draw(

@@ -14,7 +14,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowItemHoverInformation : IDisposable
     {
-        private readonly Dictionary<String, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();
+        private readonly Dictionary<string, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();
         private readonly ClickableTextureComponent _bundleIcon = 
             new ClickableTextureComponent(
                 "", 
@@ -27,7 +27,7 @@ namespace UIInfoSuite.UIElements
 
         private Item _hoverItem;
         private CommunityCenter _communityCenter;
-        private Dictionary<String, String> _bundleData;
+        private Dictionary<string, string> _bundleData;
         private readonly IModEvents _events;
 
         public ShowItemHoverInformation(IModEvents events)
@@ -45,7 +45,7 @@ namespace UIInfoSuite.UIElements
             if (showItemHoverInformation)
             {
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
-                _bundleData = Game1.content.Load<Dictionary<String, String>>("Data\\Bundles");
+                _bundleData = Game1.content.Load<Dictionary<string, string>>("Data\\Bundles");
                 PopulateRequiredBundles();
 
                 _events.Player.InventoryChanged += OnInventoryChanged;
@@ -104,8 +104,8 @@ namespace UIInfoSuite.UIElements
             _prunedRequiredBundles.Clear();
             foreach (var bundle in _bundleData)
             {
-                String[] bundleRoomInfo = bundle.Key.Split('/');
-                String bundleRoom = bundleRoomInfo[0];
+                var bundleRoomInfo = bundle.Key.Split('/');
+                var bundleRoom = bundleRoomInfo[0];
                 int roomNum;
 
                 switch(bundleRoom)
@@ -121,15 +121,15 @@ namespace UIInfoSuite.UIElements
 
                 if (_communityCenter.shouldNoteAppearInArea(roomNum))
                 {
-                    int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
-                    string[] bundleInfo = bundle.Value.Split('/');
-                    string bundleName = bundleInfo[0];
-                    string[] bundleValues = bundleInfo[2].Split(' ');
-                    List<int> source = new List<int>();
+                    var bundleNumber = bundleRoomInfo[1].SafeParseInt32();
+                    var bundleInfo = bundle.Value.Split('/');
+                    var bundleName = bundleInfo[0];
+                    var bundleValues = bundleInfo[2].Split(' ');
+                    var source = new List<int>();
 
-                    for (int i = 0; i < bundleValues.Length; i += 3)
+                    for (var i = 0; i < bundleValues.Length; i += 3)
                     {
-                        int bundleValue = bundleValues[i].SafeParseInt32();
+                        var bundleValue = bundleValues[i].SafeParseInt32();
                         if (bundleValue != -1 &&
                             !_communityCenter.bundles[bundleNumber][i / 3])
                         {
@@ -151,9 +151,9 @@ namespace UIInfoSuite.UIElements
             {
                 //String text = string.Empty;
                 //String extra = string.Empty;
-                int truePrice = Tools.GetTruePrice(_hoverItem);
-                int itemPrice = 0;
-                int stackPrice = 0;
+                var truePrice = Tools.GetTruePrice(_hoverItem);
+                var itemPrice = 0;
+                var stackPrice = 0;
 
                 if (truePrice > 0)
                 {
@@ -172,7 +172,7 @@ namespace UIInfoSuite.UIElements
                         //text += " (" + (truePrice / 2 * _hoverItem.getStack()) + ")";
                     }
                 }
-                int cropPrice = 0;
+                var cropPrice = 0;
 
                 //bool flag = false;
                 if (_hoverItem is StardewValley.Object && 
@@ -181,7 +181,7 @@ namespace UIInfoSuite.UIElements
                     (_hoverItem.Name != "Mixed Seeds" ||
                     _hoverItem.Name != "Winter Seeds"))
                 {
-                    StardewValley.Object itemObject = new StardewValley.Object(new Debris(new Crop(_hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value, Game1.player.position, Game1.player.position).chunkType.Value, 1);
+                    var itemObject = new StardewValley.Object(new Debris(new Crop(_hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value, Game1.player.position, Game1.player.position).chunkType.Value, 1);
                     //extra += "    " + itemObject.Price;
                     cropPrice = itemObject.Price;
                     //flag = true;
@@ -193,7 +193,7 @@ namespace UIInfoSuite.UIElements
                 //vector2.X += 30;
                 //vector2.Y -= 10;
 
-                String requiredBundleName = null;
+                string requiredBundleName = null;
 
                 foreach (var requiredBundle in _prunedRequiredBundles)
                 {
@@ -208,13 +208,13 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                int largestTextWidth = 0;
-                int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
-                int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
+                var largestTextWidth = 0;
+                var stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
+                var itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
                 largestTextWidth = (stackTextWidth > itemTextWidth) ? stackTextWidth : itemTextWidth;
-                int windowWidth = Math.Max(largestTextWidth + 90, String.IsNullOrEmpty(requiredBundleName) ? 100 : 300);
+                var windowWidth = Math.Max(largestTextWidth + 90, string.IsNullOrEmpty(requiredBundleName) ? 100 : 300);
 
-                int windowHeight = 75;
+                var windowHeight = 75;
 
                 if (stackPrice > 0)
                     windowHeight += 40;
@@ -222,11 +222,11 @@ namespace UIInfoSuite.UIElements
                 if (cropPrice > 0)
                     windowHeight += 40;
 
-                int windowY = Game1.getMouseY() + 20;
+                var windowY = Game1.getMouseY() + 20;
 
                 windowY = Game1.viewport.Height - windowHeight - windowY < 0 ? Game1.viewport.Height - windowHeight : windowY;
 
-                int windowX = Game1.getMouseX() - windowWidth - 25;
+                var windowX = Game1.getMouseX() - windowWidth - 25;
 
                 if (Game1.getMouseX() > Game1.viewport.Width - 300)
                 {
@@ -237,8 +237,8 @@ namespace UIInfoSuite.UIElements
                     windowX = Game1.getMouseX() + 350;
                 }
 
-                Vector2 windowPos = new Vector2(windowX, windowY);
-                Vector2 currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
+                var windowPos = new Vector2(windowX, windowY);
+                var currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
 
 
                 if (itemPrice > 0)
@@ -367,21 +367,21 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                if (!String.IsNullOrEmpty(requiredBundleName))
+                if (!string.IsNullOrEmpty(requiredBundleName))
                 {
-                    int num1 = (int)windowPos.X - 30;
-                    int num2 = (int)windowPos.Y - 10;
-                    int num3 = num1 + 52;
-                    int y3 = num2 - 2;
-                    int num4 = 288;
-                    int height = 36;
-                    int num5 = 36;
-                    int width = num4 / num5;
-                    int num6 = 6;
+                    var num1 = (int)windowPos.X - 30;
+                    var num2 = (int)windowPos.Y - 10;
+                    var num3 = num1 + 52;
+                    var y3 = num2 - 2;
+                    var num4 = 288;
+                    var height = 36;
+                    var num5 = 36;
+                    var width = num4 / num5;
+                    var num6 = 6;
 
-                    for (int i = 0; i < 36; ++i)
+                    for (var i = 0; i < 36; ++i)
                     {
-                        float num7 = (float)(i >= num6 ? 0.92 - (i - num6) * (1.0 / (num5 - num6)) : 0.92f);
+                        var num7 = (float)(i >= num6 ? 0.92 - (i - num6) * (1.0 / (num5 - num6)) : 0.92f);
                         Game1.spriteBatch.Draw(
                             Game1.staminaRect,
                             new Rectangle(num3 + width * i, y3, width, height),
@@ -412,17 +412,17 @@ namespace UIInfoSuite.UIElements
         }
 
 
-        private static Vector2 DrawTooltip(SpriteBatch batch, String hoverText, String hoverTitle, Item hoveredItem)
+        private static Vector2 DrawTooltip(SpriteBatch batch, string hoverText, string hoverTitle, Item hoveredItem)
         {
-            bool flag = hoveredItem != null &&
-                hoveredItem is StardewValley.Object &&
-                (hoveredItem as StardewValley.Object).Edibility != -300;
+            var flag = hoveredItem != null &&
+                       hoveredItem is StardewValley.Object &&
+                       (hoveredItem as StardewValley.Object).Edibility != -300;
 
-            int healAmmountToDisplay = flag ? (hoveredItem as StardewValley.Object).Edibility : -1;
+            var healAmmountToDisplay = flag ? (hoveredItem as StardewValley.Object).Edibility : -1;
             string[] buffIconsToDisplay = null;
             if (flag)
             {
-                String objectInfo = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex];
+                var objectInfo = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex];
                 if (Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex].Split('/').Length >= 7)
                 {
                     buffIconsToDisplay = Game1.objectInformation[(hoveredItem as StardewValley.Object).ParentSheetIndex].Split('/')[6].Split('^');
@@ -432,27 +432,27 @@ namespace UIInfoSuite.UIElements
             return DrawHoverText(batch, hoverText, Game1.smallFont, -1, -1, -1, hoverTitle, -1, buffIconsToDisplay, hoveredItem);
         }
 
-        private static Vector2 DrawHoverText(SpriteBatch batch, String text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, String boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null)
+        private static Vector2 DrawHoverText(SpriteBatch batch, string text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, string boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null)
         {
-            Vector2 result = Vector2.Zero;
+            var result = Vector2.Zero;
 
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 result = Vector2.Zero;
             }
             else
             {
-                if (String.IsNullOrEmpty(boldTitleText))
+                if (string.IsNullOrEmpty(boldTitleText))
                     boldTitleText = null;
 
-                int num1 = 20;
-                int infoWindowWidth = (int)Math.Max(healAmountToDisplay != -1 ? font.MeasureString(healAmountToDisplay.ToString() + "+ Energy" + (Game1.tileSize / 2)).X : 0, Math.Max(font.MeasureString(text).X, boldTitleText != null ? Game1.dialogueFont.MeasureString(boldTitleText).X : 0)) + Game1.tileSize / 2;
-                int extraInfoBackgroundHeight = (int)Math.Max(
+                var num1 = 20;
+                var infoWindowWidth = (int)Math.Max(healAmountToDisplay != -1 ? font.MeasureString(healAmountToDisplay.ToString() + "+ Energy" + (Game1.tileSize / 2)).X : 0, Math.Max(font.MeasureString(text).X, boldTitleText != null ? Game1.dialogueFont.MeasureString(boldTitleText).X : 0)) + Game1.tileSize / 2;
+                var extraInfoBackgroundHeight = (int)Math.Max(
                     num1 * 3, 
                     font.MeasureString(text).Y + Game1.tileSize / 2 + (moneyAmountToDisplayAtBottom > -1 ? (font.MeasureString(string.Concat(moneyAmountToDisplayAtBottom)).Y + 4.0) : 0) + (boldTitleText != null ? Game1.dialogueFont.MeasureString(boldTitleText).Y + (Game1.tileSize / 4) : 0) + (healAmountToDisplay != -1 ? 38 : 0));
                 if (buffIconsToDisplay != null)
                 {
-                    for (int i = 0; i < buffIconsToDisplay.Length; ++i)
+                    for (var i = 0; i < buffIconsToDisplay.Length; ++i)
                     {
                         if (!buffIconsToDisplay[i].Equals("0"))
                             extraInfoBackgroundHeight += 34;
@@ -460,7 +460,7 @@ namespace UIInfoSuite.UIElements
                     extraInfoBackgroundHeight += 4;
                 }
 
-                String categoryName = null;
+                string categoryName = null;
                 if (hoveredItem != null)
                 {
                     extraInfoBackgroundHeight += (Game1.tileSize + 4) * hoveredItem.attachmentSlots();
@@ -491,14 +491,14 @@ namespace UIInfoSuite.UIElements
                     }
                     else if (hoveredItem is Boots)
                     {
-                        Boots hoveredBoots = hoveredItem as Boots;
+                        var hoveredBoots = hoveredItem as Boots;
                         extraInfoBackgroundHeight = extraInfoBackgroundHeight - (int)font.MeasureString(text).Y + (int)(hoveredBoots.getNumberOfDescriptionCategories() * Game1.pixelZoom * 12 + font.MeasureString(Game1.parseText(hoveredBoots.description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y);
                         infoWindowWidth = (int)Math.Max(infoWindowWidth, font.MeasureString("99-99 Damage").X + (15 * Game1.pixelZoom) + (Game1.tileSize / 2));
                     }
                     else if (hoveredItem is StardewValley.Object &&
                         (hoveredItem as StardewValley.Object).Edibility != -300)
                     {
-                        StardewValley.Object hoveredObject = hoveredItem as StardewValley.Object;
+                        var hoveredObject = hoveredItem as StardewValley.Object;
                         healAmountToDisplay = (int)Math.Ceiling(hoveredObject.Edibility * 2.5) + hoveredObject.Quality * hoveredObject.Edibility;
                         extraInfoBackgroundHeight += (Game1.tileSize / 2 + Game1.pixelZoom * 2) * (healAmountToDisplay > 0 ? 2 : 1);
                     }
@@ -506,8 +506,8 @@ namespace UIInfoSuite.UIElements
 
                 //Crafting ingredients were never used
 
-                int xPos = Game1.getOldMouseX() + Game1.tileSize / 2 + xOffset;
-                int yPos = Game1.getOldMouseY() + Game1.tileSize / 2 + yOffset;
+                var xPos = Game1.getOldMouseX() + Game1.tileSize / 2 + xOffset;
+                var yPos = Game1.getOldMouseY() + Game1.tileSize / 2 + yOffset;
 
                 if (xPos + infoWindowWidth > Game1.viewport.Width)
                 {
@@ -520,7 +520,7 @@ namespace UIInfoSuite.UIElements
                     xPos += Game1.tileSize / 4;
                     yPos = Game1.viewport.Height - extraInfoBackgroundHeight;
                 }
-                int hoveredItemHeight = (int)(hoveredItem == null || categoryName.Length <= 0 ? 0 : font.MeasureString("asd").Y);
+                var hoveredItemHeight = (int)(hoveredItem == null || categoryName.Length <= 0 ? 0 : font.MeasureString("asd").Y);
 
                 IClickableMenu.drawTextureBox(
                     batch,
@@ -573,7 +573,7 @@ namespace UIInfoSuite.UIElements
                     yPos += (int)Game1.dialogueFont.MeasureString(boldTitleText).Y;
                 }
 
-                int yPositionToReturn = yPos;
+                var yPositionToReturn = yPos;
                 if (hoveredItem != null && categoryName.Length > 0)
                 {
                     yPos -= 4;
@@ -596,7 +596,7 @@ namespace UIInfoSuite.UIElements
 
                 if (hoveredItem is Boots)
                 {
-                    Boots boots = hoveredItem as Boots;
+                    var boots = hoveredItem as Boots;
                     Utility.drawTextWithShadow(
                         batch,
                         Game1.parseText(
@@ -657,7 +657,7 @@ namespace UIInfoSuite.UIElements
                 }
                 else if (hoveredItem is MeleeWeapon)
                 {
-                    MeleeWeapon meleeWeapon = hoveredItem as MeleeWeapon;
+                    var meleeWeapon = hoveredItem as MeleeWeapon;
                     Utility.drawTextWithShadow(
                         batch,
                         Game1.parseText(meleeWeapon.Description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4),
@@ -699,8 +699,8 @@ namespace UIInfoSuite.UIElements
                                 Game1.pixelZoom,
                                 false,
                                 1);
-                            bool flag = meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value < -8 : meleeWeapon.speed.Value < 0;
-                            String speedText = ((meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value + 8 : meleeWeapon.speed.Value) / 2).ToString();
+                            var flag = meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value < -8 : meleeWeapon.speed.Value < 0;
+                            var speedText = ((meleeWeapon.type.Value == 2 ? meleeWeapon.speed.Value + 8 : meleeWeapon.speed.Value) / 2).ToString();
                             Utility.drawTextWithShadow(
                                 batch,
                                 Game1.content.LoadString("Strings\\UI:ItemHover_Speed", new object[] { (meleeWeapon.speed.Value > 0 ? "+" : "") + speedText }),
@@ -753,7 +753,7 @@ namespace UIInfoSuite.UIElements
                             yPos += (int)Math.Max(font.MeasureString("TT").Y, 12 * Game1.pixelZoom);
                         }
 
-                        if (((double)meleeWeapon.critMultiplier.Value - 3.0) / 0.02 >= 1.0)
+                        if ((meleeWeapon.critMultiplier.Value - 3.0) / 0.02 >= 1.0)
                         {
                             Utility.drawWithShadow(
                                 batch, 
@@ -802,8 +802,8 @@ namespace UIInfoSuite.UIElements
                 }
                 else if (text.Length > 1)
                 {
-                    int textXPos = xPos + Game1.tileSize / 4;
-                    int textYPos = yPos + Game1.tileSize / 4 + 4;
+                    var textXPos = xPos + Game1.tileSize / 4;
+                    var textYPos = yPos + Game1.tileSize / 4 + 4;
                     batch.DrawString(
                         font,
                         text,
@@ -880,9 +880,9 @@ namespace UIInfoSuite.UIElements
 
                 if (buffIconsToDisplay != null)
                 {
-                    for (int i = 0; i < buffIconsToDisplay.Length; ++i)
+                    for (var i = 0; i < buffIconsToDisplay.Length; ++i)
                     {
-                        String buffIcon = buffIconsToDisplay[i];
+                        var buffIcon = buffIconsToDisplay[i];
                         if (buffIcon != "0")
                         {
                             Utility.drawWithShadow(
@@ -896,7 +896,7 @@ namespace UIInfoSuite.UIElements
                                 false,
                                 0.95f);
 
-                            string textToDraw = (buffIcon.SafeParseInt32() > 0 ? "+" : string.Empty) + buffIcon + " ";
+                            var textToDraw = (buffIcon.SafeParseInt32() > 0 ? "+" : string.Empty) + buffIcon + " ";
 
                             //if (i <= 10)
                             //    textToDraw = Game1.content.LoadString("Strings\\UI:ItemHover_Buff" + i, new object[] { textToDraw });

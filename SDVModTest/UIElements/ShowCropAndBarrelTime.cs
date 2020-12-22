@@ -16,7 +16,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowCropAndBarrelTime : IDisposable
     {
-        private readonly Dictionary<int, String> _indexOfCropNames = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _indexOfCropNames = new Dictionary<int, string>();
         private StardewValley.Object _currentTile;
         private TerrainFeature _terrain;
         private Building _currentTileBuilding = null;
@@ -99,13 +99,13 @@ namespace UIInfoSuite.UIElements
                     {
                         if (!millBuilding.input.Value.isEmpty())
                         {
-                            int wheatCount = 0;
-                            int beetCount = 0;
+                            var wheatCount = 0;
+                            var beetCount = 0;
 
                             foreach (var item in millBuilding.input.Value.items)
                             {
                                 if (item != null &&
-                                    !String.IsNullOrEmpty(item.Name))
+                                    !string.IsNullOrEmpty(item.Name))
                                 {
                                     switch (item.Name)
                                     {
@@ -115,7 +115,7 @@ namespace UIInfoSuite.UIElements
                                 }
                             }
 
-                            StringBuilder builder = new StringBuilder();
+                            var builder = new StringBuilder();
 
                             if (wheatCount > 0)
                                 builder.Append(wheatCount + " wheat");
@@ -147,20 +147,20 @@ namespace UIInfoSuite.UIElements
                     _currentTile.heldObject.Value != null &&
                     _currentTile.Name != "Heater")
                 {
-                    StringBuilder hoverText = new StringBuilder();
+                    var hoverText = new StringBuilder();
                     hoverText.AppendLine(_currentTile.heldObject.Value.DisplayName);
                     
                     if (_currentTile is Cask)
                     {
-                        Cask currentCask = _currentTile as Cask;
+                        var currentCask = _currentTile as Cask;
                         hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
                     }
                     else
                     {
-                        int hours = _currentTile.MinutesUntilReady / 60;
-                        int minutes = _currentTile.MinutesUntilReady % 60;
+                        var hours = _currentTile.MinutesUntilReady / 60;
+                        var minutes = _currentTile.MinutesUntilReady % 60;
                         if (hours > 0)
                             hoverText.Append(hours).Append(" ")
                                 .Append(_helper.SafeGetString(
@@ -180,11 +180,11 @@ namespace UIInfoSuite.UIElements
             {
                 if (_terrain is HoeDirt)
                 {
-                    HoeDirt hoeDirt = _terrain as HoeDirt;
+                    var hoeDirt = _terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
                         !hoeDirt.crop.dead.Value)
                     {
-                        int num = 0;
+                        var num = 0;
 
                         if (hoeDirt.crop.fullyGrown.Value &&
                             hoeDirt.crop.dayOfCurrentPhase.Value > 0)
@@ -193,7 +193,7 @@ namespace UIInfoSuite.UIElements
                         }
                         else
                         {
-                            for (int i = 0; i < hoeDirt.crop.phaseDays.Count - 1; ++i)
+                            for (var i = 0; i < hoeDirt.crop.phaseDays.Count - 1; ++i)
                             {
                                 if (hoeDirt.crop.currentPhase.Value == i)
                                     num -= hoeDirt.crop.dayOfCurrentPhase.Value;
@@ -205,14 +205,14 @@ namespace UIInfoSuite.UIElements
 
                         if (hoeDirt.crop.indexOfHarvest.Value > 0)
                         {
-                            String hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest.Value);
-                            if (String.IsNullOrEmpty(hoverText))
+                            var hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest.Value);
+                            if (string.IsNullOrEmpty(hoverText))
                             {
                                 hoverText = new StardewValley.Object(new Debris(hoeDirt.crop.indexOfHarvest.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                                 _indexOfCropNames.Add(hoeDirt.crop.indexOfHarvest.Value, hoverText);
                             }
 
-                            StringBuilder finalHoverText = new StringBuilder();
+                            var finalHoverText = new StringBuilder();
                             finalHoverText.Append(hoverText).Append(": ");
                             if (num > 0)
                             {
@@ -234,7 +234,7 @@ namespace UIInfoSuite.UIElements
                 }
                 else if (_terrain is FruitTree)
                 {
-                    FruitTree tree = _terrain as FruitTree;
+                    var tree = _terrain as FruitTree;
                     var text = new StardewValley.Object(new Debris(tree.indexOfFruit.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                     if (tree.daysUntilMature.Value > 0)
                     {

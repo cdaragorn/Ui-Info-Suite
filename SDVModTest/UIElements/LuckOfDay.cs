@@ -10,7 +10,7 @@ namespace UIInfoSuite.UIElements
 {
     class LuckOfDay : IDisposable
     {
-        private String _hoverText = string.Empty;
+        private string _hoverText = string.Empty;
         private Color _color = new Color(Color.White.ToVector4());
         private ClickableTextureComponent _icon;
         private readonly IModHelper _helper;
@@ -97,7 +97,7 @@ namespace UIInfoSuite.UIElements
             // draw dice icon
             if (!Game1.eventUp)
             {
-                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
+                var iconPosition = IconHandler.Handler.GetNewIconPosition();
                 _icon.bounds.X = iconPosition.X;
                 _icon.bounds.Y = iconPosition.Y;
                 _icon.draw(Game1.spriteBatch, _color, 1f);

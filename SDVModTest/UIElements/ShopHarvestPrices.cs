@@ -5,7 +5,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Reflection;
 using UIInfoSuite.Extensions;
 
 namespace UIInfoSuite.UIElements
@@ -44,8 +43,8 @@ namespace UIInfoSuite.UIElements
             {
                 if (menu.hoveredItem is Item hoverItem)
                 {
-                    String text = string.Empty;
-                    bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
+                    var text = string.Empty;
+                    var itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
 
                     if (hoverItem is StardewValley.Object &&
                         (hoverItem as StardewValley.Object).Type == "Seeds" &&
@@ -53,7 +52,7 @@ namespace UIInfoSuite.UIElements
                         hoverItem.Name != "Mixed Seeds" &&
                         hoverItem.Name != "Winter Seeds")
                     {
-                        StardewValley.Object temp = 
+                        var temp = 
                             new StardewValley.Object(
                                 new Debris(
                                     new Crop(
@@ -70,7 +69,7 @@ namespace UIInfoSuite.UIElements
                     var heldItem = menu.heldItem as Item;
                     if (heldItem == null)
                     {
-                        int value = 0;
+                        var value = 0;
                         switch (hoverItem.ParentSheetIndex)
                         {
                             case 628: value = 50; break;
@@ -88,10 +87,10 @@ namespace UIInfoSuite.UIElements
                         if (text != "" &&
                             (hoverItem as StardewValley.Object).Type == "Seeds")
                         {
-                            String textToRender = _helper.SafeGetString(
+                            var textToRender = _helper.SafeGetString(
                                 LanguageKeys.HarvestPrice);
-                            int xPosition = menu.xPositionOnScreen - 30;
-                            int yPosition = menu.yPositionOnScreen + 580;
+                            var xPosition = menu.xPositionOnScreen - 30;
+                            var yPosition = menu.yPositionOnScreen + 580;
                             IClickableMenu.drawTextureBox(
                                 Game1.spriteBatch,
                                 xPosition + 20,
@@ -145,11 +144,11 @@ namespace UIInfoSuite.UIElements
                                 new Vector2(xPosition, yPosition + 4),
                                 Color.Black * 0.8f);
                             
-                            String hoverText = _helper.Reflection.GetField<String>(menu, "hoverText").GetValue();
-                            String hoverTitle = _helper.Reflection.GetField<String>(menu, "boldTitleText").GetValue();
-                            int currency = _helper.Reflection.GetField<int>(menu, "currency").GetValue();
-                            IReflectedMethod getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
-                            IReflectedMethod getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
+                            var hoverText = _helper.Reflection.GetField<string>(menu, "hoverText").GetValue();
+                            var hoverTitle = _helper.Reflection.GetField<string>(menu, "boldTitleText").GetValue();
+                            var currency = _helper.Reflection.GetField<int>(menu, "currency").GetValue();
+                            var getHoveredItemExtraItemIndex = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemIndex");
+                            var getHoveredItemExtraItemAmount = _helper.Reflection.GetMethod(menu, "getHoveredItemExtraItemAmount");
 
                             IClickableMenu.drawToolTip(
                                 Game1.spriteBatch,

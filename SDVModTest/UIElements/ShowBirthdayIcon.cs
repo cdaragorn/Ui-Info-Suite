@@ -97,9 +97,9 @@ namespace UIInfoSuite.UIElements
             {
                 if (_birthdayNPC != null)
                 {
-                    Rectangle headShot = _birthdayNPC.GetHeadShot();
-                    Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                    float scale = 2.9f;
+                    var headShot = _birthdayNPC.GetHeadShot();
+                    var iconPosition = IconHandler.Handler.GetNewIconPosition();
+                    var scale = 2.9f;
 
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors,
@@ -140,7 +140,7 @@ namespace UIInfoSuite.UIElements
             if (_birthdayNPC != null && 
                 (_birthdayIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
-                String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
+                var hoverText = string.Format("{0}'s Birthday", _birthdayNPC.Name);
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,
                     hoverText,
