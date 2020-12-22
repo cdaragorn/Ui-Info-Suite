@@ -318,7 +318,7 @@ namespace UIInfoSuite.Options
                 _downArrow.draw(batch);
                 if (_options.Count > 7)
                 {
-                    IClickableMenu.drawTextureBox(
+                    drawTextureBox(
                         batch, 
                         Game1.mouseCursors, 
                         new Rectangle(403, 383, 6, 6), 
@@ -333,7 +333,7 @@ namespace UIInfoSuite.Options
                 }
             }
             if (_hoverText != "")
-                IClickableMenu.drawHoverText(batch, _hoverText, Game1.smallFont);
+                drawHoverText(batch, _hoverText, Game1.smallFont);
 
             //if (Game1.options.hardwareCursor)
             //{

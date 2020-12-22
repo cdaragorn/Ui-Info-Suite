@@ -1,14 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite
 {
-    class IconHandler
+    internal class IconHandler
     {
         public static IconHandler Handler { get; private set; }
 
@@ -27,8 +23,8 @@ namespace UIInfoSuite
 
         public Point GetNewIconPosition()
         {
-            int yPos = Game1.options.zoomButtons ? 290 : 260;
-            int xPosition = (int)Tools.GetWidthInPlayArea() - 70 - 48 * _amountOfVisibleIcons;
+            var yPos = Game1.options.zoomButtons ? 290 : 260;
+            var xPosition = Tools.GetWidthInPlayArea() - 70 - 48 * _amountOfVisibleIcons;
             if (Game1.player.questLog.Any())
             {
                 xPosition -= 65;

@@ -67,7 +67,7 @@ namespace UIInfoSuite
                 case StardewValley.Object objectItem:
                     truePrice = objectItem.sellToStorePrice() * 2;
                     break;
-                case StardewValley.Item thing:
+                case Item thing:
                     truePrice = thing.salePrice();
                     break;
             }
@@ -131,7 +131,7 @@ namespace UIInfoSuite
 
         public static int AdjustPriceForQuality(int price, Quality quality)
         {
-            int ret = price;
+            var ret = price;
             switch (quality)
             {
                 case Quality.Silver:

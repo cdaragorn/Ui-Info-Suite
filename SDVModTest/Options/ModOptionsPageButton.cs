@@ -96,7 +96,7 @@ namespace UIInfoSuite.Options
 
             if (isWithinBounds(Game1.getMouseX(), Game1.getMouseY()))
             {
-                IClickableMenu.drawHoverText(Game1.spriteBatch, "UI Info Mod Options", Game1.smallFont);
+                drawHoverText(Game1.spriteBatch, "UI Info Mod Options", Game1.smallFont);
             }
             Tools.DrawMouseCursor();
         }

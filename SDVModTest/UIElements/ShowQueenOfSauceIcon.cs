@@ -230,7 +230,7 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            this.CheckForNewRecipe();
+            CheckForNewRecipe();
         }
 
         private void CheckForNewRecipe()

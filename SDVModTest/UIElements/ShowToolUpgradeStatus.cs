@@ -52,7 +52,7 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            this.UpdateToolInfo();
+            UpdateToolInfo();
         }
 
         private void UpdateToolInfo()

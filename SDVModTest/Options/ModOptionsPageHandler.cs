@@ -75,7 +75,7 @@ namespace UIInfoSuite.Options
             };
 
             var whichOption = 1;
-            var thisVersion = Assembly.GetAssembly(this.GetType()).GetName().Version;
+            var thisVersion = Assembly.GetAssembly(GetType()).GetName().Version;
             _optionsElements.Add(new ModOptionsElement("UI Info Suite v" +
                 thisVersion.Major + "." + thisVersion.Minor + "." + thisVersion.Build));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowLuckIcon), whichOption++, _luckOfDay.Toggle, _options, OptionKeys.ShowLuckIcon));
