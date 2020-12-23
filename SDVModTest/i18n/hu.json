@@ -32,5 +32,7 @@
   "ShowTravelingMerchant": "Mutasd az vándorkereskedőt",
   "ShowHarvestPricesInShop": "Mutasd a bolti betakarítási árakat",
   "ShowWhenNewRecipesAreAvailable": "Mutasd ha új receptek érhetőek el",
-  "ShowToolUpgradeStatus": "Mutasd az eszköz fejlesztés állapotát"
+  "ShowToolUpgradeStatus": "Mutasd az eszköz fejlesztés állapotát",
+  "NPCBirthday": "Ma van {0} születésnapja",
+  "UIOptions": "UI Info Mod Beállítások"
 }

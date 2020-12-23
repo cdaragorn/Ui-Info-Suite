@@ -32,5 +32,7 @@
     "ShowTravelingMerchant" : "Показывать иконку Странствующего Торговца",
     "ShowHarvestPricesInShop" : "Показывать цену урожая в магазине",
     "ShowWhenNewRecipesAreAvailable" : "Показывать, когда доступны новые рецепты",
-    "ShowToolUpgradeStatus" : "Показывать статус улучшения инструмента"
+    "ShowToolUpgradeStatus" : "Показывать статус улучшения инструмента",
+    "NPCBirthday": "{0}'s Birthday",
+    "UIOptions": "UI Info Mod Options"
 }

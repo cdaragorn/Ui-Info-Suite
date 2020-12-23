@@ -32,5 +32,7 @@
 	"ShowTravelingMerchant" : "Mostrar presença da camelô",
 	"ShowHarvestPricesInShop" : "Mostrar preços de colheita na loja",
 	"ShowWhenNewRecipesAreAvailable" : "Mostrar quando novas receitas estão disponíveis",
-	"ShowToolUpgradeStatus" : "Mostrar status da atualização da ferramenta"
+	"ShowToolUpgradeStatus" : "Mostrar status da atualização da ferramenta",
+	"NPCBirthday": "{0}'s Birthday",
+	"UIOptions": "UI Info Mod Options"
 }

@@ -32,5 +32,7 @@
 	"ShowTravelingMerchant" : "旅行中の商人を表示する",
 	"ShowHarvestPricesInShop" : "店舗収穫価格を表示する",
 	"ShowWhenNewRecipesAreAvailable" : "新しいレシピが利用可能になったら表示する",
-	"ShowToolUpgradeStatus" : "ツールのアップグレード情報を表示する"
+	"ShowToolUpgradeStatus" : "ツールのアップグレード情報を表示する",
+	"NPCBirthday": "{0}'s Birthday",
+	"UIOptions": "UI Info Mod Options"
 }
