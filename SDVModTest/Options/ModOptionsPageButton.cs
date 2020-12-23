@@ -5,6 +5,7 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using UIInfoSuite.Extensions;
 
 namespace UIInfoSuite.Options
 {

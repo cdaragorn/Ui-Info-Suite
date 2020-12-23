@@ -5,6 +5,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
+using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
 {
