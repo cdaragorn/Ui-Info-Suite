@@ -30,7 +30,7 @@ namespace UIInfoSuite.Options
         private readonly ShowCropAndBarrelTime _showCropAndBarrelTime;
         private readonly ShowItemEffectRanges _showScarecrowAndSprinklerRange;
         private readonly ExperienceBar _experienceBar;
-        private readonly ShowItemHoverInformation _showItemHoverInformation;
+        private readonly ItemHoverInformation _showItemHoverInformation;
         private readonly ShowTravelingMerchant _showTravelingMerchant;
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
@@ -50,7 +50,7 @@ namespace UIInfoSuite.Options
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
             _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modConfig, helper.Events);
             _experienceBar = new ExperienceBar(helper);
-            _showItemHoverInformation = new ShowItemHoverInformation(helper.Events);
+            _showItemHoverInformation = new ItemHoverInformation(helper.Events);
             _shopHarvestPrices = new ShopHarvestPrices(helper);
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
             _showTravelingMerchant = new ShowTravelingMerchant(helper);
