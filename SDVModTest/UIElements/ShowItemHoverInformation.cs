@@ -74,7 +74,7 @@ namespace UIInfoSuite.UIElements
             if (showItemHoverInformation)
             {
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
-                _bundleData = Game1.content.Load<Dictionary<string, string>>("Data\\Bundles");
+                _bundleData = Game1.netWorldState.Value.BundleData;
                 PopulateRequiredBundles();
 
                 _libraryMuseum = Game1.getLocationFromName("ArchaeologyHouse") as LibraryMuseum;
@@ -248,16 +248,6 @@ namespace UIInfoSuite.UIElements
                 int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
                 int largestTextWidth = Math.Max(bundleTextWidth, Math.Max(stackTextWidth, itemTextWidth));
                 windowWidth = largestTextWidth + 90;
-                //}
-                //else
-                //{
-                //    itemPrice = lastItemPrice;
-                //    stackPrice = lastStackPrice;
-                //    cropPrice = lastCropPrice;
-                //    truePrice = lastTruePrice;
-                //    windowWidth = lastWindowWidth;
-                //    requiredBundleName = lastRequiredBundleName;
-                //}
 
                 int windowHeight = 75;
 
