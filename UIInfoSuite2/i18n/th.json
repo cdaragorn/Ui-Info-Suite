@@ -1,0 +1,34 @@
+{
+	"Billboard": "บอร์ด",
+	"Calendar": "ปฏิทิน",
+	"Days": "วัน",
+	"DaysToMature": "วันสำหรับผู้ใหญ่",
+	"FeelingLucky": "คุณรู้สึกโชคดีมาก !!",
+	"HarvestPrice": "ราคาเก็บเกี่ยว",
+	"Hours": "ชั่วโมง",
+	"LevelUp": "ยกระดับ",
+	"LuckyButNotTooLucky": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",
+	"MaybeStayHome": "บางทีคุณควรจะอยู่บ้านวันนี้ ...",
+	"Minutes": "นาที",
+	"NotFeelingLuckyAtAll": "วันนี้คุณไม่รู้สึกโชคดีเลย",
+	"ReadyToHarvest": "พร้อมที่จะเก็บเกี่ยว!",
+	"TodaysRecipe": "สูตรวันนี้: ",
+	"TravelingMerchantIsInTown": "พ่อค้าเดินทางอยู่ในเมือง!",
+	"ShowLuckIcon": "Show luck icon", // TODO
+	"ShowLevelUpAnimation": "Show level up animation", // TODO
+	"ShowExperienceBar": "Show experience bar", // TODO
+	"AllowExperienceBarToFadeOut": "Allow experience bar to fade out", // TODO
+	"ShowExperienceGain": "Show experience gain", // TODO
+	"ShowLocationOfTownsPeople": "Show townspeople on map", // TODO
+	"ShowBirthdayIcon": "Show Birthday icon", // TODO
+	"ShowHeartFills": "Show heart fills", // TODO
+	"ShowAnimalsNeedPets": "Show when animals need pets", // TODO
+	"DisplayCalendarAndBillboard": "Show calendar/billboard button", // TODO
+	"ShowCropAndBarrelTooltip": "Show crop and barrel times", // TODO
+	"ShowItemEffectRanges": "Show scarecrow and sprinkler range", // TODO
+	"ShowExtraItemInformation": "Show item hover information", // TODO
+	"ShowTravelingMerchant": "Show Traveling Merchant", // TODO
+	"ShowRainyDay": "Show rainy days", // TODO
+	"ShowHarvestPricesInShop": "Show shop harvest prices", // TODO
+	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available" // TODO
+}
