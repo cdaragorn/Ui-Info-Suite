@@ -39,6 +39,7 @@ namespace UIInfoSuite.UIElements
             { "Desert", new KeyValuePair<int, int>(75, 40) },
             { "Cellar", new KeyValuePair<int, int>(470, 260) },
             { "JojaMart", new KeyValuePair<int, int>(872, 280) },
+            { "LeoTreeHouse", new KeyValuePair<int, int>(744, 128) },
             { "Tent", new KeyValuePair<int, int>(784, 128) },
             { "HaleyHouse", new KeyValuePair<int, int>(652, 408) },
             { "Hospital", new KeyValuePair<int, int>(677, 304) },
@@ -226,13 +227,8 @@ namespace UIInfoSuite.UIElements
 
         private void DrawSocialPageOptions()
         {
-            Game1.drawDialogueBox(
-                                Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset,
-                                Game1.activeClickableMenu.yPositionOnScreen,
-                                SocialPanelWidth,
-                                Game1.activeClickableMenu.height,
-                                false,
-                                true);
+            Game1.drawDialogueBox(Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset, Game1.activeClickableMenu.yPositionOnScreen,
+                SocialPanelWidth, Game1.activeClickableMenu.height, false, true);
 
             int slotPosition = (int)typeof(SocialPage)
                 .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -250,62 +246,23 @@ namespace UIInfoSuite.UIElements
                 yOffset += 112;
                 Color color = checkbox.isChecked ? Color.White : Color.Gray;
 
-                Game1.spriteBatch.Draw(
-                    Game1.mouseCursors,
-                    new Vector2(checkbox.bounds.X - 50, checkbox.bounds.Y),
-                    new Rectangle(80, 0, 16, 16),
-                    color,
-                    0.0f,
-                    Vector2.Zero,
-                    3f,
-                    SpriteEffects.None,
-                    1f);
+                Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(checkbox.bounds.X - 50, checkbox.bounds.Y), new Rectangle(80, 0, 16, 16),
+                    color, 0.0f, Vector2.Zero, 3f, SpriteEffects.None, 1f);
 
                 if (yOffset != 560)
                 {
-                    Game1.spriteBatch.Draw(
-                        Game1.staminaRect,
-                        new Rectangle(
-                            checkbox.bounds.X - 50,
-                            checkbox.bounds.Y + 72,
-                            SocialPanelWidth / 2 - 6,
-                            4),
-                        Color.SaddleBrown);
-
-                    Game1.spriteBatch.Draw(
-                        Game1.staminaRect,
-                        new Rectangle(
-                            checkbox.bounds.X - 50,
-                            checkbox.bounds.Y + 76,
-                            SocialPanelWidth / 2 - 6,
-                            4),
-                        Color.BurlyWood);
+                    Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50,  checkbox.bounds.Y + 72, SocialPanelWidth / 2 - 6, 4), Color.SaddleBrown);
+                    Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50, checkbox.bounds.Y + 76, SocialPanelWidth / 2 - 6, 4), Color.BurlyWood);
                 }
                 if (!Game1.options.hardwareCursor)
                 {
-                    Game1.spriteBatch.Draw(
-                        Game1.mouseCursors,
-                        new Vector2(
-                            Game1.getMouseX(),
-                            Game1.getMouseY()),
-                        Game1.getSourceRectForStandardTileSheet(
-                            Game1.mouseCursors,
-                            Game1.mouseCursor,
-                            16,
-                            16),
-                        Color.White,
-                        0.0f,
-                        Vector2.Zero,
-                        Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
-                        SpriteEffects.None,
-                        1f);
+                    Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                        Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, Game1.mouseCursor, 16, 16),
+                        Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f), SpriteEffects.None, 1f);
                 }
 
                 if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()))
-                    IClickableMenu.drawHoverText(
-                        Game1.spriteBatch,
-                        "Track on map",
-                        Game1.dialogueFont);
+                    IClickableMenu.drawHoverText(Game1.spriteBatch, "Track on map", Game1.dialogueFont);
             }
         }
 
