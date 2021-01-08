@@ -57,7 +57,7 @@ namespace UIInfoSuite.UIElements
             { "ElliottHouse", new KeyValuePair<int, int>(826, 550) },
             { "SebastianRoom", new KeyValuePair<int, int>(732, 148) },
             { "BathHouse_Entry", new KeyValuePair<int, int>(576, 60) },
-            { "Greenhouse", new KeyValuePair<int, int>(0, 0) },
+            { "Greenhouse", new KeyValuePair<int, int>(370, 270) },
             { "Sewer", new KeyValuePair<int, int>(380, 596) },
             { "WizardHouse", new KeyValuePair<int, int>(196, 352) },
             { "Trailer", new KeyValuePair<int, int>(780, 360) },
