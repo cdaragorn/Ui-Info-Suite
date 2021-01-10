@@ -23,9 +23,6 @@ namespace UIInfoSuite.UIElements
         public ShowWhenAnimalNeedsPet(IModHelper helper)
         {
             _helper = helper;
-
-            _helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
-            _helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
         }
 
         public void ToggleOption(bool showWhenAnimalNeedsPet)
