@@ -89,7 +89,7 @@ namespace UIInfoSuite.UIElements
                     Game1.questOfTheDay.currentObjective = "wat?";
 
                 Game1.activeClickableMenu =
-                    new Billboard(!(Game1.getMouseX() <
+                    new Billboard(!(Utility.ModifyCoordinateForUIScale(Game1.getMouseX()) <
                     _showBillboardButton.Value.bounds.X + _showBillboardButton.Value.bounds.Width / 2));
             }
         }
