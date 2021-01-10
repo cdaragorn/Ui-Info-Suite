@@ -23,7 +23,7 @@ namespace UIInfoSuite.UIElements
                 "Exp " + _experiencePoints,
                 Color.DarkSlateGray * (_alpha / 100f),
                 Color.PaleTurquoise * (_alpha / 100f),
-                new Vector2(_position.X - 28, _position.Y - 130),
+                Utility.ModifyCoordinatesForUIScale(new Vector2(_position.X - 28, _position.Y - 130)),
                 0.0f,
                 0.8f,
                 0.0f);

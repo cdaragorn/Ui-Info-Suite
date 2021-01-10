@@ -3,39 +3,44 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Network;
 using System;
 using System.Linq;
-using System.Timers;
 
 namespace UIInfoSuite.UIElements
 {
     class ShowWhenAnimalNeedsPet : IDisposable
     {
-        private readonly Timer _timer = new Timer();
-        private float _yMovementPerDraw;
-        private float _alpha;
+        private readonly PerScreen<float> _yMovementPerDraw = new PerScreen<float>();
+        private readonly PerScreen<float> _alpha = new PerScreen<float>();
+        private readonly PerScreen<int> _pauseTicks = new PerScreen<int>(createNewState:()=>60);
+
         private readonly IModHelper _helper;
 
         public ShowWhenAnimalNeedsPet(IModHelper helper)
         {
-            _timer.Elapsed += StartDrawingPetNeeds;
             _helper = helper;
+
+            _helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+            _helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
         }
 
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
-            _timer.Stop();
             _helper.Events.Player.Warped -= OnWarped;
             _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawAnimalHasProduct;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawNeedsPetTooltip;
+            _helper.Events.GameLoop.UpdateTicked -= UpdateTicked;
 
             if (showWhenAnimalNeedsPet)
             {
-                _timer.Start();
                 _helper.Events.Player.Warped += OnWarped;
                 _helper.Events.Display.RenderingHud += OnRenderingHud_DrawAnimalHasProduct;
+                _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
+                _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
             }
         }
 
@@ -100,14 +105,7 @@ namespace UIInfoSuite.UIElements
         {
             if (e.IsLocalPlayer)
             {
-                _timer.Stop();
-                StopDrawingPetNeeds();
-
-                if (e.NewLocation is AnimalHouse || e.NewLocation is Farm)
-                {
-                    _timer.Interval = 1000;
-                    _timer.Start();
-                }
+                _pauseTicks.Value = 60;
             }
         }
 
@@ -116,26 +114,12 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRenderingHud_DrawNeedsPetTooltip(object sender, RenderingHudEventArgs e)
         {
-            if (!Game1.eventUp && Game1.activeClickableMenu == null)
+            // If _pauseTicks is positive then don't render.
+            if (!Game1.eventUp && Game1.activeClickableMenu == null && (Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm) && _pauseTicks.Value <= 0)
             {
                 DrawIconForFarmAnimals();
                 DrawIconForPets();
             }
-        }
-
-        private void StartDrawingPetNeeds(object sender, ElapsedEventArgs e)
-        {
-            _timer.Stop();
-            _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
-            _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
-            _yMovementPerDraw = -3f;
-            _alpha = 1f;
-        }
-
-        private void StopDrawingPetNeeds()
-        {
-            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawNeedsPetTooltip;
-            _helper.Events.GameLoop.UpdateTicked -= UpdateTicked;
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
@@ -143,15 +127,21 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            // update pet draw
-            if (e.IsMultipleOf(2))
+            if (Game1.eventUp || Game1.activeClickableMenu != null || !(Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm))
+                return;
+
+            --_pauseTicks.Value;
+
+            // update pet draw. If _pauseTicks is positive then don't render.
+            if (e.IsMultipleOf(2) && _pauseTicks.Value <= 0)
             {
-                _yMovementPerDraw += 0.3f;
-                _alpha -= 0.014f;
-                if (_alpha < 0.1f)
+                _yMovementPerDraw.Value += 0.3f;
+                _alpha.Value -= 0.014f;
+                if (_alpha.Value < 0.1f)
                 {
-                    StopDrawingPetNeeds();
-                    _timer.Start();
+                    _pauseTicks.Value = 60;
+                    _yMovementPerDraw.Value = -3f;
+                    _alpha.Value = 1f;
                 }
             }
         }
@@ -180,9 +170,9 @@ namespace UIInfoSuite.UIElements
                         }
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
-                            new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
+                            Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw.Value)),
                             new Rectangle(32, 0, 16, 16),
-                            Color.White * _alpha,
+                            Color.White * _alpha.Value,
                             0.0f,
                             Vector2.Zero,
                             4f,
@@ -205,9 +195,9 @@ namespace UIInfoSuite.UIElements
                     positionAboveAnimal.Y -= 20f;
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors,
-                        new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
+                        Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw.Value)),
                         new Rectangle(32, 0, 16, 16),
-                        Color.White * _alpha,
+                        Color.White * _alpha.Value,
                         0.0f,
                         Vector2.Zero,
                         4f,

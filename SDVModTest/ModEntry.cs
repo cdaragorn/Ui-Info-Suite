@@ -50,7 +50,7 @@ namespace UIInfoSuite
 
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
         {
-
+            
         }
 
         /// <summary>Raised after the game returns to the title screen.</summary>
@@ -58,6 +58,9 @@ namespace UIInfoSuite
         /// <param name="e"></param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
+            // Unload unload if the main player quits.
+            if (Context.ScreenId != 0) return;
+            
             _modOptionsPageHandler?.Dispose();
             _modOptionsPageHandler = null;
         }
@@ -67,6 +70,9 @@ namespace UIInfoSuite
         /// <param name="e">The event arguments.</param>
         private void OnSaved(object sender, EventArgs e)
         {
+            // Only save for the main player.
+            if (Context.ScreenId != 0) return;
+
             if (string.IsNullOrWhiteSpace(_modDataFileName)) return;
             if (File.Exists(_modDataFileName))
                 File.Delete(_modDataFileName);
@@ -94,6 +100,9 @@ namespace UIInfoSuite
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            // Only load once for split screen.
+            if (Context.ScreenId != 0) return;
+
             try
             {
                 try

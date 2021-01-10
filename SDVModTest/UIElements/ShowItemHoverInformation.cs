@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using UIInfoSuite.Extensions;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -56,7 +57,7 @@ namespace UIInfoSuite.UIElements
             Game1.pixelZoom);
 
 
-        private Item _hoverItem;
+        private readonly PerScreen<Item> _hoverItem = new PerScreen<Item>();
         private CommunityCenter _communityCenter;
         private Dictionary<String, String> _bundleData;
         private LibraryMuseum _libraryMuseum;
@@ -99,7 +100,7 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRendering(object sender, EventArgs e)
         {
-            _hoverItem = Tools.GetHoveredItem();
+            _hoverItem.Value = Tools.GetHoveredItem();
         }
 
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear over the HUD.</summary>
@@ -178,10 +179,12 @@ namespace UIInfoSuite.UIElements
 
         private void DrawAdvancedTooltip()
         {
-            if (_hoverItem == null || _hoverItem.Name == "Scythe" || _hoverItem is FishingRod) return;
+            var hoverItem = _hoverItem.Value;
+
+            if (hoverItem == null || hoverItem.Name == "Scythe" || hoverItem is FishingRod) return;
             //String text = string.Empty;
             //String extra = string.Empty;
-            var truePrice = Tools.GetTruePrice(_hoverItem);
+            var truePrice = Tools.GetTruePrice(hoverItem);
             var itemPrice = 0;
             var stackPrice = 0;
 
@@ -196,34 +199,34 @@ namespace UIInfoSuite.UIElements
                 //    spaces.Append(" ");
                 //}
                 //text = "\n" + spaces.ToString() + (truePrice / 2);
-                if (_hoverItem.Stack > 1)
+                if (hoverItem.Stack > 1)
                 {
-                    stackPrice = (itemPrice * _hoverItem.Stack);
-                    //text += " (" + (truePrice / 2 * _hoverItem.getStack()) + ")";
+                    stackPrice = (itemPrice * hoverItem.Stack);
+                    //text += " (" + (truePrice / 2 * hoverItem.getStack()) + ")";
                 }
             }
             var cropPrice = 0;
 
             //bool flag = false;
-            if (_hoverItem is Object o && 
+            if (hoverItem is Object o && 
                 o?.Type == "Seeds" &&
                 itemPrice > 0 &&
-                (_hoverItem.Name != "Mixed Seeds" ||
-                 _hoverItem.Name != "Winter Seeds"))
+                (hoverItem.Name != "Mixed Seeds" ||
+                 hoverItem.Name != "Winter Seeds"))
             {
-                var itemObject = new Object(new Debris(new Crop(_hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value, Game1.player.position, Game1.player.position).chunkType.Value, 1);
+                var itemObject = new Object(new Debris(new Crop(hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value, Game1.player.position, Game1.player.position).chunkType.Value, 1);
                 //extra += "    " + itemObject.Price;
                 cropPrice = itemObject.Price;
                 //flag = true;
             }
 
-            //String hoverTile = _hoverItem.DisplayName + text + extra;
-            //String description = _hoverItem.getDescription();
-            //Vector2 vector2 = DrawTooltip(Game1.spriteBatch, _hoverItem.getDescription(), hoverTile, _hoverItem);
+            //String hoverTile = hoverItem.DisplayName + text + extra;
+            //String description = hoverItem.getDescription();
+            //Vector2 vector2 = DrawTooltip(Game1.spriteBatch, hoverItem.getDescription(), hoverTile, hoverItem);
             //vector2.X += 30;
             //vector2.Y -= 10;
 
-            var requiredBundleName = (from requiredBundle in _prunedRequiredBundles where requiredBundle.Value.Contains(_hoverItem.ParentSheetIndex) && !_hoverItem.Name.Contains("arecrow") && _hoverItem.Name != "Chest" && _hoverItem.Name != "Recycling Machine" && _hoverItem.Name != "Solid Gold Lewis" select requiredBundle.Key).FirstOrDefault();
+            var requiredBundleName = (from requiredBundle in _prunedRequiredBundles where requiredBundle.Value.Contains(hoverItem.ParentSheetIndex) && !hoverItem.Name.Contains("arecrow") && hoverItem.Name != "Chest" && hoverItem.Name != "Recycling Machine" && hoverItem.Name != "Solid Gold Lewis" select requiredBundle.Key).FirstOrDefault();
 
 
             var bundleTextWidth = 0;
@@ -390,7 +393,7 @@ namespace UIInfoSuite.UIElements
                 }
             }
 
-            if (_libraryMuseum.isItemSuitableForDonation(_hoverItem))
+            if (_libraryMuseum.isItemSuitableForDonation(hoverItem))
             {
                 _museumIcon.bounds.X = (int)windowPos.X - 30;
                 _museumIcon.bounds.Y = (int)windowPos.Y - 60 + windowHeight;
@@ -430,7 +433,7 @@ namespace UIInfoSuite.UIElements
                 _bundleIcon.draw(Game1.spriteBatch);
             }
 
-            if (_hoverItem is Object obj)
+            if (hoverItem is Object obj)
             {
                 if (obj.countsForShippedCollection() && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex))
                 {
@@ -455,7 +458,7 @@ namespace UIInfoSuite.UIElements
         {
             if (Game1.activeClickableMenu is ItemGrabMenu)
             {
-                ((MenuWithInventory) Game1.activeClickableMenu).hoveredItem = _hoverItem;
+                ((MenuWithInventory) Game1.activeClickableMenu).hoveredItem = _hoverItem.Value;
             }
         }
 

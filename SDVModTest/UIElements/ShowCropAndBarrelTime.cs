@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using UIInfoSuite.Extensions;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
@@ -17,9 +18,9 @@ namespace UIInfoSuite.UIElements
     class ShowCropAndBarrelTime : IDisposable
     {
         private readonly Dictionary<int, string> _indexOfCropNames = new Dictionary<int, string>();
-        private StardewValley.Object _currentTile;
-        private TerrainFeature _terrain;
-        private Building _currentTileBuilding = null;
+        private readonly PerScreen<StardewValley.Object> _currentTile = new PerScreen<StardewValley.Object>();
+        private readonly PerScreen<TerrainFeature> _terrain = new PerScreen<TerrainFeature>();
+        private readonly PerScreen<Building> _currentTileBuilding = new PerScreen<Building>();
         private readonly IModHelper _helper;
 
         public ShowCropAndBarrelTime(IModHelper helper)
@@ -48,35 +49,31 @@ namespace UIInfoSuite.UIElements
                 return;
 
             // get tile under cursor
-            _currentTileBuilding = Game1.currentLocation is BuildableGameLocation buildableLocation
+            _currentTileBuilding.Value = Game1.currentLocation is BuildableGameLocation buildableLocation
                 ? buildableLocation.getBuildingAt(Game1.currentCursorTile)
                 : null;
+
             if (Game1.currentLocation != null)
             {
-                if (Game1.currentLocation.Objects == null ||
-                    !Game1.currentLocation.Objects.TryGetValue(Game1.currentCursorTile, out _currentTile))
-                {
-                    _currentTile = null;
-                }
+                if (Game1.currentLocation.Objects != null && Game1.currentLocation.Objects.TryGetValue(Game1.currentCursorTile, out var currentTile))
+                    _currentTile.Value = currentTile;
+                else
+                    _currentTile.Value = null;
 
-                if (Game1.currentLocation.terrainFeatures == null ||
-                    !Game1.currentLocation.terrainFeatures.TryGetValue(Game1.currentCursorTile, out _terrain))
+                if (Game1.currentLocation.terrainFeatures != null && Game1.currentLocation.terrainFeatures.TryGetValue(Game1.currentCursorTile, out var terrain))
+                    _terrain.Value = terrain;
+                else
                 {
-                    if (_currentTile is IndoorPot pot &&
-                        pot.hoeDirt.Value != null)
-                    {
-                        _terrain = pot.hoeDirt.Value;
-                    }
+                    if (_currentTile.Value is IndoorPot pot && pot.hoeDirt.Value != null)
+                        _terrain.Value = pot.hoeDirt.Value;
                     else
-                    {
-                        _terrain = null;
-                    }
+                        _terrain.Value = null;
                 }
             }
             else
             {
-                _currentTile = null;
-                _terrain = null;
+                _currentTile.Value = null;
+                _terrain.Value = null;
             }
         }
 
@@ -90,10 +87,13 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
+            var currentTileBuilding = _currentTileBuilding.Value;
+            var currentTile = _currentTile.Value;
+            var terrain = _terrain.Value;
             // draw hover tooltip
-            if (_currentTileBuilding != null)
+            if (currentTileBuilding != null)
             {
-                if (_currentTileBuilding is Mill millBuilding)
+                if (currentTileBuilding is Mill millBuilding)
                 {
                     if (millBuilding.input.Value != null)
                     {
@@ -138,29 +138,29 @@ namespace UIInfoSuite.UIElements
                     }
                 }
             }
-            else if (_currentTile != null &&
-                (!_currentTile.bigCraftable.Value ||
-                _currentTile.MinutesUntilReady > 0))
+            else if (currentTile != null &&
+                (!currentTile.bigCraftable.Value ||
+                currentTile.MinutesUntilReady > 0))
             {
-                if (_currentTile.bigCraftable.Value &&
-                    _currentTile.MinutesUntilReady > 0 &&
-                    _currentTile.heldObject.Value != null &&
-                    _currentTile.Name != "Heater")
+                if (currentTile.bigCraftable.Value &&
+                    currentTile.MinutesUntilReady > 0 &&
+                    currentTile.heldObject.Value != null &&
+                    currentTile.Name != "Heater")
                 {
                     var hoverText = new StringBuilder();
-                    hoverText.AppendLine(_currentTile.heldObject.Value.DisplayName);
+                    hoverText.AppendLine(currentTile.heldObject.Value.DisplayName);
                     
-                    if (_currentTile is Cask)
+                    if (currentTile is Cask)
                     {
-                        var currentCask = _currentTile as Cask;
+                        var currentCask = currentTile as Cask;
                         hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
                     }
                     else
                     {
-                        var hours = _currentTile.MinutesUntilReady / 60;
-                        var minutes = _currentTile.MinutesUntilReady % 60;
+                        var hours = currentTile.MinutesUntilReady / 60;
+                        var minutes = currentTile.MinutesUntilReady % 60;
                         if (hours > 0)
                             hoverText.Append(hours).Append(" ")
                                 .Append(_helper.SafeGetString(
@@ -176,11 +176,11 @@ namespace UIInfoSuite.UIElements
                         Game1.smallFont);
                 }
             }
-            else if (_terrain != null)
+            else if (terrain != null)
             {
-                if (_terrain is HoeDirt)
+                if (terrain is HoeDirt)
                 {
-                    var hoeDirt = _terrain as HoeDirt;
+                    var hoeDirt = terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
                         !hoeDirt.crop.dead.Value)
                     {
@@ -232,9 +232,9 @@ namespace UIInfoSuite.UIElements
                         }
                     }
                 }
-                else if (_terrain is FruitTree)
+                else if (terrain is FruitTree)
                 {
-                    var tree = _terrain as FruitTree;
+                    var tree = terrain as FruitTree;
                     var text = new StardewValley.Object(new Debris(tree.indexOfFruit.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                     if (tree.daysUntilMature.Value > 0)
                     {

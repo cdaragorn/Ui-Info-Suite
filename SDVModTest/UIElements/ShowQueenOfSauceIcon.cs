@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -18,9 +19,9 @@ namespace UIInfoSuite.UIElements
         private Dictionary<string, string> _recipes = new Dictionary<string, string>();
         private string _todaysRecipe;
         private NPC _gus;
-        private bool _drawQueenOfSauceIcon = false;
+        private readonly PerScreen<bool> _drawQueenOfSauceIcon = new PerScreen<bool>();
         private bool _drawDishOfDayIcon = false;
-        private ClickableTextureComponent _queenOfSauceIcon;
+        private readonly PerScreen<ClickableTextureComponent> _queenOfSauceIcon = new PerScreen<ClickableTextureComponent>();
         private readonly IModHelper _helper;
 
         public void ToggleOption(bool showQueenOfSauceIcon)
@@ -29,6 +30,7 @@ namespace UIInfoSuite.UIElements
             _helper.Events.Display.RenderedHud -= OnRenderedHud;
             _helper.Events.GameLoop.DayStarted -= OnDayStarted;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
+            _helper.Events.GameLoop.SaveLoaded -= OnSaveLoaded;
 
             if (showQueenOfSauceIcon)
             {
@@ -38,6 +40,8 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderingHud += OnRenderingHud;
                 _helper.Events.Display.RenderedHud += OnRenderedHud;
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+                _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
+                _helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             }
         }
 
@@ -47,8 +51,8 @@ namespace UIInfoSuite.UIElements
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             // check if learned recipe
-            if (e.IsOneSecond && _drawQueenOfSauceIcon && Game1.player.knowsRecipe(_todaysRecipe))
-                _drawQueenOfSauceIcon = false;
+            if (e.IsOneSecond && _drawQueenOfSauceIcon.Value && Game1.player.knowsRecipe(_todaysRecipe))
+                _drawQueenOfSauceIcon.Value = false;
         }
 
         public ShowQueenOfSauceIcon(IModHelper helper)
@@ -148,16 +152,16 @@ namespace UIInfoSuite.UIElements
             // draw icon
             if (!Game1.eventUp)
             {
-                if (_drawQueenOfSauceIcon)
+                if (_drawQueenOfSauceIcon.Value)
                 {
                     var iconPosition = IconHandler.Handler.GetNewIconPosition();
 
-                    _queenOfSauceIcon = new ClickableTextureComponent(
+                    _queenOfSauceIcon.Value = new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
                         Game1.mouseCursors,
                         new Rectangle(609, 361, 28, 28),
                         1.3f);
-                    _queenOfSauceIcon.draw(Game1.spriteBatch);
+                    _queenOfSauceIcon.Value.draw(Game1.spriteBatch);
                 }
 
                 if (_drawDishOfDayIcon)
@@ -209,8 +213,8 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_drawQueenOfSauceIcon &&
-                _queenOfSauceIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            if (_drawQueenOfSauceIcon.Value &&
+                _queenOfSauceIcon.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,
@@ -233,6 +237,11 @@ namespace UIInfoSuite.UIElements
             CheckForNewRecipe();
         }
 
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            CheckForNewRecipe();
+        }
+
         private void CheckForNewRecipe()
         {
             var tv = new TV();
@@ -245,7 +254,7 @@ namespace UIInfoSuite.UIElements
             if (Game1.player.cookingRecipes.Count() > numRecipesKnown)
                 Game1.player.cookingRecipes.Remove(_todaysRecipe);
 
-            _drawQueenOfSauceIcon = (Game1.dayOfMonth % 7 == 0 || (Game1.dayOfMonth - 3) % 7 == 0) &&
+            _drawQueenOfSauceIcon.Value = (Game1.dayOfMonth % 7 == 0 || (Game1.dayOfMonth - 3) % 7 == 0) &&
                 Game1.stats.DaysPlayed > 5 && 
                 !Game1.player.knowsRecipe(_todaysRecipe);
             //_drawDishOfDayIcon = !Game1.player.knowsRecipe(Game1.dishOfTheDay.Name);
