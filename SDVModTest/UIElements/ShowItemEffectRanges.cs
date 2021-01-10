@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -12,7 +13,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowItemEffectRanges : IDisposable
     {
-        private readonly List<Point> _effectiveArea = new List<Point>();
+        private readonly PerScreen<List<Point>> _effectiveArea = new PerScreen<List<Point>>(createNewState: () => new List<Point>());
         private readonly ModConfig _modConfig;
         private readonly IModEvents _events;
 
@@ -75,7 +76,7 @@ namespace UIInfoSuite.UIElements
                 try
                 {
                     // check draw tile outlines
-                    _effectiveArea.Clear();
+                    _effectiveArea.Value.Clear();
                 }
                 finally
                 {
@@ -201,17 +202,20 @@ namespace UIInfoSuite.UIElements
                 try
                 {
                     // draw tile outlines
-                    foreach (var point in _effectiveArea)
+                    foreach (var point in _effectiveArea.Value)
+                    { 
+                        var position = new Vector2(point.X * Utility.ModifyCoordinateFromUIScale(Game1.tileSize), point.Y * Utility.ModifyCoordinateFromUIScale(Game1.tileSize));
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
-                            Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
+                            Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(Utility.ModifyCoordinatesForUIScale(position))),
                             new Rectangle(194, 388, 16, 16),
                             Color.White * 0.7f,
                             0.0f,
                             Vector2.Zero,
-                            Game1.pixelZoom,
+                            Utility.ModifyCoordinateForUIScale(Game1.pixelZoom),
                             SpriteEffects.None,
                             0.01f);
+                    }
                 }
                 finally
                 {
@@ -234,7 +238,7 @@ namespace UIInfoSuite.UIElements
                         for (var j = 0; j < highlightedLocation[i].Length; ++j)
                         {
                             if (highlightedLocation[i][j] == 1)
-                                _effectiveArea.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
+                                _effectiveArea.Value.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
                         }
                     }
                 }
