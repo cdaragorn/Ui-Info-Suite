@@ -80,10 +80,9 @@ namespace UIInfoSuite.UIElements
 
         private void ActivateBillboard()
         {
-            if (Game1.activeClickableMenu is GameMenu &&
-                (Game1.activeClickableMenu as GameMenu).currentTab == 0 &&
-                _showBillboardButton.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY())
-                && _heldItem.Value == null)
+            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 0
+                && _heldItem.Value == null
+                && _showBillboardButton.Value.containsPoint((int)Utility.ModifyCoordinateForUIScale(Game1.getMouseX()), (int)Utility.ModifyCoordinateForUIScale(Game1.getMouseY())))
             {
                 if (Game1.questOfTheDay != null &&
                     string.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
@@ -100,9 +99,8 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRenderedActiveMenu(object sender, EventArgs e)
         {
-            if (_hoverItem.Value == null &&
-                Game1.activeClickableMenu is GameMenu gameMenu &&
-                gameMenu.currentTab == 0
+            if (_hoverItem.Value == null
+                && Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 0
                 && _heldItem.Value == null)
             {
                 var billboardButton = _showBillboardButton.Value;
