@@ -133,7 +133,7 @@ namespace UIInfoSuite.UIElements
         private void PopulateRequiredBundles()
         {
             _prunedRequiredBundles.Clear();
-            if (!_communityCenter.areAllAreasComplete() && !Game1.player.mailReceived.Contains("JojaMember"))
+            if (!Game1.player.mailReceived.Contains("JojaMember"))
             {
                 foreach (var bundle in _bundleData)
                 {
@@ -149,6 +149,7 @@ namespace UIInfoSuite.UIElements
                         case "Boiler Room": roomNum = 3; break;
                         case "Vault": roomNum = 4; break;
                         case "Bulletin Board": roomNum = 5; break;
+                        case "Abandoned Joja Mart": roomNum = 6; break;
                         default: continue;
                     }
 
