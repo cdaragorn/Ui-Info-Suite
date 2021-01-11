@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Quests;
 using System;
@@ -17,15 +18,17 @@ namespace UIInfoSuite.UIElements
 {
     class LocationOfTownsfolk : IDisposable
     {
-        #region Members
-        private List<NPC> _townsfolk = new List<NPC>();
-        private List<OptionsCheckbox> _checkboxes = new List<OptionsCheckbox>();
-        private const int SocialPanelWidth = 190;
-        private const int SocialPanelXOffset = 160;
+        #region Properties
         private SocialPage _socialPage;
         private string[] _friendNames;
+        private List<NPC> _townsfolk = new List<NPC>();
+        private List<OptionsCheckbox> _checkboxes = new List<OptionsCheckbox>();
+
         private readonly IDictionary<string, string> _options;
         private readonly IModHelper _helper;
+
+        private const int SocialPanelWidth = 190;
+        private const int SocialPanelXOffset = 160;
 
         private static readonly Dictionary<string, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
         {
@@ -33,9 +36,10 @@ namespace UIInfoSuite.UIElements
             { "BathHouse_Pool", new KeyValuePair<int, int>(576, 60) },
             { "WizardHouseBasement", new KeyValuePair<int, int>(196, 352) },
             { "BugLand", new KeyValuePair<int, int>(0, 0) },
-            { "Desert", new KeyValuePair<int, int>(60, 92) },
-            { "Cellar", new KeyValuePair<int, int>(0, 0) },
+            { "Desert", new KeyValuePair<int, int>(75, 40) },
+            { "Cellar", new KeyValuePair<int, int>(470, 260) },
             { "JojaMart", new KeyValuePair<int, int>(872, 280) },
+            { "LeoTreeHouse", new KeyValuePair<int, int>(744, 128) },
             { "Tent", new KeyValuePair<int, int>(784, 128) },
             { "HaleyHouse", new KeyValuePair<int, int>(652, 408) },
             { "Hospital", new KeyValuePair<int, int>(677, 304) },
@@ -47,14 +51,14 @@ namespace UIInfoSuite.UIElements
             { "SeedShop", new KeyValuePair<int, int>(696, 296) },
             { "Blacksmith", new KeyValuePair<int, int>(852, 388) },
             { "JoshHouse", new KeyValuePair<int, int>(740, 320) },
-            { "SandyHouse", new KeyValuePair<int, int>(40, 40) },
+            { "SandyHouse", new KeyValuePair<int, int>(40, 115) },
             { "Tunnel", new KeyValuePair<int, int>(0, 0) },
             { "CommunityCenter", new KeyValuePair<int, int>(692, 204) },
             { "Backwoods", new KeyValuePair<int, int>(460, 156) },
             { "ElliottHouse", new KeyValuePair<int, int>(826, 550) },
             { "SebastianRoom", new KeyValuePair<int, int>(732, 148) },
             { "BathHouse_Entry", new KeyValuePair<int, int>(576, 60) },
-            { "Greenhouse", new KeyValuePair<int, int>(0, 0) },
+            { "Greenhouse", new KeyValuePair<int, int>(370, 270) },
             { "Sewer", new KeyValuePair<int, int>(380, 596) },
             { "WizardHouse", new KeyValuePair<int, int>(196, 352) },
             { "Trailer", new KeyValuePair<int, int>(780, 360) },
@@ -81,46 +85,70 @@ namespace UIInfoSuite.UIElements
             { "WitchWarpCave", new KeyValuePair<int, int>(0, 0) },
             { "Club", new KeyValuePair<int, int>(60, 92) }
         };
-
         #endregion
 
+        #region Lifecycle
         public LocationOfTownsfolk(IModHelper helper, IDictionary<string, string> options)
         {
             _helper = helper;
             _options = options;
         }
 
+        public void ToggleShowNPCLocationsOnMap(bool showLocations)
+        {
+            InitializeProperties();
+            _helper.Events.Display.MenuChanged -= OnMenuChanged;
+            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawSocialPageOptions;
+            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawNPCLocationsOnMap;
+            _helper.Events.Input.ButtonPressed -= OnButtonPressed_ForSocialPage;
+
+            if (showLocations)
+            {
+                _helper.Events.Display.MenuChanged += OnMenuChanged;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawSocialPageOptions;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawNPCLocationsOnMap;
+                _helper.Events.Input.ButtonPressed += OnButtonPressed_ForSocialPage;
+            }
+        }
+
         public void Dispose()
         {
             ToggleShowNPCLocationsOnMap(false);
         }
+        #endregion
 
-        public void ToggleShowNPCLocationsOnMap(bool showLocations)
+        #region Event subscriptions
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            ExtendMenuIfNeeded();
-            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawSocialPageOptions;
-            _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawNPCLocationsOnMap;
-            _helper.Events.Input.ButtonPressed -= OnButtonPressed_ForSocialPage;
-            _helper.Events.Display.MenuChanged -= OnMenuChanged;
+            InitializeProperties();
+        }
 
-            if (showLocations)
+        private void OnButtonPressed_ForSocialPage(object sender, ButtonPressedEventArgs e)
+        {
+            if (Game1.activeClickableMenu is GameMenu && (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA))
             {
-                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawSocialPageOptions;
-                _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawNPCLocationsOnMap;
-                _helper.Events.Input.ButtonPressed += OnButtonPressed_ForSocialPage;
-                _helper.Events.Display.MenuChanged += OnMenuChanged;
+                CheckSelectedBox();
             }
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnRenderedActiveMenu_DrawSocialPageOptions(object sender, RenderedActiveMenuEventArgs e)
         {
-            ExtendMenuIfNeeded();
+            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 2)
+            {
+                DrawSocialPageOptions();
+            }
         }
+        private void OnRenderedActiveMenu_DrawNPCLocationsOnMap(object sender, RenderedActiveMenuEventArgs e)
+        {
+            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 3)
+            {
+                DrawNPCLocationsOnMap(gameMenu);
+            }
+        }
+        #endregion
 
-        private void ExtendMenuIfNeeded()
+        #region Logic
+        private void InitializeProperties()
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu)
             {
@@ -135,6 +163,7 @@ namespace UIInfoSuite.UIElements
                         break;
                     }
                 }
+
                 _townsfolk.Clear();
                 foreach (var location in Game1.locations)
                 {
@@ -144,6 +173,7 @@ namespace UIInfoSuite.UIElements
                             _townsfolk.Add(npc);
                     }
                 }
+
                 _checkboxes.Clear();
                 foreach (var friendName in _friendNames)
                 {
@@ -176,348 +206,200 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnButtonPressed_ForSocialPage(object sender, ButtonPressedEventArgs e)
-        {
-            if (Game1.activeClickableMenu is GameMenu && (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA))
-            {
-                CheckSelectedBox();
-            }
-        }
-
         private void CheckSelectedBox()
         {
-            if (Game1.activeClickableMenu is GameMenu gameMenu)
-            {
-                int slotPosition = (int)typeof(SocialPage)
-                    .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .GetValue(_socialPage);
+            int slotPosition = (int)typeof(SocialPage)
+                .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(_socialPage);
 
-                for (int i = slotPosition; i < slotPosition + 5; ++i)
+            for (int i = slotPosition; i < slotPosition + 5; ++i)
+            {
+                OptionsCheckbox checkbox = _checkboxes[i];
+                if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()) &&
+                    !checkbox.greyedOut)
                 {
-                    OptionsCheckbox checkbox = _checkboxes[i];
-                    if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()) &&
-                        !checkbox.greyedOut)
-                    {
-                        checkbox.isChecked = !checkbox.isChecked;
-                        _options[checkbox.whichOption.ToString()] = checkbox.isChecked.ToString();
-                        Game1.playSound("drumkit6");
-                    }
+                    checkbox.isChecked = !checkbox.isChecked;
+                    _options[checkbox.whichOption.ToString()] = checkbox.isChecked.ToString();
+                    Game1.playSound("drumkit6");
                 }
             }
         }
 
-        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnRenderedActiveMenu_DrawNPCLocationsOnMap(object sender, RenderedActiveMenuEventArgs e)
+        private void DrawSocialPageOptions()
         {
-            if (Game1.activeClickableMenu is GameMenu gameMenu)
+            Game1.drawDialogueBox(Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset, Game1.activeClickableMenu.yPositionOnScreen,
+                SocialPanelWidth, Game1.activeClickableMenu.height, false, true);
+
+            int slotPosition = (int)typeof(SocialPage)
+                .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(_socialPage);
+            int yOffset = 0;
+
+            for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
             {
-                if (gameMenu.currentTab == 3)
+                OptionsCheckbox checkbox = _checkboxes[i];
+                checkbox.bounds.X = Game1.activeClickableMenu.xPositionOnScreen - 60;
+
+                checkbox.bounds.Y = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
+
+                checkbox.draw(Game1.spriteBatch, 0, 0);
+                yOffset += 112;
+                Color color = checkbox.isChecked ? Color.White : Color.Gray;
+
+                Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(checkbox.bounds.X - 50, checkbox.bounds.Y), new Rectangle(80, 0, 16, 16),
+                    color, 0.0f, Vector2.Zero, 3f, SpriteEffects.None, 1f);
+
+                if (yOffset != 560)
                 {
-                    List<string> namesToShow = new List<string>();
-                    foreach (var character in _townsfolk)
-                    {
-                        try
-                        {
-                            int hashCode = character.Name.GetHashCode();
-
-                            bool drawCharacter = _options.SafeGet(hashCode.ToString()).SafeParseBool();
-
-                            if (drawCharacter)
-                            {
-                                KeyValuePair<int, int> location = new KeyValuePair<int, int>((int)character.Position.X, (int)character.position.Y);
-                                string locationName = character.currentLocation?.Name ?? character.DefaultMap;
-
-                                switch (locationName)
-                                {
-                                    case "Town":
-                                    case "Forest":
-                                        {
-                                            int xStart = 0;
-                                            int yStart = 0;
-                                            int areaWidth = 0;
-                                            int areaHeight = 0;
-
-                                            switch (locationName)
-                                            {
-                                                case "Town":
-                                                    {
-                                                        xStart = 595;
-                                                        yStart = 163;
-                                                        areaWidth = 345;
-                                                        areaHeight = 330;
-                                                        break;
-                                                    }
-
-                                                case "Forest":
-                                                    {
-                                                        xStart = 183;
-                                                        yStart = 378;
-                                                        areaWidth = 319;
-                                                        areaHeight = 261;
-                                                        break;
-                                                    }
-                                            }
-                                            xTile.Map map = character.currentLocation.Map;
-
-                                            float xScale = (float)areaWidth / (float)map.DisplayWidth;
-                                            float yScale = (float)areaHeight / (float)map.DisplayHeight;
-
-                                            float scaledX = character.position.X * xScale;
-                                            float scaledY = character.position.Y * yScale;
-                                            int xPos = (int)scaledX + xStart;
-                                            int yPos = (int)scaledY + yStart;
-                                            location = new KeyValuePair<int, int>(xPos, yPos);
-
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            _mapLocations.TryGetValue(locationName, out location);
-                                            break;
-                                        }
-                                }
-
-                                //if (character.currentLocation.Name == "Town")
-                                //{
-                                //    string locationName = character.currentLocation.Name;
-                                //    xTile.Map map = character.currentLocation.Map;
-                                //    int xStart = 595;
-                                //    int yStart = 163;
-                                //    int townWidth = 345;
-                                //    int townHeight = 330;
-
-                                //    float xScale = (float)townWidth / (float)map.DisplayWidth;
-                                //    float yScale = (float)townHeight / (float)map.DisplayHeight;
-
-                                //    float scaledX = character.position.X * xScale;
-                                //    float scaledY = character.position.Y * yScale;
-                                //    int xPos = (int)scaledX + xStart;
-                                //    int yPos = (int)scaledY + yStart;
-                                //    location = new KeyValuePair<int, int>(xPos, yPos);
-                                //}
-                                //else
-                                //{
-                                //    _mapLocations.TryGetValue(character.currentLocation.name, out location);
-                                //}
-                                Rectangle headShot = character.GetHeadShot();
-                                int xBase = Game1.activeClickableMenu.xPositionOnScreen - 158;
-                                int yBase = Game1.activeClickableMenu.yPositionOnScreen - 40;
-
-                                int x = xBase + location.Key;
-                                int y = yBase + location.Value;
-
-                                Color color = character.CurrentDialogue.Count <= 0 ?
-                                    Color.Gray : Color.White;
-                                ClickableTextureComponent textureComponent =
-                                    new ClickableTextureComponent(
-                                        character.Name,
-                                        new Rectangle(x, y, 0, 0),
-                                        null,
-                                        character.Name,
-                                        character.Sprite.Texture,
-                                        headShot,
-                                        2.3f);
-
-                                float headShotScale = 2f;
-                                Game1.spriteBatch.Draw(
-                                    character.Sprite.Texture,
-                                    new Vector2(x, y),
-                                    new Rectangle?(headShot),
-                                    color,
-                                    0.0f,
-                                    Vector2.Zero,
-                                    headShotScale,
-                                    SpriteEffects.None,
-                                    1f);
-
-                                int mouseX = Game1.getMouseX();
-                                int mouseY = Game1.getMouseY();
-
-                                if (mouseX >= x && mouseX <= x + headShot.Width * headShotScale &&
-                                    mouseY >= y && mouseY <= y + headShot.Height * headShotScale)
-                                {
-                                    namesToShow.Add(character.displayName);
-                                }
-
-                                foreach (var quest in Game1.player.questLog)
-                                {
-                                    if (quest.accepted.Value && quest.dailyQuest.Value && !quest.completed.Value)
-                                    {
-                                        bool isQuestTarget = false;
-                                        switch (quest.questType.Value)
-                                        {
-                                            case 3: isQuestTarget = (quest as ItemDeliveryQuest).target.Value == character.Name; break;
-                                            case 4: isQuestTarget = (quest as SlayMonsterQuest).target.Value == character.Name; break;
-                                            case 7: isQuestTarget = (quest as FishingQuest).target.Value == character.Name; break;
-                                            case 10: isQuestTarget = (quest as ResourceCollectionQuest).target.Value == character.Name; break;
-                                        }
-
-                                        if (isQuestTarget)
-                                            Game1.spriteBatch.Draw(
-                                                Game1.mouseCursors,
-                                                new Vector2(x + 10, y - 12),
-                                                new Rectangle(394, 495, 4, 10),
-                                                Color.White,
-                                                0.0f,
-                                                Vector2.Zero,
-                                                3f,
-                                                SpriteEffects.None,
-                                                1f);
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ModEntry.MonitorObject.Log(ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
-                        }
-                    }
-
-                    if (namesToShow.Count > 0)
-                    {
-                        StringBuilder text = new StringBuilder();
-                        int longestLength = 0;
-                        foreach (string name in namesToShow)
-                        {
-                            text.AppendLine(name);
-                            longestLength = Math.Max(longestLength, (int)Math.Ceiling(Game1.smallFont.MeasureString(name).Length()));
-                        }
-
-                        int windowHeight = Game1.smallFont.LineSpacing * namesToShow.Count + 25;
-                        Vector2 windowPos = new Vector2(Game1.getMouseX() + 40, Game1.getMouseY() - windowHeight);
-                        IClickableMenu.drawTextureBox(
-                            Game1.spriteBatch,
-                            (int)windowPos.X,
-                            (int)windowPos.Y,
-                            longestLength + 30,
-                            Game1.smallFont.LineSpacing * namesToShow.Count + 25,
-                            Color.White);
-
-                        Game1.spriteBatch.DrawString(
-                            Game1.smallFont,
-                            text,
-                            new Vector2(windowPos.X + 17, windowPos.Y + 17),
-                            Game1.textShadowColor);
-
-                        Game1.spriteBatch.DrawString(
-                            Game1.smallFont,
-                            text,
-                            new Vector2(windowPos.X + 15, windowPos.Y + 15),
-                            Game1.textColor);
-                    }
-
-                    //The cursor needs to show up in front of the character faces
-                    Tools.DrawMouseCursor();
-
-                    string hoverText = (string)typeof(MapPage)
-                        .GetField(
-                            "hoverText",
-                            BindingFlags.Instance | BindingFlags.NonPublic)
-                        .GetValue(gameMenu.pages[gameMenu.currentTab]);
-
-                    IClickableMenu.drawHoverText(
-                        Game1.spriteBatch,
-                        hoverText,
-                        Game1.smallFont);
+                    Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50,  checkbox.bounds.Y + 72, SocialPanelWidth / 2 - 6, 4), Color.SaddleBrown);
+                    Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50, checkbox.bounds.Y + 76, SocialPanelWidth / 2 - 6, 4), Color.BurlyWood);
                 }
+                if (!Game1.options.hardwareCursor)
+                {
+                    Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(Game1.getMouseX(), Game1.getMouseY()),
+                        Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, Game1.mouseCursor, 16, 16),
+                        Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f), SpriteEffects.None, 1f);
+                }
+
+                if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()))
+                    IClickableMenu.drawHoverText(Game1.spriteBatch, "Track on map", Game1.dialogueFont);
             }
         }
 
-        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnRenderedActiveMenu_DrawSocialPageOptions(object sender, RenderedActiveMenuEventArgs e)
+        private void DrawNPCLocationsOnMap(GameMenu gameMenu)
         {
-            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 2)
+            List<string> namesToShow = new List<string>();
+            foreach (var character in _townsfolk)
             {
-                Game1.drawDialogueBox(
-                    Game1.activeClickableMenu.xPositionOnScreen - SocialPanelXOffset,
-                    Game1.activeClickableMenu.yPositionOnScreen,
-                    SocialPanelWidth,
-                    Game1.activeClickableMenu.height,
-                    false,
-                    true);
-
-                int slotPosition = (int)typeof(SocialPage)
-                    .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .GetValue(_socialPage);
-                int yOffset = 0;
-
-                for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
+                try
                 {
-                    OptionsCheckbox checkbox = _checkboxes[i];
-                    checkbox.bounds.X = Game1.activeClickableMenu.xPositionOnScreen - 60;
-
-                    checkbox.bounds.Y = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
-
-                    checkbox.draw(Game1.spriteBatch, 0, 0);
-                    yOffset += 112;
-                    Color color = checkbox.isChecked ? Color.White : Color.Gray;
-
-                    Game1.spriteBatch.Draw(
-                        Game1.mouseCursors,
-                        new Vector2(checkbox.bounds.X - 50, checkbox.bounds.Y),
-                        new Rectangle(80, 0, 16, 16),
-                        color,
-                        0.0f,
-                        Vector2.Zero,
-                        3f,
-                        SpriteEffects.None,
-                        1f);
-
-                    if (yOffset != 560)
+                    bool shouldDrawCharacter = _options.SafeGet(character.Name.GetHashCode().ToString()).SafeParseBool();
+                    if (shouldDrawCharacter)
                     {
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                checkbox.bounds.X - 50,
-                                checkbox.bounds.Y + 72,
-                                SocialPanelWidth / 2 - 6,
-                                4),
-                            Color.SaddleBrown);
-
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(
-                                checkbox.bounds.X - 50,
-                                checkbox.bounds.Y + 76,
-                                SocialPanelWidth / 2 - 6,
-                                4),
-                            Color.BurlyWood);
+                        DrawNPC(character, namesToShow);
                     }
-                    if (!Game1.options.hardwareCursor)
-                    {
-                        Game1.spriteBatch.Draw(
-                            Game1.mouseCursors,
-                            new Vector2(
-                                Game1.getMouseX(),
-                                Game1.getMouseY()),
-                            Game1.getSourceRectForStandardTileSheet(
-                                Game1.mouseCursors,
-                                Game1.mouseCursor,
-                                16,
-                                16),
-                            Color.White,
-                            0.0f,
-                            Vector2.Zero,
-                            Game1.pixelZoom + (Game1.dialogueButtonScale / 150.0f),
-                            SpriteEffects.None,
-                            1f);
-                    }
-
-                    if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()))
-                        IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            "Track on map",
-                            Game1.dialogueFont);
+                }
+                catch (Exception ex)
+                {
+                    ModEntry.MonitorObject.Log(ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
                 }
             }
+            DrawNPCNames(namesToShow);
+
+            //The cursor needs to show up in front of the character faces
+            Tools.DrawMouseCursor();
+
+            string hoverText = (string)typeof(MapPage)
+                .GetField("hoverText", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(gameMenu.pages[gameMenu.currentTab]);
+
+            IClickableMenu.drawHoverText(Game1.spriteBatch, hoverText, Game1.smallFont);
         }
+
+        private static void DrawNPC(NPC character, List<string> namesToShow)
+        {
+            KeyValuePair<int, int> location = GetMapCoordinatesForNPC(character);
+
+            Rectangle headShot = character.GetHeadShot();
+            int xBase = Game1.activeClickableMenu.xPositionOnScreen - 158;
+            int yBase = Game1.activeClickableMenu.yPositionOnScreen - 40;
+
+            int x = xBase + location.Key;
+            int y = yBase + location.Value;
+
+            Color color = character.CurrentDialogue.Count <= 0 ? Color.Gray : Color.White;
+            ClickableTextureComponent textureComponent = new ClickableTextureComponent(character.Name, new Rectangle(x, y, 0, 0),
+                null, character.Name, character.Sprite.Texture, headShot, 2.3f);
+
+            float headShotScale = 2f;
+            Game1.spriteBatch.Draw(character.Sprite.Texture, new Vector2(x, y), new Rectangle?(headShot),
+                color, 0.0f, Vector2.Zero, headShotScale, SpriteEffects.None, 1f);
+
+            int mouseX = Game1.getMouseX();
+            int mouseY = Game1.getMouseY();
+            if (mouseX >= x && mouseX <= x + headShot.Width * headShotScale && mouseY >= y && mouseY <= y + headShot.Height * headShotScale)
+            {
+                namesToShow.Add(character.displayName);
+            }
+
+            DrawQuestsForNPC(character, x, y);
+        }
+
+        private static KeyValuePair<int, int> GetMapCoordinatesForNPC(NPC character)
+        {
+            string locationName = character.currentLocation?.Name ?? character.DefaultMap;
+
+            // Ginger Island
+            if (character.currentLocation is IslandLocation)
+            {
+                return new KeyValuePair<int, int>(1104, 658);
+            }
+
+            // Scale Town and Forest
+            if (locationName == "Town" || locationName == "Forest")
+            {
+                int xStart = locationName == "Town" ? 595 : 183;
+                int yStart = locationName == "Town" ? 163 : 378;
+                int areaWidth = locationName == "Town" ? 345 : 319;
+                int areaHeight = locationName == "Town" ? 330 : 261;
+
+                xTile.Map map = character.currentLocation.Map;
+
+                float xScale = (float)areaWidth / (float)map.DisplayWidth;
+                float yScale = (float)areaHeight / (float)map.DisplayHeight;
+
+                float scaledX = character.position.X * xScale;
+                float scaledY = character.position.Y * yScale;
+                int xPos = (int)scaledX + xStart;
+                int yPos = (int)scaledY + yStart;
+                return new KeyValuePair<int, int>(xPos, yPos);
+            }
+
+            // Other known locations
+            return _mapLocations.SafeGet(locationName, new KeyValuePair<int, int>(0, 0));
+        }
+
+        private static void DrawQuestsForNPC(NPC character, int x, int y)
+        {
+            foreach (var quest in Game1.player.questLog.Where(q => q.accepted.Value && q.dailyQuest.Value && ! q.completed.Value))
+            {
+                bool isQuestTarget = false;
+                switch (quest.questType.Value)
+                {
+                    case 3: isQuestTarget = (quest as ItemDeliveryQuest).target.Value == character.Name; break;
+                    case 4: isQuestTarget = (quest as SlayMonsterQuest).target.Value == character.Name; break;
+                    case 7: isQuestTarget = (quest as FishingQuest).target.Value == character.Name; break;
+                    case 10: isQuestTarget = (quest as ResourceCollectionQuest).target.Value == character.Name; break;
+                }
+
+                if (isQuestTarget)
+                    Game1.spriteBatch.Draw(Game1.mouseCursors, new Vector2(x + 10, y - 12), new Rectangle(394, 495, 4, 10),
+                        Color.White, 0.0f, Vector2.Zero, 3f, SpriteEffects.None, 1f);
+            }
+        }
+
+        private static void DrawNPCNames(List<string> namesToShow)
+        {
+            if (namesToShow.Count == 0)
+                return;
+
+            StringBuilder text = new StringBuilder();
+            int longestLength = 0;
+            foreach (string name in namesToShow)
+            {
+                text.AppendLine(name);
+                longestLength = Math.Max(longestLength, (int)Math.Ceiling(Game1.smallFont.MeasureString(name).Length()));
+            }
+
+            int windowHeight = Game1.smallFont.LineSpacing * namesToShow.Count + 25;
+            Vector2 windowPos = new Vector2(Game1.getMouseX() + 40, Game1.getMouseY() - windowHeight);
+            IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)windowPos.X, (int)windowPos.Y,
+                longestLength + 30, Game1.smallFont.LineSpacing * namesToShow.Count + 25, Color.White);
+
+            Game1.spriteBatch.DrawString(Game1.smallFont, text, new Vector2(windowPos.X + 17, windowPos.Y + 17), Game1.textShadowColor);
+
+            Game1.spriteBatch.DrawString(Game1.smallFont, text, new Vector2(windowPos.X + 15, windowPos.Y + 15), Game1.textColor);
+        }
+        #endregion
     }
 }
