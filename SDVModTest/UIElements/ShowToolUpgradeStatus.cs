@@ -63,34 +63,35 @@ namespace UIInfoSuite.UIElements
             {
                 var toolBeingUpgraded = _toolBeingUpgraded.Value = Game1.player.toolBeingUpgraded.Value;
                 var toolTexturePosition = new Rectangle();
-
+                // default hoe
+                toolTexturePosition.Width = 16;
+                toolTexturePosition.Height = 16;
+                toolTexturePosition.X = 81 + (111 * toolBeingUpgraded.UpgradeLevel);
+                toolTexturePosition.Y = 31;                 
+                    
                 if (toolBeingUpgraded is StardewValley.Tools.WateringCan)
                 {
-                    toolTexturePosition.X = 32;
+                    toolTexturePosition.X = 32 + (111 * toolBeingUpgraded.UpgradeLevel);
                     toolTexturePosition.Y = 228;
-                    toolTexturePosition.Width = 16;
                     toolTexturePosition.Height = 11;
+                }
+                else if (toolBeingUpgraded is StardewValley.Tools.GenericTool)
+                {
+                    toolTexturePosition.X = 208 (16 * Game1.player.trashCanLevel);
+                    toolTexturePosition.Y = 0;
                 }
                 else
                 {
-                    toolTexturePosition.Width = 16;
-                    toolTexturePosition.Height = 16;
-                    toolTexturePosition.X = 81;
-                    toolTexturePosition.Y = 31;
-
-                    if (!(toolBeingUpgraded is StardewValley.Tools.Hoe))
+                    if (toolBeingUpgraded is StardewValley.Tools.Pickaxe)
                     {
                         toolTexturePosition.Y += 64;
-
-                        if (!(toolBeingUpgraded is StardewValley.Tools.Pickaxe))
-                        {
-                            toolTexturePosition.Y += 64;
-                        }
                     }
+                    else if (toolBeingUpgraded is StardewValley.Tools.Axe)
+                    {
+                        toolTexturePosition.Y += 128;
+                    }              
                 }
-
-                toolTexturePosition.X += (111 * toolBeingUpgraded.UpgradeLevel);
-
+                
                 if (toolTexturePosition.X > Game1.toolSpriteSheet.Width)
                 {
                     toolTexturePosition.Y += 32;
