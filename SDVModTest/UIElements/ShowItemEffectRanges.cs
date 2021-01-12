@@ -14,6 +14,8 @@ namespace UIInfoSuite.UIElements
     class ShowItemEffectRanges : IDisposable
     {
         private readonly PerScreen<List<Point>> _effectiveArea = new PerScreen<List<Point>>(createNewState: () => new List<Point>());
+        private readonly PerScreen<bool> _usingGamepad = new PerScreen<bool>();
+
         private readonly ModConfig _modConfig;
         private readonly IModEvents _events;
 
@@ -68,6 +70,12 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (Game1.lastCursorMotionWasMouse)
+                _usingGamepad.Value = false;
+
+            if (Game1.isGamePadThumbstickInMotion())
+                _usingGamepad.Value = true;
+
             if (!e.IsMultipleOf(4))
                 return;
 
@@ -89,7 +97,7 @@ namespace UIInfoSuite.UIElements
             {
                 if (Game1.currentLocation is BuildableGameLocation buildableLocation)
                 {
-                    var building = buildableLocation.getBuildingAt(Game1.currentCursorTile);
+                    var building = buildableLocation.getBuildingAt(Game1.GetPlacementGrabTile());
 
                     if (building is JunimoHut)
                     {
@@ -101,13 +109,18 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                if (Game1.player.CurrentItem != null)
+                Item currentItem;
+                if ((currentItem = Game1.player.CurrentItem) != null && currentItem.isPlaceable())
                 {
-                    var name = Game1.player.CurrentItem.Name.ToLower();
-                    var currentItem = Game1.player.CurrentItem;
+                    var name = currentItem.Name.ToLower();
                     List<StardewValley.Object> objects = null;
 
                     int[][] arrayToUse = null;
+
+                    var currentTile = Game1.GetPlacementGrabTile();
+                    Game1.isCheckingNonMousePlacement = !Game1.IsPerformingMousePlacement();
+                    var validTile = Utility.snapToInt(Utility.GetNearbyValidPlacementPosition(Game1.player, Game1.currentLocation, currentItem, (int)currentTile.X * Game1.tileSize, (int)currentTile.Y * Game1.tileSize))/Game1.tileSize;
+                    Game1.isCheckingNonMousePlacement = false;
 
                     if (name.Contains("arecrow"))
                     {
@@ -120,7 +133,7 @@ namespace UIInfoSuite.UIElements
                                 arrayToUse[i][j] = (Math.Abs(i - 8) + Math.Abs(j - 8) <= 12) ? 1 : 0;
                             }
                         }
-                        ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
+                        ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
                         objects = GetObjectsInLocationOfSimilarName("arecrow");
                         if (objects != null)
                         {
@@ -151,7 +164,7 @@ namespace UIInfoSuite.UIElements
                         }
 
                         if (arrayToUse != null)
-                            ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
+                            ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
 
                         objects = GetObjectsInLocationOfSimilarName("sprinkler");
 
@@ -184,7 +197,7 @@ namespace UIInfoSuite.UIElements
                     }
                     else if (name.Contains("bee house"))
                     {
-                        ParseConfigToHighlightedArea(_modConfig.Beehouse, TileUnderMouseX, TileUnderMouseY);
+                        ParseConfigToHighlightedArea(_modConfig.Beehouse, (int)validTile.X, (int)validTile.Y);
                     }
 
                 }

@@ -48,19 +48,24 @@ namespace UIInfoSuite.UIElements
             if (!e.IsMultipleOf(4))
                 return;
 
+            var gamepadTile = Game1.player.CurrentTool != null ? Utility.snapToInt(Game1.player.GetToolLocation()/Game1.tileSize) : Utility.snapToInt(Game1.player.GetGrabTile());
+            var mouseTile = Game1.currentCursorTile;
+
+            var tile = (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0) ? gamepadTile : mouseTile;
+
             // get tile under cursor
             _currentTileBuilding.Value = Game1.currentLocation is BuildableGameLocation buildableLocation
-                ? buildableLocation.getBuildingAt(Game1.currentCursorTile)
+                ? buildableLocation.getBuildingAt(tile)
                 : null;
 
             if (Game1.currentLocation != null)
             {
-                if (Game1.currentLocation.Objects != null && Game1.currentLocation.Objects.TryGetValue(Game1.currentCursorTile, out var currentTile))
-                    _currentTile.Value = currentTile;
+                if (Game1.currentLocation.Objects != null && Game1.currentLocation.Objects.TryGetValue(tile, out var currentObject))
+                    _currentTile.Value = currentObject;
                 else
                     _currentTile.Value = null;
 
-                if (Game1.currentLocation.terrainFeatures != null && Game1.currentLocation.terrainFeatures.TryGetValue(Game1.currentCursorTile, out var terrain))
+                if (Game1.currentLocation.terrainFeatures != null && Game1.currentLocation.terrainFeatures.TryGetValue(tile, out var terrain))
                     _terrain.Value = terrain;
                 else
                 {
@@ -90,52 +95,55 @@ namespace UIInfoSuite.UIElements
             var currentTileBuilding = _currentTileBuilding.Value;
             var currentTile = _currentTile.Value;
             var terrain = _terrain.Value;
+
+            int overrideX = -1;
+            int overrideY = -1;
+
             // draw hover tooltip
-            if (currentTileBuilding != null)
+            if (currentTileBuilding != null && currentTileBuilding is Mill millBuilding && millBuilding.input.Value != null && !millBuilding.input.Value.isEmpty())
             {
-                if (currentTileBuilding is Mill millBuilding)
+                var wheatCount = 0;
+                var beetCount = 0;
+
+                foreach (var item in millBuilding.input.Value.items)
                 {
-                    if (millBuilding.input.Value != null)
+                    if (item != null &&
+                        !string.IsNullOrEmpty(item.Name))
                     {
-                        if (!millBuilding.input.Value.isEmpty())
+                        switch (item.Name)
                         {
-                            var wheatCount = 0;
-                            var beetCount = 0;
-
-                            foreach (var item in millBuilding.input.Value.items)
-                            {
-                                if (item != null &&
-                                    !string.IsNullOrEmpty(item.Name))
-                                {
-                                    switch (item.Name)
-                                    {
-                                        case "Wheat": wheatCount = item.Stack; break;
-                                        case "Beet": beetCount = item.Stack; break;
-                                    }
-                                }
-                            }
-
-                            var builder = new StringBuilder();
-
-                            if (wheatCount > 0)
-                                builder.Append(wheatCount + " wheat");
-
-                            if (beetCount > 0)
-                            {
-                                if (wheatCount > 0)
-                                    builder.Append(Environment.NewLine);
-                                builder.Append(beetCount + " beets");
-                            }
-
-                            if (builder.Length > 0)
-                            {
-                                IClickableMenu.drawHoverText(
-                                   Game1.spriteBatch,
-                                   builder.ToString(),
-                                   Game1.smallFont);
-                            }
+                            case "Wheat": wheatCount = item.Stack; break;
+                            case "Beet": beetCount = item.Stack; break;
                         }
                     }
+                }
+
+                var builder = new StringBuilder();
+
+                if (wheatCount > 0)
+                    builder.Append(wheatCount + " wheat");
+
+                if (beetCount > 0)
+                {
+                    if (wheatCount > 0)
+                        builder.Append(Environment.NewLine);
+                    builder.Append(beetCount + " beets");
+                }
+
+                if (builder.Length > 0)
+                {
+                    if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                    {
+                        var tilePosition = Game1.GlobalToLocal(new Vector2(currentTileBuilding.tileX.Value, currentTileBuilding.tileY.Value) * Game1.tileSize);
+                        overrideX = (int)tilePosition.X + 32;
+                        overrideY = (int)tilePosition.Y + 32;
+                    }
+                    
+
+                    IClickableMenu.drawHoverText(
+                        Game1.spriteBatch,
+                        builder.ToString(),
+                        Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                 }
             }
             else if (currentTile != null &&
@@ -170,10 +178,18 @@ namespace UIInfoSuite.UIElements
                             .Append(_helper.SafeGetString(
                                 LanguageKeys.Minutes));
                     }
+
+                    if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                    {
+                        var tilePosition = Game1.GlobalToLocal(new Vector2(currentTile.TileLocation.X, currentTile.TileLocation.Y) * Game1.tileSize);
+                        overrideX = (int)tilePosition.X + 32;
+                        overrideY = (int)tilePosition.Y + 32;
+                    }
+
                     IClickableMenu.drawHoverText(
                         Game1.spriteBatch,
                         hoverText.ToString(),
-                        Game1.smallFont);
+                        Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                 }
             }
             else if (terrain != null)
@@ -225,10 +241,18 @@ namespace UIInfoSuite.UIElements
                                 finalHoverText.Append(_helper.SafeGetString(
                                     LanguageKeys.ReadyToHarvest));
                             }
+
+                            if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                            {
+                                var tilePosition = Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize);
+                                overrideX = (int)tilePosition.X + 32;
+                                overrideY = (int)tilePosition.Y + 32;
+                            }
+
                             IClickableMenu.drawHoverText(
                                 Game1.spriteBatch,
                                 finalHoverText.ToString(),
-                                Game1.smallFont);
+                                Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                         }
                     }
                 }
@@ -243,10 +267,18 @@ namespace UIInfoSuite.UIElements
                                     LanguageKeys.DaysToMature);
 
                     }
+
+                    if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                    {
+                        var tilePosition = Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize);
+                        overrideX = (int)tilePosition.X + 32;
+                        overrideY = (int)tilePosition.Y + 32;
+                    }
+
                     IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             text,
-                            Game1.smallFont);
+                            Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                 }
             }
         }
