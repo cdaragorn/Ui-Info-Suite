@@ -40,7 +40,6 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderingHud += OnRenderingHud;
                 _helper.Events.Display.RenderedHud += OnRenderedHud;
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-                _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
                 _helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             }
         }
