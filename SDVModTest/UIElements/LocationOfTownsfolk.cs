@@ -208,7 +208,7 @@ namespace UIInfoSuite.UIElements
                 for (var i = slotPosition; i < slotPosition + 5; ++i)
                 {
                     var checkbox = _checkboxes[i];
-                    if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()) &&
+                    if (checkbox.bounds.Contains((int)Utility.ModifyCoordinateForUIScale(Game1.getMouseX()), (int)Utility.ModifyCoordinateForUIScale(Game1.getMouseY())) &&
                         !checkbox.greyedOut)
                     {
                         checkbox.isChecked = !checkbox.isChecked;
