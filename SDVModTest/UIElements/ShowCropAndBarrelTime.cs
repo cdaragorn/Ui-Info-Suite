@@ -134,9 +134,9 @@ namespace UIInfoSuite.UIElements
                 {
                     if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
                     {
-                        var tilePosition = Game1.GlobalToLocal(new Vector2(currentTileBuilding.tileX.Value, currentTileBuilding.tileY.Value) * Game1.tileSize);
-                        overrideX = (int)tilePosition.X + 32;
-                        overrideY = (int)tilePosition.Y + 32;
+                        var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(currentTileBuilding.tileX.Value, currentTileBuilding.tileY.Value) * Game1.tileSize));
+                        overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                        overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
                     }
                     
 
@@ -181,9 +181,9 @@ namespace UIInfoSuite.UIElements
 
                     if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
                     {
-                        var tilePosition = Game1.GlobalToLocal(new Vector2(currentTile.TileLocation.X, currentTile.TileLocation.Y) * Game1.tileSize);
-                        overrideX = (int)tilePosition.X + 32;
-                        overrideY = (int)tilePosition.Y + 32;
+                        var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(currentTile.TileLocation.X, currentTile.TileLocation.Y) * Game1.tileSize));
+                        overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                        overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
                     }
 
                     IClickableMenu.drawHoverText(
@@ -244,9 +244,9 @@ namespace UIInfoSuite.UIElements
 
                             if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
                             {
-                                var tilePosition = Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize);
-                                overrideX = (int)tilePosition.X + 32;
-                                overrideY = (int)tilePosition.Y + 32;
+                                var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize));
+                                overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                                overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
                             }
 
                             IClickableMenu.drawHoverText(
@@ -270,9 +270,9 @@ namespace UIInfoSuite.UIElements
 
                     if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
                     {
-                        var tilePosition = Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize);
-                        overrideX = (int)tilePosition.X + 32;
-                        overrideY = (int)tilePosition.Y + 32;
+                        var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize));
+                        overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                        overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
                     }
 
                     IClickableMenu.drawHoverText(
