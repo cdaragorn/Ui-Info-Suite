@@ -86,6 +86,7 @@ namespace UIInfoSuite.UIElements
             helper.Events.Display.RenderingHud += OnRenderingHud;
             helper.Events.Player.Warped += OnWarped_RemoveAllExperiencePointDisplays;
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked_HandleTimers;
+            helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
 
             var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
             try
@@ -129,6 +130,7 @@ namespace UIInfoSuite.UIElements
             _helper.Events.Player.Warped -= OnWarped_RemoveAllExperiencePointDisplays;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_HandleTimers;
+            _helper.Events.GameLoop.SaveLoaded -= OnSaveLoaded;
         }
 
         public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
@@ -181,6 +183,16 @@ namespace UIInfoSuite.UIElements
                 //PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             }
+        }
+
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            for (var i = 0; i < _currentExperience.Value.Length; ++i)
+            {
+                _currentExperience.Value[i] = Game1.player.experiencePoints[i];
+            }
+
+            _experiencePointDisplays.Value.Clear();
         }
 
         /// <summary>Raised after a player skill level changes. This happens as soon as they level up, not when the game notifies the player after their character goes to bed.</summary>
