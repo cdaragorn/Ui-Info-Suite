@@ -69,7 +69,7 @@ namespace UIInfoSuite.UIElements
                             positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + animal.Value.Name.GetHashCode()) * 5.0);
                             Game1.spriteBatch.Draw(
                                 Game1.emoteSpriteSheet,
-                                new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y),
+                                Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y)),
                                 new Rectangle(3 * (Game1.tileSize / 4) % Game1.emoteSpriteSheet.Width, 3 * (Game1.tileSize / 4) / Game1.emoteSpriteSheet.Width * (Game1.tileSize / 4), Game1.tileSize / 4, Game1.tileSize / 4),
                                 Color.White * 0.9f,
                                 0.0f,
@@ -81,7 +81,7 @@ namespace UIInfoSuite.UIElements
                             var sourceRectangle = GameLocation.getSourceRectForObject(animal.Value.currentProduce.Value);
                             Game1.spriteBatch.Draw(
                                 Game1.objectSpriteSheet,
-                                new Vector2(positionAboveAnimal.X + 28f, positionAboveAnimal.Y + 8f),
+                                Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X + 28f, positionAboveAnimal.Y + 8f)),
                                 sourceRectangle,
                                 Color.White * 0.9f,
                                 0.0f,
