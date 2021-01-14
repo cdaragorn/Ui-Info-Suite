@@ -150,7 +150,7 @@ namespace UIInfoSuite.UIElements
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsMainPlayer || !e.IsOneSecond)
+            if (!e.IsOneSecond || (Context.IsSplitScreen && Context.ScreenId != 0))
                 return;
 
             _townsfolk.Clear();
