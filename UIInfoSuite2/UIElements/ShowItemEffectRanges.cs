@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -14,7 +15,8 @@ namespace UIInfoSuite.UIElements
     class ShowItemEffectRanges : IDisposable
     {
         #region Properties
-        private readonly List<Point> _effectiveArea = new List<Point>();
+        private readonly PerScreen<List<Point>> _effectiveArea = new PerScreen<List<Point>>(createNewState: () => new List<Point>());
+
         private readonly Mutex _mutex = new Mutex();
 
         private readonly IModHelper _helper;
@@ -56,7 +58,7 @@ namespace UIInfoSuite.UIElements
             {
                 try
                 {
-                    _effectiveArea.Clear();
+                    _effectiveArea.Value.Clear();
                 }
                 finally
                 {
@@ -65,10 +67,10 @@ namespace UIInfoSuite.UIElements
 
             }
 
-            if (Game1.activeClickableMenu != null || Game1.eventUp)
-                return;
-
-            UpdateEffectiveArea();
+            if (Game1.activeClickableMenu == null && !Game1.eventUp)
+            {
+                UpdateEffectiveArea();
+            }
         }
 
         private void OnRendered(object sender, RenderedEventArgs e)
@@ -77,17 +79,20 @@ namespace UIInfoSuite.UIElements
             {
                 try
                 {
-                    foreach (Point point in _effectiveArea)
+                    foreach (Point point in _effectiveArea.Value)
+                    {
+                        var position = new Vector2(point.X * Utility.ModifyCoordinateFromUIScale(Game1.tileSize), point.Y * Utility.ModifyCoordinateFromUIScale(Game1.tileSize));
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
-                            Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
+                            Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(Utility.ModifyCoordinatesForUIScale(position))),
                             new Rectangle(194, 388, 16, 16),
                             Color.White * 0.7f,
                             0.0f,
                             Vector2.Zero,
-                            Game1.pixelZoom,
+                            Utility.ModifyCoordinateForUIScale(Game1.pixelZoom),
                             SpriteEffects.None,
                             0.01f);
+                    }
                 }
                 finally
                 {
@@ -107,7 +112,7 @@ namespace UIInfoSuite.UIElements
             // Junimo Hut is handled differently, because it is a building
             if (Game1.currentLocation is BuildableGameLocation buildableLocation)
             {
-                Building building = buildableLocation.getBuildingAt(Game1.currentCursorTile);
+                Building building = buildableLocation.getBuildingAt(Game1.GetPlacementGrabTile());
 
                 if (building is JunimoHut)
                 {
@@ -123,14 +128,19 @@ namespace UIInfoSuite.UIElements
             }
 
             // Every other item is here
-            if (Game1.player.CurrentItem != null)
+            if (Game1.player.CurrentItem is Item currentItem && currentItem.isPlaceable())
             {
                 string itemName = Game1.player.CurrentItem.Name;
+
+                Vector2 currentTile = Game1.GetPlacementGrabTile();
+                Game1.isCheckingNonMousePlacement = !Game1.IsPerformingMousePlacement();
+                Vector2 validTile = Utility.snapToInt(Utility.GetNearbyValidPlacementPosition(Game1.player, Game1.currentLocation, currentItem, (int)currentTile.X * Game1.tileSize, (int)currentTile.Y * Game1.tileSize)) / Game1.tileSize;
+                Game1.isCheckingNonMousePlacement = false;
 
                 if (itemName.IndexOf("arecrow", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     arrayToUse = itemName.Contains("eluxe") ? GetDistanceArray(ObjectsWithDistance.DeluxeScarecrow) : GetDistanceArray(ObjectsWithDistance.Scarecrow);
-                    ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
+                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
 
                     similarObjects = GetSimilarObjectsInLocation("arecrow");
                     foreach (StardewValley.Object next in similarObjects)
@@ -146,7 +156,7 @@ namespace UIInfoSuite.UIElements
                         itemName.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler) :
                             GetDistanceArray(ObjectsWithDistance.Sprinkler);
 
-                    ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
+                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
 
                     similarObjects = GetSimilarObjectsInLocation("sprinkler");
                     foreach (StardewValley.Object next in similarObjects)
@@ -162,7 +172,7 @@ namespace UIInfoSuite.UIElements
                 else if (itemName.IndexOf("bee house", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     arrayToUse = GetDistanceArray(ObjectsWithDistance.Beehouse);
-                    ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
+                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
                 }
             }
         }
@@ -181,7 +191,7 @@ namespace UIInfoSuite.UIElements
                         for (int j = 0; j < highlightedLocation[i].Length; ++j)
                         {
                             if (highlightedLocation[i][j] == 1)
-                                _effectiveArea.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
+                                _effectiveArea.Value.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
                         }
                     }
                 }
