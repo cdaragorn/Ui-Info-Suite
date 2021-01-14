@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
-using System;
 using System.Collections.Generic;
 
 namespace UIInfoSuite.Extensions
@@ -9,7 +8,7 @@ namespace UIInfoSuite.Extensions
     public static class ObjectExtensions
     {
         #region Memebers
-        private static readonly Dictionary<String, int> _npcHeadShotSize = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> _npcHeadShotSize = new Dictionary<string, int>()
         {
             { "Piere", 9 },
             { "Sebastian", 7 },
@@ -55,17 +54,17 @@ namespace UIInfoSuite.Extensions
             if (!_npcHeadShotSize.TryGetValue(npc.Name, out size))
                 size = 4;
 
-            Rectangle mugShotSourceRect = npc.getMugShotSourceRect();
+            var mugShotSourceRect = npc.getMugShotSourceRect();
             mugShotSourceRect.Height -= size / 2;
             mugShotSourceRect.Y -= size / 2;
             return mugShotSourceRect;
         }
 
-        public static String SafeGetString(this IModHelper helper, String key)
+        public static string SafeGetString(this IModHelper helper, string key)
         {
-            String result = string.Empty;
+            var result = string.Empty;
 
-            if (!String.IsNullOrEmpty(key) &&
+            if (!string.IsNullOrEmpty(key) &&
                 helper != null)
             {
                 result = helper.Translation.Get(key);

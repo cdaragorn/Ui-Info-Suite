@@ -22,7 +22,7 @@ namespace UIInfoSuite.Options
             //_optionsPageHandler = optionsPageHandler;
             width = 64;
             height = 64;
-            GameMenu activeClickableMenu = Game1.activeClickableMenu as GameMenu;
+            var activeClickableMenu = Game1.activeClickableMenu as GameMenu;
 
             xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
             yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
@@ -49,8 +49,8 @@ namespace UIInfoSuite.Options
         {
             if (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA)
             {
-                int x = (int)e.Cursor.ScreenPixels.X;
-                int y = (int)e.Cursor.ScreenPixels.Y;
+                var x = (int)Utility.ModifyCoordinateForUIScale(e.Cursor.ScreenPixels.X);
+                var y = (int)Utility.ModifyCoordinateForUIScale(e.Cursor.ScreenPixels.Y);
                 if (isWithinBounds(x, y))
                 {
                     receiveLeftClick(x, y);
@@ -96,7 +96,7 @@ namespace UIInfoSuite.Options
 
             if (isWithinBounds(Game1.getMouseX(), Game1.getMouseY()))
             {
-                IClickableMenu.drawHoverText(Game1.spriteBatch, "UI Info Mod Options", Game1.smallFont);
+                drawHoverText(Game1.spriteBatch, "UI Info Mod Options", Game1.smallFont);
             }
             Tools.DrawMouseCursor();
         }

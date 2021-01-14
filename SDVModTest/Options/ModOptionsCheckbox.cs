@@ -2,9 +2,6 @@
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
@@ -17,15 +14,15 @@ namespace UIInfoSuite.Options
 
         private readonly Action<bool> _toggleOptionsDelegate;
         private bool _isChecked;
-        private readonly IDictionary<String, String> _options;
-        private readonly String _optionKey;
+        private readonly IDictionary<string, string> _options;
+        private readonly string _optionKey;
 
         public ModOptionsCheckbox(
-            String label, 
+            string label, 
             int whichOption, 
             Action<bool> toggleOptionDelegate, 
-            IDictionary<String, String> options, 
-            String optionKey, 
+            IDictionary<string, string> options, 
+            string optionKey, 
             bool defaultValue = true, 
             int x = -1, 
             int y = -1)

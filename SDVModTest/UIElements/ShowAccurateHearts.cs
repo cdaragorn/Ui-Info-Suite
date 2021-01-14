@@ -3,7 +3,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -11,7 +10,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowAccurateHearts : IDisposable
     {
-        private String[] _friendNames;
+        private string[] _friendNames;
         private SocialPage _socialPage;
         private IModEvents _events;
 
@@ -57,27 +56,27 @@ namespace UIInfoSuite.UIElements
                 {
                     if (_socialPage != null)
                     {
-                        int slotPosition = (int)typeof(SocialPage)
+                        var slotPosition = (int)typeof(SocialPage)
                             .GetField(
                                 "slotPosition",
                                 BindingFlags.Instance | BindingFlags.NonPublic)
                                 .GetValue(_socialPage);
-                        int yOffset = 0;
+                        var yOffset = 0;
 
-                        for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
+                        for (var i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
                         {
-                            int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
+                            var yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
                             yOffset += 112;
                             Friendship friendshipValues;
-                            String nextName = _friendNames[i];
+                            var nextName = _friendNames[i];
                             if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
                             {
-                                int friendshipRawValue = friendshipValues.Points;
+                                var friendshipRawValue = friendshipValues.Points;
 
                                 if (friendshipRawValue > 0)
                                 {
-                                    int pointsToNextHeart = friendshipRawValue % 250;
-                                    int numHearts = friendshipRawValue / 250;
+                                    var pointsToNextHeart = friendshipRawValue % 250;
+                                    var numHearts = friendshipRawValue / 250;
 
                                     if (friendshipRawValue < 3000 &&
                                         _friendNames[i] == Game1.player.spouse ||
@@ -103,7 +102,7 @@ namespace UIInfoSuite.UIElements
                             }
                         }
 
-                        String hoverText = gameMenu.hoverText;
+                        var hoverText = gameMenu.hoverText;
                         IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             hoverText,
@@ -145,7 +144,7 @@ namespace UIInfoSuite.UIElements
 
         private void DrawEachIndividualSquare(int friendshipLevel, int friendshipPoints, int yPosition)
         {
-            int numberOfPointsToDraw = (int)(((double)friendshipPoints) / 12.5);
+            var numberOfPointsToDraw = (int)(friendshipPoints / 12.5);
             int num2;
 
             if (friendshipLevel > 10)
@@ -158,9 +157,9 @@ namespace UIInfoSuite.UIElements
                 num2 = 32 * friendshipLevel;
             }
 
-            for (int i = 3; i >= 0 && numberOfPointsToDraw > 0; --i)
+            for (var i = 3; i >= 0 && numberOfPointsToDraw > 0; --i)
             {
-                for (int j = 0; j < 5 && numberOfPointsToDraw > 0; ++j, --numberOfPointsToDraw)
+                for (var j = 0; j < 5 && numberOfPointsToDraw > 0; ++j, --numberOfPointsToDraw)
                 {
                     if (_numArray[i][j] == 1)
                     {

@@ -50,7 +50,7 @@ namespace UIInfoSuite.UIElements
 
         private void UpdateTravelingMerchant()
         {
-            int dayOfWeek = Game1.dayOfMonth % 7;
+            var dayOfWeek = Game1.dayOfMonth % 7;
             _travelingMerchantIsHere = dayOfWeek == 0 || dayOfWeek == 5;
         }
 
@@ -62,7 +62,7 @@ namespace UIInfoSuite.UIElements
             // draw traveling merchant
             if (!Game1.eventUp && _travelingMerchantIsHere)
             {
-                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
+                var iconPosition = IconHandler.Handler.GetNewIconPosition();
                 _travelingMerchantIcon = 
                     new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40), 
@@ -81,7 +81,7 @@ namespace UIInfoSuite.UIElements
             // draw hover text
             if (_travelingMerchantIsHere && (_travelingMerchantIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
-                string hoverText = _helper.SafeGetString(
+                var hoverText = _helper.SafeGetString(
                     LanguageKeys.TravelingMerchantIsInTown);
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,

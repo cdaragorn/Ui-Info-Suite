@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite
 {
-    public interface LEEvents
+    public interface ILeEvents
     {
-        event EventHandler OnXPChanged;
-        void raiseEvent();
+        event EventHandler OnXpChanged;
+        void RaiseEvent();
     }
 }

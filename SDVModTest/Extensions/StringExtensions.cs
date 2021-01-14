@@ -1,44 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UIInfoSuite.Extensions
+﻿namespace UIInfoSuite.Extensions
 {
     static class StringExtensions
     {
 
 
-        public static Int32 SafeParseInt32(this String s)
+        public static int SafeParseInt32(this string s)
         {
-            Int32 result = 0;
+            var result = 0;
 
-            if (!String.IsNullOrWhiteSpace(s))
+            if (!string.IsNullOrWhiteSpace(s))
             {
-                Int32.TryParse(s, out result);
+                int.TryParse(s, out result);
             }
 
             return result;
         }
 
-        public static Int64 SafeParseInt64(this String s)
+        public static long SafeParseInt64(this string s)
         {
-            Int64 result = 0;
+            long result = 0;
 
-            if (!String.IsNullOrWhiteSpace(s))
-                Int64.TryParse(s, out result);
+            if (!string.IsNullOrWhiteSpace(s))
+                long.TryParse(s, out result);
 
             return result;
         }
 
-        public static bool SafeParseBool(this String s)
+        public static bool SafeParseBool(this string s)
         {
-            bool result = false;
+            var result = false;
 
-            if (!String.IsNullOrWhiteSpace(s))
+            if (!string.IsNullOrWhiteSpace(s))
             {
-                Boolean.TryParse(s, out result);
+                bool.TryParse(s, out result);
             }
 
             return result;
