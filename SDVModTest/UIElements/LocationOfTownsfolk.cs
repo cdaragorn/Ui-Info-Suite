@@ -25,7 +25,7 @@ namespace UIInfoSuite.UIElements
         private readonly IDictionary<string, string> _options;
         private readonly IModHelper _helper;
 
-        private IDictionary<string, NPC> _mainChars = new Dictionary<string, NPC>();
+        private readonly List<NPC> _townsfolk = new List<NPC>();
 
         private static readonly Dictionary<string, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
         {
@@ -172,16 +172,16 @@ namespace UIInfoSuite.UIElements
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsMainPlayer || !e.IsOneSecond)
+            if (!e.IsOneSecond || (Context.IsSplitScreen && Context.ScreenId != 0))
                 return;
 
-
+            _townsfolk.Clear();
 
             foreach (var loc in Game1.locations)
             {
                 foreach (var character in loc.characters)
                 {
-                    _mainChars[character.Name] = character;
+                    _townsfolk.Add(character);
                 }
             }
         }
@@ -228,7 +228,7 @@ namespace UIInfoSuite.UIElements
             {
                 var namesToShow = new List<string>();
 
-                foreach (var character in _mainChars.Values)
+                foreach (var character in _townsfolk)
                 {
                     if (!Game1.player.friendshipData.ContainsKey(character.Name))
                         continue;
