@@ -32,5 +32,7 @@
 	"ShowTravelingMerchant" : "Mostrar comerciante ambulante",
 	"ShowHarvestPricesInShop" : "Mostrar los precios de cosechas de la tienda",
 	"ShowWhenNewRecipesAreAvailable" : "Mostrar cuando hay nuevas recetas disponibles",
-	"ShowToolUpgradeStatus" : "Mostrar el estado de actualización de la herramienta"
+	"ShowToolUpgradeStatus" : "Mostrar el estado de actualización de la herramienta",
+	"NPCBirthday": "{0}'s Birthday",
+	"UIOptions": "UI Info Mod Options"
 }

@@ -5,6 +5,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
+using StardewModdingAPI;
 
 namespace UIInfoSuite.UIElements
 {
@@ -13,10 +14,12 @@ namespace UIInfoSuite.UIElements
         private NPC _birthdayNPC;
         private ClickableTextureComponent _birthdayIcon;
         private readonly IModEvents _events;
+        private readonly IModHelper _helper;
 
-        public ShowBirthdayIcon(IModEvents events)
+        public ShowBirthdayIcon(IModHelper helper)
         {
-            _events = events;
+            _events = helper.Events;
+            _helper = helper;
         }
 
         public void ToggleOption(bool showBirthdayIcon)
@@ -81,7 +84,7 @@ namespace UIInfoSuite.UIElements
                         break;
                     }
                 }
-                
+
                 if (_birthdayNPC != null)
                     break;
             }
@@ -118,8 +121,8 @@ namespace UIInfoSuite.UIElements
                             new Rectangle(
                                 iconPosition.X - 7,
                                 iconPosition.Y - 2,
-                                (int)(16.0 * scale),
-                                (int)(16.0 * scale)),
+                                (int) (16.0 * scale),
+                                (int) (16.0 * scale)),
                             null,
                             _birthdayNPC.Name,
                             _birthdayNPC.Sprite.Texture,
@@ -137,10 +140,10 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_birthdayNPC != null && 
+            if (_birthdayNPC != null &&
                 (_birthdayIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
-                String hoverText = String.Format("{0}'s Birthday", _birthdayNPC.Name);
+                String hoverText = String.Format(_helper.SafeGetString(LanguageKeys.NPCBirthday), _birthdayNPC.Name);
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,
                     hoverText,

@@ -43,7 +43,7 @@ namespace UIInfoSuite.Options
             _helper = helper;
             ModConfig modConfig = _helper.ReadConfig<ModConfig>();
             _luckOfDay = new LuckOfDay(helper);
-            _showBirthdayIcon = new ShowBirthdayIcon(helper.Events);
+            _showBirthdayIcon = new ShowBirthdayIcon(helper);
             _showAccurateHearts = new ShowAccurateHearts(helper.Events);
             _locationOfTownsfolk = new LocationOfTownsfolk(helper, _options);
             _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);
@@ -140,7 +140,7 @@ namespace UIInfoSuite.Options
                 if (_modOptionsPageButton == null)
                 {
                     _modOptionsPage = new ModOptionsPage(_optionsElements, _helper.Events);
-                    _modOptionsPageButton = new ModOptionsPageButton(_helper.Events);
+                    _modOptionsPageButton = new ModOptionsPageButton(_helper);
                 }
 
                 _helper.Events.Display.RenderedActiveMenu += DrawButton;

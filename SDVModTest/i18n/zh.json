@@ -32,5 +32,7 @@
 	"ShowTravelingMerchant" : "显示旅行商人",
 	"ShowHarvestPricesInShop" : "在购买页面显示收获价格",
 	"ShowWhenNewRecipesAreAvailable" : "显示可学习的新食谱",
-	"ShowToolUpgradeStatus" : "显示工具升级状态"
+	"ShowToolUpgradeStatus" : "显示工具升级状态",
+	"NPCBirthday": "{0}'s Birthday",
+	"UIOptions": "UI Info Mod Options"
 }
