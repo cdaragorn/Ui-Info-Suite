@@ -210,7 +210,7 @@ namespace UIInfoSuite.UIElements
         {
             // draw hover text
             if (_drawQueenOfSauceIcon &&
-                _queenOfSauceIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+                (_queenOfSauceIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,

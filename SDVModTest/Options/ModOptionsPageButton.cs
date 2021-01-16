@@ -22,11 +22,12 @@ namespace UIInfoSuite.Options
             //_optionsPageHandler = optionsPageHandler;
             width = 64;
             height = 64;
-            GameMenu activeClickableMenu = Game1.activeClickableMenu as GameMenu;
-
-            xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
-            yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
-            Bounds = new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height);
+            if (Game1.activeClickableMenu is GameMenu activeClickableMenu)
+            {
+                xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
+                yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
+                Bounds = new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height);
+            }
             events.Input.ButtonPressed += OnButtonPressed;
             events.Display.MenuChanged += OnMenuChanged;
         }
