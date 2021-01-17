@@ -33,5 +33,11 @@
   "ShowRainyDay": "Show rainy days",                          // TODO
   "ShowHarvestPricesInShop" : "Zeige Erntewerte",
   "ShowWhenNewRecipesAreAvailable" : "Zeige, wenn neue Rezepte verfügbar sind",
-  "ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt"
+  "ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt",
+  "LuckStatus1": "Du fühlst dich glücklich!",
+  "LuckStatus2": "Du fühlst dich glücklich ... aber nicht zu glücklich",
+  "LuckStatus3": "Du fühlst dich glücklich ... aber nicht zu glücklich",
+  "LuckStatus4": "Du fühlst dich glücklich ... aber nicht zu glücklich",
+  "LuckStatus5": "Du fühlst dich heute gar nicht glücklich",
+  "LuckStatus6": "Vielleicht solltest du heute zu Hause bleiben"
 }

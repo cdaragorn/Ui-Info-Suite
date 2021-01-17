@@ -33,5 +33,11 @@
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "在购买页面显示收获价格",
 	"ShowWhenNewRecipesAreAvailable": "显示可学习的新食谱",
-	"ShowToolUpgradeStatus": "显示工具升级状态"
+	"ShowToolUpgradeStatus": "显示工具升级状态",
+	"LuckStatus1": "你感到很幸运！",
+	"LuckStatus2": "你感到幸运……但不是特别幸运",
+	"LuckStatus3": "你感到幸运……但不是特别幸运",
+	"LuckStatus4": "你感到幸运……但不是特别幸运",
+	"LuckStatus5": "你一点都不觉得今天幸运",
+	"LuckStatus6": "也许你今天应该呆在家里……"
 }

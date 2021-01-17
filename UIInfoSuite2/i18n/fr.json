@@ -33,5 +33,11 @@
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "Montrer le prix des récoles en magasin",
 	"ShowWhenNewRecipesAreAvailable": "Montrer quand nouvelles recettes disp.",
-	"ShowToolUpgradeStatus": "Montrer état de l'amélioration des outils"
+	"ShowToolUpgradeStatus": "Montrer état de l'amélioration des outils",
+	"LuckStatus1": "Tu te sens chanceux!",
+	"LuckStatus2": "Tu te sens chanceux... mais pas trop",
+	"LuckStatus3": "Tu te sens chanceux... mais pas trop",
+	"LuckStatus4": "Tu te sens chanceux... mais pas trop",
+	"LuckStatus5": "Tu ne te sens pas tu tout chanceux...",
+	"LuckStatus6": "Tu ferais mieux de rester à la maison aujourd'hui"
 }

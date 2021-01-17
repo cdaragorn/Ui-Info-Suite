@@ -33,5 +33,11 @@
   "ShowRainyDay": "Show rainy days", // TODO
   "ShowHarvestPricesInShop": "Mostrar preços de colheita na loja",
   "ShowWhenNewRecipesAreAvailable": "Mostrar quando novas receitas estão disponíveis",
-  "ShowToolUpgradeStatus": "Mostrar status da atualização da ferramenta"
+  "ShowToolUpgradeStatus": "Mostrar status da atualização da ferramenta",
+  "LuckStatus1": "Você está se sentindo sortudo!",
+  "LuckStatus2": "Sentindo-se com sorte... mas não muita",
+  "LuckStatus3": "Sentindo-se com sorte... mas não muita",
+  "LuckStatus4": "Sentindo-se com sorte... mas não muita",
+  "LuckStatus5": "Você não está se sentindo sortudo hoje...",
+  "LuckStatus6": "Talvez você deva ficar em casa hoje..."
 }

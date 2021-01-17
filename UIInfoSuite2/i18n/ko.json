@@ -33,5 +33,11 @@
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "상점에서의 수확물 가격 표시",
 	"ShowWhenNewRecipesAreAvailable": "새 레시피를 얻을 수 있을 때를 알림",
-	"ShowToolUpgradeStatus": "도구 업그레이드 현황 보여주기"
+	"ShowToolUpgradeStatus": "도구 업그레이드 현황 보여주기",
+	"LuckStatus1": "당신은 왠지 오늘 운이 매우 좋을 것 같다!!",
+	"LuckStatus2": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",
+	"LuckStatus3": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",
+	"LuckStatus4": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",
+	"LuckStatus5": "오늘은 전혀 운이 따라주지 않는 것 같다...",
+	"LuckStatus6": "오늘은 집에 남아 있는 편이 좋을 것 같다..."
 }

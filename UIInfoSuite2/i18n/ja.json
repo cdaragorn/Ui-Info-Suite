@@ -33,5 +33,11 @@
   "ShowRainyDay": "Show rainy days", // TODO
   "ShowHarvestPricesInShop": "店舗収穫価格を表示する",
   "ShowWhenNewRecipesAreAvailable": "新しいレシピが利用可能になったら表示する",
-  "ShowToolUpgradeStatus": "ツールのアップグレード情報を表示する"
+  "ShowToolUpgradeStatus": "ツールのアップグレード情報を表示する",
+  "LuckStatus1": "あなたは幸運を感じている！",
+  "LuckStatus2": "幸運を感じる...しかしそれほど幸運ではない",
+  "LuckStatus3": "幸運を感じる...しかしそれほど幸運ではない",
+  "LuckStatus4": "幸運を感じる...しかしそれほど幸運ではない",
+  "LuckStatus5": "あなたは今日も幸運を感じていません...",
+  "LuckStatus6": "多分あなたは今日家にいなければなりません..."
 }

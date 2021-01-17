@@ -36,5 +36,11 @@
   "ShowRainyDay": "Mutasd az esõs napokat",
   "ShowHarvestPricesInShop": "Mutasd a boltban a learatási árakat",
   "ShowWhenNewRecipesAreAvailable": "Mutasd amikor új receptek elérhetõek",
-  "ShowToolUpgradeStatus": "Mutasd az eszközfejlesztések idejét"
+  "ShowToolUpgradeStatus": "Mutasd az eszközfejlesztések idejét",
+  "LuckStatus1": "Szerencsésnek érzed magad!",
+  "LuckStatus2": "Szerencsésnek érzed magad... de nem nagyon.",
+  "LuckStatus3": "Szerencsésnek érzed magad... de nem nagyon.",
+  "LuckStatus4": "Szerencsésnek érzed magad... de nem nagyon.",
+  "LuckStatus5": "Egyáltalán nem érzed szerencsésnek magad...",
+  "LuckStatus6": "Talán ma otthon kéne maradnod..."
 }
