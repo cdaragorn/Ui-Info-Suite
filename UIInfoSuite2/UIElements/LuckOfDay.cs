@@ -53,29 +53,44 @@ namespace UIInfoSuite.UIElements
             {
                 _color = new Color(Color.White.ToVector4());
 
-                if (Game1.player.DailyLuck < -0.04)
+                switch (Game1.player.DailyLuck)
                 {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.MaybeStayHome);
-                    _color.B = 155;
-                    _color.G = 155;
-                }
-                else if (Game1.player.DailyLuck < 0)
-                {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.NotFeelingLuckyAtAll);
-                    _color.B = 165;
-                    _color.G = 165;
-                    _color.R = 165;
-                    _color *= 0.8f;
-                }
-                else if (Game1.player.DailyLuck <= 0.04)
-                {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.LuckyButNotTooLucky);
-                }
-                else
-                {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.FeelingLucky);
-                    _color.B = 155;
-                    _color.R = 155;
+                    // Spirits are very happy (FeelingLucky)
+                    case var l when (l > 0.07):
+                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus1);
+                        _color.R = 87;
+                        _color.B = 106;
+                        break;
+                    // Spirits are in good humor (LuckyButNotTooLucky)
+                    case var l when (l > 0.02 && l <= 0.07):
+                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus2);
+                        _color.R = 148;
+                        _color.B = 210;
+                        break;
+                    // The spirits feel neutral
+                    case var l when (l >= -0.02 && l <= 0.02 && l != 0):
+                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus3);
+                        _color.R = 246;
+                        _color.B = 145;
+                        break;
+                    // The spirits feel absolutely neutral
+                    case var l when (l == 0):
+                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus4);
+                        break;
+                    // The spirits are somewhat annoyed (NotFeelingLuckyAtAll)
+                    case var l when (l >= -0.07 && l < -0.02):
+                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus5);
+                        _color.B = 155;
+                        _color.G = 155;
+                        break;
+                    // The spirits are very displeased (MaybeStayHome)
+                    case var l when (l < -0.07):
+                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus6);
+                        _color.B = 165;
+                        _color.G = 165;
+                        _color.R = 165;
+                        _color *= 0.8f;
+                        break;
                 }
             }
         }

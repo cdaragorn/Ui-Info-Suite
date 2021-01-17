@@ -22,5 +22,11 @@
         public const string Billboard = "Billboard";
         public const string DaysUntilToolIsUpgraded = "DaysUntilToolIsUpgraded";
         public const string ToolIsFinishedBeingUpgraded = "ToolIsFinishedBeingUpgraded";
+        public const string LuckStatus1 = "LuckStatus1";
+        public const string LuckStatus2 = "LuckStatus2";
+        public const string LuckStatus3 = "LuckStatus3";
+        public const string LuckStatus4 = "LuckStatus4";
+        public const string LuckStatus5 = "LuckStatus5";
+        public const string LuckStatus6 = "LuckStatus6";
     }
 }
