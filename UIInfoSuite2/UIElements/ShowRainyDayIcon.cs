@@ -105,7 +105,6 @@ namespace UIInfoSuite.UIElements
             Game1.mouseCursors.GetData(cursorColors);
             var subTextureColors = new Color[15 * 15];
             
-            //ModEntry.MonitorObject.Log($"Got tile sheet with length {cursorColors.Length}", LogLevel.Alert);
             // Copy over the bits we want
             // Border from TV screen
             Tools.GetSubTexture(subTextureColors, cursorColors, bounds, new Rectangle(499, 307, 15, 15));
@@ -113,7 +112,6 @@ namespace UIInfoSuite.UIElements
             Tools.SetSubTexture(subTextureColors, _weatherIconColors, WeatherSheetWidth, new Rectangle(0, 0, 15, 15));
             Tools.SetSubTexture(subTextureColors, _weatherIconColors, WeatherSheetWidth, new Rectangle(15, 0, 15, 15));
             Tools.SetSubTexture(subTextureColors, _weatherIconColors, WeatherSheetWidth, new Rectangle(30, 0, 15, 15));
-            //ModEntry.MonitorObject.Log("Got TV textures", LogLevel.Alert);
 
             subTextureColors = new Color[13 * 13];
             // Rainy Weather
@@ -128,7 +126,6 @@ namespace UIInfoSuite.UIElements
             Tools.GetSubTexture(subTextureColors, cursorColors, bounds, new Rectangle(465, 346, 13, 13));
             Tools.SetSubTexture(subTextureColors, _weatherIconColors, WeatherSheetWidth,  new Rectangle(31, 1, 13, 13));
             
-            //ModEntry.MonitorObject.Log("Got weather textures, setting icon sheet...", LogLevel.Alert);
             _iconSheet.SetData(_weatherIconColors);
         }
 
@@ -146,14 +143,12 @@ namespace UIInfoSuite.UIElements
 
                 case Game1.weather_rain:
                     _IsNextDayRainy = true;
-                    // _weatherIconSpriteLocation = new Rectangle(268, 1750, 20, 20);
                     _weatherIconSpriteLocation = new Rectangle(0, 0, 15, 15);
                     _hoverText = _helper.SafeGetString(LanguageKeys.RainNextDay);
                     break;
 
                 case Game1.weather_lightning:
                     _IsNextDayRainy = true;
-                    // _weatherIconSpriteLocation = new Rectangle(272, 1641, 20, 20);
                     _weatherIconSpriteLocation = new Rectangle(15, 0, 15, 15);
                     _hoverText = _helper.SafeGetString(LanguageKeys.ThunderstormNextDay);
                     break;

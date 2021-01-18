@@ -117,7 +117,6 @@ namespace UIInfoSuite.Infrastructure
 
         public static void GetSubTexture(Color[] output, Color[] originalColors, Rectangle sourceBounds, Rectangle clipArea)
         {
-            //Create output array
             if (output.Length < clipArea.Width * clipArea.Height)
             {
                 return;
