@@ -3,18 +3,20 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Network;
 using System;
+using System.Linq;
 
 namespace UIInfoSuite.UIElements
 {
     class ShowWhenAnimalNeedsPet : IDisposable
     {
         #region Properties
-        private float _yMovementPerDraw = 0f;
-        private float _alpha = 1f;
+        private readonly PerScreen<float> _yMovementPerDraw = new PerScreen<float>();
+        private readonly PerScreen<float> _alpha = new PerScreen<float>();
 
         private readonly IModHelper _helper;
         #endregion
@@ -34,12 +36,16 @@ namespace UIInfoSuite.UIElements
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
             _helper.Events.Player.Warped -= OnWarped;
-            _helper.Events.Display.RenderingHud -= OnRenderingHud;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawAnimalHasProduct;
+            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawNeedsPetTooltip;
+            _helper.Events.GameLoop.UpdateTicked -= UpdateTicked;
 
             if (showWhenAnimalNeedsPet)
             {
                 _helper.Events.Player.Warped += OnWarped;
-                _helper.Events.Display.RenderingHud += OnRenderingHud;
+                _helper.Events.Display.RenderingHud += OnRenderingHud_DrawAnimalHasProduct;
+                _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
+                _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
             }
         }
         #endregion
@@ -48,43 +54,21 @@ namespace UIInfoSuite.UIElements
         #region Event subscriptions
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.IsLocalPlayer)
-            {
-                if (e.NewLocation is AnimalHouse || e.NewLocation is Farm)
-                {
-                    StartDrawingPetNeeds();
-                }
-                else
-                {
-                    StopDrawingPetNeeds();
-                }
-            }
-        }
-
-        private void StartDrawingPetNeeds()
-        {
-            _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
-            _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
-        }
-
-        private void StopDrawingPetNeeds()
-        {
-            _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawNeedsPetTooltip;
-            _helper.Events.GameLoop.UpdateTicked -= UpdateTicked;
+            
         }
 
         private void OnRenderingHud_DrawNeedsPetTooltip(object sender, RenderingHudEventArgs e)
         {
-            if (!Game1.eventUp && Game1.activeClickableMenu == null)
+            if (!Game1.eventUp && Game1.activeClickableMenu == null && (Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm))
             {
                 DrawIconForFarmAnimals();
                 DrawIconForPets();
             }
         }
 
-        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
+        private void OnRenderingHud_DrawAnimalHasProduct(object sender, RenderingHudEventArgs e)
         {
-            if (!Game1.eventUp && Game1.activeClickableMenu == null && Game1.currentLocation != null)
+            if (!Game1.eventUp && Game1.activeClickableMenu == null && (Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm))
             {
                 DrawAnimalHasProduct();
             }
@@ -92,12 +76,14 @@ namespace UIInfoSuite.UIElements
 
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (Game1.eventUp || Game1.activeClickableMenu != null || !(Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm))
+                return;
+
             float sine = (float)Math.Sin(e.Ticks / 20.0);
-            _yMovementPerDraw = -6f + 6f * sine;
-            _alpha = 0.8f + 0.2f * sine;
+            _yMovementPerDraw.Value = -6f + 6f * sine;
+            _alpha.Value = 0.8f + 0.2f * sine;
         }
         #endregion
-
 
         #region Logic
         private void DrawAnimalHasProduct()
@@ -116,7 +102,7 @@ namespace UIInfoSuite.UIElements
                         positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + (double)animal.Value.Name.GetHashCode()) * 5.0);
                         Game1.spriteBatch.Draw(
                             Game1.emoteSpriteSheet,
-                            new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y),
+                            Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y)),
                             new Rectangle(3 * (Game1.tileSize / 4) % Game1.emoteSpriteSheet.Width, 3 * (Game1.tileSize / 4) / Game1.emoteSpriteSheet.Width * (Game1.tileSize / 4), Game1.tileSize / 4, Game1.tileSize / 4),
                             Color.White * 0.9f,
                             0.0f,
@@ -128,7 +114,7 @@ namespace UIInfoSuite.UIElements
                         Rectangle sourceRectangle = GameLocation.getSourceRectForObject(animal.Value.currentProduce.Value);
                         Game1.spriteBatch.Draw(
                             Game1.objectSpriteSheet,
-                            new Vector2(positionAboveAnimal.X + 28f, positionAboveAnimal.Y + 8f),
+                            Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X + 28f, positionAboveAnimal.Y + 8f)),
                             sourceRectangle,
                             Color.White * 0.9f,
                             0.0f,
@@ -166,9 +152,9 @@ namespace UIInfoSuite.UIElements
                         }
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
-                            new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
+                            Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw.Value)),
                             new Rectangle(32, 0, 16, 16),
-                            Color.White * _alpha,
+                            Color.White * _alpha.Value,
                             0.0f,
                             Vector2.Zero,
                             4f,
@@ -183,27 +169,23 @@ namespace UIInfoSuite.UIElements
         {
             foreach (var character in Game1.currentLocation.characters)
             {
-                if (character is Pet)
+                if (character is Pet pet &&
+                    !pet.lastPetDay.Values.Any(day => day == Game1.Date.TotalDays)
+                    && pet.friendshipTowardFarmer.Value < 1000)
                 {
-                    Pet pet = character as Pet;
-
-                    if ((!pet.lastPetDay.ContainsKey(Game1.player.UniqueMultiplayerID) || pet.lastPetDay[Game1.player.UniqueMultiplayerID] != Game1.Date.TotalDays)
-                        && pet.friendshipTowardFarmer.Value < 1000)
-                    {
-                        Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
-                        positionAboveAnimal.X += 50f;
-                        positionAboveAnimal.Y -= 20f;
-                        Game1.spriteBatch.Draw(
-                            Game1.mouseCursors,
-                            new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw),
-                            new Rectangle(32, 0, 16, 16),
-                            Color.White * _alpha,
-                            0.0f,
-                            Vector2.Zero,
-                            4f,
-                            SpriteEffects.None,
-                            1f);
-                    }
+                    Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
+                    positionAboveAnimal.X += 50f;
+                    positionAboveAnimal.Y -= 20f;
+                    Game1.spriteBatch.Draw(
+                        Game1.mouseCursors,
+                        Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X, positionAboveAnimal.Y + _yMovementPerDraw.Value)),
+                        new Rectangle(32, 0, 16, 16),
+                        Color.White * _alpha.Value,
+                        0.0f,
+                        Vector2.Zero,
+                        4f,
+                        SpriteEffects.None,
+                        1f);
                 }
             }
         }
@@ -228,7 +210,7 @@ namespace UIInfoSuite.UIElements
             }
 
             return animals;
-        } 
+        }
         #endregion
     }
 }

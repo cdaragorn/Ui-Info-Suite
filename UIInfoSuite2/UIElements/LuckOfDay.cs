@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using StardewModdingAPI.Utilities;
 using System;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
@@ -11,11 +12,28 @@ namespace UIInfoSuite.UIElements
 {
     class LuckOfDay : IDisposable
     {
-        private string _hoverText = string.Empty;
-        private Color _color = new Color(Color.White.ToVector4());
-        private ClickableTextureComponent _icon;
+        private readonly PerScreen<string> _hoverText = new PerScreen<string>(createNewState: () => string.Empty);
+        private readonly PerScreen<Color> _color = new PerScreen<Color>(createNewState: () => new Color(Color.White.ToVector4()));
+        private readonly PerScreen<ClickableTextureComponent> _icon = new PerScreen<ClickableTextureComponent>(createNewState: () => new ClickableTextureComponent("",
+                new Rectangle(Tools.GetWidthInPlayArea() - 134,
+                    290,
+                    10 * Game1.pixelZoom,
+                    10 * Game1.pixelZoom),
+                "",
+                "",
+                Game1.mouseCursors,
+                new Rectangle(50, 428, 10, 14),
+                Game1.pixelZoom,
+                false));
         private readonly IModHelper _helper;
 
+        private readonly static Color _luck1Color = new Color(87, 255, 106, 255);
+        private readonly static Color _luck2Color = new Color(148, 255, 210, 255);
+        private readonly static Color _luck3Color = new Color(246, 255, 145, 255);
+        private readonly static Color _luck4Color = new Color(255, 255, 255, 255);
+        private readonly static Color _luck5Color = new Color(255, 155, 155, 255);
+        private readonly static Color _luck6Color = new Color(165, 165, 165, 204);
+        
         public void Toggle(bool showLuckOfDay)
         {
             _helper.Events.Player.Warped -= OnWarped;
@@ -51,45 +69,40 @@ namespace UIInfoSuite.UIElements
             // calculate luck
             if (e.IsMultipleOf(30)) // half second
             {
-                _color = new Color(Color.White.ToVector4());
-
                 switch (Game1.player.DailyLuck)
                 {
                     // Spirits are very happy (FeelingLucky)
                     case var l when (l > 0.07):
-                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus1);
-                        _color.R = 87;
-                        _color.B = 106;
+                        _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus1);
+                        _color.Value = _luck1Color;
                         break;
                     // Spirits are in good humor (LuckyButNotTooLucky)
                     case var l when (l > 0.02 && l <= 0.07):
-                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus2);
-                        _color.R = 148;
-                        _color.B = 210;
+                        _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus2);
+                        _color.Value = _luck2Color;
+
                         break;
                     // The spirits feel neutral
                     case var l when (l >= -0.02 && l <= 0.02 && l != 0):
-                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus3);
-                        _color.R = 246;
-                        _color.B = 145;
+                        _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus3);
+                        _color.Value = _luck3Color;
+
                         break;
                     // The spirits feel absolutely neutral
                     case var l when (l == 0):
-                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus4);
+                        _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus4);
+                        _color.Value = _luck4Color;
                         break;
                     // The spirits are somewhat annoyed (NotFeelingLuckyAtAll)
                     case var l when (l >= -0.07 && l < -0.02):
-                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus5);
-                        _color.B = 155;
-                        _color.G = 155;
+                        _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus5);
+                        _color.Value = _luck5Color;
+
                         break;
                     // The spirits are very displeased (MaybeStayHome)
                     case var l when (l < -0.07):
-                        _hoverText = _helper.SafeGetString(LanguageKeys.LuckStatus6);
-                        _color.B = 165;
-                        _color.G = 165;
-                        _color.R = 165;
-                        _color *= 0.8f;
+                        _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus6);
+                        _color.Value = _luck6Color;
                         break;
                 }
             }
@@ -101,8 +114,8 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_icon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                IClickableMenu.drawHoverText(Game1.spriteBatch, _hoverText, Game1.dialogueFont);
+            if (_icon.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+                IClickableMenu.drawHoverText(Game1.spriteBatch, _hoverText.Value, Game1.dialogueFont);
         }
 
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
@@ -114,9 +127,11 @@ namespace UIInfoSuite.UIElements
             if (!Game1.eventUp)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                _icon.bounds.X = iconPosition.X;
-                _icon.bounds.Y = iconPosition.Y;
-                _icon.draw(Game1.spriteBatch, _color, 1f);
+                var icon = _icon.Value;
+                icon.bounds.X = iconPosition.X;
+                icon.bounds.Y = iconPosition.Y;
+                _icon.Value = icon;
+                _icon.Value.draw(Game1.spriteBatch, _color.Value, 1f);
             }
         }
 
@@ -134,7 +149,7 @@ namespace UIInfoSuite.UIElements
 
         private void AdjustIconXToBlackBorder()
         {
-            _icon = new ClickableTextureComponent("",
+            _icon.Value = new ClickableTextureComponent("",
                 new Rectangle(Tools.GetWidthInPlayArea() - 134,
                     290,
                     10 * Game1.pixelZoom,

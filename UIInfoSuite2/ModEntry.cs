@@ -43,12 +43,18 @@ namespace UIInfoSuite
         #region Event subscriptions
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
+            // Unload if the main player quits.
+            if (Context.ScreenId != 0) return;
+            
             _modOptionsPageHandler?.Dispose();
             _modOptionsPageHandler = null;
         }
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            // Only load once for split screen.
+            if (Context.ScreenId != 0) return;
+
             try
             {
                 try
@@ -87,6 +93,9 @@ namespace UIInfoSuite
 
         private void OnSaved(object sender, EventArgs e)
         {
+            // Only save for the main player.
+            if (Context.ScreenId != 0) return;
+
             if (!string.IsNullOrWhiteSpace(_modDataFileName))
             {
                 if (File.Exists(_modDataFileName))

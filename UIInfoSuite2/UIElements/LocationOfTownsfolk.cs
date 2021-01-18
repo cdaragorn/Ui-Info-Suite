@@ -101,6 +101,7 @@ namespace UIInfoSuite.UIElements
             _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawSocialPageOptions;
             _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu_DrawNPCLocationsOnMap;
             _helper.Events.Input.ButtonPressed -= OnButtonPressed_ForSocialPage;
+            _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
 
             if (showLocations)
             {
@@ -108,6 +109,7 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawSocialPageOptions;
                 _helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu_DrawNPCLocationsOnMap;
                 _helper.Events.Input.ButtonPressed += OnButtonPressed_ForSocialPage;
+                _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
 
@@ -145,6 +147,23 @@ namespace UIInfoSuite.UIElements
                 DrawNPCLocationsOnMap(gameMenu);
             }
         }
+
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            if (!e.IsOneSecond || (Context.IsSplitScreen && Context.ScreenId != 0))
+                return;
+
+            _townsfolk.Clear();
+
+            foreach (var loc in Game1.locations)
+            {
+                foreach (var character in loc.characters)
+                {
+                    if (character.isVillager())
+                        _townsfolk.Add(character);
+                }
+            }
+        }
         #endregion
 
         #region Logic
@@ -161,16 +180,6 @@ namespace UIInfoSuite.UIElements
                             .Select(name => name.ToString())
                             .ToArray();
                         break;
-                    }
-                }
-
-                _townsfolk.Clear();
-                foreach (var location in Game1.locations)
-                {
-                    foreach (var npc in location.characters)
-                    {
-                        if (Game1.player.friendshipData.ContainsKey(npc.Name))
-                            _townsfolk.Add(npc);
                     }
                 }
 
@@ -215,7 +224,7 @@ namespace UIInfoSuite.UIElements
             for (int i = slotPosition; i < slotPosition + 5; ++i)
             {
                 OptionsCheckbox checkbox = _checkboxes[i];
-                if (checkbox.bounds.Contains(Game1.getMouseX(), Game1.getMouseY()) &&
+                if (checkbox.bounds.Contains((int)Utility.ModifyCoordinateForUIScale(Game1.getMouseX()), (int)Utility.ModifyCoordinateForUIScale(Game1.getMouseY())) &&
                     !checkbox.greyedOut)
                 {
                     checkbox.isChecked = !checkbox.isChecked;
@@ -273,7 +282,7 @@ namespace UIInfoSuite.UIElements
             {
                 try
                 {
-                    bool shouldDrawCharacter = _options.SafeGet(character.Name.GetHashCode().ToString()).SafeParseBool();
+                    bool shouldDrawCharacter = Game1.player.friendshipData.ContainsKey(character.Name) && _options.SafeGet(character.Name.GetHashCode().ToString()).SafeParseBool();
                     if (shouldDrawCharacter)
                     {
                         DrawNPC(character, namesToShow);

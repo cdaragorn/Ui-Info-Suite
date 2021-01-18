@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -53,7 +54,7 @@ namespace UIInfoSuite.UIElements
                 new Rectangle(134, 236, 30, 15),
                 Game1.pixelZoom);
 
-        private Item _hoverItem;
+        private readonly PerScreen<Item> _hoverItem = new PerScreen<Item>();
         private CommunityCenter _communityCenter;
         private Dictionary<string, string> _bundleData;
         private LibraryMuseum _libraryMuseum;
@@ -96,7 +97,7 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRendering(object sender, EventArgs e)
         {
-            _hoverItem = Tools.GetHoveredItem();
+            _hoverItem.Value = Tools.GetHoveredItem();
         }
 
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear over the HUD.</summary>
@@ -190,36 +191,36 @@ namespace UIInfoSuite.UIElements
         private void DrawAdvancedTooltip()
         {
 
-            if (_hoverItem != null &&
-                _hoverItem.Name != "Scythe" &&
-              !(_hoverItem is StardewValley.Tools.FishingRod))
+            if (_hoverItem.Value != null &&
+                _hoverItem.Value.Name != "Scythe" &&
+              !(_hoverItem.Value is StardewValley.Tools.FishingRod))
             {
                 int itemPrice = 0;
                 int stackPrice = 0;
                 int cropPrice = 0;
-                int truePrice = Tools.GetTruePrice(_hoverItem);
+                int truePrice = Tools.GetTruePrice(_hoverItem.Value);
                 int windowWidth;
                 string requiredBundleName = null;
 
-                //if (_lastHoverItem == null || _hoverItem.Name != _lastHoverItem.Name || _hoverItem.Stack != lastStackSize)
+                //if (_lastHoverItem == null || _hoverItem.Value.Name != _lastHoverItem.Name || _hoverItem.Value.Stack != lastStackSize)
                 //{
                 if (truePrice > 0)
                 {
                     itemPrice = truePrice / 2;
 
-                    if (_hoverItem.Stack > 1)
+                    if (_hoverItem.Value.Stack > 1)
                     {
-                        stackPrice = (itemPrice * _hoverItem.Stack);
+                        stackPrice = (itemPrice * _hoverItem.Value.Stack);
                     }
                 }
 
-                if (_hoverItem is StardewValley.Object
+                if (_hoverItem.Value is StardewValley.Object
                     && itemPrice > 0
-                    && (_hoverItem as StardewValley.Object).Type == "Seeds"
-                    && (_hoverItem.Name != "Mixed Seeds" || _hoverItem.Name != "Winter Seeds"))
+                    && (_hoverItem.Value as StardewValley.Object).Type == "Seeds"
+                    && (_hoverItem.Value.Name != "Mixed Seeds" || _hoverItem.Value.Name != "Winter Seeds"))
                 {
                     StardewValley.Object itemObject = new StardewValley.Object(
-                            new Debris(new Crop(_hoverItem.ParentSheetIndex, 0, 0).indexOfHarvest.Value,
+                            new Debris(new Crop(_hoverItem.Value.ParentSheetIndex, 0, 0).indexOfHarvest.Value,
                             Game1.player.position,
                             Game1.player.position).chunkType.Value,
                             1);
@@ -228,11 +229,11 @@ namespace UIInfoSuite.UIElements
 
                 foreach (var requiredBundle in _prunedRequiredBundles)
                 {
-                    if (requiredBundle.Value.Contains(_hoverItem.ParentSheetIndex)
-                        && !_hoverItem.Name.Contains("arecrow")
-                        && _hoverItem.Name != "Chest"
-                        && _hoverItem.Name != "Recycling Machine"
-                        && _hoverItem.Name != "Solid Gold Lewis")
+                    if (requiredBundle.Value.Contains(_hoverItem.Value.ParentSheetIndex)
+                        && !_hoverItem.Value.Name.Contains("arecrow")
+                        && _hoverItem.Value.Name != "Chest"
+                        && _hoverItem.Value.Name != "Recycling Machine"
+                        && _hoverItem.Value.Name != "Solid Gold Lewis")
                     {
                         requiredBundleName = requiredBundle.Key;
                         break;
@@ -379,7 +380,7 @@ namespace UIInfoSuite.UIElements
                     }
                 }
 
-                if (_libraryMuseum.isItemSuitableForDonation(_hoverItem))
+                if (_libraryMuseum.isItemSuitableForDonation(_hoverItem.Value))
                 {
                     _museumIcon.bounds.X = (int)windowPos.X - 30;
                     _museumIcon.bounds.Y = (int)windowPos.Y - 60 + windowHeight;
@@ -419,7 +420,7 @@ namespace UIInfoSuite.UIElements
                     _bundleIcon.draw(Game1.spriteBatch);
                 }
 
-                if (_hoverItem is StardewValley.Object obj)
+                if (_hoverItem.Value is StardewValley.Object obj)
                 {
                     if (obj.countsForShippedCollection() && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex))
                     {
@@ -439,14 +440,14 @@ namespace UIInfoSuite.UIElements
                 }
 
                 //memorize the result to save processing time when calling again with same values
-                //_lastHoverItem = (_lastHoverItem != _hoverItem) ? _hoverItem : _lastHoverItem;
+                //_lastHoverItem = (_lastHoverItem != _hoverItem.Value) ? _hoverItem.Value : _lastHoverItem;
                 //lastItemPrice = (itemPrice != lastItemPrice) ? itemPrice : lastItemPrice;
                 //lastCropPrice = (lastCropPrice != cropPrice) ? cropPrice : lastCropPrice;
                 //lastStackPrice = (lastStackPrice != stackPrice) ? stackPrice : lastStackPrice;
                 //lastTruePrice = (lastTruePrice != truePrice) ? truePrice : lastTruePrice;
                 //lastWindowWidth = (lastWindowWidth != windowWidth) ? windowWidth : lastWindowWidth;
                 //lastRequiredBundleName = (lastRequiredBundleName != requiredBundleName) ? requiredBundleName : lastRequiredBundleName;
-                //lastStackSize = (_hoverItem != null && lastStackSize != _hoverItem.Stack) ? _hoverItem.Stack : lastStackSize;
+                //lastStackSize = (_hoverItem.Value != null && lastStackSize != _hoverItem.Value.Stack) ? _hoverItem.Value.Stack : lastStackSize;
             }
         }
 
@@ -454,7 +455,7 @@ namespace UIInfoSuite.UIElements
         {
             if (Game1.activeClickableMenu is ItemGrabMenu)
             {
-                (Game1.activeClickableMenu as MenuWithInventory).hoveredItem = _hoverItem;
+                (Game1.activeClickableMenu as MenuWithInventory).hoveredItem = _hoverItem.Value;
             }
         }
 

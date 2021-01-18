@@ -1,6 +1,7 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -18,9 +19,9 @@ namespace UIInfoSuite.UIElements
     class ShowCropAndBarrelTime : IDisposable
     {
         private readonly Dictionary<int, string> _indexOfCropNames = new Dictionary<int, string>();
-        private StardewValley.Object _currentTile;
-        private TerrainFeature _terrain;
-        private Building _currentTileBuilding = null;
+        private readonly PerScreen<StardewValley.Object> _currentTile = new PerScreen<StardewValley.Object>();
+        private readonly PerScreen<TerrainFeature> _terrain = new PerScreen<TerrainFeature>();
+        private readonly PerScreen<Building> _currentTileBuilding = new PerScreen<Building>();
         private readonly IModHelper _helper;
 
         public ShowCropAndBarrelTime(IModHelper helper)
@@ -48,36 +49,37 @@ namespace UIInfoSuite.UIElements
             if (!e.IsMultipleOf(4))
                 return;
 
+            var gamepadTile = Game1.player.CurrentTool != null ? Utility.snapToInt(Game1.player.GetToolLocation()/Game1.tileSize) : Utility.snapToInt(Game1.player.GetGrabTile());
+            var mouseTile = Game1.currentCursorTile;
+
+            var tile = (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0) ? gamepadTile : mouseTile;
+
             // get tile under cursor
-            _currentTileBuilding = Game1.currentLocation is BuildableGameLocation buildableLocation
-                ? buildableLocation.getBuildingAt(Game1.currentCursorTile)
+            _currentTileBuilding.Value = Game1.currentLocation is BuildableGameLocation buildableLocation
+                ? buildableLocation.getBuildingAt(tile)
                 : null;
+
             if (Game1.currentLocation != null)
             {
-                if (Game1.currentLocation.Objects == null ||
-                    !Game1.currentLocation.Objects.TryGetValue(Game1.currentCursorTile, out _currentTile))
-                {
-                    _currentTile = null;
-                }
+                if (Game1.currentLocation.Objects != null && Game1.currentLocation.Objects.TryGetValue(tile, out var currentObject))
+                    _currentTile.Value = currentObject;
+                else
+                    _currentTile.Value = null;
 
-                if (Game1.currentLocation.terrainFeatures == null ||
-                    !Game1.currentLocation.terrainFeatures.TryGetValue(Game1.currentCursorTile, out _terrain))
+                if (Game1.currentLocation.terrainFeatures != null && Game1.currentLocation.terrainFeatures.TryGetValue(tile, out var terrain))
+                    _terrain.Value = terrain;
+                else
                 {
-                    if (_currentTile is IndoorPot pot &&
-                        pot.hoeDirt.Value != null)
-                    {
-                        _terrain = pot.hoeDirt.Value;
-                    }
+                    if (_currentTile.Value is IndoorPot pot && pot.hoeDirt.Value != null)
+                        _terrain.Value = pot.hoeDirt.Value;
                     else
-                    {
-                        _terrain = null;
-                    }
+                        _terrain.Value = null;
                 }
             }
             else
             {
-                _currentTile = null;
-                _terrain = null;
+                _currentTile.Value = null;
+                _terrain.Value = null;
             }
         }
 
@@ -91,76 +93,82 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
+            var currentTileBuilding = _currentTileBuilding.Value;
+            var currentTile = _currentTile.Value;
+            var terrain = _terrain.Value;
+
+            int overrideX = -1;
+            int overrideY = -1;
+
             // draw hover tooltip
-            if (_currentTileBuilding != null)
+            if (currentTileBuilding != null && currentTileBuilding is Mill millBuilding && millBuilding.input.Value != null && !millBuilding.input.Value.isEmpty())
             {
-                if (_currentTileBuilding is Mill millBuilding)
+                int wheatCount = 0;
+                int beetCount = 0;
+
+                foreach (Item item in millBuilding.input.Value.items)
                 {
-                    if (millBuilding.input.Value != null)
+                    if (item != null &&
+                        !string.IsNullOrEmpty(item.Name))
                     {
-                        if (!millBuilding.input.Value.isEmpty())
+                        switch (item.Name)
                         {
-                            int wheatCount = 0;
-                            int beetCount = 0;
-
-                            foreach (var item in millBuilding.input.Value.items)
-                            {
-                                if (item != null &&
-                                    !string.IsNullOrEmpty(item.Name))
-                                {
-                                    switch (item.Name)
-                                    {
-                                        case "Wheat": wheatCount = item.Stack; break;
-                                        case "Beet": beetCount = item.Stack; break;
-                                    }
-                                }
-                            }
-
-                            StringBuilder builder = new StringBuilder();
-
-                            if (wheatCount > 0)
-                                builder.Append(wheatCount + " wheat");
-
-                            if (beetCount > 0)
-                            {
-                                if (wheatCount > 0)
-                                    builder.Append(Environment.NewLine);
-                                builder.Append(beetCount + " beets");
-                            }
-
-                            if (builder.Length > 0)
-                            {
-                                IClickableMenu.drawHoverText(
-                                   Game1.spriteBatch,
-                                   builder.ToString(),
-                                   Game1.smallFont);
-                            }
+                            case "Wheat": wheatCount = item.Stack; break;
+                            case "Beet": beetCount = item.Stack; break;
                         }
                     }
                 }
+
+                StringBuilder builder = new StringBuilder();
+
+                if (wheatCount > 0)
+                    builder.Append(wheatCount + " wheat");
+
+                if (beetCount > 0)
+                {
+                    if (wheatCount > 0)
+                        builder.Append(Environment.NewLine);
+                    builder.Append(beetCount + " beets");
+                }
+
+                if (builder.Length > 0)
+                {
+                    if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                    {
+                        var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(currentTileBuilding.tileX.Value, currentTileBuilding.tileY.Value) * Game1.tileSize));
+                        overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                        overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
+                    }
+                    
+                    IClickableMenu.drawHoverText(
+                        Game1.spriteBatch,
+                        builder.ToString(),
+                        Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
+                }
             }
-            else if (_currentTile != null &&
-                (!_currentTile.bigCraftable.Value ||
-                _currentTile.MinutesUntilReady > 0))
+            else if (currentTile != null &&
+                (!currentTile.bigCraftable.Value ||
+                currentTile.MinutesUntilReady > 0))
             {
-                if (_currentTile.bigCraftable.Value &&
-                    _currentTile.MinutesUntilReady > 0 &&
-                    _currentTile.heldObject.Value != null &&
-                    _currentTile.Name != "Heater")
+                if (currentTile.bigCraftable.Value &&
+                    currentTile.MinutesUntilReady > 0 &&
+                    currentTile.heldObject.Value != null &&
+                    currentTile.Name != "Heater")
                 {
                     StringBuilder hoverText = new StringBuilder();
-                    hoverText.AppendLine(_currentTile.heldObject.Value.DisplayName);
 
-                    if (_currentTile is Cask)
+                    hoverText.AppendLine(currentTile.heldObject.Value.DisplayName);
+                    
+                    if (currentTile is Cask)
                     {
-                        Cask currentCask = _currentTile as Cask;
+                        Cask currentCask = currentTile as Cask;
                         hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
                     }
                     else
                     {
-                        int timeLeft = _currentTile.MinutesUntilReady;
+                        int timeLeft = currentTile.MinutesUntilReady;
                         int longTime = timeLeft / 60;
                         string longText = LanguageKeys.Hours;
                         int shortTime = timeLeft % 60;
@@ -191,25 +199,31 @@ namespace UIInfoSuite.UIElements
 
                         if (longTime > 0)
                             hoverText.Append(longTime).Append(" ")
-                                .Append(_helper.SafeGetString(
-                                    longText))
+                                .Append(_helper.SafeGetString(longText))
                                 .Append(", ");
 
                         hoverText.Append(shortTime).Append(" ")
-                            .Append(_helper.SafeGetString(
-                                shortText));
+                            .Append(_helper.SafeGetString(shortText));
                     }
+
+                    if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                    {
+                        var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(currentTile.TileLocation.X, currentTile.TileLocation.Y) * Game1.tileSize));
+                        overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                        overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
+                    }
+
                     IClickableMenu.drawHoverText(
                         Game1.spriteBatch,
                         hoverText.ToString(),
-                        Game1.smallFont);
+                        Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                 }
             }
-            else if (_terrain != null)
+            else if (terrain != null)
             {
-                if (_terrain is HoeDirt)
+                if (terrain is HoeDirt)
                 {
-                    HoeDirt hoeDirt = _terrain as HoeDirt;
+                    HoeDirt hoeDirt = terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
                         !hoeDirt.crop.dead.Value)
                     {
@@ -254,16 +268,24 @@ namespace UIInfoSuite.UIElements
                                 finalHoverText.Append(_helper.SafeGetString(
                                     LanguageKeys.ReadyToHarvest));
                             }
+
+                            if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                            {
+                                var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize));
+                                overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                                overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
+                            }
+
                             IClickableMenu.drawHoverText(
                                 Game1.spriteBatch,
                                 finalHoverText.ToString(),
-                                Game1.smallFont);
+                                Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                         }
                     }
                 }
-                else if (_terrain is FruitTree)
+                else if (terrain is FruitTree)
                 {
-                    FruitTree tree = _terrain as FruitTree;
+                    FruitTree tree = terrain as FruitTree;
                     var text = new StardewValley.Object(new Debris(tree.indexOfFruit.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                     if (tree.daysUntilMature.Value > 0)
                     {
@@ -272,10 +294,18 @@ namespace UIInfoSuite.UIElements
                                     LanguageKeys.DaysToMature);
 
                     }
+
+                    if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                    {
+                        var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize));
+                        overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                        overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
+                    }
+
                     IClickableMenu.drawHoverText(
                             Game1.spriteBatch,
                             text,
-                            Game1.smallFont);
+                            Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                 }
             }
         }
