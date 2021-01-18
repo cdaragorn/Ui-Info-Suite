@@ -27,12 +27,12 @@ namespace UIInfoSuite.UIElements
                 false));
         private readonly IModHelper _helper;
 
-        private readonly static Color _luck1Color = new Color(87, 255, 106, 255);
-        private readonly static Color _luck2Color = new Color(148, 255, 210, 255);
-        private readonly static Color _luck3Color = new Color(246, 255, 145, 255);
-        private readonly static Color _luck4Color = new Color(255, 255, 255, 255);
-        private readonly static Color _luck5Color = new Color(255, 155, 155, 255);
-        private readonly static Color _luck6Color = new Color(165, 165, 165, 204);
+        private static readonly Color Luck1Color = new Color(87, 255, 106, 255);
+        private static readonly Color Luck2Color = new Color(148, 255, 210, 255);
+        private static readonly Color Luck3Color = new Color(246, 255, 145, 255);
+        private static readonly Color Luck4Color = new Color(255, 255, 255, 255);
+        private static readonly Color Luck5Color = new Color(255, 155, 155, 255);
+        private static readonly Color Luck6Color = new Color(165, 165, 165, 204);
         
         public void Toggle(bool showLuckOfDay)
         {
@@ -74,35 +74,35 @@ namespace UIInfoSuite.UIElements
                     // Spirits are very happy (FeelingLucky)
                     case var l when (l > 0.07):
                         _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus1);
-                        _color.Value = _luck1Color;
+                        _color.Value = Luck1Color;
                         break;
                     // Spirits are in good humor (LuckyButNotTooLucky)
                     case var l when (l > 0.02 && l <= 0.07):
                         _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus2);
-                        _color.Value = _luck2Color;
+                        _color.Value = Luck2Color;
 
                         break;
                     // The spirits feel neutral
                     case var l when (l >= -0.02 && l <= 0.02 && l != 0):
                         _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus3);
-                        _color.Value = _luck3Color;
+                        _color.Value = Luck3Color;
 
                         break;
                     // The spirits feel absolutely neutral
                     case var l when (l == 0):
                         _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus4);
-                        _color.Value = _luck4Color;
+                        _color.Value = Luck4Color;
                         break;
                     // The spirits are somewhat annoyed (NotFeelingLuckyAtAll)
                     case var l when (l >= -0.07 && l < -0.02):
                         _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus5);
-                        _color.Value = _luck5Color;
+                        _color.Value = Luck5Color;
 
                         break;
                     // The spirits are very displeased (MaybeStayHome)
                     case var l when (l < -0.07):
                         _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckStatus6);
-                        _color.Value = _luck6Color;
+                        _color.Value = Luck6Color;
                         break;
                 }
             }
