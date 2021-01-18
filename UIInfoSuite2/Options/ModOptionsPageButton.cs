@@ -50,8 +50,8 @@ namespace UIInfoSuite.Options
         {
             if (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA)
             {
-                int x = (int)e.Cursor.ScreenPixels.X;
-                int y = (int)e.Cursor.ScreenPixels.Y;
+                var x = (int)Utility.ModifyCoordinateForUIScale(e.Cursor.ScreenPixels.X);
+                var y = (int)Utility.ModifyCoordinateForUIScale(e.Cursor.ScreenPixels.Y);
                 if (isWithinBounds(x, y))
                 {
                     receiveLeftClick(x, y);
