@@ -8,10 +8,6 @@
         public const string Minutes = "Minutes";
         public const string ReadyToHarvest = "ReadyToHarvest";
         public const string TodaysRecipe = "TodaysRecipe";
-        public const string MaybeStayHome = "MaybeStayHome";
-        public const string NotFeelingLuckyAtAll = "NotFeelingLuckyAtAll";
-        public const string LuckyButNotTooLucky = "LuckyButNotTooLucky";
-        public const string FeelingLucky = "FeelingLucky";
         public const string TravelingMerchantIsInTown = "TravelingMerchantIsInTown";
         public const string RainNextDay = "RainNextDay";
         public const string ThunderstormNextDay = "ThunderstormNextDay";
