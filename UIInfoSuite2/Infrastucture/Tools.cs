@@ -114,5 +114,40 @@ namespace UIInfoSuite.Infrastructure
 
             return hoverItem;
         }
+
+        public static void GetSubTexture(Color[] output, Color[] originalColors, Rectangle sourceBounds, Rectangle clipArea)
+        {
+            if (output.Length < clipArea.Width * clipArea.Height)
+            {
+                return;
+            }
+
+            var dest = 0;
+            for (var yOffset = 0; yOffset < clipArea.Height; yOffset++)
+            {
+                for (var xOffset = 0; xOffset < clipArea.Width; xOffset++)
+                {
+                    var idx = (clipArea.X + xOffset) + (sourceBounds.Width * (yOffset + clipArea.Y));
+                    output[dest++] = originalColors[idx];
+                }
+            }
+
+        }
+
+        public static void SetSubTexture(Color[] sourceColors, Color[] destColors, int destWidth, Rectangle destBounds)
+        {
+            if(sourceColors.Length > destColors.Length || (destBounds.Width * destBounds.Height) > destColors.Length) {
+                return;
+            }
+            var srcIdx = 0;
+            for (var yOffset = 0; yOffset < destBounds.Height; yOffset++)
+            {
+                for (var xOffset = 0; xOffset < destBounds.Width; xOffset++)
+                {
+                    var idx = (destBounds.X + xOffset) + (destWidth * (yOffset + destBounds.Y));
+                    destColors[idx] = sourceColors[srcIdx++];
+                }
+            }
+        }
     }
 }
