@@ -3,14 +3,10 @@
   "Calendar" : "Kalender",
   "Days" : "Tage",
   "DaysToMature" : "Tage bis gereift",
-  "FeelingLucky" : "Du fühlst dich glücklich!",
   "HarvestPrice" : "Erntewert",
   "Hours" : "Stunden",
   "LevelUp" : "Level aufgestiegen",
-  "LuckyButNotTooLucky" : "Du fühlst dich glücklich ... aber nicht zu glücklich",
-  "MaybeStayHome" : "Vielleicht solltest du heute zu Hause bleiben",
   "Minutes" : "Minuten",
-  "NotFeelingLuckyAtAll" : "Du fühlst dich heute gar nicht glücklich",
   "ReadyToHarvest" : "Bereit zum Ernten!",
   "TodaysRecipe" : "Heutiges Rezept: ",
   "TravelingMerchantIsInTown" : "Der reisende Händler ist im Dorf!",
@@ -33,5 +29,11 @@
   "ShowRainyDay": "Show rainy days",                          // TODO
   "ShowHarvestPricesInShop" : "Zeige Erntewerte",
   "ShowWhenNewRecipesAreAvailable" : "Zeige, wenn neue Rezepte verfügbar sind",
-  "ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt"
+  "ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt",
+  "LuckStatus1": "Du fühlst dich glücklich!",
+  "LuckStatus2": "Du fühlst dich glücklich ... aber nicht zu glücklich",  // TODO
+  "LuckStatus3": "Du fühlst dich glücklich ... aber nicht zu glücklich",  // TODO
+  "LuckStatus4": "Du fühlst dich glücklich ... aber nicht zu glücklich",  // TODO
+  "LuckStatus5": "Du fühlst dich heute gar nicht glücklich",              // TODO
+  "LuckStatus6": "Vielleicht solltest du heute zu Hause bleiben"
 }

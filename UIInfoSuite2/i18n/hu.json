@@ -3,14 +3,10 @@
   "Calendar": "Naptár",
   "Days": "nap",
   "DaysToMature": "nap a megnövésig",
-  "FeelingLucky": "Szerencsésnek érzed magad!",
   "HarvestPrice": "Ár learatásnál",
   "Hours": "óra",
   "LevelUp": "Szintlépés",
-  "LuckyButNotTooLucky": "Szerencsésnek érzed magad... de nem nagyon.",
-  "MaybeStayHome": "Talán ma otthon kéne maradnod...",
   "Minutes": "perc",
-  "NotFeelingLuckyAtAll": "Egyáltalán nem érzed szerencsésnek magad...",
   "ReadyToHarvest": "Aratásra kész!",
   "TodaysRecipe": "Mai recept: ",
   "TravelingMerchantIsInTown": "Az utazó árus a városban van!",
@@ -36,5 +32,11 @@
   "ShowRainyDay": "Mutasd az esõs napokat",
   "ShowHarvestPricesInShop": "Mutasd a boltban a learatási árakat",
   "ShowWhenNewRecipesAreAvailable": "Mutasd amikor új receptek elérhetõek",
-  "ShowToolUpgradeStatus": "Mutasd az eszközfejlesztések idejét"
+  "ShowToolUpgradeStatus": "Mutasd az eszközfejlesztések idejét",
+  "LuckStatus1": "Szerencsésnek érzed magad!",
+  "LuckStatus2": "Szerencsésnek érzed magad... de nem nagyon.", // TODO
+  "LuckStatus3": "Szerencsésnek érzed magad... de nem nagyon.", // TODO
+  "LuckStatus4": "Szerencsésnek érzed magad... de nem nagyon.", // TODO
+  "LuckStatus5": "Egyáltalán nem érzed szerencsésnek magad...", // TODO
+  "LuckStatus6": "Talán ma otthon kéne maradnod..."
 }

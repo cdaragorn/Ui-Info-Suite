@@ -3,14 +3,10 @@
 	"Calendar": "ปฏิทิน",
 	"Days": "วัน",
 	"DaysToMature": "วันสำหรับผู้ใหญ่",
-	"FeelingLucky": "คุณรู้สึกโชคดีมาก !!",
 	"HarvestPrice": "ราคาเก็บเกี่ยว",
 	"Hours": "ชั่วโมง",
 	"LevelUp": "ยกระดับ",
-	"LuckyButNotTooLucky": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",
-	"MaybeStayHome": "บางทีคุณควรจะอยู่บ้านวันนี้ ...",
 	"Minutes": "นาที",
-	"NotFeelingLuckyAtAll": "วันนี้คุณไม่รู้สึกโชคดีเลย",
 	"ReadyToHarvest": "พร้อมที่จะเก็บเกี่ยว!",
 	"TodaysRecipe": "สูตรวันนี้: ",
 	"TravelingMerchantIsInTown": "พ่อค้าเดินทางอยู่ในเมือง!",
@@ -30,5 +26,11 @@
 	"ShowTravelingMerchant": "Show Traveling Merchant", // TODO
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "Show shop harvest prices", // TODO
-	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available" // TODO
+	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available", // TODO
+	"LuckStatus1": "คุณรู้สึกโชคดีมาก !!",
+	"LuckStatus2": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",	// TODO
+	"LuckStatus3": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",	// TODO
+	"LuckStatus4": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",	// TODO
+	"LuckStatus5": "วันนี้คุณไม่รู้สึกโชคดีเลย",				// TODO
+	"LuckStatus6": "บางทีคุณควรจะอยู่บ้านวันนี้ ..."
 }

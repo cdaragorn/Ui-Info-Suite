@@ -3,14 +3,10 @@
   "Calendar": "Calendario",
   "Days": "días",
   "DaysToMature": "días para madurar",
-  "FeelingLucky": "¡Tienes suerte!",
   "HarvestPrice": "Precio de la cosecha",
   "Hours": "horas",
   "LevelUp": "Subida de nivel",
-  "LuckyButNotTooLucky": "Te sientes con suerte... aunque no demasiado",
-  "MaybeStayHome": "Tal vez deberías quedarte en casa hoy",
   "Minutes": "minutos",
-  "NotFeelingLuckyAtAll": "No te sientes afortunado en absoluto...",
   "ReadyToHarvest": "¡Listo para cosechar!",
   "TodaysRecipe": "Receta de hoy: ",
   "TravelingMerchantIsInTown": "¡El comerciante ambulante está en la zona!",
@@ -33,5 +29,11 @@
   "ShowRainyDay": "Show rainy days", // TODO
   "ShowHarvestPricesInShop": "Mostrar los precios de cosechas de la tienda",
   "ShowWhenNewRecipesAreAvailable": "Mostrar cuando hay nuevas recetas disponibles",
-  "ShowToolUpgradeStatus": "Mostrar el estado de actualización de la herramienta"
+  "ShowToolUpgradeStatus": "Mostrar el estado de actualización de la herramienta",
+  "LuckStatus1": "¡Tienes suerte!",
+  "LuckStatus2": "Te sientes con suerte... aunque no demasiado",  // TODO
+  "LuckStatus3": "Te sientes con suerte... aunque no demasiado",  // TODO
+  "LuckStatus4": "Te sientes con suerte... aunque no demasiado",  // TODO
+  "LuckStatus5": "No te sientes afortunado en absoluto...",       // TODO
+  "LuckStatus6": "Tal vez deberías quedarte en casa hoy"
 }
