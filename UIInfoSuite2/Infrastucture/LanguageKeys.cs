@@ -12,6 +12,8 @@
         public const string RainNextDay = "RainNextDay";
         public const string ThunderstormNextDay = "ThunderstormNextDay";
         public const string SnowNextDay = "SnowNextDay";
+        public const string IslandRainNextDay = "IslandRainNextDay";
+        public const string IslandThunderstormNextDay = "IslandThunderstormNextDay";
         public const string HarvestPrice = "HarvestPrice";
         public const string LevelUp = "LevelUp";
         public const string Calendar = "Calendar";

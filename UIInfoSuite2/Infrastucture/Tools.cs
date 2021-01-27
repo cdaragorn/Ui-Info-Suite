@@ -134,18 +134,26 @@ namespace UIInfoSuite.Infrastructure
 
         }
 
-        public static void SetSubTexture(Color[] sourceColors, Color[] destColors, int destWidth, Rectangle destBounds)
+        public static void SetSubTexture(Color[] sourceColors, Color[] destColors, int destWidth, Rectangle destBounds, bool overlay = false)
         {
             if(sourceColors.Length > destColors.Length || (destBounds.Width * destBounds.Height) > destColors.Length) {
                 return;
             }
+            var emptyColor = new Color(0, 0, 0, 0);
             var srcIdx = 0;
             for (var yOffset = 0; yOffset < destBounds.Height; yOffset++)
             {
                 for (var xOffset = 0; xOffset < destBounds.Width; xOffset++)
                 {
                     var idx = (destBounds.X + xOffset) + (destWidth * (yOffset + destBounds.Y));
-                    destColors[idx] = sourceColors[srcIdx++];
+                    Color sourcePixel = sourceColors[srcIdx++];
+                    
+                    // If using overlay mode, don't copy transparent pixels
+                    if (overlay && emptyColor.Equals(sourcePixel))
+                    {
+                        continue;
+                    }
+                    destColors[idx] = sourcePixel;
                 }
             }
         }
