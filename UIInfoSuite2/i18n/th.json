@@ -30,5 +30,9 @@
 	"ShowTravelingMerchant": "Show Traveling Merchant", // TODO
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "Show shop harvest prices", // TODO
-	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available" // TODO
+	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available", // TODO,
+	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+	"HideMerchantWhenVisited": "Hide when visited", // TODO
+	"ShowExactValue": "Show exact value", // TODO
+	"DailyLuckValue": "Your daily luck is {0}" // TODO
 }

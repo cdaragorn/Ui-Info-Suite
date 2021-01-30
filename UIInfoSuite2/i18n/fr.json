@@ -33,5 +33,9 @@
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "Montrer le prix des récoles en magasin",
 	"ShowWhenNewRecipesAreAvailable": "Montrer quand nouvelles recettes disp.",
-	"ShowToolUpgradeStatus": "Montrer état de l'amélioration des outils"
+	"ShowToolUpgradeStatus": "Montrer état de l'amélioration des outils",
+	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+	"HideMerchantWhenVisited": "Hide when visited", // TODO
+	"ShowExactValue": "Show exact value", // TODO
+	"DailyLuckValue": "Your daily luck is {0}" // TODO
 }

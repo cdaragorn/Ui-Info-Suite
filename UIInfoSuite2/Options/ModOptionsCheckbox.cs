@@ -22,7 +22,8 @@ namespace UIInfoSuite.Options
             Action<bool> toggleOptionDelegate,
             IDictionary<string, string> options,
             string optionKey,
-            ModOptionsCheckbox parent = null)
+            ModOptionsCheckbox parent = null,
+            bool defaultValue = true)
             : base(label, whichOption, parent)
         {
             _toggleOptionsDelegate = toggleOptionDelegate;
@@ -30,7 +31,7 @@ namespace UIInfoSuite.Options
             _optionKey = optionKey;
 
             if (!_options.ContainsKey(_optionKey))
-                _options[_optionKey] = "true";
+                _options[_optionKey] = defaultValue ? "true" : "false";
 
             _isChecked = _options[_optionKey].SafeParseBool();
             _toggleOptionsDelegate(_isChecked);

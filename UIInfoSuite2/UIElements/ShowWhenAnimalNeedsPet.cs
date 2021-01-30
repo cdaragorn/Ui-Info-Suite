@@ -18,6 +18,8 @@ namespace UIInfoSuite.UIElements
         private readonly PerScreen<float> _yMovementPerDraw = new PerScreen<float>();
         private readonly PerScreen<float> _alpha = new PerScreen<float>();
 
+        public bool HideOnMaxFriendship { get; set; }
+
         private readonly IModHelper _helper;
         #endregion
 
@@ -47,6 +49,10 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderingHud += OnRenderingHud_DrawNeedsPetTooltip;
                 _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
             }
+        }
+        public void ToggleDisableOnMaxFirendshipOption(bool hideOnMaxFriendship)
+        {
+            HideOnMaxFriendship = hideOnMaxFriendship;
         }
         #endregion
 
@@ -137,7 +143,7 @@ namespace UIInfoSuite.UIElements
                 {
                     if (!animal.Value.IsEmoting &&
                         !animal.Value.wasPet.Value &&
-                        animal.Value.friendshipTowardFarmer.Value < 1000)
+                        (animal.Value.friendshipTowardFarmer.Value < 1000 || !HideOnMaxFriendship))
                     {
                         Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
                         string animalType = animal.Value.type.Value.ToLower();
@@ -171,7 +177,7 @@ namespace UIInfoSuite.UIElements
             {
                 if (character is Pet pet &&
                     !pet.lastPetDay.Values.Any(day => day == Game1.Date.TotalDays)
-                    && pet.friendshipTowardFarmer.Value < 1000)
+                    && (pet.friendshipTowardFarmer.Value < 1000 || !HideOnMaxFriendship))
                 {
                     Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(character);
                     positionAboveAnimal.X += 50f;

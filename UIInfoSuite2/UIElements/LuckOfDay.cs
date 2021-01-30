@@ -12,6 +12,7 @@ namespace UIInfoSuite.UIElements
 {
     class LuckOfDay : IDisposable
     {
+        #region Properties
         private readonly PerScreen<string> _hoverText = new PerScreen<string>(createNewState: () => string.Empty);
         private readonly PerScreen<Color> _color = new PerScreen<Color>(createNewState: () => new Color(Color.White.ToVector4()));
         private readonly PerScreen<ClickableTextureComponent> _icon = new PerScreen<ClickableTextureComponent>(createNewState: () => new ClickableTextureComponent("",
@@ -27,12 +28,26 @@ namespace UIInfoSuite.UIElements
                 false));
         private readonly IModHelper _helper;
 
+        private bool ShowExactValue { get; set; }
+
         private readonly static Color _maybeStayHomeColor = new Color(255, 155, 155, 255);
         private readonly static Color _notFeelingLuckyAtAllColor = new Color(132, 132, 132, 255);
         private readonly static Color _luckyButNotTooLuckyColor = new Color(255, 255, 255, 255);
         private readonly static Color _feelingLuckyColor = new Color(155, 255, 155, 255);
+        #endregion
 
-        public void Toggle(bool showLuckOfDay)
+        #region Lifecycle
+        public LuckOfDay(IModHelper helper)
+        {
+            _helper = helper;
+        }
+
+        public void Dispose()
+        {
+            ToggleOption(false);
+        }
+
+        public void ToggleOption(bool showLuckOfDay)
         {
             _helper.Events.Player.Warped -= OnWarped;
             _helper.Events.Display.RenderingHud -= OnRenderingHud;
@@ -48,23 +63,43 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderedHud += OnRenderedHud;
             }
         }
-
-        public LuckOfDay(IModHelper helper)
+        public void ToggleShowExactValueOption(bool showExactValue)
         {
-            _helper = helper;
+            ShowExactValue = showExactValue;
         }
+        #endregion
 
-        public void Dispose()
-        {
-            Toggle(false);
-        }
-
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
+        #region Event subscriptions
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            // calculate luck
+            CalculateLuck(e);
+        }
+
+        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
+        {
+            // draw hover text
+            if (_icon.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+                IClickableMenu.drawHoverText(Game1.spriteBatch, _hoverText.Value, Game1.dialogueFont);
+        }
+
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
+        {
+            // draw dice icon
+            if (!Game1.eventUp)
+            {
+                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
+                var icon = _icon.Value;
+                icon.bounds.X = iconPosition.X;
+                icon.bounds.Y = iconPosition.Y;
+                _icon.Value = icon;
+                _icon.Value.draw(Game1.spriteBatch, _color.Value, 1f);
+            }
+        }
+        #endregion
+
+        #region Logic
+        private void CalculateLuck(UpdateTickedEventArgs e)
+        {
             if (e.IsMultipleOf(30)) // half second
             {
                 if (Game1.player.DailyLuck < -0.04)
@@ -87,39 +122,15 @@ namespace UIInfoSuite.UIElements
                     _hoverText.Value = _helper.SafeGetString(LanguageKeys.FeelingLucky);
                     _color.Value = _feelingLuckyColor;
                 }
+
+                // Rewrite the text, but keep the color
+                if (ShowExactValue)
+                {
+                    _hoverText.Value = string.Format(_helper.SafeGetString(LanguageKeys.DailyLuckValue), Game1.player.DailyLuck);
+                }
             }
         }
 
-        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnRenderedHud(object sender, RenderedHudEventArgs e)
-        {
-            // draw hover text
-            if (_icon.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                IClickableMenu.drawHoverText(Game1.spriteBatch, _hoverText.Value, Game1.dialogueFont);
-        }
-
-        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
-        {
-            // draw dice icon
-            if (!Game1.eventUp)
-            {
-                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                var icon = _icon.Value;
-                icon.bounds.X = iconPosition.X;
-                icon.bounds.Y = iconPosition.Y;
-                _icon.Value = icon;
-                _icon.Value.draw(Game1.spriteBatch, _color.Value, 1f);
-            }
-        }
-
-        /// <summary>Raised after a player warps to a new location.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
         {
             // adjust icon X to black border
@@ -143,5 +154,6 @@ namespace UIInfoSuite.UIElements
                 Game1.pixelZoom,
                 false);
         }
+        #endregion
     }
 }

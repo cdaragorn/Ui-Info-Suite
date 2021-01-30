@@ -33,5 +33,9 @@
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "在购买页面显示收获价格",
 	"ShowWhenNewRecipesAreAvailable": "显示可学习的新食谱",
-	"ShowToolUpgradeStatus": "显示工具升级状态"
+	"ShowToolUpgradeStatus": "显示工具升级状态",
+	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+	"HideMerchantWhenVisited": "Hide when visited", // TODO
+	"ShowExactValue": "Show exact value", // TODO
+	"DailyLuckValue": "Your daily luck is {0}" // TODO
 }
