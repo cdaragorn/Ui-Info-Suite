@@ -161,10 +161,14 @@ namespace UIInfoSuite.UIElements
                     similarObjects = GetSimilarObjectsInLocation("sprinkler");
                     foreach (StardewValley.Object next in similarObjects)
                     {
-                        arrayToUse = next.name.IndexOf("iridium", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.IridiumSprinkler) :
-                        next.name.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.QualitySprinkler) :
-                        next.name.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler) :
-                            GetDistanceArray(ObjectsWithDistance.Sprinkler);
+                        bool hasPressureNozzle = false;
+                        if (next.heldObject.Value != null && next.heldObject.Value.DisplayName.IndexOf("nozzle", StringComparison.OrdinalIgnoreCase) >= 0)
+                            hasPressureNozzle = true;
+
+                        arrayToUse = next.name.IndexOf("iridium", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.IridiumSprinkler, hasPressureNozzle) :
+                        next.name.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.QualitySprinkler, hasPressureNozzle) :
+                        next.name.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler, hasPressureNozzle) :
+                            GetDistanceArray(ObjectsWithDistance.Sprinkler, hasPressureNozzle);
 
                         ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
                     }
@@ -243,12 +247,12 @@ namespace UIInfoSuite.UIElements
             PrismaticSprinkler
         }
 
-        private int[][] GetDistanceArray(ObjectsWithDistance type)
+        private int[][] GetDistanceArray(ObjectsWithDistance type, bool hasPressureNozzle = false)
         {
             switch (type)
             {
                 case ObjectsWithDistance.JunimoHut:
-                    return GetCircularMask(100, maxRadius: 8);
+                    return GetCircularMask(100, maxDisplaySquareRadius: 8);
                 case ObjectsWithDistance.Beehouse:
                     return GetCircularMask(4.19, exceptionalDistance: 5, onlyClearExceptions: true);
                 case ObjectsWithDistance.Scarecrow:
@@ -256,11 +260,11 @@ namespace UIInfoSuite.UIElements
                 case ObjectsWithDistance.DeluxeScarecrow:
                     return GetCircularMask(16.99);
                 case ObjectsWithDistance.Sprinkler:
-                    return GetCircularMask(1);
+                    return hasPressureNozzle ? GetCircularMask(100, maxDisplaySquareRadius: 1) : GetCircularMask(1);
                 case ObjectsWithDistance.QualitySprinkler:
-                    return GetCircularMask(1.5);
+                    return hasPressureNozzle ? GetCircularMask(100, maxDisplaySquareRadius: 2) : GetCircularMask(100, maxDisplaySquareRadius: 1);
                 case ObjectsWithDistance.IridiumSprinkler:
-                    return GetCircularMask(2.89);
+                    return hasPressureNozzle ? GetCircularMask(100, maxDisplaySquareRadius: 3) : GetCircularMask(100, maxDisplaySquareRadius: 2);
                 case ObjectsWithDistance.PrismaticSprinkler:
                     return GetCircularMask(3.69, exceptionalDistance: Math.Sqrt(18), onlyClearExceptions: false);
                 default:
@@ -268,10 +272,10 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private static int[][] GetCircularMask(double maxDistance, double? exceptionalDistance = null, bool? onlyClearExceptions = null, int? maxRadius = null)
+        private static int[][] GetCircularMask(double maxDistance, double? exceptionalDistance = null, bool? onlyClearExceptions = null, int? maxDisplaySquareRadius = null)
         {
             int radius = Math.Max((int)Math.Ceiling(maxDistance), exceptionalDistance.HasValue ? (int)Math.Ceiling(exceptionalDistance.Value) : 0);
-            radius = Math.Min(radius, maxRadius.HasValue ? maxRadius.Value : radius);
+            radius = Math.Min(radius, maxDisplaySquareRadius.HasValue ? maxDisplaySquareRadius.Value : radius);
             int size = 2 * radius + 1;
 
             int[][] result = new int[size][];
