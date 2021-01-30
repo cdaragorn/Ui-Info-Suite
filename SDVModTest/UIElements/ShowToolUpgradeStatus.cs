@@ -57,61 +57,72 @@ namespace UIInfoSuite.UIElements
 
         private void UpdateToolInfo()
         {
-            // 
-            if (Game1.player.toolBeingUpgraded.Value != null)
+            if (Game1.player.toolBeingUpgraded.Value == null)
             {
-                _toolBeingUpgraded = Game1.player.toolBeingUpgraded.Value;
-                _toolTexturePosition = new Rectangle();
+                _toolBeingUpgraded = null;
+                return;
+            }
 
-                if (_toolBeingUpgraded is StardewValley.Tools.WateringCan)
-                {
-                    _toolTexturePosition.X = 32;
-                    _toolTexturePosition.Y = 228;
-                    _toolTexturePosition.Width = 16;
-                    _toolTexturePosition.Height = 11;
-                }
-                else
-                {
-                    _toolTexturePosition.Width = 16;
-                    _toolTexturePosition.Height = 16;
-                    _toolTexturePosition.X = 81;
-                    _toolTexturePosition.Y = 31;
+            Tool toolBeingUpgraded = _toolBeingUpgraded = Game1.player.toolBeingUpgraded.Value;
+            Rectangle toolTexturePosition = new Rectangle();
 
-                    if (!(_toolBeingUpgraded is StardewValley.Tools.Hoe))
-                    {
-                        _toolTexturePosition.Y += 64;
-
-                        if (!(_toolBeingUpgraded is StardewValley.Tools.Pickaxe))
-                        {
-                            _toolTexturePosition.Y += 64;
-                        }
-                    }
-                }
-
-                _toolTexturePosition.X += (111 * _toolBeingUpgraded.UpgradeLevel);
-
-                if (_toolTexturePosition.X > Game1.toolSpriteSheet.Width)
-                {
-                    _toolTexturePosition.Y += 32;
-                    _toolTexturePosition.X -= 333;
-                }
-
-                if (Game1.player.daysLeftForToolUpgrade.Value > 0)
-                {
-                    _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
-                        Game1.player.daysLeftForToolUpgrade.Value, _toolBeingUpgraded.DisplayName);
-                }
-                else
-                {
-                    _hoverText = String.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
-                        _toolBeingUpgraded.DisplayName);
-                }
+            if (toolBeingUpgraded is StardewValley.Tools.WateringCan)
+            {
+                toolTexturePosition.X = 32;
+                toolTexturePosition.Y = 228;
+                toolTexturePosition.Width = 16;
+                toolTexturePosition.Height = 11;
+                toolTexturePosition.X += (111 * toolBeingUpgraded.UpgradeLevel);
             }
             else
             {
-                _toolBeingUpgraded = null;
+                toolTexturePosition.Width = 16;
+                toolTexturePosition.Height = 16;
+
+                if (toolBeingUpgraded is StardewValley.Tools.Hoe)
+                {
+                    toolTexturePosition.X = 81;
+                    toolTexturePosition.Y = 31;
+                    toolTexturePosition.X += (111 * toolBeingUpgraded.UpgradeLevel);
+                }
+                else if (toolBeingUpgraded is StardewValley.Tools.Pickaxe)
+                {
+                    toolTexturePosition.X = 81;
+                    toolTexturePosition.Y = 31 + 64;
+                    toolTexturePosition.X += (111 * toolBeingUpgraded.UpgradeLevel);
+                }
+                else if (toolBeingUpgraded is StardewValley.Tools.Axe)
+                {
+                    toolTexturePosition.X = 81;
+                    toolTexturePosition.Y = 31 + 64 + 64;
+                    toolTexturePosition.X += (111 * toolBeingUpgraded.UpgradeLevel);
+                }
+                else if (toolBeingUpgraded is StardewValley.Tools.GenericTool)
+                {
+                    toolTexturePosition.X = 208;
+                    toolTexturePosition.Y = 0;
+                    toolTexturePosition.X += (16 * toolBeingUpgraded.UpgradeLevel);
+                }
             }
-            
+
+            if (toolTexturePosition.X > Game1.toolSpriteSheet.Width)
+            {
+                toolTexturePosition.Y += 32;
+                toolTexturePosition.X -= 333;
+            }
+
+            if (Game1.player.daysLeftForToolUpgrade.Value > 0)
+            {
+                _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.DaysUntilToolIsUpgraded),
+                    Game1.player.daysLeftForToolUpgrade.Value, toolBeingUpgraded.DisplayName);
+            }
+            else
+            {
+                _hoverText = string.Format(_helper.SafeGetString(LanguageKeys.ToolIsFinishedBeingUpgraded),
+                    toolBeingUpgraded.DisplayName);
+            }
+
+            _toolTexturePosition = toolTexturePosition;
         }
 
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear under the HUD.</summary>
