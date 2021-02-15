@@ -18,6 +18,7 @@
         public const string Billboard = "Billboard";
         public const string DaysUntilToolIsUpgraded = "DaysUntilToolIsUpgraded";
         public const string ToolIsFinishedBeingUpgraded = "ToolIsFinishedBeingUpgraded";
+        public const string DailyLuckValue = "DailyLuckValue";
         public const string LuckStatus1 = "LuckStatus1";
         public const string LuckStatus2 = "LuckStatus2";
         public const string LuckStatus3 = "LuckStatus3";

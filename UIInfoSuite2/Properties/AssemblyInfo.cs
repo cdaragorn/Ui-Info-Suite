@@ -1,18 +1,14 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-/*
- * 1.8.4    Fixed ShowHarvestPrices for SDV 1.4 changes.
- * */
-
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("UI Info Suite")]
+[assembly: AssemblyTitle("UIInfoSuite2")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("UI Info Suite")]
+[assembly: AssemblyProduct("UIInfoSuite2")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

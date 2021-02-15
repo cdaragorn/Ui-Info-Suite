@@ -3,7 +3,9 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using System;
+using System.Linq;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
 
@@ -13,7 +15,10 @@ namespace UIInfoSuite.UIElements
     {
         #region Properties
         private bool _travelingMerchantIsHere;
+        private bool _travelingMerchantIsVisited;
         private ClickableTextureComponent _travelingMerchantIcon;
+
+        public bool HideWhenVisited { get; set; }
 
         private readonly IModHelper _helper;
         #endregion
@@ -35,6 +40,7 @@ namespace UIInfoSuite.UIElements
             _helper.Events.Display.RenderingHud -= OnRenderingHud;
             _helper.Events.Display.RenderedHud -= OnRenderedHud;
             _helper.Events.GameLoop.DayStarted -= OnDayStarted;
+            _helper.Events.Display.MenuChanged -= OnMenuChanged;
 
             if (showTravelingMerchant)
             {
@@ -42,7 +48,13 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderingHud += OnRenderingHud;
                 _helper.Events.Display.RenderedHud += OnRenderedHud;
                 _helper.Events.GameLoop.DayStarted += OnDayStarted;
+                _helper.Events.Display.MenuChanged += OnMenuChanged;
             }
+        }
+
+        public void ToggleHideWhenVisitedOption(bool hideWhenVisited)
+        {
+            HideWhenVisited = hideWhenVisited;
         }
         #endregion
 
@@ -53,10 +65,18 @@ namespace UIInfoSuite.UIElements
             UpdateTravelingMerchant();
         }
 
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            if (e.NewMenu is ShopMenu menu && menu.forSale.Any(s => !(s is Hat)) && Game1.currentLocation.Name == "Forest")
+            {
+                _travelingMerchantIsVisited = true;
+            }
+        }
+
         private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
             // Draw icon
-            if (!Game1.eventUp && _travelingMerchantIsHere)
+            if (!Game1.eventUp && ShouldDrawIcon())
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
                 _travelingMerchantIcon =
@@ -72,12 +92,12 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // Show text on hover
-            if (_travelingMerchantIsHere && (_travelingMerchantIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
+            if (ShouldDrawIcon() && (_travelingMerchantIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
                 string hoverText = _helper.SafeGetString(LanguageKeys.TravelingMerchantIsInTown);
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,
-                    hoverText, 
+                    hoverText,
                     Game1.dialogueFont
                 );
             }
@@ -90,6 +110,13 @@ namespace UIInfoSuite.UIElements
         {
             int dayOfWeek = Game1.dayOfMonth % 7;
             _travelingMerchantIsHere = dayOfWeek == 0 || dayOfWeek == 5;
+
+            _travelingMerchantIsVisited = false;
+        }
+
+        private bool ShouldDrawIcon()
+        {
+            return _travelingMerchantIsHere && (!_travelingMerchantIsVisited || !HideWhenVisited);
         }
         #endregion
     }

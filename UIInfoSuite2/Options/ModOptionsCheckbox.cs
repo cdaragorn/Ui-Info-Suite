@@ -10,12 +10,11 @@ namespace UIInfoSuite.Options
 {
     class ModOptionsCheckbox : ModOptionsElement
     {
-        private const int PixelSize = 9;
-
         private readonly Action<bool> _toggleOptionsDelegate;
         private bool _isChecked;
         private readonly IDictionary<string, string> _options;
         private readonly string _optionKey;
+        private bool _canClick => !(_parent is ModOptionsCheckbox) || (_parent as ModOptionsCheckbox)._isChecked;
 
         public ModOptionsCheckbox(
             string label,
@@ -23,17 +22,16 @@ namespace UIInfoSuite.Options
             Action<bool> toggleOptionDelegate,
             IDictionary<string, string> options,
             string optionKey,
-            bool defaultValue = true,
-            int x = -1,
-            int y = -1)
-            : base(label, x, y, PixelSize * Game1.pixelZoom, PixelSize * Game1.pixelZoom, whichOption)
+            ModOptionsCheckbox parent = null,
+            bool defaultValue = true)
+            : base(label, whichOption, parent)
         {
             _toggleOptionsDelegate = toggleOptionDelegate;
             _options = options;
             _optionKey = optionKey;
 
             if (!_options.ContainsKey(_optionKey))
-                _options[_optionKey] = defaultValue.ToString();
+                _options[_optionKey] = defaultValue ? "true" : "false";
 
             _isChecked = _options[_optionKey].SafeParseBool();
             _toggleOptionsDelegate(_isChecked);

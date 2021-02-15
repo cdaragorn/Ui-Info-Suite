@@ -26,7 +26,11 @@
 	"ShowTravelingMerchant": "Show Traveling Merchant", // TODO
 	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "Show shop harvest prices", // TODO
-	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available", // TODO
+	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available", // TODO,
+	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+	"HideMerchantWhenVisited": "Hide when visited", // TODO
+	"ShowExactValue": "Show exact value", // TODO
+	"DailyLuckValue": "Your daily luck is {0}", // TODO
 	"LuckStatus1": "คุณรู้สึกโชคดีมาก !!",
 	"LuckStatus2": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",	// TODO
 	"LuckStatus3": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป",	// TODO

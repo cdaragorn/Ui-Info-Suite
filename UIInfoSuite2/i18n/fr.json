@@ -30,6 +30,10 @@
 	"ShowHarvestPricesInShop": "Montrer le prix des récoles en magasin",
 	"ShowWhenNewRecipesAreAvailable": "Montrer quand nouvelles recettes disp.",
 	"ShowToolUpgradeStatus": "Montrer état de l'amélioration des outils",
+	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+	"HideMerchantWhenVisited": "Hide when visited", // TODO
+	"ShowExactValue": "Show exact value", // TODO
+	"DailyLuckValue": "Your daily luck is {0}", // TODO
 	"LuckStatus1": "Tu te sens chanceux!",
 	"LuckStatus2": "Tu te sens chanceux... mais pas trop",	// TODO
 	"LuckStatus3": "Tu te sens chanceux... mais pas trop",	// TODO

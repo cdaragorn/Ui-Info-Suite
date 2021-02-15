@@ -30,6 +30,10 @@
 	"ShowHarvestPricesInShop": "상점에서의 수확물 가격 표시",
 	"ShowWhenNewRecipesAreAvailable": "새 레시피를 얻을 수 있을 때를 알림",
 	"ShowToolUpgradeStatus": "도구 업그레이드 현황 보여주기",
+	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+	"HideMerchantWhenVisited": "Hide when visited", // TODO
+	"ShowExactValue": "Show exact value", // TODO
+	"DailyLuckValue": "Your daily luck is {0}", // TODO
 	"LuckStatus1": "당신은 왠지 오늘 운이 매우 좋을 것 같다!!",
 	"LuckStatus2": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
 	"LuckStatus3": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
