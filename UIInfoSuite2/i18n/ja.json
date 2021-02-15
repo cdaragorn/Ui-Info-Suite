@@ -37,5 +37,11 @@
     "HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
     "HideMerchantWhenVisited": "Hide when visited", // TODO
     "ShowExactValue": "Show exact value", // TODO
-    "DailyLuckValue": "Your daily luck is {0}" // TODO
+    "DailyLuckValue": "Your daily luck is {0}", // TODO
+    "LuckStatus1": "あなたは幸運を感じている！",
+    "LuckStatus2": "幸運を感じる...しかしそれほど幸運ではない", // TODO
+    "LuckStatus3": "幸運を感じる...しかしそれほど幸運ではない", // TODO
+    "LuckStatus4": "幸運を感じる...しかしそれほど幸運ではない", // TODO 
+    "LuckStatus5": "あなたは今日も幸運を感じていません...",   // TODO
+    "LuckStatus6": "多分あなたは今日家にいなければなりません..."
 }

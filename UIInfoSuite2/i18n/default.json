@@ -40,5 +40,11 @@
     "HideAnimalPetOnMaxFriendship": "Hide on max friendship",
     "HideMerchantWhenVisited": "Hide when visited",
     "ShowExactValue": "Show exact value",
-    "DailyLuckValue": "Your daily luck is {0}"
+    "DailyLuckValue": "Your daily luck is {0}",
+    "LuckStatus1": "Feelin' lucky!",
+    "LuckStatus2": "Feelin' a little lucky today!",
+    "LuckStatus3": "The day is in your hands",
+    "LuckStatus4": "The spirits feel absolutely neutral today",
+    "LuckStatus5": "Luck will not be on your side today",
+    "LuckStatus6": "Maybe you should stay home today..."
 }

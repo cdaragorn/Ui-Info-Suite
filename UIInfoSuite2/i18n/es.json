@@ -37,5 +37,11 @@
     "HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
     "HideMerchantWhenVisited": "Hide when visited", // TODO
     "ShowExactValue": "Show exact value", // TODO
-    "DailyLuckValue": "Your daily luck is {0}" // TODO
+    "DailyLuckValue": "Your daily luck is {0}", // TODO
+    "LuckStatus1": "¡Tienes suerte!",
+    "LuckStatus2": "Te sientes con suerte... aunque no demasiado",  // TODO
+    "LuckStatus3": "Te sientes con suerte... aunque no demasiado",  // TODO
+    "LuckStatus4": "Te sientes con suerte... aunque no demasiado",  // TODO
+    "LuckStatus5": "No te sientes afortunado en absoluto...",       // TODO
+    "LuckStatus6": "Tal vez deberías quedarte en casa hoy"
 }

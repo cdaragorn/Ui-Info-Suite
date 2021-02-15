@@ -3,14 +3,10 @@
 	"Calendar": "달력",
 	"Days": "일",
 	"DaysToMature": "다 자라기까지 걸리는 시간",
-	"FeelingLucky": "당신은 왠지 오늘 운이 매우 좋을 것 같다!!",
 	"HarvestPrice": "수확물 가격",
 	"Hours": "시간",
 	"LevelUp": "레벨 업",
-	"LuckyButNotTooLucky": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",
-	"MaybeStayHome": "오늘은 집에 남아 있는 편이 좋을 것 같다...",
 	"Minutes": "분",
-	"NotFeelingLuckyAtAll": "오늘은 전혀 운이 따라주지 않는 것 같다...",
 	"ReadyToHarvest": "수확 준비 완료!",
 	"TodaysRecipe": "오늘의 방송 레시피: ",
 	"TravelingMerchantIsInTown": "행상인이 마을에 나타났다!",
@@ -37,5 +33,11 @@
 	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
 	"HideMerchantWhenVisited": "Hide when visited", // TODO
 	"ShowExactValue": "Show exact value", // TODO
-	"DailyLuckValue": "Your daily luck is {0}" // TODO
+	"DailyLuckValue": "Your daily luck is {0}", // TODO
+	"LuckStatus1": "당신은 왠지 오늘 운이 매우 좋을 것 같다!!",
+	"LuckStatus2": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
+	"LuckStatus3": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
+	"LuckStatus4": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
+	"LuckStatus5": "오늘은 전혀 운이 따라주지 않는 것 같다...",		// TODO
+	"LuckStatus6": "오늘은 집에 남아 있는 편이 좋을 것 같다..."
 }

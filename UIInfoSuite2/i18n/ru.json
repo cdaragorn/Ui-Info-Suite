@@ -37,5 +37,11 @@
     "HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
     "HideMerchantWhenVisited": "Hide when visited", // TODO
     "ShowExactValue": "Show exact value", // TODO
-    "DailyLuckValue": "Your daily luck is {0}" // TODO
+    "DailyLuckValue": "Your daily luck is {0}", // TODO
+    "LuckStatus1": "Вы ощущаете, что сегодня вам точно повезёт!",
+    "LuckStatus2": "Вы ощущаете, что сегодня, вроде бы, вам повезёт.",  // TODO
+    "LuckStatus3": "Вы ощущаете, что сегодня, вроде бы, вам повезёт.",  // TODO
+    "LuckStatus4": "Вы ощущаете, что сегодня, вроде бы, вам повезёт.",  // TODO
+    "LuckStatus5": "Сегодня вам совсем не везёт...",                    // TODO
+    "LuckStatus6": "Может быть, вам стоит сегодня остаться дома..."
 }
