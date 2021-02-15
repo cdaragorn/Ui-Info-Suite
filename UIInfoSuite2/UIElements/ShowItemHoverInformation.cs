@@ -232,11 +232,7 @@ namespace UIInfoSuite.UIElements
                 foreach (var requiredBundle in _prunedRequiredBundles)
                 {
                     int quality = _hoverItem.Value is StardewValley.Object ? ((StardewValley.Object)_hoverItem.Value).Quality : 0;
-                    if (requiredBundle.Value.Any(
-                            itemQuality => 
-                                itemQuality.Key == _hoverItem.Value.ParentSheetIndex
-                                && (quality == 0 || quality >= itemQuality.Value)
-                        )
+                    if (requiredBundle.Value.Any(itemQuality => itemQuality.Key == _hoverItem.Value.ParentSheetIndex && quality >= itemQuality.Value)
                         && !_hoverItem.Value.Name.Contains("arecrow")
                         && _hoverItem.Value.Name != "Chest"
                         && _hoverItem.Value.Name != "Recycling Machine"
