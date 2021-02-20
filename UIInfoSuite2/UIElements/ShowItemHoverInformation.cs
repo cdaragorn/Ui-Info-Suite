@@ -8,6 +8,7 @@ using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
@@ -16,7 +17,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowItemHoverInformation : IDisposable
     {
-        private readonly Dictionary<string, List<int>> _prunedRequiredBundles = new Dictionary<string, List<int>>();
+        private readonly Dictionary<string, List<KeyValuePair<int, int>>> _prunedRequiredBundles = new Dictionary<string, List<KeyValuePair<int, int>>>();
         private readonly ClickableTextureComponent _bundleIcon =
             new ClickableTextureComponent(
                 "",
@@ -160,15 +161,16 @@ namespace UIInfoSuite.UIElements
                         string[] bundleInfo = bundle.Value.Split('/');
                         string bundleName = bundleInfo[0];
                         string[] bundleValues = bundleInfo[2].Split(' ');
-                        List<int> source = new List<int>();
+                        List<KeyValuePair<int, int>> source = new List<KeyValuePair<int, int>>();
 
                         for (int i = 0; i < bundleValues.Length; i += 3)
                         {
                             int bundleValue = bundleValues[i].SafeParseInt32();
+                            int quality = bundleValues[i + 2].SafeParseInt32();
                             if (bundleValue != -1 &&
                                 !_communityCenter.bundles[bundleNumber][i / 3])
                             {
-                                source.Add(bundleValue);
+                                source.Add(new KeyValuePair<int, int>(bundleValue, quality));
                             }
                         }
 
@@ -229,7 +231,8 @@ namespace UIInfoSuite.UIElements
 
                 foreach (var requiredBundle in _prunedRequiredBundles)
                 {
-                    if (requiredBundle.Value.Contains(_hoverItem.Value.ParentSheetIndex)
+                    int quality = _hoverItem.Value is StardewValley.Object ? ((StardewValley.Object)_hoverItem.Value).Quality : 0;
+                    if (requiredBundle.Value.Any(itemQuality => itemQuality.Key == _hoverItem.Value.ParentSheetIndex && quality >= itemQuality.Value)
                         && !_hoverItem.Value.Name.Contains("arecrow")
                         && _hoverItem.Value.Name != "Chest"
                         && _hoverItem.Value.Name != "Recycling Machine"
