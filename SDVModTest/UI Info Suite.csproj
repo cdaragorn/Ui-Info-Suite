@@ -72,7 +72,6 @@
     <Compile Include="LanguageKeys.cs" />
     <Compile Include="LEEvents.cs" />
     <Compile Include="LevelExtenderInterface.cs" />
-    <Compile Include="ModConfig.cs" />
     <Compile Include="Options\ModOptionsCheckbox.cs" />
     <Compile Include="Options\ModOptionsPageButton.cs" />
     <Compile Include="Options\ModOptionsPageHandler.cs" />
