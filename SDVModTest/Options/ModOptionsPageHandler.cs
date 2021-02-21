@@ -41,14 +41,13 @@ namespace UIInfoSuite.Options
             _options = options;
             helper.Events.Display.MenuChanged += ToggleModOptions;
             _helper = helper;
-            ModConfig modConfig = _helper.ReadConfig<ModConfig>();
             _luckOfDay = new LuckOfDay(helper);
             _showBirthdayIcon = new ShowBirthdayIcon(helper);
             _showAccurateHearts = new ShowAccurateHearts(helper.Events);
             _locationOfTownsfolk = new LocationOfTownsfolk(helper, _options);
             _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
-            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modConfig, helper.Events);
+            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(helper.Events);
             _experienceBar = new ExperienceBar(helper);
             _showItemHoverInformation = new ShowItemHoverInformation(helper.Events);
             _shopHarvestPrices = new ShopHarvestPrices(helper);
