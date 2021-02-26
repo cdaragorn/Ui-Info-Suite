@@ -6,5 +6,5 @@
     "UniqueID": "Annosz.UiInfoSuite2",
     "EntryDll": "UIInfoSuite2.dll",
     "MinimumApiVersion": "3.0.0",
-    "UpdateKeys": [ "Nexus:7098" ]
+    "UpdateKeys": [ "GitHub:Annosz/UIInfoSuite2" ]
 }
