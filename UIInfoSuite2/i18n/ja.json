@@ -42,6 +42,7 @@
     "LuckStatus2": "幸運を感じる...しかしそれほど幸運ではない", // TODO
     "LuckStatus3": "幸運を感じる...しかしそれほど幸運ではない", // TODO
     "LuckStatus4": "幸運を感じる...しかしそれほど幸運ではない", // TODO 
-    "LuckStatus5": "あなたは今日も幸運を感じていません...",   // TODO
-    "LuckStatus6": "多分あなたは今日家にいなければなりません..."
+    "LuckStatus5": "あなたは今日も幸運を感じていません...", // TODO
+    "LuckStatus6": "多分あなたは今日家にいなければなりません...",
+    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)" // TODO
 }

@@ -206,16 +206,6 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private int TileUnderMouseX
-        {
-            get { return (Game1.getMouseX() + Game1.viewport.X) / Game1.tileSize; }
-        }
-
-        private int TileUnderMouseY
-        {
-            get { return (Game1.getMouseY() + Game1.viewport.Y) / Game1.tileSize; }
-        }
-
         private List<StardewValley.Object> GetSimilarObjectsInLocation(string nameContains)
         {
             List<StardewValley.Object> result = new List<StardewValley.Object>();

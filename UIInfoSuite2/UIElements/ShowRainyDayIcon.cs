@@ -40,12 +40,12 @@ namespace UIInfoSuite.UIElements
             _iconSheet.Dispose();
         }
 
-        public void ToggleOption(bool showTravelingMerchant)
+        public void ToggleOption(bool showRainyDay)
         {
             _helper.Events.Display.RenderingHud -= OnRenderingHud;
             _helper.Events.Display.RenderedHud -= OnRenderedHud;
 
-            if (showTravelingMerchant)
+            if (showRainyDay)
             {
                 _helper.Events.Display.RenderingHud += OnRenderingHud;
                 _helper.Events.Display.RenderedHud += OnRenderedHud;

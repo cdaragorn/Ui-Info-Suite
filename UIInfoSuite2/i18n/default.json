@@ -46,5 +46,7 @@
     "LuckStatus3": "The day is in your hands",
     "LuckStatus4": "The spirits feel absolutely neutral today",
     "LuckStatus5": "Luck will not be on your side today",
-    "LuckStatus6": "Maybe you should stay home today..."
+    "LuckStatus6": "Maybe you should stay home today...",
+    "ShowRobinBuildingStatusIcon": "Show Robin building status",
+    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)"
 }

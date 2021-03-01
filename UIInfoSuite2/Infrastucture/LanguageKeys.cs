@@ -25,5 +25,6 @@
         public const string LuckStatus4 = "LuckStatus4";
         public const string LuckStatus5 = "LuckStatus5";
         public const string LuckStatus6 = "LuckStatus6";
+        public const string RobinBuildingStatus = "RobinBuildingStatus";
     }
 }

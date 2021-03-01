@@ -35,9 +35,10 @@
 	"ShowExactValue": "Show exact value", // TODO
 	"DailyLuckValue": "Your daily luck is {0}", // TODO
 	"LuckStatus1": "당신은 왠지 오늘 운이 매우 좋을 것 같다!!",
-	"LuckStatus2": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
-	"LuckStatus3": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
-	"LuckStatus4": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.",	// TODO
-	"LuckStatus5": "오늘은 전혀 운이 따라주지 않는 것 같다...",		// TODO
-	"LuckStatus6": "오늘은 집에 남아 있는 편이 좋을 것 같다..."
+	"LuckStatus2": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.", // TODO
+	"LuckStatus3": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.", // TODO
+	"LuckStatus4": "운이 좋은 것 같다... 하지만 매우는 아닌듯 하다.", // TODO
+	"LuckStatus5": "오늘은 전혀 운이 따라주지 않는 것 같다...", // TODO
+	"LuckStatus6": "오늘은 집에 남아 있는 편이 좋을 것 같다...",
+	"RobinBuildingStatus": "Robin will finish your new building in {0} day(s)" // TODO
 }
