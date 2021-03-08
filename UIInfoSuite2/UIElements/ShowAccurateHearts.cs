@@ -166,7 +166,7 @@ namespace UIInfoSuite.UIElements
                         Game1.spriteBatch.Draw(
                             Game1.staminaRect,
                             new Rectangle(
-                                Game1.activeClickableMenu.xPositionOnScreen + 316 + num2 + j * 4,
+                                Game1.activeClickableMenu.xPositionOnScreen + 320 + num2 + j * 4,
                                 yPosition + 14 + i * 4,
                                 4,
                                 4),
