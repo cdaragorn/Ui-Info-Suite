@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
 using StardewValley.Buildings;
+using StardewModdingAPI.Utilities;
 
 namespace UIInfoSuite.UIElements
 {
@@ -18,7 +19,7 @@ namespace UIInfoSuite.UIElements
         private bool _IsBuildingInProgress;
         Rectangle? _buildingIconSpriteLocation;
         private string _hoverText;
-        private ClickableTextureComponent _buildingIcon;
+        private PerScreen<ClickableTextureComponent> _buildingIcon = new PerScreen<ClickableTextureComponent>();;
         private Texture2D _robinIconSheet;
 
         private readonly IModHelper _helper;
@@ -64,20 +65,20 @@ namespace UIInfoSuite.UIElements
             if (!Game1.eventUp && _IsBuildingInProgress && _buildingIconSpriteLocation.HasValue)
             {
                 Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                _buildingIcon =
+                _buildingIcon.Value =
                     new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
                         _robinIconSheet,
                         _buildingIconSpriteLocation.Value,
                         8 / 3f);
-                _buildingIcon.draw(Game1.spriteBatch);
+                _buildingIcon.Value.draw(Game1.spriteBatch);
             }
         }
 
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // Show text on hover
-            if (_IsBuildingInProgress && (_buildingIcon?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false) && !String.IsNullOrEmpty(_hoverText))
+            if (_IsBuildingInProgress && (_buildingIcon.Value?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false) && !String.IsNullOrEmpty(_hoverText))
             {
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,
@@ -96,7 +97,7 @@ namespace UIInfoSuite.UIElements
             {
                 _IsBuildingInProgress = false;
                 _hoverText = String.Empty;
-            } 
+            }
             else
             {
                 _IsBuildingInProgress = true;
