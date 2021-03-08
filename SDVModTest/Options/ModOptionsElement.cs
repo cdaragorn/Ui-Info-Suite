@@ -13,33 +13,33 @@ namespace UIInfoSuite.Options
 {
     public class ModOptionsElement
     {
-        private const int DefaultX = 8;
-        private const int DefaultY = 4;
-        private const int DefaultPixelSize = 9;
+        protected const int DefaultX = 8;
+        protected const int DefaultY = 4;
+        protected const int DefaultPixelSize = 9;
+
         private Rectangle _bounds;
         private String _label;
         private int _whichOption;
-        protected bool _canClick = true;
+
+        protected readonly ModOptionsElement _parent;
 
         public Rectangle Bounds { get { return _bounds; } }
 
-        public ModOptionsElement(String label)
-            : this(label, -1, -1, DefaultPixelSize * Game1.pixelZoom, DefaultPixelSize * Game1.pixelZoom)
+        public ModOptionsElement(string label, int whichOption = -1, ModOptionsElement parent = null)
         {
+            int x = DefaultX * Game1.pixelZoom;
+            int y = DefaultY * Game1.pixelZoom;
+            int width = DefaultPixelSize * Game1.pixelZoom;
+            int height = DefaultPixelSize * Game1.pixelZoom;
 
-        }
-
-        public ModOptionsElement(String label, int x, int y, int width, int height, int whichOption = -1)
-        {
-            if (x < 0)
-                x = DefaultX * Game1.pixelZoom;
-
-            if (y < 0)
-                y = DefaultY * Game1.pixelZoom;
+            if (parent != null)
+                x += DefaultX * 2 * Game1.pixelZoom;
 
             _bounds = new Rectangle(x, y, width, height);
             _label = label;
             _whichOption = whichOption;
+
+            _parent = parent;
         }
 
         public virtual void ReceiveLeftClick(int x, int y)
@@ -74,7 +74,7 @@ namespace UIInfoSuite.Options
                     _label, 
                     Game1.dialogueFont, 
                     new Vector2(slotX + _bounds.X + _bounds.Width + Game1.pixelZoom * 2, slotY + _bounds.Y), 
-                    _canClick ? Game1.textColor : Game1.textColor * 0.33f, 
+                    Game1.textColor, 
                     1f, 
                     0.1f);
             }
