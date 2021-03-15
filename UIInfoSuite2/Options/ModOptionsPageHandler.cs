@@ -36,6 +36,7 @@ namespace UIInfoSuite.Options
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
+        private readonly ShowRobinBuildingStatusIcon _showRobinBuildingStatusIcon;
 
         public ModOptionsPageHandler(IModHelper helper, IDictionary<string, string> options)
         {
@@ -57,6 +58,7 @@ namespace UIInfoSuite.Options
             _showRainyDayIcon = new ShowRainyDayIcon(helper);
             _showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
             _showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
+            _showRobinBuildingStatusIcon = new ShowRobinBuildingStatusIcon(helper);
 
             _elementsToDispose = new List<IDisposable>()
             {
@@ -73,7 +75,8 @@ namespace UIInfoSuite.Options
                 _showRainyDayIcon,
                 _shopHarvestPrices,
                 _showQueenOfSauceIcon,
-                _showToolUpgradeStatus
+                _showToolUpgradeStatus,
+                _showRobinBuildingStatusIcon
             };
 
             int whichOption = 1;
@@ -104,6 +107,7 @@ namespace UIInfoSuite.Options
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowHarvestPricesInShop), whichOption++, _shopHarvestPrices.ToggleOption, _options, OptionKeys.ShowHarvestPricesInShop));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowWhenNewRecipesAreAvailable), whichOption++, _showQueenOfSauceIcon.ToggleOption, _options, OptionKeys.ShowWhenNewRecipesAreAvailable));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowToolUpgradeStatus), whichOption++, _showToolUpgradeStatus.ToggleOption, _options, OptionKeys.ShowToolUpgradeStatus));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowRobinBuildingStatusIcon), whichOption++, _showRobinBuildingStatusIcon.ToggleOption, _options, OptionKeys.ShowRobinBuildingStatusIcon));
 
         }
 
