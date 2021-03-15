@@ -19,7 +19,7 @@ namespace UIInfoSuite.UIElements
         private bool _IsBuildingInProgress;
         Rectangle? _buildingIconSpriteLocation;
         private string _hoverText;
-        private PerScreen<ClickableTextureComponent> _buildingIcon = new PerScreen<ClickableTextureComponent>();;
+        private PerScreen<ClickableTextureComponent> _buildingIcon = new PerScreen<ClickableTextureComponent>();
         private Texture2D _robinIconSheet;
 
         private readonly IModHelper _helper;
