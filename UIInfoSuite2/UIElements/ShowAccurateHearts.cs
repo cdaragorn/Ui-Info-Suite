@@ -10,6 +10,7 @@ namespace UIInfoSuite.UIElements
 {
     class ShowAccurateHearts : IDisposable
     {
+        #region Properties
         private string[] _friendNames;
         private SocialPage _socialPage;
         private IModEvents _events;
@@ -21,10 +22,17 @@ namespace UIInfoSuite.UIElements
             new int[] { 0, 1, 1, 1, 0 },
             new int[] { 0, 0, 1, 0, 0 }
         };
+        #endregion
 
+        #region Lifecycle
         public ShowAccurateHearts(IModEvents events)
         {
             _events = events;
+        }
+
+        public void Dispose()
+        {
+            ToggleOption(false);
         }
 
         public void ToggleOption(bool showAccurateHearts)
@@ -38,92 +46,36 @@ namespace UIInfoSuite.UIElements
                 _events.Display.RenderedActiveMenu += OnRenderedActiveMenu;
             }
         }
+        #endregion
 
-        public void Dispose()
-        {
-            ToggleOption(false);
-        }
-
-        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
+        #region Event subscriptions
         private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            // draw heart fills
-            if (Game1.activeClickableMenu is GameMenu gameMenu)
+            if (_socialPage == null)
             {
-                if (gameMenu.currentTab == 2)
-                {
-                    if (_socialPage != null)
-                    {
-                        int slotPosition = (int)typeof(SocialPage)
-                            .GetField(
-                                "slotPosition",
-                                BindingFlags.Instance | BindingFlags.NonPublic)
-                                .GetValue(_socialPage);
-                        int yOffset = 0;
+                ExtendMenuIfNeeded();
+                return;
+            }
 
-                        for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
-                        {
-                            int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
-                            yOffset += 112;
-                            Friendship friendshipValues;
-                            string nextName = _friendNames[i];
-                            if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
-                            {
-                                int friendshipRawValue = friendshipValues.Points;
+            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 2)
+            {
+                DrawHeartFills();
 
-                                if (friendshipRawValue > 0)
-                                {
-                                    int pointsToNextHeart = friendshipRawValue % 250;
-                                    int numHearts = friendshipRawValue / 250;
-
-                                    if (friendshipRawValue < 3000 &&
-                                        _friendNames[i] == Game1.player.spouse ||
-                                        friendshipRawValue < 2500)
-                                    {
-                                        DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
-                                        //if (!Game1.options.hardwareCursor)
-                                        //    Game1.spriteBatch.Draw(
-                                        //        Game1.mouseCursors,
-                                        //        new Vector2(Game1.getMouseX(), Game1.getMouseY()),
-                                        //        Game1.getSourceRectForStandardTileSheet(
-                                        //            Game1.mouseCursors, Game1.mouseCursor,
-                                        //            16,
-                                        //            16),
-                                        //        Color.White,
-                                        //        0.0f,
-                                        //        Vector2.Zero,
-                                        //        Game1.pixelZoom + (float)(Game1.dialogueButtonScale / 150.0),
-                                        //        SpriteEffects.None,
-                                        //        1f);
-                                    }
-                                }
-                            }
-                        }
-
-                        string hoverText = gameMenu.hoverText;
-                        IClickableMenu.drawHoverText(
-                            Game1.spriteBatch,
-                            hoverText,
-                            Game1.smallFont);
-                    }
-                    else
-                    {
-                        ExtendMenuIfNeeded();
-                    }
-                }
+                string hoverText = gameMenu.hoverText;
+                IClickableMenu.drawHoverText(
+                    Game1.spriteBatch,
+                    hoverText,
+                    Game1.smallFont);
             }
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             ExtendMenuIfNeeded();
         }
+        #endregion
 
+        #region Logic
         private void ExtendMenuIfNeeded()
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu)
@@ -137,6 +89,41 @@ namespace UIInfoSuite.UIElements
                             .Select(name => name.ToString())
                             .ToArray();
                         break;
+                    }
+                }
+            }
+        }
+
+        private void DrawHeartFills()
+        {
+            int slotPosition = (int)typeof(SocialPage)
+                                .GetField(
+                                    "slotPosition",
+                                    BindingFlags.Instance | BindingFlags.NonPublic)
+                                    .GetValue(_socialPage);
+            int yOffset = 0;
+
+            for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
+            {
+                int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
+                yOffset += 112;
+                Friendship friendshipValues;
+                string nextName = _friendNames[i];
+                if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
+                {
+                    int friendshipRawValue = friendshipValues.Points;
+
+                    if (friendshipRawValue > 0)
+                    {
+                        int pointsToNextHeart = friendshipRawValue % 250;
+                        int numHearts = friendshipRawValue / 250;
+
+                        if (friendshipRawValue < 3000 &&
+                            _friendNames[i] == Game1.player.spouse ||
+                            friendshipRawValue < 2500)
+                        {
+                            DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
+                        }
                     }
                 }
             }
@@ -175,5 +162,6 @@ namespace UIInfoSuite.UIElements
                 }
             }
         }
+        #endregion
     }
 }
