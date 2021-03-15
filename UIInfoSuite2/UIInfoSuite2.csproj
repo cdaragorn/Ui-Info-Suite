@@ -97,6 +97,7 @@
     <Compile Include="UIElements\ShowQueenOfSauceIcon.cs" />
     <Compile Include="UIElements\ShowRobinBuildingStatusIcon.cs" />
     <Compile Include="UIElements\ShowRainyDayIcon.cs" />
+    <Compile Include="UIElements\ShowTodaysGifts.cs" />
     <Compile Include="UIElements\ShowToolUpgradeStatus.cs" />
     <Compile Include="UIElements\ShowTravelingMerchant.cs" />
     <Compile Include="UIElements\ShowWhenAnimalNeedsPet.cs" />

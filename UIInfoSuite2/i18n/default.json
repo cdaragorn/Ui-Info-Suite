@@ -48,5 +48,6 @@
     "LuckStatus5": "Luck will not be on your side today",
     "LuckStatus6": "Maybe you should stay home today...",
     "ShowRobinBuildingStatusIcon": "Show Robin building status",
-    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)"
+    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)",
+    "ShowTodaysGifts": "Show gifts given today"
 }
