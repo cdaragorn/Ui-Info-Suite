@@ -28,5 +28,6 @@ namespace UIInfoSuite.Options
         public const string ShowWhenNewRecipesAreAvailable = "ShowWhenNewRecipesAreAvailable";
         public const string ShowToolUpgradeStatus = "ShowToolUpgradeStatus";
         public const string UIOptions = "UIOptions";
+        public const string ShowRobinBuildingStatusIcon = "ShowRobinBuildingStatusIcon";
     }
 }
