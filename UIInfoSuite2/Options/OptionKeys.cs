@@ -26,5 +26,6 @@
         public const string HideMerchantWhenVisited = "HideMerchantWhenVisited";
         public const string ShowExactValue = "ShowExactValue";
         public const string ShowRobinBuildingStatusIcon = "ShowRobinBuildingStatusIcon";
+        public const string ShowTodaysGifts = "ShowTodaysGifts";
     }
 }

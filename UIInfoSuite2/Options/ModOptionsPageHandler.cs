@@ -37,6 +37,7 @@ namespace UIInfoSuite.Options
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
         private readonly ShowRobinBuildingStatusIcon _showRobinBuildingStatusIcon;
+        private readonly ShowTodaysGifts _showTodaysGift;
 
         public ModOptionsPageHandler(IModHelper helper, IDictionary<string, string> options)
         {
@@ -59,6 +60,7 @@ namespace UIInfoSuite.Options
             _showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
             _showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
             _showRobinBuildingStatusIcon = new ShowRobinBuildingStatusIcon(helper);
+            _showTodaysGift = new ShowTodaysGifts(helper);
 
             _elementsToDispose = new List<IDisposable>()
             {
@@ -108,7 +110,7 @@ namespace UIInfoSuite.Options
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowWhenNewRecipesAreAvailable), whichOption++, _showQueenOfSauceIcon.ToggleOption, _options, OptionKeys.ShowWhenNewRecipesAreAvailable));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowToolUpgradeStatus), whichOption++, _showToolUpgradeStatus.ToggleOption, _options, OptionKeys.ShowToolUpgradeStatus));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowRobinBuildingStatusIcon), whichOption++, _showRobinBuildingStatusIcon.ToggleOption, _options, OptionKeys.ShowRobinBuildingStatusIcon));
-
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowTodaysGifts), whichOption++, _showTodaysGift.ToggleOption, _options, OptionKeys.ShowTodaysGifts));
         }
 
 
