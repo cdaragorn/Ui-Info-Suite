@@ -29,7 +29,7 @@ namespace UIInfoSuite
         {
             int yPos = Game1.options.zoomButtons ? 290 : 260;
             int xPosition = (int)Tools.GetWidthInPlayArea() - 70 - 48 * _amountOfVisibleIcons;
-            if (Game1.player.questLog.Any())
+            if (Game1.player.visibleQuestCount > 0)
             {
                 xPosition -= 65;
             }
