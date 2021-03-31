@@ -14,6 +14,8 @@ namespace UIInfoSuite.UIElements
         private Color _color = new Color(Color.White.ToVector4());
         private ClickableTextureComponent _icon;
         private readonly IModHelper _helper;
+        private readonly double luckMin = -0.1;
+        private readonly double luckMax = 0.1;
 
         public void Toggle(bool showLuckOfDay)
         {
@@ -76,7 +78,16 @@ namespace UIInfoSuite.UIElements
                     _color.B = 155;
                     _color.R = 155;
                 }
+                _hoverText += $" ({GetLuckPercentage()})";
             }
+        }
+
+        /// <summary>Returns daily luck value as a percentage between 0% and 100%</summary>
+        private string GetLuckPercentage()
+        {
+            double currentLuck = Game1.player.DailyLuck;
+            double normalized = Math.Round((currentLuck - luckMin) / (luckMax - luckMin) * 100);
+            return normalized.ToString() + "%";
         }
 
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
