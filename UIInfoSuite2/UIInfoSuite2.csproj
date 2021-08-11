@@ -71,6 +71,7 @@
     <Compile Include="Infrastucture\Extensions\ObjectExtensions.cs" />
     <Compile Include="Infrastucture\LanguageKeys.cs" />
     <Compile Include="Compatibility\LevelExtenderInterface.cs" />
+    <Compile Include="Options\ModConfig.cs" />
     <Compile Include="Options\ModOptions.cs" />
     <Compile Include="Options\ModOptionsCheckbox.cs" />
     <Compile Include="Options\ModOptionsPageButton.cs" />

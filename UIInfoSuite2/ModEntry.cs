@@ -18,7 +18,7 @@ namespace UIInfoSuite
         public static IMonitor MonitorObject { get; private set; }
 
         private SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
-        private ModOptions _options;
+        private ModConfig _options;
 
         private ModOptionsPageHandler _modOptionsPageHandler;
         #endregion
@@ -37,7 +37,7 @@ namespace UIInfoSuite
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
 
             // for initializing the config.json
-            _options = this.Helper.ReadConfig<ModOptions>();
+            _options = this.Helper.ReadConfig<ModConfig>();
         }
         #endregion
 
@@ -57,9 +57,9 @@ namespace UIInfoSuite
             // Only load once for split screen.
             if (Context.ScreenId != 0) return;
 
-            _options = this.Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") ?? _options;
+            ModOptions options = this.Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") ?? _options;
 
-            _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _options);
+            _modOptionsPageHandler = new ModOptionsPageHandler(Helper, options, _options.ShowOptionsTabInMenu);
         }
 
         private void OnSaved(object sender, EventArgs e)

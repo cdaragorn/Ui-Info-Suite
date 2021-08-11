@@ -17,6 +17,7 @@ namespace UIInfoSuite.Options
         private ModOptionsPageButton _modOptionsPageButton;
         private ModOptionsPage _modOptionsPage;
         private readonly IModHelper _helper;
+        private bool _showPersonalConfigButton;
 
         private int _modOptionsTabPageNumber;
 
@@ -38,10 +39,13 @@ namespace UIInfoSuite.Options
         private readonly ShowRobinBuildingStatusIcon _showRobinBuildingStatusIcon;
         private readonly ShowTodaysGifts _showTodaysGift;
 
-        public ModOptionsPageHandler(IModHelper helper, ModOptions _options)
+        public ModOptionsPageHandler(IModHelper helper, ModOptions _options, bool showPersonalConfigButton)
         {
-            helper.Events.Display.MenuChanged += ToggleModOptions;
+            if(showPersonalConfigButton) {
+                helper.Events.Display.MenuChanged += ToggleModOptions;
+            }
             _helper = helper;
+            _showPersonalConfigButton = showPersonalConfigButton;
             _luckOfDay = new LuckOfDay(helper);
             _showBirthdayIcon = new ShowBirthdayIcon(helper.Events);
             _showAccurateHearts = new ShowAccurateHearts(helper.Events);
@@ -172,8 +176,9 @@ namespace UIInfoSuite.Options
         private void DrawButton(object sender, EventArgs e)
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu &&
-                gameMenu.currentTab != 3 // Do not render when the map is showing
-                && !GameMenu.forcePreventClose) // Do not render when an action is being remapped
+                gameMenu.currentTab != 3 && // Do not render when the map is showing
+                !GameMenu.forcePreventClose && // Do not render when an action is being remapped
+                _showPersonalConfigButton) // Only render when it is enabled in the config.json
             {
                 if (gameMenu.currentTab == _modOptionsTabPageNumber)
                 {
