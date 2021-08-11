@@ -12,28 +12,24 @@ namespace UIInfoSuite.Options
     {
         private readonly Action<bool> _toggleOptionsDelegate;
         private bool _isChecked;
-        private readonly IDictionary<string, string> _options;
-        private readonly string _optionKey;
+        private readonly Func<bool> _getOption;
+        private readonly Action<bool> _setOption;
         private bool _canClick => !(_parent is ModOptionsCheckbox) || (_parent as ModOptionsCheckbox)._isChecked;
 
         public ModOptionsCheckbox(
             string label,
             int whichOption,
             Action<bool> toggleOptionDelegate,
-            IDictionary<string, string> options,
-            string optionKey,
-            ModOptionsCheckbox parent = null,
-            bool defaultValue = true)
+            Func<bool> getOption,
+            Action<bool> setOption,
+            ModOptionsCheckbox parent = null)
             : base(label, whichOption, parent)
         {
             _toggleOptionsDelegate = toggleOptionDelegate;
-            _options = options;
-            _optionKey = optionKey;
+            _getOption = getOption;
+            _setOption = setOption;
 
-            if (!_options.ContainsKey(_optionKey))
-                _options[_optionKey] = defaultValue ? "true" : "false";
-
-            _isChecked = _options[_optionKey].SafeParseBool();
+            _isChecked = _getOption();
             _toggleOptionsDelegate(_isChecked);
         }
 
@@ -44,7 +40,7 @@ namespace UIInfoSuite.Options
                 Game1.playSound("drumkit6");
                 base.ReceiveLeftClick(x, y);
                 _isChecked = !_isChecked;
-                _options[_optionKey] = _isChecked.ToString();
+                _setOption(_isChecked);
                 _toggleOptionsDelegate(_isChecked);
             }
         }

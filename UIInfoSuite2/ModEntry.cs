@@ -18,8 +18,7 @@ namespace UIInfoSuite
         public static IMonitor MonitorObject { get; private set; }
 
         private SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
-        private string _modDataFileName;
-        private readonly Dictionary<string, string> _options = new Dictionary<string, string>();
+        private ModOptions _options;
 
         private ModOptionsPageHandler _modOptionsPageHandler;
         #endregion
@@ -36,6 +35,9 @@ namespace UIInfoSuite
             helper.Events.GameLoop.Saved += OnSaved;
 
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
+
+            // for initializing the config.json
+            _options = this.Helper.ReadConfig<ModOptions>();
         }
         #endregion
 
@@ -55,38 +57,7 @@ namespace UIInfoSuite
             // Only load once for split screen.
             if (Context.ScreenId != 0) return;
 
-            try
-            {
-                try
-                {
-                    _modDataFileName = Path.Combine(Helper.DirectoryPath, Game1.player.Name + "_modData.xml");
-                }
-                catch
-                {
-                    Monitor.Log("Error: Player name contains character that cannot be used in file name. Using generic file name." + Environment.NewLine +
-                        "Options may not be able to be different between characters.", LogLevel.Warn);
-                    _modDataFileName = Path.Combine(Helper.DirectoryPath, "default_modData.xml");
-                }
-
-                if (File.Exists(_modDataFileName))
-                {
-                    XmlDocument document = new XmlDocument();
-                    document.Load(_modDataFileName);
-
-                    foreach (XmlNode node in document.GetElementsByTagName("option"))
-                    {
-                        string key = node.Attributes["name"]?.Value;
-                        string value = node.InnerText;
-
-                        if (key != null)
-                            _options[key] = value;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Monitor.Log("Error loading mod config. " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
-            }
+            _options = this.Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") ?? _options;
 
             _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _options);
         }
@@ -96,33 +67,16 @@ namespace UIInfoSuite
             // Only save for the main player.
             if (Context.ScreenId != 0) return;
 
-            if (!string.IsNullOrWhiteSpace(_modDataFileName))
-            {
-                if (File.Exists(_modDataFileName))
-                {
-                    File.Delete(_modDataFileName);
-                }
-
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "  ";
-
-                using (XmlWriter writer = XmlWriter.Create(File.Open(_modDataFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), settings))
-                {
-                    writer.WriteStartElement("options");
-
-                    foreach (var option in _options)
-                    {
-                        writer.WriteStartElement("option");
-                        writer.WriteAttributeString("name", option.Key);
-                        writer.WriteValue(option.Value);
-                        writer.WriteEndElement();
-                    }
-                    writer.WriteEndElement();
-                }
+            // Only save if the options differ from the default config or there is already a file for that character
+            var defaultOptions = this.Helper.ReadConfig<ModOptions>();
+            var savedUserOptions = this.Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json");
+            if (!_options.Equals(defaultOptions) || savedUserOptions != null) {   
+                this.Helper.Data.WriteJsonFile($"data/{Constants.SaveFolderName}.json", _options);
             }
-        } 
-        #endregion
 
-    }
+        }
+
+            #endregion
+
+        }
 }

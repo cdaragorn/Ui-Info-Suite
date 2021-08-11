@@ -71,6 +71,7 @@
     <Compile Include="Infrastucture\Extensions\ObjectExtensions.cs" />
     <Compile Include="Infrastucture\LanguageKeys.cs" />
     <Compile Include="Compatibility\LevelExtenderInterface.cs" />
+    <Compile Include="Options\ModOptions.cs" />
     <Compile Include="Options\ModOptionsCheckbox.cs" />
     <Compile Include="Options\ModOptionsPageButton.cs" />
     <Compile Include="Options\ModOptionsPageHandler.cs" />
@@ -79,7 +80,6 @@
     <Compile Include="Infrastucture\Extensions\StringExtensions.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Infrastucture\IconHandler.cs" />
-    <Compile Include="Options\OptionKeys.cs" />
     <Compile Include="Options\ModOptionsElement.cs" />
     <Compile Include="Options\ModOptionsPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

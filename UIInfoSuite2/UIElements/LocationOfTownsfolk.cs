@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite.Options;
 
 namespace UIInfoSuite.UIElements
 {
@@ -24,7 +25,7 @@ namespace UIInfoSuite.UIElements
         private List<NPC> _townsfolk = new List<NPC>();
         private List<OptionsCheckbox> _checkboxes = new List<OptionsCheckbox>();
 
-        private readonly IDictionary<string, string> _options;
+        private readonly ModOptions _options;
         private readonly IModHelper _helper;
 
         private const int SocialPanelWidth = 190;
@@ -88,7 +89,7 @@ namespace UIInfoSuite.UIElements
         #endregion
 
         #region Lifecycle
-        public LocationOfTownsfolk(IModHelper helper, IDictionary<string, string> options)
+        public LocationOfTownsfolk(IModHelper helper, ModOptions options)
         {
             _helper = helper;
             _options = options;
@@ -199,16 +200,7 @@ namespace UIInfoSuite.UIElements
                     }
                     else
                     {
-                        string optionValue = _options.SafeGet(hashCode.ToString());
-
-                        if (string.IsNullOrEmpty(optionValue))
-                        {
-                            _options[hashCode.ToString()] = optionForThisFriend.ToString();
-                        }
-                        else
-                        {
-                            optionForThisFriend = optionValue.SafeParseBool();
-                        }
+                        bool optionValue = _options.ShowLocationOfFriends.SafeGet(hashCode.ToString(), optionForThisFriend);
                     }
                     checkbox.isChecked = optionForThisFriend;
                 }
@@ -228,7 +220,7 @@ namespace UIInfoSuite.UIElements
                     !checkbox.greyedOut)
                 {
                     checkbox.isChecked = !checkbox.isChecked;
-                    _options[checkbox.whichOption.ToString()] = checkbox.isChecked.ToString();
+                    _options.ShowLocationOfFriends[checkbox.whichOption.ToString()] = checkbox.isChecked;
                     Game1.playSound("drumkit6");
                 }
             }
@@ -282,7 +274,7 @@ namespace UIInfoSuite.UIElements
             {
                 try
                 {
-                    bool shouldDrawCharacter = Game1.player.friendshipData.ContainsKey(character.Name) && _options.SafeGet(character.Name.GetHashCode().ToString()).SafeParseBool();
+                    bool shouldDrawCharacter = Game1.player.friendshipData.ContainsKey(character.Name) && _options.ShowLocationOfFriends.SafeGet(character.Name.GetHashCode().ToString());
                     if (shouldDrawCharacter)
                     {
                         DrawNPC(character, namesToShow);
