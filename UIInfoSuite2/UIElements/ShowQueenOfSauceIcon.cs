@@ -22,7 +22,7 @@ namespace UIInfoSuite.UIElements
         private NPC _gus;
         private readonly PerScreen<bool> _drawQueenOfSauceIcon = new PerScreen<bool>();
         private bool _drawDishOfDayIcon = false;
-        private readonly PerScreen<ClickableTextureComponent> _queenOfSauceIcon = new PerScreen<ClickableTextureComponent>();
+        private readonly PerScreen<ClickableTextureComponent> _icon = new PerScreen<ClickableTextureComponent>();
         private readonly IModHelper _helper;
 
         public void ToggleOption(bool showQueenOfSauceIcon)
@@ -156,12 +156,12 @@ namespace UIInfoSuite.UIElements
                 {
                     Point iconPosition = IconHandler.Handler.GetNewIconPosition();
 
-                    _queenOfSauceIcon.Value = new ClickableTextureComponent(
+                    _icon.Value = new ClickableTextureComponent(
                         new Rectangle(iconPosition.X, iconPosition.Y, 40, 40),
                         Game1.mouseCursors,
                         new Rectangle(609, 361, 28, 28),
                         1.3f);
-                    _queenOfSauceIcon.Value.draw(Game1.spriteBatch);
+                    _icon.Value.draw(Game1.spriteBatch);
                 }
 
                 if (_drawDishOfDayIcon)
@@ -207,20 +207,12 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            // draw hover text
-            if (_drawQueenOfSauceIcon.Value &&
-                _queenOfSauceIcon.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+            // Show text on hover
+            if (_drawQueenOfSauceIcon.Value && !Game1.IsFakedBlackScreen() && (_icon.Value?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
-                IClickableMenu.drawHoverText(
-                    Game1.spriteBatch,
-                    _helper.SafeGetString(
-                        LanguageKeys.TodaysRecipe) + _todaysRecipe,
-                    Game1.dialogueFont);
+                IClickableMenu.drawHoverText(Game1.spriteBatch, _helper.SafeGetString(LanguageKeys.TodaysRecipe) + _todaysRecipe, Game1.dialogueFont);
             }
         }
 
