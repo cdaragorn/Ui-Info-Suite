@@ -3,7 +3,7 @@
     "Calendar": "Kalender",
     "Days": "Tage",
     "DaysToMature": "Tage bis gereift",
-    "FeelingLucky": "Du fühlst dich glücklich!",
+    "FeelingLucky": "Heute ist dein absoluter Glückstag!",
     "HarvestPrice": "Erntewert",
     "Hours": "Stunden",
     "LevelUp": "Level aufgestiegen",
@@ -19,30 +19,30 @@
     "ShowLuckIcon": "Zeige Glücksymbol",
     "ShowLevelUpAnimation": "Zeige Aufstiegsanimation",
     "ShowExperienceBar": "Zeige Erfahrungsleiste",
-    "AllowExperienceBarToFadeOut": "Erlauben verblassende Erfahrungsleiste",
+    "AllowExperienceBarToFadeOut": "Erlaube verblassende Erfahrungsleiste",
     "ShowExperienceGain": "Zeige Erfahrungsgewinn",
     "ShowLocationOfTownsPeople": "Zeige Bewohner auf der Karte",
     "ShowBirthdayIcon": "Zeige Geburtstagssymbol",
-    "ShowHeartFills": "Zeige Herzfüllungen",
+    "ShowHeartFills": "Zeige detaillierte Herzfüllungen",
     "ShowAnimalsNeedPets": "Zeige wenn Tiere gestreichelt werden müssen",
     "DisplayCalendarAndBillboard": "Zeige Schaltfläche für Kalender und schwarzes Brett",
     "ShowCropAndBarrelTooltip": "Zeige Ernte- und Reifezeiten",
     "ShowItemEffectRanges": "Zeige Vogelscheuche und Sprinkler-Bereich",
-    "ShowExtraItemInformation": "Zeige schwebende Info für Gegenstände",
+    "ShowExtraItemInformation": "Zeige detaillierte Info für Gegenstände",
     "ShowTravelingMerchant": "Zeige reisenden Händler",
-    "ShowRainyDay": "Show rainy days", // TODO
+    "ShowRainyDay": "Zeige regnerische Tage",
     "ShowHarvestPricesInShop": "Zeige Erntewerte",
-    "ShowWhenNewRecipesAreAvailable": "Zeige, wenn neue Rezepte verfügbar sind",
+    "ShowWhenNewRecipesAreAvailable": "Zeige wenn neue Rezepte verfügbar sind",
     "ShowToolUpgradeStatus": "Zeige Werkzeugverbesserungsfortschritt",
-    "HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
-    "HideMerchantWhenVisited": "Hide when visited", // TODO
-    "ShowExactValue": "Show exact value", // TODO
-    "DailyLuckValue": "Your daily luck is {0}", // TODO
-    "LuckStatus1": "Du fühlst dich glücklich!",
-    "LuckStatus2": "Du fühlst dich glücklich ... aber nicht zu glücklich", // TODO
-    "LuckStatus3": "Du fühlst dich glücklich ... aber nicht zu glücklich", // TODO
-    "LuckStatus4": "Du fühlst dich glücklich ... aber nicht zu glücklich", // TODO
-    "LuckStatus5": "Du fühlst dich heute gar nicht glücklich", // TODO
+    "HideAnimalPetOnMaxFriendship": "Verstecke bei maximaler Zuneigung",
+    "HideMerchantWhenVisited": "Verstecke wenn besucht",
+    "ShowExactValue": "Zeige exakten Wert",
+    "DailyLuckValue": "Dein heutiges Glück ist {0}",
+    "LuckStatus1": "Heute ist dein absoluter Glückstag!",
+    "LuckStatus2": "Heute hast du das Glück auf deiner Seite",
+    "LuckStatus3": "Der Tag liegt in deinen Händen",
+    "LuckStatus4": "Fortuna's Laune ist heute absolut neutral",
+    "LuckStatus5": "Das Glück ist heute nicht auf deiner Seite",
     "LuckStatus6": "Vielleicht solltest du heute zu Hause bleiben",
-    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)" // TODO
+    "RobinBuildingStatus": "Robin wird in {0} Tage(n) mit dem Bau fertig sein"
 }
