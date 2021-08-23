@@ -1,6 +1,7 @@
 ﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +36,7 @@ namespace UIInfoSuite
             helper.Events.GameLoop.Saved += OnSaved;
 
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
+            helper.Events.Input.ButtonsChanged += HandleKeyBindings;
 
             // for initializing the config.json
             _options = this.Helper.ReadConfig<ModConfig>();
@@ -76,7 +78,23 @@ namespace UIInfoSuite
 
         }
 
-            #endregion
-
+        private void HandleKeyBindings(object sender, ButtonsChangedEventArgs e)
+        {
+            if (_options != null)
+            {
+                if(Context.IsPlayerFree && _options.OpenCalendarKeybind.JustPressed())
+                {
+                    Helper.Input.SuppressActiveKeybinds(_options.OpenCalendarKeybind);
+                    Game1.activeClickableMenu = new Billboard(false);
+                }
+                else if (Context.IsPlayerFree && _options.OpenQuestBoardKeybind.JustPressed())
+                {
+                    Helper.Input.SuppressActiveKeybinds(_options.OpenQuestBoardKeybind);
+                    Game1.RefreshQuestOfTheDay();
+                    Game1.activeClickableMenu = new Billboard(true);
+                }
+            }
         }
+        #endregion
+    }
 }
