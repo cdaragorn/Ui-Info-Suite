@@ -26,7 +26,7 @@ namespace UIInfoSuite.AdditionalFeatures
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (Game1.activeClickableMenu is TitleMenu menu && e.Button == SButton.Escape)
+            if (Game1.activeClickableMenu is TitleMenu menu && (e.Button == SButton.Escape || e.Button == SButton.ControllerStart))
             {
                 menu.skipToTitleButtons();
                 _events.Input.ButtonPressed -= OnButtonPressed;
