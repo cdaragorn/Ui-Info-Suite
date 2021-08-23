@@ -185,24 +185,23 @@ namespace UIInfoSuite.UIElements
                 }
 
                 _checkboxes.Clear();
-                foreach (var friendName in _friendNames)
+                for (int i = 0; i < _friendNames.Length; i++)
                 {
-                    int hashCode = friendName.GetHashCode();
-                    OptionsCheckbox checkbox = new OptionsCheckbox("", hashCode);
-                    _checkboxes.Add(checkbox);
-
-                    //default to on
-                    bool optionForThisFriend = true;
-                    if (!Game1.player.friendshipData.ContainsKey(friendName))
+                    var friendName = _friendNames[i];
+                    OptionsCheckbox checkbox = new OptionsCheckbox("", i);
+                    if (Game1.player.friendshipData.ContainsKey(friendName))
                     {
-                        checkbox.greyedOut = true;
-                        optionForThisFriend = false;
+                        // npc
+                        checkbox.greyedOut = false;
+                        checkbox.isChecked = _options.ShowLocationOfFriends.SafeGet(friendName, true);
                     }
                     else
                     {
-                        bool optionValue = _options.ShowLocationOfFriends.SafeGet(hashCode.ToString(), optionForThisFriend);
+                        // player
+                        checkbox.greyedOut = true;
+                        checkbox.isChecked = true;
                     }
-                    checkbox.isChecked = optionForThisFriend;
+                    _checkboxes.Add(checkbox);
                 }
             }
         }
@@ -220,7 +219,7 @@ namespace UIInfoSuite.UIElements
                     !checkbox.greyedOut)
                 {
                     checkbox.isChecked = !checkbox.isChecked;
-                    _options.ShowLocationOfFriends[checkbox.whichOption.ToString()] = checkbox.isChecked;
+                    _options.ShowLocationOfFriends[_friendNames[checkbox.whichOption]] = checkbox.isChecked;
                     Game1.playSound("drumkit6");
                 }
             }
@@ -252,7 +251,8 @@ namespace UIInfoSuite.UIElements
 
                 if (yOffset != 560)
                 {
-                    Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50,  checkbox.bounds.Y + 72, SocialPanelWidth / 2 - 6, 4), Color.SaddleBrown);
+                    // draw seperator line
+                    Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50, checkbox.bounds.Y + 72, SocialPanelWidth / 2 - 6, 4), Color.SaddleBrown);
                     Game1.spriteBatch.Draw(Game1.staminaRect, new Rectangle(checkbox.bounds.X - 50, checkbox.bounds.Y + 76, SocialPanelWidth / 2 - 6, 4), Color.BurlyWood);
                 }
                 if (!Game1.options.hardwareCursor)
@@ -274,7 +274,7 @@ namespace UIInfoSuite.UIElements
             {
                 try
                 {
-                    bool shouldDrawCharacter = Game1.player.friendshipData.ContainsKey(character.Name) && _options.ShowLocationOfFriends.SafeGet(character.Name.GetHashCode().ToString());
+                    bool shouldDrawCharacter = Game1.player.friendshipData.ContainsKey(character.Name) && _options.ShowLocationOfFriends.SafeGet(character.Name, true);
                     if (shouldDrawCharacter)
                     {
                         DrawNPC(character, namesToShow);
