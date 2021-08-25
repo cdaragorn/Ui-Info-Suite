@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Enums;
@@ -10,7 +11,6 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using UIInfoSuite.Compatibility;
@@ -52,13 +52,12 @@ namespace UIInfoSuite.UIElements
         private readonly TimeSpan _timeBeforeExperienceBarFades = TimeSpan.FromSeconds(8);
         private readonly PerScreen<int> _hideExperienceBarTicks = new PerScreen<int>();
 
-        //private SoundEffectInstance _soundEffect;
+        private SoundEffectInstance _soundEffect;
         private bool _allowExperienceBarToFadeOut = true;
         private bool _showExperienceGain = true;
         private bool _showLevelUpAnimation = true;
         private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
-        private readonly SoundPlayer _soundPlayer;
 
         private readonly ILevelExtenderInterface _levelExtenderAPI;
 
@@ -74,7 +73,7 @@ namespace UIInfoSuite.UIElements
             try
             {
                 path = Path.Combine(_helper.DirectoryPath, "assets", "LevelUp.wav");
-                _soundPlayer = new SoundPlayer(path);
+                _soundEffect = SoundEffect.FromStream(new FileStream(path, FileMode.Open)).CreateInstance();
             }
             catch (Exception ex)
             {
@@ -109,6 +108,7 @@ namespace UIInfoSuite.UIElements
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_DetermineIfExperienceHasBeenGained;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_HandleTimers;
             _helper.Events.GameLoop.SaveLoaded -= OnSaveLoaded;
+            _soundEffect.Dispose();
         }
 
         public void ToggleLevelUpAnimation(bool showLevelUpAnimation)
@@ -188,26 +188,18 @@ namespace UIInfoSuite.UIElements
                 }
                 _shouldDrawLevelUp.Value = true;
                 ShowExperienceBar();
-
-                float previousAmbientVolume = Game1.options.ambientVolumeLevel;
-                float previousMusicVolume = Game1.options.musicVolumeLevel;
-
-                //if (_soundEffect != null)
-                //    _soundEffect.Volume = previousMusicVolume <= 0.01f ? 0 : Math.Min(1, previousMusicVolume + 0.3f);
-
-                //Task.Factory.StartNew(() =>
-                //{
-                //    Thread.Sleep(100);
-                //    Game1.musicCategory.SetVolume((float)Math.Max(0, Game1.options.musicVolumeLevel - 0.3));
-                //    Game1.ambientCategory.SetVolume((float)Math.Max(0, Game1.options.ambientVolumeLevel - 0.3));
-                //    if (_soundEffect != null)
-                //        _soundEffect.Play();
-                //});
-
+                
+                if (_soundEffect != null)
+                {
+                    _soundEffect.Volume = Game1.options.soundVolumeLevel;
+                }
+                    
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(100);
-                    _soundPlayer.Play();
+                    
+                    if (_soundEffect != null)
+                        _soundEffect.Play();
                 });
 
                 _hideLevelUpTicks.Value = (int)(_levelUpPauseTime.TotalSeconds * 60f);
