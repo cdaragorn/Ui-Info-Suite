@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -128,9 +128,9 @@ namespace UIInfoSuite.UIElements
 
         private void OnButtonPressed_ForSocialPage(object sender, ButtonPressedEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu && (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA))
+            if (Game1.activeClickableMenu is GameMenu && (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA || e.Button == SButton.ControllerX))
             {
-                CheckSelectedBox();
+                CheckSelectedBox(e);
             }
         }
 
@@ -206,7 +206,7 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private void CheckSelectedBox()
+        private void CheckSelectedBox(ButtonPressedEventArgs e)
         {
             int slotPosition = (int)typeof(SocialPage)
                 .GetField("slotPosition", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -215,7 +215,12 @@ namespace UIInfoSuite.UIElements
             for (int i = slotPosition; i < slotPosition + 5; ++i)
             {
                 OptionsCheckbox checkbox = _checkboxes[i];
-                if (checkbox.bounds.Contains((int)Utility.ModifyCoordinateForUIScale(Game1.getMouseX()), (int)Utility.ModifyCoordinateForUIScale(Game1.getMouseY())) &&
+                var rect = new Rectangle(checkbox.bounds.X, checkbox.bounds.Y, checkbox.bounds.Width, checkbox.bounds.Height);
+                if(e.Button == SButton.ControllerX)
+                {
+                    rect.Width += SocialPanelWidth + Game1.activeClickableMenu.width;
+                }
+                if (rect.Contains((int)Utility.ModifyCoordinateForUIScale(Game1.getMouseX()), (int)Utility.ModifyCoordinateForUIScale(Game1.getMouseY())) &&
                     !checkbox.greyedOut)
                 {
                     checkbox.isChecked = !checkbox.isChecked;
