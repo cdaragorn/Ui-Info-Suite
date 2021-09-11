@@ -1,10 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
+
 using StardewValley;
 using StardewValley.Menus;
+
 using System;
+
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
 
@@ -142,7 +146,7 @@ namespace UIInfoSuite.UIElements
             if (_birthdayNPC != null &&
                 (_birthdayIcon.Value?.containsPoint(Game1.getMouseX(), Game1.getMouseY()) ?? false))
             {
-                string hoverText = string.Format("{0}'s Birthday", _birthdayNPC.Name);
+                string hoverText = string.Format(LanguageKeys.NpcBirthDayTip, _birthdayNPC.Name);
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,
                     hoverText,

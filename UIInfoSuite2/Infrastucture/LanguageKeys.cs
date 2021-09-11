@@ -26,5 +26,6 @@
         public const string LuckStatus5 = "LuckStatus5";
         public const string LuckStatus6 = "LuckStatus6";
         public const string RobinBuildingStatus = "RobinBuildingStatus";
+        public const string NpcBirthDayTip = "NpcBirthDayTip";
     }
 }
