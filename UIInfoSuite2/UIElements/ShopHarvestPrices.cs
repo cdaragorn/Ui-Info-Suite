@@ -80,8 +80,8 @@ namespace UIInfoSuite.UIElements
             {
                 switch (hoverItem.ParentSheetIndex)
                 {
-                    case 628: value = 50; break;    // Cherry
-                    case 629: value = 80; break;    // Apricot
+                    case 628: value = 80; break;    // Cherry
+                    case 629: value = 50; break;    // Apricot
                     case 630:                       // Orange
                     case 633: value = 100; break;   // Apple
                     case 631:                       // Peach
