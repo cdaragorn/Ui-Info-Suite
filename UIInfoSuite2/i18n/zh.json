@@ -50,5 +50,5 @@
 	"ShowRobinBuildingStatusIcon": "显示罗宾工作进度",
 	"RobinBuildingStatus": "罗宾将在{0}天内完成您的新建筑",
 	"ShowTodaysGifts": "显示今天赠送的礼物",
-	"NpcBirthDayTip": "{0}的生日"
+	"NpcBirthday": "{0}的生日"
 }

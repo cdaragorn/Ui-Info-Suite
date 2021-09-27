@@ -47,7 +47,7 @@ namespace UIInfoSuite.Options
             _helper = helper;
             _showPersonalConfigButton = showPersonalConfigButton;
             _luckOfDay = new LuckOfDay(helper);
-            _showBirthdayIcon = new ShowBirthdayIcon(helper.Events);
+            _showBirthdayIcon = new ShowBirthdayIcon(helper);
             _showAccurateHearts = new ShowAccurateHearts(helper.Events);
             _locationOfTownsfolk = new LocationOfTownsfolk(helper, _options);
             _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);

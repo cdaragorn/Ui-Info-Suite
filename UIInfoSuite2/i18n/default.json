@@ -50,5 +50,5 @@
   "ShowRobinBuildingStatusIcon": "Show Robin building status",
   "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)",
   "ShowTodaysGifts": "Show gifts given today",
-  "NpcBirthDayTip": "{0}'s Birthday"
+  "NpcBirthday": "{0}'s birthday"
 }
