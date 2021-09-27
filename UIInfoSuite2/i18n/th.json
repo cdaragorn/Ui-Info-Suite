@@ -1,41 +1,53 @@
 {
-	"Billboard": "บอร์ด",
-	"Calendar": "ปฏิทิน",
-	"Days": "วัน",
-	"DaysToMature": "วันสำหรับผู้ใหญ่",
-	"HarvestPrice": "ราคาเก็บเกี่ยว",
-	"Hours": "ชั่วโมง",
-	"LevelUp": "ยกระดับ",
-	"Minutes": "นาที",
-	"ReadyToHarvest": "พร้อมที่จะเก็บเกี่ยว!",
-	"TodaysRecipe": "สูตรวันนี้: ",
-	"TravelingMerchantIsInTown": "พ่อค้าเดินทางอยู่ในเมือง!",
-	"ShowLuckIcon": "Show luck icon", // TODO
-	"ShowLevelUpAnimation": "Show level up animation", // TODO
-	"ShowExperienceBar": "Show experience bar", // TODO
-	"AllowExperienceBarToFadeOut": "Allow experience bar to fade out", // TODO
-	"ShowExperienceGain": "Show experience gain", // TODO
-	"ShowLocationOfTownsPeople": "Show townspeople on map", // TODO
-	"ShowBirthdayIcon": "Show Birthday icon", // TODO
-	"ShowHeartFills": "Show heart fills", // TODO
-	"ShowAnimalsNeedPets": "Show when animals need pets", // TODO
-	"DisplayCalendarAndBillboard": "Show calendar/billboard button", // TODO
-	"ShowCropAndBarrelTooltip": "Show crop and barrel times", // TODO
-	"ShowItemEffectRanges": "Show scarecrow and sprinkler range", // TODO
-	"ShowExtraItemInformation": "Show item hover information", // TODO
-	"ShowTravelingMerchant": "Show Traveling Merchant", // TODO
-	"ShowRainyDay": "Show rainy days", // TODO
-	"ShowHarvestPricesInShop": "Show shop harvest prices", // TODO
-	"ShowWhenNewRecipesAreAvailable": "Show when new recipes are available", // TODO,
-	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
-	"HideMerchantWhenVisited": "Hide when visited", // TODO
-	"ShowExactValue": "Show exact value", // TODO
-	"DailyLuckValue": "Your daily luck is {0}", // TODO
-	"LuckStatus1": "คุณรู้สึกโชคดีมาก !!",
-	"LuckStatus2": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป", // TODO
-	"LuckStatus3": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป", // TODO
-	"LuckStatus4": "รู้สึก 'โชคดี ... แต่ไม่โชคดีเกินไป", // TODO
-	"LuckStatus5": "วันนี้คุณไม่รู้สึกโชคดีเลย", // TODO
-	"LuckStatus6": "บางทีคุณควรจะอยู่บ้านวันนี้ ...",
-	"RobinBuildingStatus": "Robin will finish your new building in {0} day(s)" // TODO
+    "Billboard": "กระดานปิดประกาศ",
+    "Calendar": "ปฏิทิน",
+    "Days": "วัน",
+    "DaysToMature": "วัน จะเติบโตเต็มที่",
+    "FeelingLucky": "คุณรู้สึกว่า โชคดีสุดๆ!!",
+    "HarvestPrice": "ราคาผลผลิต",
+    "Hours": "ชั่วโมง",
+    "LevelUp": "เลื่อนขั้น",
+    "LuckyButNotTooLucky": "รู้สึกเหมือนจะโชคดี... แต่ก็ไม่มาก",
+    "MaybeStayHome": "วันนี้คุณควรอยู่บ้านจะดีกว่านะ...",
+    "Minutes": "นาที",
+    "NotFeelingLuckyAtAll": "คุณรู้สึกว่า วันนี้โชคไม่เข้าข้างเอาซะเลย...",
+    "ReadyToHarvest": "พร้อมเก็บเกี่ยวแล้ว!",
+    "TodaysRecipe": "เมนูวันนี้: ",
+    "TravelingMerchantIsInTown": "รถพ่อค้าเร่มาถึงเมืองแล้ว!",
+    "RainNextDay": "พรุ่งนี้ฝนจะตก",
+    "ThunderstormNextDay": "พรุ่งนี้จะมีพายุฝนฟ้าคะนอง",
+    "SnowNextDay": "พรุ่งนี้จะมีหิมะตก",
+    "DaysUntilToolIsUpgraded": "{0} วัน จะอัพเกรด {1} เสร็จสิ้น",
+    "ToolIsFinishedBeingUpgraded": "{0} เสร็จเรียบร้อย!",
+    "ShowLuckIcon": "แสดงสัญลักษณ์ โชค", // TODO
+    "ShowLevelUpAnimation": "แสดงอะนิเมชั่นการเลื่อนขั้น", // TODO
+    "ShowExperienceBar": "แสดงแถบค่าประสบการณ์", // TODO
+    "AllowExperienceBarToFadeOut": "อนุญาตให้แถบค่าประสบการณ์ จางหายไป", // TODO
+    "ShowExperienceGain": "แสดงค่าประสบการณ์ที่ได้รับ", // TODO
+    "ShowLocationOfTownsPeople": "แสดงชาวเมืองในแผนที่", // TODO
+    "ShowBirthdayIcon": "แสดงสัญลักษณ์ วันเกิด", // TODO
+    "ShowHeartFills": "แสดงค่าหัวใจ", // TODO
+    "ShowAnimalsNeedPets": "แสดงสัตว์เลี้ยงที่ต้องดูแล", // TODO
+    "DisplayCalendarAndBillboard": "แสดงปุ่มปฏิทิน/กระดานปิดประกาศ", // TODO
+    "ShowCropAndBarrelTooltip": "แสดงเวลาของผักและถังบ่ม", // TODO
+    "ShowItemEffectRanges": "แสดงระยะของหุ่นไล่กาและสปริงเกอร์", // TODO
+    "ShowExtraItemInformation": "แสดงข้อมูลไอเท็มเมื่อชี้เมาส์", // TODO
+    "ShowTravelingMerchant": "แสดงรถพ่อค้าเร่", // TODO
+    "ShowRainyDay": "แสดงวันที่ฝนตก", // TODO
+    "ShowHarvestPricesInShop": "แสดงราคาขายผลผลิตในร้านค้า", // TODO
+    "ShowWhenNewRecipesAreAvailable": "แสดงเมื่อมีสูตรอาหาร/สูตรคราฟชนิดใหม่เกิดขึ้น", // TODO,
+    "ShowToolUpgradeStatus": "แสดงสถานะการอัพเกรดอุปกรณ์",
+    "HideAnimalPetOnMaxFriendship": "ซ่อนค่าหัวใจสัตว์เลี้ยง เมื่อมีค่าสูงสุด", // TODO
+    "HideMerchantWhenVisited": "ซ่อนรถพ่อค้าเร่ หากไปมาแล้ว", // TODO
+    "ShowExactValue": "แสดงมูลค่าจริง", // TODO
+    "DailyLuckValue": "โชคประจำวันของคุณคือ {0}", // TODO
+    "LuckStatus1": "รู้สึกโชคดี!",
+    "LuckStatus2": "วันนี้รู้สึกโชคดีนิดหน่อย!", // TODO
+    "LuckStatus3": "วันนี้อยู่ในกำมือของคุณแล้ว", // TODO
+    "LuckStatus4": "วันนี้เหล่าวิญญาณรู้สึกวางตัวเป็นกลาง", // TODO
+    "LuckStatus5": "วันนี้โชคไม่เข้าข้างคุณ", // TODO
+    "LuckStatus6": "บางทีวันนี้คุณควรจะอยู่บ้าน...",
+    "ShowRobinBuildingStatusIcon": "แสดงสถานะสิ่งปลูกสร้างของโรบิน",
+    "RobinBuildingStatus": "โรบินจะสร้างสิ่งปลูกสร้างใหม่ของคุณให้เสร็จใน {0} วัน", // TODO
+    "ShowTodaysGifts": "แสดงของขวัญที่ให้ในวันนี้"
 }
