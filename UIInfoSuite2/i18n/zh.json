@@ -10,7 +10,7 @@
 	"ReadyToHarvest": "可以收获！",
 	"TodaysRecipe": "今日食谱：",
 	"TravelingMerchantIsInTown": "旅行商人在镇上！",
-	"DaysUntilToolIsUpgraded": "{1}还有{0}完成！",
+	"DaysUntilToolIsUpgraded": "{1}还有{0}天完成！",
 	"ToolIsFinishedBeingUpgraded": "{0}完成了！",
 	"ShowLuckIcon": "显示运气图标",
 	"ShowLevelUpAnimation": "显示升级动画",
@@ -26,19 +26,29 @@
 	"ShowItemEffectRanges": "显示稻草人与洒水器的范围",
 	"ShowExtraItemInformation": "鼠标悬停时显示物品信息",
 	"ShowTravelingMerchant": "显示旅行商人",
-	"ShowRainyDay": "Show rainy days", // TODO
 	"ShowHarvestPricesInShop": "在购买页面显示收获价格",
 	"ShowWhenNewRecipesAreAvailable": "显示可学习的新食谱",
 	"ShowToolUpgradeStatus": "显示工具升级状态",
-	"HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
-	"HideMerchantWhenVisited": "Hide when visited", // TODO
-	"ShowExactValue": "Show exact value", // TODO
-	"DailyLuckValue": "Your daily luck is {0}", // TODO
-	"LuckStatus1": "你感到很幸运！",
-	"LuckStatus2": "你感到幸运……但不是特别幸运", // TODO
-	"LuckStatus3": "你感到幸运……但不是特别幸运", // TODO
-	"LuckStatus4": "你感到幸运……但不是特别幸运", // TODO
-	"LuckStatus5": "你一点都不觉得今天幸运", // TODO
+	"LuckStatus1": "你感到今天很幸运",
+	"LuckStatus2": "你感到今天有点幸运",
+	"LuckStatus3": "今天掌握在你的手中",
+	"LuckStatus4": "今天精灵们十分冷漠",
+	"LuckStatus5": "今天运气不会站在你这边",
 	"LuckStatus6": "也许你今天应该呆在家里……",
-	"RobinBuildingStatus": "Robin will finish your new building in {0} day(s)" // TODO
+	"FeelingLucky": "你感到今天很幸运！！",
+	"LuckyButNotTooLucky": "你感到很幸运……但不是太幸运",
+	"MaybeStayHome": "也许你今天应该呆在家里……",
+	"NotFeelingLuckyAtAll": "你今天一点都不幸运……",
+	"RainNextDay": "明日有雨",
+	"ThunderstormNextDay": "明日雷雨",
+	"SnowNextDay": "明日有雪",
+	"ShowRainyDay": "显示雨天",
+	"HideAnimalPetOnMaxFriendship": "在动物达到最大心情时隐藏",
+	"HideMerchantWhenVisited": "在访问后隐藏",
+	"ShowExactValue": "显示精确的值",
+	"DailyLuckValue": "你今日的幸运值为{0}",
+	"ShowRobinBuildingStatusIcon": "显示罗宾工作进度",
+	"RobinBuildingStatus": "罗宾将在{0}天内完成您的新建筑",
+	"ShowTodaysGifts": "显示今天赠送的礼物",
+	"NpcBirthDayTip": "{0}的生日"
 }
