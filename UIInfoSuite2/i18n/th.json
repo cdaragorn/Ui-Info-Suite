@@ -19,35 +19,35 @@
     "SnowNextDay": "พรุ่งนี้จะมีหิมะตก",
     "DaysUntilToolIsUpgraded": "{0} วัน จะอัพเกรด {1} เสร็จสิ้น",
     "ToolIsFinishedBeingUpgraded": "{0} เสร็จเรียบร้อย!",
-    "ShowLuckIcon": "แสดงสัญลักษณ์ โชค", // TODO
-    "ShowLevelUpAnimation": "แสดงอะนิเมชั่นการเลื่อนขั้น", // TODO
-    "ShowExperienceBar": "แสดงแถบค่าประสบการณ์", // TODO
-    "AllowExperienceBarToFadeOut": "อนุญาตให้แถบค่าประสบการณ์ จางหายไป", // TODO
-    "ShowExperienceGain": "แสดงค่าประสบการณ์ที่ได้รับ", // TODO
-    "ShowLocationOfTownsPeople": "แสดงชาวเมืองในแผนที่", // TODO
-    "ShowBirthdayIcon": "แสดงสัญลักษณ์ วันเกิด", // TODO
-    "ShowHeartFills": "แสดงค่าหัวใจ", // TODO
-    "ShowAnimalsNeedPets": "แสดงสัตว์เลี้ยงที่ต้องดูแล", // TODO
-    "DisplayCalendarAndBillboard": "แสดงปุ่มปฏิทิน/กระดานปิดประกาศ", // TODO
-    "ShowCropAndBarrelTooltip": "แสดงเวลาของผักและถังบ่ม", // TODO
-    "ShowItemEffectRanges": "แสดงระยะของหุ่นไล่กาและสปริงเกอร์", // TODO
-    "ShowExtraItemInformation": "แสดงข้อมูลไอเท็มเมื่อชี้เมาส์", // TODO
-    "ShowTravelingMerchant": "แสดงรถพ่อค้าเร่", // TODO
-    "ShowRainyDay": "แสดงวันที่ฝนตก", // TODO
-    "ShowHarvestPricesInShop": "แสดงราคาขายผลผลิตในร้านค้า", // TODO
-    "ShowWhenNewRecipesAreAvailable": "แสดงเมื่อมีสูตรอาหาร/สูตรคราฟชนิดใหม่เกิดขึ้น", // TODO,
+    "ShowLuckIcon": "แสดงสัญลักษณ์ โชค",
+    "ShowLevelUpAnimation": "แสดงอะนิเมชั่นการเลื่อนขั้น",
+    "ShowExperienceBar": "แสดงแถบค่าประสบการณ์",
+    "AllowExperienceBarToFadeOut": "อนุญาตให้แถบค่าประสบการณ์ จางหายไป",
+    "ShowExperienceGain": "แสดงค่าประสบการณ์ที่ได้รับ",
+    "ShowLocationOfTownsPeople": "แสดงชาวเมืองในแผนที่",
+    "ShowBirthdayIcon": "แสดงสัญลักษณ์ วันเกิด",
+    "ShowHeartFills": "แสดงค่าหัวใจ",
+    "ShowAnimalsNeedPets": "แสดงสัตว์เลี้ยงที่ต้องดูแล",
+    "DisplayCalendarAndBillboard": "แสดงปุ่มปฏิทิน/กระดานปิดประกาศ",
+    "ShowCropAndBarrelTooltip": "แสดงเวลาของผักและถังบ่ม",
+    "ShowItemEffectRanges": "แสดงระยะของหุ่นไล่กาและสปริงเกอร์",
+    "ShowExtraItemInformation": "แสดงข้อมูลไอเท็มเมื่อชี้เมาส์",
+    "ShowTravelingMerchant": "แสดงรถพ่อค้าเร่",
+    "ShowRainyDay": "แสดงวันที่ฝนตก",
+    "ShowHarvestPricesInShop": "แสดงราคาขายผลผลิตในร้านค้า",
+    "ShowWhenNewRecipesAreAvailable": "แสดงเมื่อมีสูตรอาหาร/สูตรคราฟชนิดใหม่เกิดขึ้น",
     "ShowToolUpgradeStatus": "แสดงสถานะการอัพเกรดอุปกรณ์",
-    "HideAnimalPetOnMaxFriendship": "ซ่อนค่าหัวใจสัตว์เลี้ยง เมื่อมีค่าสูงสุด", // TODO
-    "HideMerchantWhenVisited": "ซ่อนรถพ่อค้าเร่ หากไปมาแล้ว", // TODO
-    "ShowExactValue": "แสดงมูลค่าจริง", // TODO
-    "DailyLuckValue": "โชคประจำวันของคุณคือ {0}", // TODO
+    "HideAnimalPetOnMaxFriendship": "ซ่อนค่าหัวใจสัตว์เลี้ยง เมื่อมีค่าสูงสุด",
+    "HideMerchantWhenVisited": "ซ่อนรถพ่อค้าเร่ หากไปมาแล้ว",
+    "ShowExactValue": "แสดงมูลค่าจริง",
+    "DailyLuckValue": "โชคประจำวันของคุณคือ {0}",
     "LuckStatus1": "รู้สึกโชคดี!",
-    "LuckStatus2": "วันนี้รู้สึกโชคดีนิดหน่อย!", // TODO
-    "LuckStatus3": "วันนี้อยู่ในกำมือของคุณแล้ว", // TODO
-    "LuckStatus4": "วันนี้เหล่าวิญญาณรู้สึกวางตัวเป็นกลาง", // TODO
-    "LuckStatus5": "วันนี้โชคไม่เข้าข้างคุณ", // TODO
+    "LuckStatus2": "วันนี้รู้สึกโชคดีนิดหน่อย!",
+    "LuckStatus3": "วันนี้อยู่ในกำมือของคุณแล้ว",
+    "LuckStatus4": "วันนี้เหล่าวิญญาณรู้สึกวางตัวเป็นกลาง",
+    "LuckStatus5": "วันนี้โชคไม่เข้าข้างคุณ",
     "LuckStatus6": "บางทีวันนี้คุณควรจะอยู่บ้าน...",
     "ShowRobinBuildingStatusIcon": "แสดงสถานะสิ่งปลูกสร้างของโรบิน",
-    "RobinBuildingStatus": "โรบินจะสร้างสิ่งปลูกสร้างใหม่ของคุณให้เสร็จใน {0} วัน", // TODO
+    "RobinBuildingStatus": "โรบินจะสร้างสิ่งปลูกสร้างใหม่ของคุณให้เสร็จใน {0} วัน",
     "ShowTodaysGifts": "แสดงของขวัญที่ให้ในวันนี้"
 }
