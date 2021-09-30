@@ -18,7 +18,7 @@
   "ThunderstormNextDay": "Jutro będzie burza",
   "SnowNextDay": "Jutro będzie padać śnieg",
   "DaysUntilToolIsUpgraded": "{0} dni do zakończenia ulepszania: {1}",
-  "ToolIsFinishedBeingUpgraded": "Ukończono ulepszanie: {0}!",
+  "ToolIsFinishedBeingUpgraded": "Ulepszanie zakończone: {0}!",
   "ShowLuckIcon": "Pokaż ikonę szczęścia",
   "ShowLevelUpAnimation": "Pokaż animację awansu",
   "ShowExperienceBar": "Pokaż pasek doświadczenia",
@@ -50,5 +50,5 @@
   "ShowRobinBuildingStatusIcon": "Pokaż stan budowy Robin",
   "RobinBuildingStatus": "Robin ukończy budowę za {0} dni",
   "ShowTodaysGifts": "Pokaż wręczone dzisiaj prezenty",
-  "NpcBirthday": "{0} ma urodziny"
+  "NpcBirthday": "{0} ma dzisiaj urodziny"
 }
