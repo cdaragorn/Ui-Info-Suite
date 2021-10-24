@@ -26,6 +26,10 @@ The current features include:
 - Display an icon for the next day's weather conditions
 - ... and also a new tab added to the options menu that allows turning each individual mod on or off whenever you want.
 
+Known issues:
+- In multiplayer only the host can see the correct location of NPC's on the map. If you face this issue, use the mod NPC Map Locations by Bouhm, which solves this problem. As it is a mod specialized for extending the map, it gets priority before UI Info Suite 2 and disables this mod's map features!
+
 Compatibility is assured with:
+- NPC Map Locations by Bouhm (gets priority before UI Info Suite 2 and disables this mod's map features)
 - Bigger Backpack by spacechase0
 - Level Extender by DevinLematty (probably?)
