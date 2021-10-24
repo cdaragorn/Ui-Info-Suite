@@ -105,36 +105,26 @@ namespace UIInfoSuite.UIElements
 
             for (int i = slotPosition; i < slotPosition + 5 && i < _friendNames.Length; ++i)
             {
-                int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
-                yOffset += 112;
-                Friendship friendshipValues;
-                string nextName = _friendNames[i];
-                if (Game1.player.friendshipData.TryGetValue(nextName, out friendshipValues))
+                if (Game1.player.friendshipData.TryGetValue(_friendNames[i], out Friendship friendshipValues)
+                    && friendshipValues.Points > 0
+                    && friendshipValues.Points < Utility.GetMaximumHeartsForCharacter(Game1.getCharacterFromName(_friendNames[i])) * 250)
                 {
-                    int friendshipRawValue = friendshipValues.Points;
-
-                    if (friendshipRawValue > 0)
-                    {
-                        int pointsToNextHeart = friendshipRawValue % 250;
-                        int numHearts = friendshipRawValue / 250;
-
-                        if (friendshipRawValue < 3000 &&
-                            _friendNames[i] == Game1.player.spouse ||
-                            friendshipRawValue < 2500)
-                        {
-                            DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
-                        }
-                    }
+                    int pointsToNextHeart = friendshipValues.Points % 250;
+                    int numHearts = friendshipValues.Points / 250;
+                    int yPosition = Game1.activeClickableMenu.yPositionOnScreen + 130 + yOffset;
+                    DrawEachIndividualSquare(numHearts, pointsToNextHeart, yPosition);
                 }
+
+                yOffset += 112;
             }
         }
 
         private void DrawEachIndividualSquare(int friendshipLevel, int friendshipPoints, int yPosition)
         {
-            int numberOfPointsToDraw = (int)(((double)friendshipPoints) / 12.5);
+            int numberOfPointsToDraw = (int)((friendshipPoints) / 12.5);
             int num2;
 
-            if (friendshipLevel > 10)
+            if (friendshipLevel >= 10)
             {
                 num2 = 32 * (friendshipLevel - 10);
                 yPosition += 28;
