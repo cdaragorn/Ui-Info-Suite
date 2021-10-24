@@ -151,7 +151,7 @@ namespace UIInfoSuite.UIElements
 
         private void DrawHoverText()
         {
-            string hoverText = string.Format(_helper.SafeGetString(LanguageKeys.NpcBirthday), _birthdayNPC.Name);
+            string hoverText = string.Format(_helper.SafeGetString(LanguageKeys.NpcBirthday), _birthdayNPC.displayName);
             IClickableMenu.drawHoverText(
                 Game1.spriteBatch,
                 hoverText,
