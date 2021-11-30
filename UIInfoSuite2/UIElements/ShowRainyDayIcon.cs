@@ -131,8 +131,9 @@ namespace UIInfoSuite.UIElements
 
         private void GetWeatherIconSpriteLocation()
         {
-            
-            switch (Game1.weatherForTomorrow)
+            WorldDate date = new WorldDate(Game1.Date);
+            ++date.TotalDays;
+            switch (!Game1.IsMasterGame ? Game1.getWeatherModificationsForDate(date, Game1.netWorldState.Value.WeatherForTomorrow) : Game1.getWeatherModificationsForDate(date, Game1.weatherForTomorrow))
             {
                 case Game1.weather_sunny:
                 case Game1.weather_debris:
