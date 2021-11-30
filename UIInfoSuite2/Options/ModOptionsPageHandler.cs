@@ -87,7 +87,6 @@ namespace UIInfoSuite.Options
             Version thisVersion = Assembly.GetAssembly(this.GetType()).GetName().Version;
             _optionsElements.Add(new ModOptionsElement("UI Info Suite 2 v" + thisVersion.Major + "." + thisVersion.Minor + "." + thisVersion.Build));
 
-
             var luckIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowLuckIcon)), whichOption++, _luckOfDay.ToggleOption, () => _options.ShowLuckIcon, v => _options.ShowLuckIcon = v);
             _optionsElements.Add(luckIcon);
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExactValue)), whichOption++, _luckOfDay.ToggleShowExactValueOption, () => _options.ShowExactValue, v => _options.ShowExactValue = v, luckIcon));
@@ -95,7 +94,8 @@ namespace UIInfoSuite.Options
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExperienceBar)), whichOption++, _experienceBar.ToggleShowExperienceBar, () => _options.ShowExperienceBar, v => _options.ShowExperienceBar = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.AllowExperienceBarToFadeOut)), whichOption++, _experienceBar.ToggleExperienceBarFade, () => _options.AllowExperienceBarToFadeOut, v => _options.AllowExperienceBarToFadeOut = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExperienceGain)), whichOption++, _experienceBar.ToggleShowExperienceGain, () => _options.ShowExperienceGain, v => _options.ShowExperienceGain = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowLocationOfTownsPeople)), whichOption++, _locationOfTownsfolk.ToggleShowNPCLocationsOnMap, () => _options.ShowLocationOfTownsPeople, v => _options.ShowLocationOfTownsPeople = v));
+            if (!_helper.ModRegistry.IsLoaded("Bouhm.NPCMapLocations"))
+                _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowLocationOfTownsPeople)), whichOption++, _locationOfTownsfolk.ToggleShowNPCLocationsOnMap, () => _options.ShowLocationOfTownsPeople, v => _options.ShowLocationOfTownsPeople = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowBirthdayIcon)), whichOption++, _showBirthdayIcon.ToggleOption, () => _options.ShowBirthdayIcon, v => _options.ShowBirthdayIcon = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowHeartFills)), whichOption++, _showAccurateHearts.ToggleOption, () => _options.ShowHeartFills, v => _options.ShowHeartFills = v));
             var animalPetIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowAnimalsNeedPets)), whichOption++, _showWhenAnimalNeedsPet.ToggleOption, () => _options.ShowAnimalsNeedPets, v => _options.ShowAnimalsNeedPets = v);
