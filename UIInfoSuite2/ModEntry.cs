@@ -59,7 +59,7 @@ namespace UIInfoSuite
             // Only load once for split screen.
             if (Context.ScreenId != 0) return;
 
-            ModOptions options = this.Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") ?? _options;
+            ModOptions options = Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") ?? _options;
 
             _modOptionsPageHandler = new ModOptionsPageHandler(Helper, options, _options.ShowOptionsTabInMenu);
         }
