@@ -144,7 +144,7 @@ namespace UIInfoSuite.UIElements
                 // Rewrite the text, but keep the color
                 if (ShowExactValue)
                 {
-                    _hoverText.Value = string.Format(_helper.SafeGetString(LanguageKeys.DailyLuckValue), Game1.player.DailyLuck);
+                    _hoverText.Value = string.Format(_helper.SafeGetString(LanguageKeys.DailyLuckValue), Game1.player.DailyLuck.ToString("N3"));
                 }
             }
         }
