@@ -33,6 +33,6 @@
 	"ShowHarvestPricesInShop" : "แสดงราคาขายผลผลิตในร้านค้า",
 	"ShowWhenNewRecipesAreAvailable" : "แสดงเมื่อมีสูตรอาหาร/สูตรคราฟชนิดใหม่เกิดขึ้น",
 	"ShowToolUpgradeStatus" : "แสดงสถานะการอัพเกรดอุปกรณ์",
-	"NPCBirthday": "วันเกิดของ {0}",
+	"NPCBirthday": "วันเกิดของ{0}",
 	"UIOptions": "ปรับแต่งมอด UI Info"
 }
