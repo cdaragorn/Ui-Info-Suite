@@ -50,5 +50,5 @@
     "ShowRobinBuildingStatusIcon": "แสดงสถานะสิ่งปลูกสร้างของโรบิน",
     "RobinBuildingStatus": "โรบินจะสร้างสิ่งปลูกสร้างใหม่ของคุณให้เสร็จใน {0} วัน",
     "ShowTodaysGifts": "แสดงของขวัญที่ให้ในวันนี้",
-    "NpcBirthday": "วันเกิดของ {0}"
+    "NpcBirthday": "วันเกิดของ{0}"
 }
