@@ -161,16 +161,7 @@ namespace UIInfoSuite.UIElements
                     similarObjects = GetSimilarObjectsInLocation("sprinkler");
                     foreach (StardewValley.Object next in similarObjects)
                     {
-                        bool hasPressureNozzle = false;
-                        if (next.heldObject.Value != null && next.heldObject.Value.DisplayName.IndexOf("nozzle", StringComparison.OrdinalIgnoreCase) >= 0)
-                            hasPressureNozzle = true;
-
-                        arrayToUse = next.name.IndexOf("iridium", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.IridiumSprinkler, hasPressureNozzle) :
-                        next.name.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.QualitySprinkler, hasPressureNozzle) :
-                        next.name.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler, hasPressureNozzle) :
-                            GetDistanceArray(ObjectsWithDistance.Sprinkler, hasPressureNozzle);
-
-                        ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                        AddTilesToHighlightedArea(next.GetSprinklerTiles());
                     }
                 }
                 else if (itemName.IndexOf("bee house", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -181,6 +172,22 @@ namespace UIInfoSuite.UIElements
             }
         }
 
+        private void AddTilesToHighlightedArea(IEnumerable<Vector2> tiles)
+        {
+            if (_mutex.WaitOne())
+            {
+                try
+                {
+                    foreach (var tile in tiles) 
+                        _effectiveArea.Value.Add(tile.ToPoint());
+                }
+                finally
+                {
+                    _mutex.ReleaseMutex();
+                }
+            }
+        }
+        
         private void ParseConfigToHighlightedArea(int[][] highlightedLocation, int xPos, int yPos)
         {
             int xOffset = highlightedLocation.Length / 2;
