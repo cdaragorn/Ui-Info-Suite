@@ -7,13 +7,16 @@
     "HarvestPrice": "Precio de la cosecha",
     "Hours": "horas",
     "LevelUp": "Subida de nivel",
-    "LuckyButNotTooLucky": "Te sientes con suerte... aunque no demasiado",
-    "MaybeStayHome": "Tal vez deberías quedarte en casa hoy",
+    "LuckyButNotTooLucky": "Te sientes con suerte... aunque no demasiada",
+    "MaybeStayHome": "Tal vez deberías quedarte en casa hoy...",
     "Minutes": "minutos",
     "NotFeelingLuckyAtAll": "No te sientes afortunado en absoluto...",
     "ReadyToHarvest": "¡Listo para cosechar!",
     "TodaysRecipe": "Receta de hoy: ",
     "TravelingMerchantIsInTown": "¡El comerciante ambulante está en la zona!",
+    "RainNextDay": "Mañana lloverá",
+    "ThunderstormNextDay": "Mañana habrá tormenta eléctrica",
+    "SnowNextDay": "Mañana nevará",
     "DaysUntilToolIsUpgraded": "{0} días hasta que {1} termine de actualizarse",
     "ToolIsFinishedBeingUpgraded": "¡{0} está terminado!",
     "ShowLuckIcon": "Mostrar icono de suerte",
@@ -30,19 +33,22 @@
     "ShowItemEffectRanges": "Mostrar rango de espantapájaros y aspersores",
     "ShowExtraItemInformation": "Mostrar información extra de objetos",
     "ShowTravelingMerchant": "Mostrar comerciante ambulante",
-    "ShowRainyDay": "Show rainy days", // TODO
+    "ShowRainyDay": "Mostrar los días de lluvia",
     "ShowHarvestPricesInShop": "Mostrar los precios de cosechas de la tienda",
     "ShowWhenNewRecipesAreAvailable": "Mostrar cuando hay nuevas recetas disponibles",
     "ShowToolUpgradeStatus": "Mostrar el estado de actualización de la herramienta",
-    "HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
-    "HideMerchantWhenVisited": "Hide when visited", // TODO
-    "ShowExactValue": "Show exact value", // TODO
-    "DailyLuckValue": "Your daily luck is {0}", // TODO
+    "HideAnimalPetOnMaxFriendship": "Ocultar con la amistad al máximo",
+    "HideMerchantWhenVisited": "Ocultar al ser visitado",
+    "ShowExactValue": "Mostrar valor exacto",
+    "DailyLuckValue": "Tu suerte diaria es {0}",
     "LuckStatus1": "¡Tienes suerte!",
-    "LuckStatus2": "Te sientes con suerte... aunque no demasiado", // TODO
-    "LuckStatus3": "Te sientes con suerte... aunque no demasiado", // TODO
-    "LuckStatus4": "Te sientes con suerte... aunque no demasiado", // TODO
-    "LuckStatus5": "No te sientes afortunado en absoluto...", // TODO
-    "LuckStatus6": "Tal vez deberías quedarte en casa hoy",
-    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)" // TODO
+    "LuckStatus2": "Hoy me siento un poco afortunado",
+    "LuckStatus3": "El día está en tus manos",
+    "LuckStatus4": "Los espíritus se sienten absolutamente neutrales hoy",
+    "LuckStatus5": "La suerte no estará de tu lado hoy",
+    "LuckStatus6": "Tal vez deberías quedarte en casa hoy...",
+    "ShowRobinBuildingStatusIcon": "Mostrar estado del edificio de Robin",
+    "RobinBuildingStatus": "Robin terminará tu nuevo edificio en {0} día(s)",
+    "ShowTodaysGifts": "Mostrar regalos entregados hoy",
+    "NpcBirthday": "Cumpleaños de {0}"
 }
