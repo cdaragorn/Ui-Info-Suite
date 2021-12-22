@@ -19,9 +19,10 @@ namespace UIInfoSuite
         public static IMonitor MonitorObject { get; private set; }
 
         private SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
-        private ModConfig _options;
+        private ModConfig _modConfig;
 
         private ModOptionsPageHandler _modOptionsPageHandler;
+        private ModOptions _modOptions;
         #endregion
 
 
@@ -39,7 +40,7 @@ namespace UIInfoSuite
             helper.Events.Input.ButtonsChanged += HandleKeyBindings;
 
             // for initializing the config.json
-            _options = this.Helper.ReadConfig<ModConfig>();
+            _modConfig = Helper.ReadConfig<ModConfig>();
         }
         #endregion
 
@@ -59,37 +60,33 @@ namespace UIInfoSuite
             // Only load once for split screen.
             if (Context.ScreenId != 0) return;
 
-            ModOptions options = Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") ?? _options;
+            _modOptions = Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") 
+                ?? Helper.Data.ReadJsonFile<ModOptions>($"data/{_modConfig.ApplyDefaultSettingsFromThisSave}.json")
+                ?? new ModOptions();
 
-            _modOptionsPageHandler = new ModOptionsPageHandler(Helper, options, _options.ShowOptionsTabInMenu);
+            _modOptionsPageHandler = new ModOptionsPageHandler(Helper, _modOptions, _modConfig.ShowOptionsTabInMenu);
         }
 
         private void OnSaved(object sender, EventArgs e)
         {
             // Only save for the main player.
             if (Context.ScreenId != 0) return;
-
-            // Only save if the options differ from the default config or there is already a file for that character
-            var defaultOptions = this.Helper.ReadConfig<ModOptions>();
-            var savedUserOptions = this.Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json");
-            if (!_options.Equals(defaultOptions) || savedUserOptions != null) {   
-                this.Helper.Data.WriteJsonFile($"data/{Constants.SaveFolderName}.json", _options);
-            }
-
+ 
+            Helper.Data.WriteJsonFile($"data/{Constants.SaveFolderName}.json", _modOptions);
         }
 
         private void HandleKeyBindings(object sender, ButtonsChangedEventArgs e)
         {
-            if (_options != null)
+            if (_modOptions != null)
             {
-                if(Context.IsPlayerFree && _options.OpenCalendarKeybind.JustPressed())
+                if(Context.IsPlayerFree && _modOptions.OpenCalendarKeybind.JustPressed())
                 {
-                    Helper.Input.SuppressActiveKeybinds(_options.OpenCalendarKeybind);
+                    Helper.Input.SuppressActiveKeybinds(_modOptions.OpenCalendarKeybind);
                     Game1.activeClickableMenu = new Billboard(false);
                 }
-                else if (Context.IsPlayerFree && _options.OpenQuestBoardKeybind.JustPressed())
+                else if (Context.IsPlayerFree && _modOptions.OpenQuestBoardKeybind.JustPressed())
                 {
-                    Helper.Input.SuppressActiveKeybinds(_options.OpenQuestBoardKeybind);
+                    Helper.Input.SuppressActiveKeybinds(_modOptions.OpenQuestBoardKeybind);
                     Game1.RefreshQuestOfTheDay();
                     Game1.activeClickableMenu = new Billboard(true);
                 }
