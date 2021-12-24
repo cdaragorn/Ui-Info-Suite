@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace UIInfoSuite.Options
 {
-    class ModConfig : ModOptions
+    class ModConfig
     {
         public bool ShowOptionsTabInMenu { get; set; } = true;
+        public string ApplyDefaultSettingsFromThisSave { get; set; } = "JohnDoe_123456789";
     }
 }

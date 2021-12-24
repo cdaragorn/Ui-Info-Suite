@@ -1,0 +1,64 @@
+{
+  //GUI - Billboard
+  "Billboard": "İlan panosu",
+  "Calendar": "Takvim",
+  //GUI - Seed shop
+  "HarvestPrice": "Hasat ücreti",
+  //Production
+  "Days": "gün",
+  "Hours": "saat",
+  "Minutes": "dakika",
+  //Harvest
+  "DaysToMature": "olgunlaşmasına kalan zaman",
+  "ReadyToHarvest": "Hasata hazır!",
+  //Display icons - General
+  "TodaysRecipe": "Bugün'ün tarifi: ",
+  "TravelingMerchantIsInTown": "Gezgin tüccar kasabada!",
+  "RainNextDay": "Yarın yamur yağacak",
+  "ThunderstormNextDay": "Yarın Fırtına olacak",
+  "SnowNextDay": "Yarın kar yağacak",
+  "DaysUntilToolIsUpgraded": "{1}'nın yükseltmesinin bitmesine {0} gün kaldı ",
+  "ToolIsFinishedBeingUpgraded": "{0} hazır!",
+  "NpcBirthday": "Doğum günü: {0}",
+  "RobinBuildingStatus": "Robin inşaatı {0} günde bitirecek",
+  //Display icons - Luck
+  "DailyLuckValue": "Bugünkü şans değerin {0}",
+  "FeelingLucky": "Şanslı hissediyorsun!!",
+  "LuckyButNotTooLucky": "Şanslı hissediyorsun... ama çok da değil",
+  "NotFeelingLuckyAtAll": "Bugün pek de şanslı hissetmiyorsun...",
+  "MaybeStayHome": "Belki de bugün evde kalmalısın...",
+  "LuckStatus1": "Şanslı hissediyorsun!",
+  "LuckStatus2": "Bugün biraz şanslı hissediyorsun!",
+  "LuckStatus3": "Şansın bugün kendi ellerinde",
+  "LuckStatus4": "Ruhlar bugün tarafsız hissediyor",
+  "LuckStatus5": "Şans bugün yanında değil",
+  "LuckStatus6": "Belki de bugün evde kalmalısın...",
+  //Settings - General
+  "ShowLevelUpAnimation": "Seviye atlama animasyonunu göster",
+  "ShowExperienceBar": "Deneyim çubuğu görünebilsin",
+  "AllowExperienceBarToFadeOut": "Deneyim çubuğu kaybolabilsin",
+  "ShowExperienceGain": "Deneyim kazanıldığını göster",
+  "ShowLocationOfTownsPeople": "Kasaba halkını haritada göster",
+  "ShowAnimalsNeedPets": "Sevilme ihtiyacı olan hayvanları göster",
+  "HideAnimalPetOnMaxFriendship": "Maksimumda gizle",
+  "ShowCropAndBarrelTooltip": "Ekin ve varil sürelerini göster",
+  "ShowItemEffectRanges": "Korkuluk ve fıskiye menzilini göster",
+  "ShowExtraItemInformation": "Nesneler hakkında ek bilgileri göster",
+  "ShowHarvestPricesInShop": "Dükkanda ürün satış fiyatını göster",
+  //Settings - Tabs info
+  "DisplayCalendarAndBillboard": "Takvim/ilan pano düğmesini göster",
+  "ShowHeartFills": "Kalbin ne kadarının dolduğunu göster",
+  "ShowTodaysGifts": "Bugün verilen hediyeleri göster",
+  //Settings - Show icons
+  "ShowBirthdayIcon": "Doğum günü ikonunu göster",
+  "ShowTravelingMerchant": "Gezgin tüccar ikonunu göster",
+  "HideMerchantWhenVisited": "Ziyaret edince gizle",
+  "ShowRainyDay": "Yağmurlu günleri göster",
+  "ShowWhenNewRecipesAreAvailable": "Yeni tarifler mevcut olduğunda göster",
+  "ShowToolUpgradeStatus": "Alet yükseltme durumunu göster",
+  "ShowRobinBuildingStatusIcon": "Robin'in inşaa durumunu göster",
+  "ShowLuckIcon": "Şans ikonunu göster",
+  "ShowExactValue": "Tam değeri göster",
+  //Others
+  "LevelUp": "Seviye atlama"
+}
