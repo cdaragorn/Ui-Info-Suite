@@ -14,12 +14,12 @@
   //Display icons - General
   "TodaysRecipe": "Heutiges Rezept: ",
   "TravelingMerchantIsInTown": "Der reisende Händler ist im Dorf!",
-  "RainNextDay": "There will be rain tomorrow", // TODO
-  "ThunderstormNextDay": "There will be a thunderstorm tomorrow", // TODO
-  "SnowNextDay": "There will be snow tomorrow", // TODO
+  "RainNextDay": "Es wird morgen regnen",
+  "ThunderstormNextDay": "Es wird morgen ein Gewitter geben",
+  "SnowNextDay": "Es wird morgen schneien",
   "DaysUntilToolIsUpgraded": "{0} Tage bis {1} fertig verbessert wurde",
   "ToolIsFinishedBeingUpgraded": "{0} ist fertig!",
-  "NpcBirthday": "{0}'s birthday", // TODO
+  "NpcBirthday": "{0}'s Geburtstag",
   "RobinBuildingStatus": "Robin wird in {0} Tage(n) mit dem Bau fertig sein",
   //Display icons - Luck
   "DailyLuckValue": "Dein heutiges Glück ist {0}",
@@ -48,7 +48,7 @@
   //Settings - Tabs info
   "DisplayCalendarAndBillboard": "Zeige Schaltfläche für Kalender und schwarzes Brett",
   "ShowHeartFills": "Zeige detaillierte Herzfüllungen",
-  "ShowTodaysGifts": "Show gifts given today", // TODO
+  "ShowTodaysGifts": "Zeige heute bereits vergebene Geschenke",
   //Settings - Show icons
   "ShowBirthdayIcon": "Zeige Geburtstagssymbol",
   "ShowTravelingMerchant": "Zeige reisenden Händler",
@@ -56,7 +56,7 @@
   "ShowRainyDay": "Zeige regnerische Tage",
   "ShowWhenNewRecipesAreAvailable": "Zeige wenn neue Rezepte verfügbar sind",
   "ShowToolUpgradeStatus": "Zeige Werkzeugverbesserungsfortschritt",
-  "ShowRobinBuildingStatusIcon": "Show Robin building status", // TODO
+  "ShowRobinBuildingStatusIcon": "Zeige Robins Bau-Status",
   "ShowLuckIcon": "Zeige Glücksymbol",
   "ShowExactValue": "Zeige exakten Wert",
   //Others
