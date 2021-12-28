@@ -53,7 +53,7 @@ locale     | status
 default    | [✓](UIInfoSuite2/i18n/default.json)
 Chinese    | [✓](UIInfoSuite2/i18n/zh.json)
 French     | [↻](UIInfoSuite2/i18n/fr.json)
-German     | [↻](UIInfoSuite2/i18n/de.json)
+German     | [✓](UIInfoSuite2/i18n/de.json)
 Hungarian  | [↻](UIInfoSuite2/i18n/hu.json)
 Italian    | ❑
 Japanese   | [↻](UIInfoSuite2/i18n/ja.json)
