@@ -1,0 +1,127 @@
+{
+
+  //GUI - Billboard
+
+  "Billboard": "Оголошення",
+
+  "Calendar": "Календар",
+
+  //GUI - Seed shop
+
+  "HarvestPrice": "Ціна врожаю",
+
+  //Production
+
+  "Days": "дні(в)",
+
+  "Hours": "годин",
+
+  "Minutes": "хвилин",
+
+  //Harvest
+
+  "DaysToMature": "дні(в) для дозрівання",
+
+  "ReadyToHarvest": "Готово до збору!",
+
+  //Display icons - General
+
+  "TodaysRecipe": "Сьогоднішній рецепт: ",
+
+  "TravelingMerchantIsInTown": "Мандрівний купець у місті!",
+
+  "RainNextDay": "Завтра буде дощ",
+
+  "ThunderstormNextDay": "Завтра буде гроза",
+
+  "SnowNextDay": "Завтра буде сніг",
+
+  "DaysUntilToolIsUpgraded": "Залишилося {0} дні(в), щоб {1} було оновлено",
+
+  "ToolIsFinishedBeingUpgraded": "{0} оновлено!",
+
+  "NpcBirthday": "{0} - день народження",
+
+  "RobinBuildingStatus": "Робін завершить нову будівлю за {0} дні(в)",
+
+  //Display icons - Luck
+
+  "DailyLuckValue": "Ваша щоденна удача - {0}",
+
+  "FeelingLucky": "Вам сьогодні пощастить!!",
+
+  "LuckyButNotTooLucky": "Вам сьогодні трохи пощастить",
+
+  "NotFeelingLuckyAtAll": "Вам сьогодні не щастиме цілий день...",
+
+  "MaybeStayHome": "Можливо, сьогодні вам слід залишися вдома...",
+
+  "LuckStatus1": "Вам сьогодні пощастить!",
+
+  "LuckStatus2": "Вам сьогодні трохи пощастить!",
+
+  "LuckStatus3": "День у ваших руках",
+
+  "LuckStatus4": "Духи сьогодні абсолютно нейтральні.",
+
+  "LuckStatus5": "Сьогодні удача не буде на вашому боці.",
+
+  "LuckStatus6": "Можливо, сьогодні вам слід залишися вдома...",
+
+  //Settings - General
+
+  "ShowLevelUpAnimation": "Показувати анімацію переходу до нового рівня",
+
+  "ShowExperienceBar": "Показувати шкалу досвіду",
+
+  "AllowExperienceBarToFadeOut": "Дозволити шкалі досвіду зникати",
+
+  "ShowExperienceGain": "Показати набутий досвід",
+
+  "ShowLocationOfTownsPeople": "Показувати містян на мапі",
+
+  "ShowAnimalsNeedPets": "Показувати, що тварин потрібно поласкати",
+
+  "HideAnimalPetOnMaxFriendship": "Сховати при максимальному рівні дружби",
+
+  "ShowCropAndBarrelTooltip": "Показувати час вирощення культур та залишений час для бочок",
+
+  "ShowItemEffectRanges": "Показувати радіус дії опудал та спринклерів",
+
+  "ShowExtraItemInformation": "Показувати додаткову інформацію про предмет",
+
+  "ShowHarvestPricesInShop": "Показувати ціни врожаю у крамниці",
+
+  //Settings - Tabs info
+
+  "DisplayCalendarAndBillboard": "Показувати кнопку календаря/дошки оголошень",
+
+  "ShowHeartFills": "Показувати заповненість сердець стосунків",
+
+  "ShowTodaysGifts": "Показувати сьогоднішні даровані подарунки",
+
+  //Settings - Show icons
+
+  "ShowBirthdayIcon": "Показувати іконку дня народження",
+
+  "ShowTravelingMerchant": "Показувати іконку мандрівного купця",
+
+  "HideMerchantWhenVisited": "Сховати після відвідування",
+
+  "ShowRainyDay": "Показувати дощові дні",
+
+  "ShowWhenNewRecipesAreAvailable": "Показувати, коли доступні нові рецепти",
+
+  "ShowToolUpgradeStatus": "Показувати статус оновлення інструмента",
+
+  "ShowRobinBuildingStatusIcon": "Показувати статус роботи Робін над побудовою",
+
+  "ShowLuckIcon": "Показувати іконку удачі",
+
+  "ShowExactValue": "Показувати точне значення",
+
+  //Others
+
+  "LevelUp": "Новий рівень"
+
+}
