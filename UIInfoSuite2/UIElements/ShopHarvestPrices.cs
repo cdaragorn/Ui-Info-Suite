@@ -140,12 +140,12 @@ namespace UIInfoSuite.UIElements
                 Game1.spriteBatch.DrawString(
                     Game1.dialogueFont,
                     text,
-                    new Vector2(xPosition - 2, yPosition + 6),
+                    new Vector2(xPosition + 13, yPosition + 6),
                     Color.Black * 0.2f);
                 Game1.spriteBatch.DrawString(
                     Game1.dialogueFont,
                     text,
-                    new Vector2(xPosition, yPosition + 4),
+                    new Vector2(xPosition + 15, yPosition + 4),
                     Color.Black * 0.8f);
                 /*
 				 * I have no Idea why this is here...
