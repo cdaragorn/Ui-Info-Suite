@@ -64,6 +64,6 @@ Russian    | [↻](UIInfoSuite2/i18n/ru.json)
 Spanish    | [✓](UIInfoSuite2/i18n/es.json)
 Thai¹      | [✓](UIInfoSuite2/i18n/th.json)
 Turkish    | [✓](UIInfoSuite2/i18n/tr.json)
-Ukranian¹  | [✓](UIInfoSuite2/i18n/uk.json)
+Ukrainian   | [✓](UIInfoSuite2/i18n/uk.json)
 
-¹ This is a custom language provided by a mod (see [Polish](https://www.nexusmods.com/stardewvalley/mods/3616), [Thai](https://www.nexusmods.com/stardewvalley/mods/7052) and [Ukranian](https://www.nexusmods.com/stardewvalley/mods/8427)).
+¹ This is a custom language provided by a mod (see [Polish](https://www.nexusmods.com/stardewvalley/mods/3616), [Thai](https://www.nexusmods.com/stardewvalley/mods/7052) and [Ukrainian](https://www.nexusmods.com/stardewvalley/mods/8427)).
