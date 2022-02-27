@@ -16,7 +16,7 @@ namespace UIInfoSuite.UIElements
         #region Properties
         private NPC _birthdayNPC;
         private readonly PerScreen<ClickableTextureComponent> _birthdayIcon = new PerScreen<ClickableTextureComponent>();
-
+        public bool HideBirthdayIfFullFriendShip { get; set; }
         private readonly IModHelper _helper;
         #endregion
 
@@ -48,6 +48,12 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
+
+        public void ToggleDisableOnMaxFriendshipOption(bool hideBirthdayIfFullFriendShip)
+        {
+            HideBirthdayIfFullFriendShip = hideBirthdayIfFullFriendShip;
+        }
+
         #endregion
 
 
@@ -103,7 +109,7 @@ namespace UIInfoSuite.UIElements
             {
                 foreach (var character in location.characters)
                 {
-                    if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth))
+                    if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth) && !(!Game1.player.friendshipData.ContainsKey(character.Name) && Game1.NPCGiftTastes.ContainsKey(character.Name)))
                     {
                         _birthdayNPC = character;
                         break;
@@ -117,6 +123,10 @@ namespace UIInfoSuite.UIElements
 
         private void DrawBithdayIcon()
         {
+            if(HideBirthdayIfFullFriendShip && Game1.player.friendshipData[_birthdayNPC.Name].Points >= 2000)
+            {
+                return;
+            }
             Rectangle headShot = _birthdayNPC.GetHeadShot();
             Point iconPosition = IconHandler.Handler.GetNewIconPosition();
             float scale = 2.9f;

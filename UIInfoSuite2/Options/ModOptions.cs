@@ -35,6 +35,7 @@ namespace UIInfoSuite.Options
         public bool ShowExactValue { get; set; } = false;
         public bool ShowRobinBuildingStatusIcon { get; set; } = true;
         public bool ShowTodaysGifts { get; set; } = true;
+        public bool HideBirthdayIfFullFriendShip { get; set; } = true;
         public KeybindList OpenCalendarKeybind { get; set; } = KeybindList.ForSingle(SButton.B);
         public KeybindList OpenQuestBoardKeybind { get; set; } = KeybindList.ForSingle(SButton.H);
         public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new Dictionary<string, bool>();
@@ -64,6 +65,7 @@ namespace UIInfoSuite.Options
                 ShowLocationOfTownsPeopleShowQuestIcon == options.ShowLocationOfTownsPeopleShowQuestIcon &&
                 ShowCropAndBarrelTooltip == options.ShowCropAndBarrelTooltip &&
                 ShowBirthdayIcon == options.ShowBirthdayIcon &&
+                HideBirthdayIfFullFriendShip == options.HideBirthdayIfFullFriendShip &&
                 ShowAnimalsNeedPets == options.ShowAnimalsNeedPets &&
                 HideAnimalPetOnMaxFriendship == options.HideAnimalPetOnMaxFriendship &&
                 ShowItemEffectRanges == options.ShowItemEffectRanges &&
