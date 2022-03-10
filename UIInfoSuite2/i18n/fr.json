@@ -10,28 +10,28 @@
   "Minutes": "minutes",
   //Harvest
   "DaysToMature": "jours pour mûrir",
-  "ReadyToHarvest": "Prêt à récolter!",
-  //Display icons - General
+  "ReadyToHarvest": "Prêt à récolter!",  
+//Display icons - General
   "TodaysRecipe": "Recette d'aujourd'hui: ",
   "TravelingMerchantIsInTown": "Le marchand itinérant est en ville!",
-  "RainNextDay": "There will be rain tomorrow", // TODO
-  "ThunderstormNextDay": "There will be a thunderstorm tomorrow", // TODO
-  "SnowNextDay": "There will be snow tomorrow", // TODO
+  "RainNextDay": "Il va pleuvoir demain,",
+  "ThunderstormNextDay": "Il va y avoir un orage demain",
+  "SnowNextDay": "Il va neiger demain",
   "DaysUntilToolIsUpgraded": "{0} jours avant que {1} ne termine de s'améliorer",
   "ToolIsFinishedBeingUpgraded": "{0} est terminé!",
-  "NpcBirthday": "{0}'s birthday", // TODO
-  "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)", // TODO
+  "NpcBirthday": "Anniversaire de {0}",
+  "RobinBuildingStatus": "Robin aura fini votre nouveau batiment dans {0} jour(s)",
   //Display icons - Luck
-  "DailyLuckValue": "Your daily luck is {0}", // TODO
-  "FeelingLucky": "You're feelin' lucky!!", // TODO
-  "LuckyButNotTooLucky": "Feelin' lucky... but not too lucky", // TODO
-  "NotFeelingLuckyAtAll": "You're not feeling lucky at all today...", // TODO
-  "MaybeStayHome": "Maybe you should stay home today...", // TODO
+  "DailyLuckValue": "Ta chance du jour est {0}",
+  "FeelingLucky": "Tu te sens chanceux !!",
+  "LuckyButNotTooLucky": "Tu te sens chanceux... mais pas trop",
+  "NotFeelingLuckyAtAll": "Tu ne te sens pas du tout chanceux...",
+  "MaybeStayHome": "Tu devrais peut etre rester à la maison aujourd'hui...",
   "LuckStatus1": "Tu te sens chanceux!",
-  "LuckStatus2": "Tu te sens chanceux... mais pas trop", // TODO
-  "LuckStatus3": "Tu te sens chanceux... mais pas trop", // TODO
-  "LuckStatus4": "Tu te sens chanceux... mais pas trop", // TODO
-  "LuckStatus5": "Tu ne te sens pas tu tout chanceux...", // TODO
+  "LuckStatus2": "Tu te sens un peu chanceux",
+  "LuckStatus3": "La journée est entre tes mains",
+  "LuckStatus4": "Les esprits sont plutôt neutre aujourd'hui",
+  "LuckStatus5": "La chance n'est pas avec toi aujourd'hui",
   "LuckStatus6": "Tu ferais mieux de rester à la maison aujourd'hui",
   //Settings - General
   "ShowLevelUpAnimation": "Montrer l'animation de gain de niveau",
@@ -40,7 +40,7 @@
   "ShowExperienceGain": "Montrer le gain d'exp.",
   "ShowLocationOfTownsPeople": "Montrer les habitants sur la carte",
   "ShowAnimalsNeedPets": "Montrer les animaux à câliner",
-  "HideAnimalPetOnMaxFriendship": "Hide on max friendship", // TODO
+  "HideAnimalPetOnMaxFriendship": "Cacher lorsque l'amitié est à son maximum",
   "ShowCropAndBarrelTooltip": "Montrer le temps des récoltes/barils",
   "ShowItemEffectRanges": "Montrer portée épouvantails/arroseurs",
   "ShowExtraItemInformation": "Montrer informations supp. des objets",
@@ -48,17 +48,17 @@
   //Settings - Tabs info
   "DisplayCalendarAndBillboard": "Montrer Calendrier/Tableau d'annonces",
   "ShowHeartFills": "Montrer le remplissage des coeurs",
-  "ShowTodaysGifts": "Show gifts given today", // TODO
+  "ShowTodaysGifts": "Montrer les cadeaux offerts aujourd'hui",
   //Settings - Show icons
   "ShowBirthdayIcon": "Montrer l'icône d'anniversaire",
   "ShowTravelingMerchant": "Montrer le marchand itinérant",
-  "HideMerchantWhenVisited": "Hide when visited", // TODO
-  "ShowRainyDay": "Show rainy days", // TODO
+  "HideMerchantWhenVisited": "Cacher pendant la visite",
+  "ShowRainyDay": "Montrer les jours de pluie",
   "ShowWhenNewRecipesAreAvailable": "Montrer quand nouvelles recettes disp.",
   "ShowToolUpgradeStatus": "Montrer état de l'amélioration des outils",
-  "ShowRobinBuildingStatusIcon": "Show Robin building status", // TODO
+  "ShowRobinBuildingStatusIcon": "Montrer l'avancée du chantier de Robin",
   "ShowLuckIcon": "Montrer l'icône de chance",
-  "ShowExactValue": "Show exact value", // TODO
+  "ShowExactValue": "Montrer la valeur exacte",
   //Others
   "LevelUp": "Gain de niveau"
 }
