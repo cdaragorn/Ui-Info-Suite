@@ -52,12 +52,12 @@ locale      | status
 ----------- | :----------------
 default     | [✓](UIInfoSuite2/i18n/default.json)
 Chinese     | [✓](UIInfoSuite2/i18n/zh.json)
-French      | [↻](UIInfoSuite2/i18n/fr.json)
+French      | [✓](UIInfoSuite2/i18n/fr.json)
 German      | [✓](UIInfoSuite2/i18n/de.json)
-Hungarian   | [↻](UIInfoSuite2/i18n/hu.json)
+Hungarian   | [✓](UIInfoSuite2/i18n/hu.json)
 Italian     | ❑
-Japanese    | [↻](UIInfoSuite2/i18n/ja.json)
-Korean      | [↻](UIInfoSuite2/i18n/ko.json)
+Japanese    | [✓](UIInfoSuite2/i18n/ja.json)
+Korean      | [✓](UIInfoSuite2/i18n/ko.json)
 [Polish]    | [✓](UIInfoSuite2/i18n/pl.json)
 Portuguese  | [✓](UIInfoSuite2/i18n/pt.json)
 Russian     | [✓](UIInfoSuite2/i18n/ru.json)
