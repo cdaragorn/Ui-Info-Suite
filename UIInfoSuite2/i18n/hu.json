@@ -19,11 +19,11 @@
   "SnowNextDay": "Holnap esni fog a hó",
   "DaysUntilToolIsUpgraded": "{0} nap amíg {1} fejlesztése kész lesz",
   "ToolIsFinishedBeingUpgraded": "{0} fejlesztése be lett fejezve!",
-  "NpcBirthday": "{0}'s birthday", // TODO
+  "NpcBirthday": "{0} születésnapja",
   "RobinBuildingStatus": "Robin be fogja fejezni az új épületedet {0} nap múlva",
   //Display icons - Luck
   "DailyLuckValue": "A mai szerencséd {0}",
-  "FeelingLucky": "You're feelin' lucky!!", // TODO
+  "FeelingLucky": "Szerencsésnek érzed magad!",
   "LuckyButNotTooLucky": "Szerencsésnek érzed magad... de nem nagyon!",
   "NotFeelingLuckyAtAll": "Egyáltalán nem érzed szerencsésnek magad!",
   "MaybeStayHome": "Talán ma otthon kéne maradnod!",

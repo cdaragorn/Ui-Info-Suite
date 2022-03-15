@@ -14,12 +14,12 @@
   //Display icons - General
   "TodaysRecipe": "Сегодняшний рецепт: ",
   "TravelingMerchantIsInTown": "Странствующий Торговец в городе!",
-  "RainNextDay": "Завтра будет дождь", // TODO
-  "ThunderstormNextDay": "Завтра будет гроза", // TODO
-  "SnowNextDay": "Завтра будет снег", // TODO
+  "RainNextDay": "Завтра будет дождь",
+  "ThunderstormNextDay": "Завтра будет гроза",
+  "SnowNextDay": "Завтра будет снег",
   "DaysUntilToolIsUpgraded": "{1} будет улучшено через {0} дней",
   "ToolIsFinishedBeingUpgraded": "{0} улучшено!",
-  "NpcBirthday": "Сегодня день рождение {0}", // TODO
+  "NpcBirthday": "Сегодня день рождение {0}",
   "RobinBuildingStatus": "Робин завершит строительство через {0} дн.",
   //Display icons - Luck
   "DailyLuckValue": "Ваша сегодняшняя удача: {0}",
@@ -48,7 +48,7 @@
   //Settings - Tabs info
   "DisplayCalendarAndBillboard": "Показывать кнопки календаря и доски объявлений",
   "ShowHeartFills": "Показывать заполнение сердец отношений",
-  "ShowTodaysGifts": "Показывать уже сегодняшние подарки", // TODO
+  "ShowTodaysGifts": "Показывать уже сегодняшние подарки",
   //Settings - Show icons
   "ShowBirthdayIcon": "Показывать иконку дня рождения",
   "ShowTravelingMerchant": "Показывать иконку Странствующего Торговца",
@@ -56,7 +56,7 @@
   "ShowRainyDay": "Показать дождливые дни",
   "ShowWhenNewRecipesAreAvailable": "Показывать, когда доступны новые рецепты",
   "ShowToolUpgradeStatus": "Показывать статус улучшения инструмента",
-  "ShowRobinBuildingStatusIcon": "Показывать статус постройки с Робин", // TODO
+  "ShowRobinBuildingStatusIcon": "Показывать статус постройки с Робин",
   "ShowLuckIcon": "Показывать иконку удачи",
   "ShowExactValue": "Показывать точное значение",
   //Others

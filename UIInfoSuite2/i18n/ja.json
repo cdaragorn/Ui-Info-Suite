@@ -19,7 +19,7 @@
   "SnowNextDay": "明日は雪が降るでしょう",
   "DaysUntilToolIsUpgraded": "{1}のアップグレード完了まで{0}日",
   "ToolIsFinishedBeingUpgraded": "{0}のアップグレード完了！",
-  "NpcBirthday": "{0}の誕生日",
+  "NpcBirthday": "{0}의 생일입니다！",
   "RobinBuildingStatus": "ロビンは{0}日以内に建築を完了させます",
   //Display icons - Luck
   "DailyLuckValue": "今日の運命数は{0}です",
