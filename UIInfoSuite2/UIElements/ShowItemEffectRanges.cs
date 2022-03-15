@@ -121,16 +121,16 @@ namespace UIInfoSuite.UIElements
                     {
                         if (nextBuilding is JunimoHut nextHut)
                         {
-                            ParseConfigToHighlightedArea(arrayToUse, nextHut.tileX.Value + 1, nextHut.tileY.Value + 1);
+                            AddTilesToHighlightedArea(arrayToUse, nextHut.tileX.Value + 1, nextHut.tileY.Value + 1);
                         }
                     }
                 }
             }
 
             // Every other item is here
-            if (Game1.player.CurrentItem is Item currentItem && currentItem.isPlaceable())
+            if (Game1.player.CurrentItem is StardewValley.Object currentItem && currentItem.isPlaceable())
             {
-                string itemName = Game1.player.CurrentItem.Name;
+                string itemName = currentItem.Name;
 
                 Vector2 currentTile = Game1.GetPlacementGrabTile();
                 Game1.isCheckingNonMousePlacement = !Game1.IsPerformingMousePlacement();
@@ -140,46 +140,48 @@ namespace UIInfoSuite.UIElements
                 if (itemName.IndexOf("arecrow", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     arrayToUse = itemName.Contains("eluxe") ? GetDistanceArray(ObjectsWithDistance.DeluxeScarecrow) : GetDistanceArray(ObjectsWithDistance.Scarecrow);
-                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
+                    AddTilesToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
 
                     similarObjects = GetSimilarObjectsInLocation("arecrow");
                     foreach (StardewValley.Object next in similarObjects)
                     {
                         arrayToUse = next.Name.IndexOf("eluxe", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.DeluxeScarecrow) : GetDistanceArray(ObjectsWithDistance.Scarecrow);
-                        ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                        AddTilesToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
                     }
                 }
                 else if (itemName.IndexOf("sprinkler", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    arrayToUse = itemName.IndexOf("iridium", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.IridiumSprinkler) :
-                        itemName.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.QualitySprinkler) :
-                        itemName.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler) :
-                            GetDistanceArray(ObjectsWithDistance.Sprinkler);
-
-                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
+                    // Relative tile positions to the placable items locations - need to pass coordinates
+                    AddTilesToHighlightedArea(currentItem.GetSprinklerTiles(), (int)validTile.X, (int)validTile.Y);
 
                     similarObjects = GetSimilarObjectsInLocation("sprinkler");
                     foreach (StardewValley.Object next in similarObjects)
                     {
+                        // Absolute tile positions
                         AddTilesToHighlightedArea(next.GetSprinklerTiles());
                     }
                 }
                 else if (itemName.IndexOf("bee house", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     arrayToUse = GetDistanceArray(ObjectsWithDistance.Beehouse);
-                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
+                    AddTilesToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
                 }
             }
         }
 
-        private void AddTilesToHighlightedArea(IEnumerable<Vector2> tiles)
+        private void AddTilesToHighlightedArea(IEnumerable<Vector2> tiles, int xPos = 0, int yPos = 0)
         {
             if (_mutex.WaitOne())
             {
                 try
                 {
-                    foreach (var tile in tiles) 
-                        _effectiveArea.Value.Add(tile.ToPoint());
+                    foreach (var tile in tiles)
+                    {
+                        var point = tile.ToPoint();
+                        point.X += xPos;
+                        point.Y += yPos;
+                        _effectiveArea.Value.Add(point);
+                    }
                 }
                 finally
                 {
@@ -188,20 +190,20 @@ namespace UIInfoSuite.UIElements
             }
         }
         
-        private void ParseConfigToHighlightedArea(int[][] highlightedLocation, int xPos, int yPos)
+        private void AddTilesToHighlightedArea(int[][] tileMap, int xPos = 0, int yPos = 0)
         {
-            int xOffset = highlightedLocation.Length / 2;
+            int xOffset = tileMap.Length / 2;
 
             if (_mutex.WaitOne())
             {
                 try
                 {
-                    for (int i = 0; i < highlightedLocation.Length; ++i)
+                    for (int i = 0; i < tileMap.Length; ++i)
                     {
-                        int yOffset = highlightedLocation[i].Length / 2;
-                        for (int j = 0; j < highlightedLocation[i].Length; ++j)
+                        int yOffset = tileMap[i].Length / 2;
+                        for (int j = 0; j < tileMap[i].Length; ++j)
                         {
-                            if (highlightedLocation[i][j] == 1)
+                            if (tileMap[i][j] == 1)
                                 _effectiveArea.Value.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
                         }
                     }
