@@ -24,10 +24,10 @@ namespace UIInfoSuite.UIElements
                 3f));
 
         private readonly IModHelper _helper;
-        #endregion
 
         private readonly PerScreen<Item> _hoverItem = new PerScreen<Item>();
         private readonly PerScreen<Item> _heldItem = new PerScreen<Item>();
+        #endregion
 
         #region Lifecycle
         public ShowCalendarAndBillboardOnGameMenuButton(IModHelper helper)
@@ -42,6 +42,8 @@ namespace UIInfoSuite.UIElements
 
         public void ToggleOption(bool showCalendarAndBillboard)
         {
+            ModEntry.RegisterCalendarAndQuestKeyBindings(_helper, showCalendarAndBillboard);
+
             _helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu;
             _helper.Events.Input.ButtonPressed -= OnButtonPressed;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
