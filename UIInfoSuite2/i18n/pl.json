@@ -10,7 +10,7 @@
   "Minutes": "minut",
   //Harvest
   "DaysToMature": "dni do dojrzałości",
-  "ReadyToHarvest": "Gotowe do zebrania!",
+  "ReadyToHarvest": "Gotowe do zbioru!",
   //Display icons - General
   "TodaysRecipe": "Dzisiejszy przepis: ",
   "TravelingMerchantIsInTown": "Podróżujący handlarz jest w mieście!",
@@ -39,11 +39,11 @@
   "AllowExperienceBarToFadeOut": "Pozwól na znikanie paska doświadczenia",
   "ShowExperienceGain": "Pokaż zdobywane doświadczenie",
   "ShowLocationOfTownsPeople": "Pokaż mieszkańców na mapie",
-  "ShowAnimalsNeedPets": "Pokaż, kiedy zwierzęta chcą pogłaskania",
+  "ShowAnimalsNeedPets": "Pokaż, gdy zwierzęta pragną głaskania",
   "HideAnimalPetOnMaxFriendship": "Ukryj na maks. poziomie miłości",
   "ShowCropAndBarrelTooltip": "Pokaż czas uprawy i produkcji",
   "ShowItemEffectRanges": "Pokaż zasięg strachów i zraszaczy",
-  "ShowExtraItemInformation": "Pokaż informacje po najechaniu",
+  "ShowExtraItemInformation": "Pokaż info o przedmiocie po najechaniu",
   "ShowHarvestPricesInShop": "Pokaż ceny plonów w sklepie",
   //Settings - Tabs info
   "DisplayCalendarAndBillboard": "Pokaż przycisk kalendarza/tablicy",

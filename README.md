@@ -48,22 +48,24 @@ on the wiki for help contributing translations.
 
 (❑ = untranslated, ↻ = partly translated, ✓ = fully translated)
 
-locale     | status
----------- | :----------------
-default    | [✓](UIInfoSuite2/i18n/default.json)
-Chinese    | [✓](UIInfoSuite2/i18n/zh.json)
-French     | [↻](UIInfoSuite2/i18n/fr.json)
-German     | [✓](UIInfoSuite2/i18n/de.json)
-Hungarian  | [↻](UIInfoSuite2/i18n/hu.json)
-Italian    | ❑
-Japanese   | [↻](UIInfoSuite2/i18n/ja.json)
-Korean     | [↻](UIInfoSuite2/i18n/ko.json)
-Polish¹    | [✓](UIInfoSuite2/i18n/pl.json)
-Portuguese | [✓](UIInfoSuite2/i18n/pt.json)
-Russian    | [↻](UIInfoSuite2/i18n/ru.json)
-Spanish    | [✓](UIInfoSuite2/i18n/es.json)
-Thai¹      | [✓](UIInfoSuite2/i18n/th.json)
-Turkish    | [✓](UIInfoSuite2/i18n/tr.json)
-Ukrainian   | [✓](UIInfoSuite2/i18n/uk.json)
+locale      | status
+----------- | :----------------
+default     | [✓](UIInfoSuite2/i18n/default.json)
+Chinese     | [✓](UIInfoSuite2/i18n/zh.json)
+French      | [↻](UIInfoSuite2/i18n/fr.json)
+German      | [✓](UIInfoSuite2/i18n/de.json)
+Hungarian   | [↻](UIInfoSuite2/i18n/hu.json)
+Italian     | ❑
+Japanese    | [↻](UIInfoSuite2/i18n/ja.json)
+Korean      | [↻](UIInfoSuite2/i18n/ko.json)
+[Polish]    | [✓](UIInfoSuite2/i18n/pl.json)
+Portuguese  | [✓](UIInfoSuite2/i18n/pt.json)
+Russian     | [↻](UIInfoSuite2/i18n/ru.json)
+Spanish     | [✓](UIInfoSuite2/i18n/es.json)
+[Thai]      | [✓](UIInfoSuite2/i18n/th.json)
+Turkish     | [✓](UIInfoSuite2/i18n/tr.json)
+[Ukrainian] | [✓](UIInfoSuite2/i18n/uk.json)
 
-¹ This is a custom language provided by a mod (see [Polish](https://www.nexusmods.com/stardewvalley/mods/3616), [Thai](https://www.nexusmods.com/stardewvalley/mods/7052) and [Ukrainian](https://www.nexusmods.com/stardewvalley/mods/8427)).
+[Polish]: https://www.nexusmods.com/stardewvalley/mods/3616
+[Thai]: https://www.nexusmods.com/stardewvalley/mods/7052
+[Ukrainian]: https://www.nexusmods.com/stardewvalley/mods/8427
