@@ -1,12 +1,10 @@
-﻿using StardewModdingAPI;
+﻿using System;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using UIInfoSuite.AdditionalFeatures;
+using UIInfoSuite.Compatibility;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Options;
 
@@ -39,6 +37,7 @@ namespace UIInfoSuite
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.Saved += OnSaved;
+            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
         }
         #endregion
@@ -49,7 +48,7 @@ namespace UIInfoSuite
         {
             // Unload if the main player quits.
             if (Context.ScreenId != 0) return;
-            
+
             _modOptionsPageHandler?.Dispose();
             _modOptionsPageHandler = null;
         }
@@ -59,7 +58,7 @@ namespace UIInfoSuite
             // Only load once for split screen.
             if (Context.ScreenId != 0) return;
 
-            _modOptions = Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json") 
+            _modOptions = Helper.Data.ReadJsonFile<ModOptions>($"data/{Constants.SaveFolderName}.json")
                 ?? Helper.Data.ReadJsonFile<ModOptions>($"data/{_modConfig.ApplyDefaultSettingsFromThisSave}.json")
                 ?? new ModOptions();
 
@@ -70,7 +69,7 @@ namespace UIInfoSuite
         {
             // Only save for the main player.
             if (Context.ScreenId != 0) return;
- 
+
             Helper.Data.WriteJsonFile($"data/{Constants.SaveFolderName}.json", _modOptions);
         }
 
@@ -91,7 +90,7 @@ namespace UIInfoSuite
         {
             if (_modConfig != null)
             {
-                if(Context.IsPlayerFree && _modConfig.OpenCalendarKeybind.JustPressed())
+                if (Context.IsPlayerFree && _modConfig.OpenCalendarKeybind.JustPressed())
                 {
                     helper.Input.SuppressActiveKeybinds(_modConfig.OpenCalendarKeybind);
                     Game1.activeClickableMenu = new Billboard(false);
@@ -103,6 +102,53 @@ namespace UIInfoSuite
                     Game1.activeClickableMenu = new Billboard(true);
                 }
             }
+        }
+        #endregion
+
+        #region Generic mod config menu
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            // get Generic Mod Config Menu's API (if it's installed)
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+                return;
+
+            // register mod
+            configMenu.Register(
+                mod: ModManifest,
+                reset: () => _modConfig = new ModConfig(),
+                save: () => Helper.WriteConfig(_modConfig)
+            );
+
+            // add some config options
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Show options in in-game menu",
+                tooltip: () => "Enables an extra tab in the in-game menu where you can configure every options for this mod.",
+                getValue: () => _modConfig.ShowOptionsTabInMenu,
+                setValue: value => _modConfig.ShowOptionsTabInMenu = value
+            );
+            configMenu.AddTextOption(
+                mod: ModManifest,
+                name: () => "Apply default settings from this save",
+                tooltip: () => "New characters will inherit the settings for the mod from this save file.",
+                getValue: () => _modConfig.ApplyDefaultSettingsFromThisSave,
+                setValue: value => _modConfig.ApplyDefaultSettingsFromThisSave = value
+            );
+            configMenu.AddKeybindList(
+                mod: ModManifest,
+                name: () => "Open calendar keybind",
+                tooltip: () => "Opens the calendar tab.",
+                getValue: () => _modConfig.OpenCalendarKeybind,
+                setValue: value => _modConfig.OpenCalendarKeybind = value
+            );
+            configMenu.AddKeybindList(
+                mod: ModManifest,
+                name: () => "Open quest board keybind",
+                tooltip: () => "Opens the quest board.",
+                getValue: () => _modConfig.OpenQuestBoardKeybind,
+                setValue: value => _modConfig.OpenQuestBoardKeybind = value
+            );
         }
         #endregion
     }
