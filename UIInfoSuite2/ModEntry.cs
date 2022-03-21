@@ -18,10 +18,10 @@ namespace UIInfoSuite
         #region Properties
         public static IMonitor MonitorObject { get; private set; }
 
-        private SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
-        private ModConfig _modConfig;
+        private static SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
+        private static ModConfig _modConfig;
 
-        private static ModOptions _modOptions;
+        private ModOptions _modOptions;
         private ModOptionsPageHandler _modOptionsPageHandler;
 
         private static EventHandler<ButtonsChangedEventArgs> _calendarAndQuestKeyBindingsHandler;
@@ -32,16 +32,14 @@ namespace UIInfoSuite
         public override void Entry(IModHelper helper)
         {
             MonitorObject = Monitor;
+
             _skipIntro = new SkipIntro(helper.Events);
+            _modConfig = Helper.ReadConfig<ModConfig>();
 
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.Saved += OnSaved;
-
             helper.Events.Display.Rendering += IconHandler.Handler.Reset;
-
-            // for initializing the config.json
-            _modConfig = Helper.ReadConfig<ModConfig>();
         }
         #endregion
 
@@ -91,16 +89,16 @@ namespace UIInfoSuite
 
         private static void HandleCalendarAndQuestKeyBindings(IModHelper helper)
         {
-            if (_modOptions != null)
+            if (_modConfig != null)
             {
-                if(Context.IsPlayerFree && _modOptions.OpenCalendarKeybind.JustPressed())
+                if(Context.IsPlayerFree && _modConfig.OpenCalendarKeybind.JustPressed())
                 {
-                    helper.Input.SuppressActiveKeybinds(_modOptions.OpenCalendarKeybind);
+                    helper.Input.SuppressActiveKeybinds(_modConfig.OpenCalendarKeybind);
                     Game1.activeClickableMenu = new Billboard(false);
                 }
-                else if (Context.IsPlayerFree && _modOptions.OpenQuestBoardKeybind.JustPressed())
+                else if (Context.IsPlayerFree && _modConfig.OpenQuestBoardKeybind.JustPressed())
                 {
-                    helper.Input.SuppressActiveKeybinds(_modOptions.OpenQuestBoardKeybind);
+                    helper.Input.SuppressActiveKeybinds(_modConfig.OpenQuestBoardKeybind);
                     Game1.RefreshQuestOfTheDay();
                     Game1.activeClickableMenu = new Billboard(true);
                 }
