@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,11 +13,6 @@ using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using UIInfoSuite.Compatibility;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
@@ -31,7 +31,7 @@ namespace UIInfoSuite.UIElements
         private readonly PerScreen<int[]> _currentExperience = new PerScreen<int[]>(createNewState: () => new int[5]);
         private readonly PerScreen<int[]> _currentLevelExtenderExperience = new PerScreen<int[]>(createNewState: () => new int[5]);
         private readonly PerScreen<List<ExperiencePointDisplay>> _experiencePointDisplays = new PerScreen<List<ExperiencePointDisplay>>(createNewState: () => new List<ExperiencePointDisplay>());
-        
+
         private readonly TimeSpan _levelUpPauseTime = TimeSpan.FromSeconds(2);
         private readonly PerScreen<int> _hideLevelUpTicks = new PerScreen<int>();
 
@@ -59,7 +59,7 @@ namespace UIInfoSuite.UIElements
         private bool _showExperienceBar = true;
         private readonly IModHelper _helper;
 
-        private readonly ILevelExtenderInterface _levelExtenderAPI;
+        private readonly ILevelExtender _levelExtenderAPI;
 
         private readonly PerScreen<int> _currentSkillLevel = new PerScreen<int>(createNewState: () => 0);
         private readonly PerScreen<int> _experienceRequiredToLevel = new PerScreen<int>(createNewState: () => -1);
@@ -87,7 +87,7 @@ namespace UIInfoSuite.UIElements
             var something = _helper.ModRegistry.GetApi("DevinLematty.LevelExtender");
             try
             {
-                _levelExtenderAPI = _helper.ModRegistry.GetApi<ILevelExtenderInterface>("DevinLematty.LevelExtender");
+                _levelExtenderAPI = _helper.ModRegistry.GetApi<ILevelExtender>("DevinLematty.LevelExtender");
             }
             catch
             {
@@ -188,16 +188,16 @@ namespace UIInfoSuite.UIElements
                 }
                 _shouldDrawLevelUp.Value = true;
                 ShowExperienceBar();
-                
+
                 if (_soundEffect != null)
                 {
                     _soundEffect.Volume = Game1.options.soundVolumeLevel;
                 }
-                    
+
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(100);
-                    
+
                     if (_soundEffect != null)
                         _soundEffect.Play();
                 });

@@ -1,6 +1,6 @@
 ﻿namespace UIInfoSuite.Compatibility
 {
-    public interface ILevelExtenderInterface
+    public interface ILevelExtender
     {
         int[] CurrentXP();
         int[] RequiredXP();
