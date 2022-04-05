@@ -38,6 +38,7 @@ Compatibility is assured with:
 - NPC Map Locations by Bouhm (gets priority before UI Info Suite 2 and disables this mod's map features)
 - Bigger Backpack by spacechase0
 - Level Extender by DevinLematty (probably?)
+- Better Farm Animal Variety by Paritee
 
 # Translating UI Info Suite 2
 The mod can be translated into any language supported by the game, and SMAPI will automatically
