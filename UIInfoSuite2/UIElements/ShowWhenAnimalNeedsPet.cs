@@ -60,7 +60,7 @@ namespace UIInfoSuite.UIElements
         #region Event subscriptions
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            
+
         }
 
         private void OnRenderingHud_DrawNeedsPetTooltip(object sender, RenderingHudEventArgs e)
@@ -99,7 +99,8 @@ namespace UIInfoSuite.UIElements
             {
                 foreach (var animal in animalsInCurrentLocation.Pairs)
                 {
-                    if (!animal.Value.IsEmoting &&
+                    if (animal.Value.harvestType.Value != FarmAnimal.layHarvestType &&
+                        !animal.Value.IsEmoting &&
                         animal.Value.currentProduce.Value != 430 &&
                         animal.Value.currentProduce.Value > 0 &&
                         animal.Value.age.Value >= animal.Value.ageWhenMature.Value)
