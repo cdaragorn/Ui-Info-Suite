@@ -36,8 +36,6 @@ namespace UIInfoSuite.Options
         public bool ShowRobinBuildingStatusIcon { get; set; } = true;
         public bool ShowTodaysGifts { get; set; } = true;
         public bool HideBirthdayIfFullFriendShip { get; set; } = true;
-        public KeybindList OpenCalendarKeybind { get; set; } = KeybindList.ForSingle(SButton.B);
-        public KeybindList OpenQuestBoardKeybind { get; set; } = KeybindList.ForSingle(SButton.H);
         public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new Dictionary<string, bool>();
 
         public object Get(string propertyName)
@@ -77,9 +75,7 @@ namespace UIInfoSuite.Options
                 HideMerchantWhenVisited == options.HideMerchantWhenVisited &&
                 ShowExactValue == options.ShowExactValue &&
                 ShowRobinBuildingStatusIcon == options.ShowRobinBuildingStatusIcon &&
-                ShowTodaysGifts == options.ShowTodaysGifts &&
-                OpenCalendarKeybind == options.OpenCalendarKeybind &&
-                OpenQuestBoardKeybind == options.OpenQuestBoardKeybind)
+                ShowTodaysGifts == options.ShowTodaysGifts)
             {
                 if (ShowLocationOfFriends.Count != options.ShowLocationOfFriends.Count)
                     return false;
