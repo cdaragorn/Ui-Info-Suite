@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Show gifts given today",
   //Settings - Show icons
   "ShowBirthdayIcon": "Show Birthday icon",
+  "HideBirthdayIfFullFriendShip": "Hide on max friendship",
   "ShowTravelingMerchant": "Show Traveling Merchant",
   "HideMerchantWhenVisited": "Hide when visited",
   "ShowRainyDay": "Show rainy days",
