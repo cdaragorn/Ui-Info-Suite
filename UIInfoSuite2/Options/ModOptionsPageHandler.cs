@@ -41,7 +41,8 @@ namespace UIInfoSuite.Options
 
         public ModOptionsPageHandler(IModHelper helper, ModOptions _options, bool showPersonalConfigButton)
         {
-            if(showPersonalConfigButton) {
+            if (showPersonalConfigButton)
+            {
                 helper.Events.Display.MenuChanged += ToggleModOptions;
             }
             _helper = helper;
@@ -54,7 +55,7 @@ namespace UIInfoSuite.Options
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
             _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(helper);
             _experienceBar = new ExperienceBar(helper);
-            _showItemHoverInformation = new ShowItemHoverInformation(helper.Events);
+            _showItemHoverInformation = new ShowItemHoverInformation(helper);
             _shopHarvestPrices = new ShopHarvestPrices(helper);
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
             _showTravelingMerchant = new ShowTravelingMerchant(helper);
