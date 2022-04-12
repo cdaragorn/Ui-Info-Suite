@@ -158,7 +158,9 @@ namespace UIInfoSuite.UIElements
                     string[] values = next.Value.Split('/');
                     if (values.Length > 1)
                     {
-                        _recipesByDescription[values[1]] = _helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en ? values[0] : values[2];
+                        _recipesByDescription[values[1]] = _helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en || values.Length < 3
+                            ? values[0]
+                            : values[2];
                     }
                 }
             }
@@ -166,10 +168,11 @@ namespace UIInfoSuite.UIElements
 
         private void CheckForNewRecipe()
         {
+            int recipiesKnownBeforeTvCall = Game1.player.cookingRecipes.Count();
             string[] recipes = typeof(TV).GetMethod("getWeeklyRecipe", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(new TV(), null) as string[];
             _todaysRecipe = _recipesByDescription.SafeGet(recipes[0]);
 
-            if (Game1.player.cookingRecipes.Count() > Game1.player.cookingRecipes.Count())
+            if (Game1.player.cookingRecipes.Count() > recipiesKnownBeforeTvCall)
                 Game1.player.cookingRecipes.Remove(_todaysRecipe);
 
             _drawQueenOfSauceIcon.Value = (Game1.dayOfMonth % 7 == 0 || (Game1.dayOfMonth - 3) % 7 == 0)

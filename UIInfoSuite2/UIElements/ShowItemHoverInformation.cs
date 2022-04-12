@@ -161,7 +161,9 @@ namespace UIInfoSuite.UIElements
                     {
                         int bundleNumber = bundleRoomInfo[1].SafeParseInt32();
                         string[] bundleInfo = bundle.Value.Split('/');
-                        string bundleName = _helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en ? bundleInfo[0] : bundleInfo[^1];
+                        string bundleName = _helper.Content.CurrentLocaleConstant == LocalizedContentManager.LanguageCode.en || int.TryParse(bundleInfo[^1], out _)
+                            ? bundleInfo[0]
+                            : bundleInfo[^1];
                         string[] bundleValues = bundleInfo[2].Split(' ');
                         List<KeyValuePair<int, int>> source = new List<KeyValuePair<int, int>>();
 
