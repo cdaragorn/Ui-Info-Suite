@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Social: Exibir presentes dados",
   //Settings - Show icons
   "ShowBirthdayIcon": "Exibir ícone dos aniversariantes",
+  "HideBirthdayIfFullFriendShip": "Esconder na amizade máxima",
   "ShowTravelingMerchant": "Exibir ícone do Carrinho de Viagem",
   "HideMerchantWhenVisited": "Esconder quando visitado",
   "ShowRainyDay": "Exibir ícone sobre dias chuvosos",

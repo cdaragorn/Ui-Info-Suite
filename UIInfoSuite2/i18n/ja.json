@@ -19,7 +19,7 @@
   "SnowNextDay": "明日は雪が降るでしょう",
   "DaysUntilToolIsUpgraded": "{1}のアップグレード完了まで{0}日",
   "ToolIsFinishedBeingUpgraded": "{0}のアップグレード完了！",
-  "NpcBirthday": "{0}의 생일입니다！",
+  "NpcBirthday": "{0}の誕生日",
   "RobinBuildingStatus": "ロビンは{0}日以内に建築を完了させます",
   //Display icons - Luck
   "DailyLuckValue": "今日の運命数は{0}です",
@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "今日贈り物をしたかを表示する",
   //Settings - Show icons
   "ShowBirthdayIcon": "誕生日アイコンを表示する",
+  "HideBirthdayIfFullFriendShip": "友好度が最大の場合は隠す",
   "ShowTravelingMerchant": "旅行中の商人を表示する",
   "HideMerchantWhenVisited": "訪問済みの場合は隠す",
   "ShowRainyDay": "雨の日を表示",

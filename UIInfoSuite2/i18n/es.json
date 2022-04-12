@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Mostrar regalos entregados hoy",
   //Settings - Show icons
   "ShowBirthdayIcon": "Mostrar icono de cumpleaños",
+  "HideBirthdayIfFullFriendShip": "Ocultar con la amistad al máximo",
   "ShowTravelingMerchant": "Mostrar comerciante ambulante",
   "HideMerchantWhenVisited": "Ocultar al ser visitado",
   "ShowRainyDay": "Mostrar los días de lluvia",

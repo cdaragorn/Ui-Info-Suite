@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Bugün verilen hediyeleri göster",
   //Settings - Show icons
   "ShowBirthdayIcon": "Doğum günü ikonunu göster",
+  "HideBirthdayIfFullFriendShip": "Maksimumda gizle",
   "ShowTravelingMerchant": "Gezgin tüccar ikonunu göster",
   "HideMerchantWhenVisited": "Ziyaret edince gizle",
   "ShowRainyDay": "Yağmurlu günleri göster",

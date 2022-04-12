@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Mutasd a ma adott ajándékokat",
   //Settings - Show icons
   "ShowBirthdayIcon": "Mutasd a szülinap ikont",
+  "HideBirthdayIfFullFriendShip": "Rejtsd el, ha max szinten van",
   "ShowTravelingMerchant": "Mutasd az utazó árus ikont",
   "HideMerchantWhenVisited": "Rejtsd el, amikor meglátogattad",
   "ShowRainyDay": "Mutasd az esős napokat",

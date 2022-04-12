@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Показувати сьогоднішні даровані подарунки",
   //Settings - Show icons
   "ShowBirthdayIcon": "Показувати іконку дня народження",
+  "HideBirthdayIfFullFriendShip": "Сховати при максимальному рівні дружби",
   "ShowTravelingMerchant": "Показувати іконку мандрівного купця",
   "HideMerchantWhenVisited": "Сховати після відвідування",
   "ShowRainyDay": "Показувати дощові дні",
