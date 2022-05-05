@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "Zeige heute bereits vergebene Geschenke",
   //Settings - Show icons
   "ShowBirthdayIcon": "Zeige Geburtstagssymbol",
+  "HideBirthdayIfFullFriendShip": "Verstecke bei maximaler Zuneigung",
   "ShowTravelingMerchant": "Zeige reisenden Händler",
   "HideMerchantWhenVisited": "Verstecke wenn besucht",
   "ShowRainyDay": "Zeige regnerische Tage",

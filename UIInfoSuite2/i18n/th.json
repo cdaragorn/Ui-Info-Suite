@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "แสดงของขวัญที่ให้ในวันนี้",
   //Settings - Show icons
   "ShowBirthdayIcon": "แสดงสัญลักษณ์ วันเกิด",
+  "HideBirthdayIfFullFriendShip": "Hide on max friendship", // TODO
   "ShowTravelingMerchant": "แสดงรถพ่อค้าเร่",
   "HideMerchantWhenVisited": "ซ่อนรถพ่อค้าเร่ หากไปมาแล้ว",
   "ShowRainyDay": "แสดงวันที่ฝนตก",

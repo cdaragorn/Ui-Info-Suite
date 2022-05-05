@@ -19,7 +19,7 @@
   "SnowNextDay": "내일은 눈이 올 것입니다",
   "DaysUntilToolIsUpgraded": "{1} 완성까지 {0}일 남았습니다",
   "ToolIsFinishedBeingUpgraded": "{0}이(가) 완성됐습니다!",
-  "NpcBirthday": "{0}'s birthday", // TODO
+  "NpcBirthday": "{0}의 생일입니다！",
   "RobinBuildingStatus": "새 건물 완성까지 {0}일 남았습니다",
   //Display icons - Luck
   "DailyLuckValue": "오늘의 행운 수치: {0}",
@@ -51,6 +51,7 @@
   "ShowTodaysGifts": "관계 창에 오늘 선물 보낸 여부 표시",
   //Settings - Show icons
   "ShowBirthdayIcon": "생일 아이콘 표시",
+  "HideBirthdayIfFullFriendShip": "친밀도 최대 시 숨김",
   "ShowTravelingMerchant": "행상인 아이콘 표시",
   "HideMerchantWhenVisited": "방문 후 아이콘 숨김",
   "ShowRainyDay": "날씨 아이콘 표시",

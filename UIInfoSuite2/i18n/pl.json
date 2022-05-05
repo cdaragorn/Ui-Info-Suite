@@ -13,7 +13,7 @@
   "ReadyToHarvest": "Gotowe do zbioru!",
   //Display icons - General
   "TodaysRecipe": "Dzisiejszy przepis: ",
-  "TravelingMerchantIsInTown": "Podróżujący handlarz jest w mieście!",
+  "TravelingMerchantIsInTown": "Wędrowny handlarz jest w miasteczku!",
   "RainNextDay": "Jutro będzie padać deszcz",
   "ThunderstormNextDay": "Jutro będzie burza",
   "SnowNextDay": "Jutro będzie padać śnieg",
@@ -51,7 +51,8 @@
   "ShowTodaysGifts": "Pokaż wręczone dzisiaj prezenty",
   //Settings - Show icons
   "ShowBirthdayIcon": "Pokaż ikonę urodzin",
-  "ShowTravelingMerchant": "Pokaż podróżującego handlarza",
+  "HideBirthdayIfFullFriendShip": "Ukryj na maks. poziomie relacji",
+  "ShowTravelingMerchant": "Pokaż wędrownego handlarza",
   "HideMerchantWhenVisited": "Ukryj po odwiedzeniu",
   "ShowRainyDay": "Pokaż deszczowe dni",
   "ShowWhenNewRecipesAreAvailable": "Pokaż, gdy dostępne są nowe przepisy",
