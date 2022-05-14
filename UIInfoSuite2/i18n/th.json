@@ -17,6 +17,8 @@
   "RainNextDay": "พรุ่งนี้ฝนจะตก",
   "ThunderstormNextDay": "พรุ่งนี้จะมีพายุฝนฟ้าคะนอง",
   "SnowNextDay": "พรุ่งนี้จะมีหิมะตก",
+  "IslandRainNextDay": "พรุ่งนี้ฝนจะตก",
+  "IslandThunderstormNextDay": "พรุ่งนี้จะมีพายุฝนฟ้าคะนอง",
   "DaysUntilToolIsUpgraded": "{0} วัน จะอัพเกรด {1} เสร็จสิ้น",
   "ToolIsFinishedBeingUpgraded": "{0} เสร็จเรียบร้อย!",
   "NpcBirthday": "วันเกิดของ{0}",

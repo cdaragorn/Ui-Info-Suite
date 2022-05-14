@@ -17,6 +17,8 @@
   "RainNextDay": "Завтра буде дощ",
   "ThunderstormNextDay": "Завтра буде гроза",
   "SnowNextDay": "Завтра буде сніг",
+  "IslandRainNextDay": "Завтра буде дощ",
+  "IslandThunderstormNextDay": "Завтра буде гроза",
   "DaysUntilToolIsUpgraded": "Залишилося {0} дні(в), щоб {1} було оновлено",
   "ToolIsFinishedBeingUpgraded": "{0} оновлено!",
   "NpcBirthday": "{0} - день народження",

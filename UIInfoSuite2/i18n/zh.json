@@ -17,6 +17,8 @@
   "RainNextDay": "明日有雨",
   "ThunderstormNextDay": "明日雷雨",
   "SnowNextDay": "明日有雪",
+  "IslandRainNextDay": "明日有雨",
+  "IslandThunderstormNextDay": "明日雷雨",
   "DaysUntilToolIsUpgraded": "{1}还有{0}天完成！",
   "ToolIsFinishedBeingUpgraded": "{0}完成了！",
   "NpcBirthday": "{0}的生日",
