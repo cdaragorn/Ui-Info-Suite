@@ -109,7 +109,9 @@ namespace UIInfoSuite.UIElements
             {
                 foreach (var character in location.characters)
                 {
-                    if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth) && !(!Game1.player.friendshipData.ContainsKey(character.Name) && Game1.NPCGiftTastes.ContainsKey(character.Name)))
+                    if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth) &&
+                        !(!Game1.player.friendshipData.ContainsKey(character.Name) &&
+                        Game1.NPCGiftTastes.ContainsKey(character.Name)))
                     {
                         _birthdayNPC = character;
                         break;
@@ -123,7 +125,9 @@ namespace UIInfoSuite.UIElements
 
         private void DrawBithdayIcon()
         {
-            if(HideBirthdayIfFullFriendShip && Game1.player.friendshipData[_birthdayNPC.Name].Points >= 2000)
+            if (HideBirthdayIfFullFriendShip
+                && Game1.player.friendshipData.TryGetValue(_birthdayNPC.Name, out Friendship friendship)
+                && friendship.Points >= 2000)
             {
                 return;
             }
