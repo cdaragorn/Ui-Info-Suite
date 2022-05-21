@@ -37,6 +37,7 @@ namespace UIInfoSuite.Options
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
         private readonly ShowRobinBuildingStatusIcon _showRobinBuildingStatusIcon;
+        private readonly ShowSeasonalBerry _showSeasonalBerry;
         private readonly ShowTodaysGifts _showTodaysGift;
 
         public ModOptionsPageHandler(IModHelper helper, ModOptions _options, bool showPersonalConfigButton)
@@ -63,6 +64,7 @@ namespace UIInfoSuite.Options
             _showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
             _showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
             _showRobinBuildingStatusIcon = new ShowRobinBuildingStatusIcon(helper);
+            _showSeasonalBerry = new ShowSeasonalBerry(helper);
             _showTodaysGift = new ShowTodaysGifts(helper);
 
             _elementsToDispose = new List<IDisposable>()
@@ -81,7 +83,8 @@ namespace UIInfoSuite.Options
                 _shopHarvestPrices,
                 _showQueenOfSauceIcon,
                 _showToolUpgradeStatus,
-                _showRobinBuildingStatusIcon
+                _showRobinBuildingStatusIcon,
+                _showSeasonalBerry
             };
 
             int whichOption = 1;
@@ -116,6 +119,7 @@ namespace UIInfoSuite.Options
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowWhenNewRecipesAreAvailable)), whichOption++, _showQueenOfSauceIcon.ToggleOption, () => _options.ShowWhenNewRecipesAreAvailable, v => _options.ShowWhenNewRecipesAreAvailable = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowToolUpgradeStatus)), whichOption++, _showToolUpgradeStatus.ToggleOption, () => _options.ShowToolUpgradeStatus, v => _options.ShowToolUpgradeStatus = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowRobinBuildingStatusIcon)), whichOption++, _showRobinBuildingStatusIcon.ToggleOption, () => _options.ShowRobinBuildingStatusIcon, v => _options.ShowRobinBuildingStatusIcon = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowSeasonalBerry)), whichOption++, _showSeasonalBerry.ToggleOption, () => _options.ShowSeasonalBerry, v => _options.ShowSeasonalBerry = v));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowTodaysGifts)), whichOption++, _showTodaysGift.ToggleOption, () => _options.ShowTodaysGifts, v => _options.ShowTodaysGifts = v));
         }
 
