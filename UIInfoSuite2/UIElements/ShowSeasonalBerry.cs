@@ -55,6 +55,8 @@ namespace UIInfoSuite.UIElements
         public void ToggleHazelnutOption(bool showHazelnut)
         {
             ShowHazelnut = showHazelnut;
+
+            UpdateBerryForDay();
         }
 
         #endregion
@@ -117,9 +119,7 @@ namespace UIInfoSuite.UIElements
                     _hoverText = _helper.SafeGetString(LanguageKeys.CanFindBlackberry);
                     _spriteScale = 5 / 2f;
                     break;
-                case "fall" when day >= 14:
-                    if (!ShowHazelnut)
-                        break;
+                case "fall" when day >= 14 && ShowHazelnut:
                     _berrySpriteLocation = new Rectangle(1, 274, 14, 14);
                     _hoverText = _helper.SafeGetString(LanguageKeys.CanFindHazelnut);
                     _spriteScale = 20 / 7f;
