@@ -1,10 +1,5 @@
-﻿using StardewModdingAPI;
-using StardewModdingAPI.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.Options
 {
@@ -35,6 +30,7 @@ namespace UIInfoSuite.Options
         public bool ShowExactValue { get; set; } = false;
         public bool ShowRobinBuildingStatusIcon { get; set; } = true;
         public bool ShowSeasonalBerry { get; set; } = true;
+        public bool ShowSeasonalBerryHazelnut { get; set; } = false;
         public bool ShowTodaysGifts { get; set; } = true;
         public bool HideBirthdayIfFullFriendShip { get; set; } = true;
         public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new Dictionary<string, bool>();
@@ -76,6 +72,8 @@ namespace UIInfoSuite.Options
                 HideMerchantWhenVisited == options.HideMerchantWhenVisited &&
                 ShowExactValue == options.ShowExactValue &&
                 ShowRobinBuildingStatusIcon == options.ShowRobinBuildingStatusIcon &&
+                ShowSeasonalBerry == options.ShowSeasonalBerry &&
+                ShowSeasonalBerryHazelnut == options.ShowSeasonalBerryHazelnut &&
                 ShowTodaysGifts == options.ShowTodaysGifts)
             {
                 if (ShowLocationOfFriends.Count != options.ShowLocationOfFriends.Count)

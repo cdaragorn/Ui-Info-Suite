@@ -66,7 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Show Robin building status",
   "ShowLuckIcon": "Show luck icon",
   "ShowExactValue": "Show exact value",
-  "ShowSeasonalBerry": "Show bush/tree forageables",
+  "ShowSeasonalBerry": "Show seasonal forageables",
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees",
   //Others
   "LevelUp": "Level Up"
 }
