@@ -34,6 +34,7 @@ namespace UIInfoSuite.Options
         public bool HideMerchantWhenVisited { get; set; } = false;
         public bool ShowExactValue { get; set; } = false;
         public bool ShowRobinBuildingStatusIcon { get; set; } = true;
+        public bool ShowSeasonalBerry { get; set; } = true;
         public bool ShowTodaysGifts { get; set; } = true;
         public bool HideBirthdayIfFullFriendShip { get; set; } = true;
         public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new Dictionary<string, bool>();

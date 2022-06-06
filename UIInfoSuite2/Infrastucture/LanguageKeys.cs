@@ -29,5 +29,8 @@
         public const string LuckStatus6 = "LuckStatus6";
         public const string RobinBuildingStatus = "RobinBuildingStatus";
         public const string NpcBirthday = "NpcBirthday";
+        public const string CanFindSalmonberry = "CanFindSalmonberry";
+        public const string CanFindBlackberry = "CanFindBlackberry";
+        public const string CanFindHazelnut = "CanFindHazelnut";
     }
 }
