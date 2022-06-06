@@ -92,12 +92,10 @@ namespace UIInfoSuite.UIElements
         {
             if (e.IsOneSecond && _birthdayNPC != null && Game1.player?.friendshipData != null)
             {
-                Game1.player.friendshipData.FieldDict.TryGetValue(_birthdayNPC.Name, out var netRef);
-                Friendship birthdayNPCDetails = netRef;
-                if (birthdayNPCDetails != null)
+                Friendship friendship = GetFriendshipWithNPC(_birthdayNPC.Name);
+                if (friendship != null && friendship.GiftsToday == 1)
                 {
-                    if (birthdayNPCDetails.GiftsToday == 1)
-                        _birthdayNPC = null;
+                    _birthdayNPC = null;
                 }
             }
         }
@@ -110,9 +108,15 @@ namespace UIInfoSuite.UIElements
                 foreach (var character in location.characters)
                 {
                     if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth) &&
-                        !(!Game1.player.friendshipData.ContainsKey(character.Name) &&
-                        Game1.NPCGiftTastes.ContainsKey(character.Name)))
+                        Game1.player.friendshipData.FieldDict.ContainsKey(character.Name))
                     {
+                        if (HideBirthdayIfFullFriendShip)
+                        {
+                            Friendship friendship = GetFriendshipWithNPC(character.Name);
+                            if (friendship != null && friendship.Points >= 2000)
+                                break;
+                        }
+
                         _birthdayNPC = character;
                         break;
                     }
@@ -123,14 +127,24 @@ namespace UIInfoSuite.UIElements
             }
         }
 
+        private static Friendship GetFriendshipWithNPC(string name)
+        {
+            try
+            {
+                Game1.player.friendshipData.FieldDict.TryGetValue(name, out var netRef);
+                Friendship birthdayNPCDetails = netRef;
+                return birthdayNPCDetails;
+            }
+            catch (Exception ex)
+            {
+                ModEntry.MonitorObject.Log("Error while getting information about the birthday of " + name + ": " + ex.Message + Environment.NewLine + ex.StackTrace, LogLevel.Error);
+            }
+
+            return null;
+        }
+
         private void DrawBithdayIcon()
         {
-            if (HideBirthdayIfFullFriendShip
-                && Game1.player.friendshipData.TryGetValue(_birthdayNPC.Name, out Friendship friendship)
-                && friendship.Points >= 2000)
-            {
-                return;
-            }
             Rectangle headShot = _birthdayNPC.GetHeadShot();
             Point iconPosition = IconHandler.Handler.GetNewIconPosition();
             float scale = 2.9f;
