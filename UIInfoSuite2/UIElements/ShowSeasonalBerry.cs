@@ -4,11 +4,8 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using UIInfoSuite.Infrastructure;
 using UIInfoSuite.Infrastructure.Extensions;
-using StardewValley.Buildings;
-using StardewModdingAPI.Utilities;
 
 namespace UIInfoSuite.UIElements
 {
@@ -22,6 +19,7 @@ namespace UIInfoSuite.UIElements
         private ClickableTextureComponent _berryIcon;
 
         private readonly IModHelper _helper;
+        public bool ShowHazelnut { get; set; }
 
         #endregion
 
@@ -52,6 +50,11 @@ namespace UIInfoSuite.UIElements
                 _helper.Events.Display.RenderingHud += OnRenderingHud;
                 _helper.Events.Display.RenderedHud += OnRenderedHud;
             }
+        }
+
+        public void ToggleHazelnutOption(bool showHazelnut)
+        {
+            ShowHazelnut = showHazelnut;
         }
 
         #endregion
@@ -115,6 +118,8 @@ namespace UIInfoSuite.UIElements
                     _spriteScale = 5 / 2f;
                     break;
                 case "fall" when day >= 14:
+                    if (!ShowHazelnut)
+                        break;
                     _berrySpriteLocation = new Rectangle(1, 274, 14, 14);
                     _hoverText = _helper.SafeGetString(LanguageKeys.CanFindHazelnut);
                     _spriteScale = 20 / 7f;
