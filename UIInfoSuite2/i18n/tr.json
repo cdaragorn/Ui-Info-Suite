@@ -17,6 +17,8 @@
   "RainNextDay": "Yarın yamur yağacak",
   "ThunderstormNextDay": "Yarın Fırtına olacak",
   "SnowNextDay": "Yarın kar yağacak",
+  "IslandRainNextDay": "Yarın yamur yağacak",
+  "IslandThunderstormNextDay": "Yarın Fırtına olacak",
   "DaysUntilToolIsUpgraded": "{1}'nın yükseltmesinin bitmesine {0} gün kaldı ",
   "ToolIsFinishedBeingUpgraded": "{0} hazır!",
   "NpcBirthday": "Doğum günü: {0}",

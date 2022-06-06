@@ -17,6 +17,8 @@
   "RainNextDay": "Il va pleuvoir demain",
   "ThunderstormNextDay": "Il va y avoir un orage demain",
   "SnowNextDay": "Il va neiger demain",
+  "IslandRainNextDay": "Il va pleuvoir demain",
+  "IslandThunderstormNextDay": "Il va y avoir un orage demain",
   "DaysUntilToolIsUpgraded": "{0} jours avant que {1} ne termine de s'améliorer",
   "ToolIsFinishedBeingUpgraded": "{0} est terminé!",
   "NpcBirthday": "Anniversaire de {0}",

@@ -17,6 +17,8 @@
   "RainNextDay": "Jutro będzie padać deszcz",
   "ThunderstormNextDay": "Jutro będzie burza",
   "SnowNextDay": "Jutro będzie padać śnieg",
+  "IslandRainNextDay": "Jutro będzie padać deszcz",
+  "IslandThunderstormNextDay": "Jutro będzie burza",
   "DaysUntilToolIsUpgraded": "{0} dni do zakończenia ulepszania: {1}",
   "ToolIsFinishedBeingUpgraded": "Ulepszanie zakończone: {0}!",
   "NpcBirthday": "{0} ma dzisiaj urodziny",

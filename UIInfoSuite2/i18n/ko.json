@@ -17,6 +17,8 @@
   "RainNextDay": "내일은 비가 올 것입니다",
   "ThunderstormNextDay": "내일은 뇌우가 올 것입니다",
   "SnowNextDay": "내일은 눈이 올 것입니다",
+  "IslandRainNextDay": "내일은 비가 올 것입니다",
+  "IslandThunderstormNextDay": "내일은 뇌우가 올 것입니다",
   "DaysUntilToolIsUpgraded": "{1} 완성까지 {0}일 남았습니다",
   "ToolIsFinishedBeingUpgraded": "{0}이(가) 완성됐습니다!",
   "NpcBirthday": "{0}의 생일입니다！",

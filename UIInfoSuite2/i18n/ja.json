@@ -17,6 +17,8 @@
   "RainNextDay": "明日は雨が降るでしょう",
   "ThunderstormNextDay": "明日は雷を伴った雨が降るでしょう",
   "SnowNextDay": "明日は雪が降るでしょう",
+  "IslandRainNextDay": "明日は雨が降るでしょう",
+  "IslandThunderstormNextDay": "明日は雷を伴った雨が降るでしょう",
   "DaysUntilToolIsUpgraded": "{1}のアップグレード完了まで{0}日",
   "ToolIsFinishedBeingUpgraded": "{0}のアップグレード完了！",
   "NpcBirthday": "{0}の誕生日",

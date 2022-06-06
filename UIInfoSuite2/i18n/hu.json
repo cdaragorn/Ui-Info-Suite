@@ -17,6 +17,8 @@
   "RainNextDay": "Holnap esni fog az eső",
   "ThunderstormNextDay": "Holnap vihar lesz",
   "SnowNextDay": "Holnap esni fog a hó",
+  "IslandRainNextDay": "Holnap esni fog az eső",
+  "IslandThunderstormNextDay": "Holnap vihar lesz",
   "DaysUntilToolIsUpgraded": "{0} nap amíg {1} fejlesztése kész lesz",
   "ToolIsFinishedBeingUpgraded": "{0} fejlesztése be lett fejezve!",
   "NpcBirthday": "{0} születésnapja",
