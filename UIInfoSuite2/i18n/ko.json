@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "{0}이(가) 완성됐습니다!",
   "NpcBirthday": "{0}의 생일입니다！",
   "RobinBuildingStatus": "새 건물 완성까지 {0}일 남았습니다",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "오늘의 행운 수치: {0}",
   "FeelingLucky": "운이 좋은 것 같습니다!!",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "건물 건설 현황 아이콘 표시",
   "ShowLuckIcon": "행운 아이콘 표시",
   "ShowExactValue": "정확한 수치 표시",
+  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
   //Others
   "LevelUp": "레벨 업"
 }

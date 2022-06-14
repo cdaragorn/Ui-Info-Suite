@@ -17,24 +17,28 @@
   "RainNextDay": "Jutro będzie padać deszcz",
   "ThunderstormNextDay": "Jutro będzie burza",
   "SnowNextDay": "Jutro będzie padać śnieg",
-  "IslandRainNextDay": "Jutro będzie padać deszcz",
-  "IslandThunderstormNextDay": "Jutro będzie burza",
+  "IslandRainNextDay": "Jutro na wyspie będzie padać deszcz",
+  "IslandThunderstormNextDay": "Jutro na wyspie będzie burza",
   "DaysUntilToolIsUpgraded": "{0} dni do zakończenia ulepszania: {1}",
   "ToolIsFinishedBeingUpgraded": "Ulepszanie zakończone: {0}!",
-  "NpcBirthday": "{0} ma dzisiaj urodziny",
+  "NpcBirthday": "{0} ma dziś urodziny",
   "RobinBuildingStatus": "Robin ukończy budowę za {0} dni",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "Dziś możesz znaleźć Maliny",
+  "CanFindBlackberry": "Dziś możesz znaleźć Jeżyny",
+  "CanFindHazelnut": "Dziś na drzewach możesz znaleźć Orzechy Laskowe",
   //Display icons - Luck
   "DailyLuckValue": "Twoje dzisiejsze szczęście: {0}",
   "FeelingLucky": "Czujesz, że dopisuje ci mnóstwo szczęścia!",
   "LuckyButNotTooLucky": "Czujesz dopisujące szczęście... lecz nie ma go zbyt wiele",
-  "NotFeelingLuckyAtAll": "Nie czujesz, aby dopisywało ci dzisiaj szczęście...",
-  "MaybeStayHome": "Może lepiej zostań dzisiaj w domu...",
+  "NotFeelingLuckyAtAll": "Nie czujesz, aby dopisywało ci dziś szczęście...",
+  "MaybeStayHome": "Może lepiej zostań dziś w domu...",
   "LuckStatus1": "Czujesz, że dopisuje ci mnóstwo szczęścia!",
-  "LuckStatus2": "Czujesz, że dopisuje ci dzisiaj odrobina szczęścia!",
+  "LuckStatus2": "Czujesz, że dopisuje ci dziś odrobina szczęścia!",
   "LuckStatus3": "Dzień jest w twoich rękach",
-  "LuckStatus4": "Duchy wydają się dzisiaj zupełnie neutralne",
-  "LuckStatus5": "Szczęście nie będzie dzisiaj po twojej stronie",
-  "LuckStatus6": "Może lepiej zostań dzisiaj w domu...",
+  "LuckStatus4": "Duchy wydają się dziś zupełnie neutralne",
+  "LuckStatus5": "Szczęście nie będzie dziś po twojej stronie",
+  "LuckStatus6": "Może lepiej zostań dziś w domu...",
   //Settings - General
   "ShowLevelUpAnimation": "Pokaż animację awansu",
   "ShowExperienceBar": "Pokaż pasek doświadczenia",
@@ -50,7 +54,7 @@
   //Settings - Tabs info
   "DisplayCalendarAndBillboard": "Pokaż przycisk kalendarza/tablicy",
   "ShowHeartFills": "Pokaż wypełnienie serduszek",
-  "ShowTodaysGifts": "Pokaż wręczone dzisiaj prezenty",
+  "ShowTodaysGifts": "Pokaż wręczone dziś prezenty",
   //Settings - Show icons
   "ShowBirthdayIcon": "Pokaż ikonę urodzin",
   "HideBirthdayIfFullFriendShip": "Ukryj na maks. poziomie relacji",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Pokaż stan budowy Robin",
   "ShowLuckIcon": "Pokaż ikonę szczęścia",
   "ShowExactValue": "Pokaż dokładną wartość",
+  "ShowSeasonalBerry": "Pokaż sezonowe dary lasu do zebrania",
+  "ShowSeasonalBerryHazelnut": "Pokaż ikonę orzechów laskowych",
   //Others
   "LevelUp": "Awans"
 }

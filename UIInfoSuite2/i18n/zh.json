@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "{0}完成了！",
   "NpcBirthday": "{0}的生日",
   "RobinBuildingStatus": "罗宾将在{0}天内完成您的新建筑",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "你今日的幸运值为{0}",
   "FeelingLucky": "你感到今天很幸运！！",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "显示罗宾工作进度",
   "ShowLuckIcon": "显示运气图标",
   "ShowExactValue": "显示精确的值",
+  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
   //Others
   "LevelUp": "升级"
 }
