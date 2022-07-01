@@ -233,17 +233,16 @@ namespace UIInfoSuite.UIElements
                     cropPrice = itemObject.Price;
                 }
 
-                foreach (var requiredBundle in _prunedRequiredBundles)
+                // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
+                if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject !is Furniture)
                 {
-                    int quality = _hoverItem.Value is StardewValley.Object ? ((StardewValley.Object)_hoverItem.Value).Quality : 0;
-                    if (requiredBundle.Value.Any(itemQuality => itemQuality.Key == _hoverItem.Value.ParentSheetIndex && quality >= itemQuality.Value)
-                        && !_hoverItem.Value.Name.Contains("arecrow")
-                        && _hoverItem.Value.Name != "Chest"
-                        && _hoverItem.Value.Name != "Recycling Machine"
-                        && _hoverItem.Value.Name != "Solid Gold Lewis")
+                    foreach (var requiredBundle in _prunedRequiredBundles)
                     {
-                        requiredBundleName = requiredBundle.Key;
-                        break;
+                        if (requiredBundle.Value.Any(itemQuality => itemQuality.Key == hoveredObject.ParentSheetIndex && hoveredObject.Quality >= itemQuality.Value))
+                        {
+                            requiredBundleName = requiredBundle.Key;
+                            break;
+                        }
                     }
                 }
 
