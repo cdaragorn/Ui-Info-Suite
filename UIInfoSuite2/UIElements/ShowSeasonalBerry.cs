@@ -119,7 +119,7 @@ namespace UIInfoSuite.UIElements
                     _hoverText = _helper.SafeGetString(LanguageKeys.CanFindBlackberry);
                     _spriteScale = 5 / 2f;
                     break;
-                case "fall" when day >= 14 && ShowHazelnut:
+                case "fall" when day >= 15 && ShowHazelnut:
                     _berrySpriteLocation = new Rectangle(1, 274, 14, 14);
                     _hoverText = _helper.SafeGetString(LanguageKeys.CanFindHazelnut);
                     _spriteScale = 20 / 7f;

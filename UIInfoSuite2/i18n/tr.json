@@ -15,14 +15,18 @@
   "TodaysRecipe": "Bugün'ün tarifi: ",
   "TravelingMerchantIsInTown": "Gezgin tüccar kasabada!",
   "RainNextDay": "Yarın yamur yağacak",
-  "ThunderstormNextDay": "Yarın Fırtına olacak",
+  "ThunderstormNextDay": "Yarın fırtına olacak",
   "SnowNextDay": "Yarın kar yağacak",
-  "IslandRainNextDay": "Yarın yamur yağacak",
-  "IslandThunderstormNextDay": "Yarın Fırtına olacak",
+  "IslandRainNextDay": "Yarın adada yamur yağacak",
+  "IslandThunderstormNextDay": "Yarın adada fırtına olacak",
   "DaysUntilToolIsUpgraded": "{1}'nın yükseltmesinin bitmesine {0} gün kaldı ",
   "ToolIsFinishedBeingUpgraded": "{0} hazır!",
   "NpcBirthday": "Doğum günü: {0}",
   "RobinBuildingStatus": "Robin inşaatı {0} günde bitirecek",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "Bugünkü şans değerin {0}",
   "FeelingLucky": "Şanslı hissediyorsun!!",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Robin'in inşaa durumunu göster",
   "ShowLuckIcon": "Şans ikonunu göster",
   "ShowExactValue": "Tam değeri göster",
+  "ShowSeasonalBerry": "Mevsimsel yemişleri göster",
+  "ShowSeasonalBerryHazelnut": "Ağaçlardaki fındıkları göster",
   //Others
   "LevelUp": "Seviye atlama"
 }
