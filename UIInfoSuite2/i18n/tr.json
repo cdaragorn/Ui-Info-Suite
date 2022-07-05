@@ -15,10 +15,10 @@
   "TodaysRecipe": "Bugün'ün tarifi: ",
   "TravelingMerchantIsInTown": "Gezgin tüccar kasabada!",
   "RainNextDay": "Yarın yamur yağacak",
-  "ThunderstormNextDay": "Yarın Fırtına olacak",
+  "ThunderstormNextDay": "Yarın fırtına olacak",
   "SnowNextDay": "Yarın kar yağacak",
-  "IslandRainNextDay": "Yarın yamur yağacak",
-  "IslandThunderstormNextDay": "Yarın Fırtına olacak",
+  "IslandRainNextDay": "Yarın adada yamur yağacak",
+  "IslandThunderstormNextDay": "Yarın adada fırtına olacak",
   "DaysUntilToolIsUpgraded": "{1}'nın yükseltmesinin bitmesine {0} gün kaldı ",
   "ToolIsFinishedBeingUpgraded": "{0} hazır!",
   "NpcBirthday": "Doğum günü: {0}",
@@ -62,6 +62,8 @@
   "ShowRobinBuildingStatusIcon": "Robin'in inşaa durumunu göster",
   "ShowLuckIcon": "Şans ikonunu göster",
   "ShowExactValue": "Tam değeri göster",
+  "ShowSeasonalBerry": "Mevsimsel yemişleri göster",
+  "ShowSeasonalBerryHazelnut": "Ağaçlardaki fındıkları göster",
   //Others
   "LevelUp": "Seviye atlama"
 }
