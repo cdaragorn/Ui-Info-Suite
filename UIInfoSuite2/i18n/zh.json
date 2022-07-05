@@ -57,7 +57,7 @@
   "ShowTodaysGifts": "显示今天赠送的礼物",
   //Settings - Show icons
   "ShowBirthdayIcon": "显示NPC生日图标",
-  "HideBirthdayIfFullFriendShip": "Hide on max friendship", // TODO
+  "HideBirthdayIfFullFriendShip": "满好感度时隐藏生日图标",
   "ShowTravelingMerchant": "显示旅行商人",
   "HideMerchantWhenVisited": "在访问后隐藏",
   "ShowRainyDay": "显示雨天",
