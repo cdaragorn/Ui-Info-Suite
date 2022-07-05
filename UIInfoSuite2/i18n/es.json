@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "¡{0} está terminado!",
   "NpcBirthday": "Cumpleaños de {0}",
   "RobinBuildingStatus": "Robin terminará tu nuevo edificio en {0} día(s)",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "Tu suerte diaria es {0}",
   "FeelingLucky": "¡Tienes suerte!",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Mostrar estado del edificio de Robin",
   "ShowLuckIcon": "Mostrar icono de suerte",
   "ShowExactValue": "Mostrar valor exacto",
+  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
   //Others
   "LevelUp": "Subida de nivel"
 }

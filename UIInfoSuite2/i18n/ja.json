@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "{0}のアップグレード完了！",
   "NpcBirthday": "{0}の誕生日",
   "RobinBuildingStatus": "ロビンは{0}日で建築を完了します",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "今日の運は{0}です",
   "FeelingLucky": "今日はラッキーな予感！",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "ロビンの建築状態を表示する",
   "ShowLuckIcon": "幸運アイコンを表示する",
   "ShowExactValue": "詳細な値を表示する",
+  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
   //Others
   "LevelUp": "レベルアップ"
 }
