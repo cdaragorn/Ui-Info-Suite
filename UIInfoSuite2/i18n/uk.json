@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "{0} оновлено!",
   "NpcBirthday": "{0} - день народження",
   "RobinBuildingStatus": "Робін завершить нову будівлю за {0} дні(в)",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "Ваша щоденна удача - {0}",
   "FeelingLucky": "Вам сьогодні пощастить!!",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Показувати статус роботи Робін над побудовою",
   "ShowLuckIcon": "Показувати іконку удачі",
   "ShowExactValue": "Показувати точне значення",
+  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
   //Others
   "LevelUp": "Новий рівень"
 }

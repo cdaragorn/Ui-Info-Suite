@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "{0} hazır!",
   "NpcBirthday": "Doğum günü: {0}",
   "RobinBuildingStatus": "Robin inşaatı {0} günde bitirecek",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "Bugünkü şans değerin {0}",
   "FeelingLucky": "Şanslı hissediyorsun!!",

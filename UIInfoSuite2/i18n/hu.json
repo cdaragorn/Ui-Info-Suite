@@ -23,6 +23,10 @@
   "ToolIsFinishedBeingUpgraded": "{0} fejlesztése be lett fejezve!",
   "NpcBirthday": "{0} születésnapja",
   "RobinBuildingStatus": "Robin be fogja fejezni az új épületedet {0} nap múlva",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
+  "CanFindBlackberry": "You can find Blackberries today", // TODO
+  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
   //Display icons - Luck
   "DailyLuckValue": "A mai szerencséd {0}",
   "FeelingLucky": "Szerencsésnek érzed magad!",
@@ -62,6 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Mutasd Robin építési állapotát",
   "ShowLuckIcon": "Mutasd a szerencse ikont",
   "ShowExactValue": "Mutasd a pontos értéket",
+  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
+  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
   //Others
   "LevelUp": "Szintlépés"
 }
