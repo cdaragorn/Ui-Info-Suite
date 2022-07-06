@@ -6,6 +6,7 @@ using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Characters;
+using StardewValley.Locations;
 using StardewValley.Network;
 using System;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace UIInfoSuite.UIElements
 
         private void OnRenderingHud_DrawNeedsPetTooltip(object sender, RenderingHudEventArgs e)
         {
-            if (!Game1.eventUp && Game1.activeClickableMenu == null && (Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm))
+            if (!Game1.eventUp && Game1.activeClickableMenu == null && (Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm || Game1.currentLocation is FarmHouse))
             {
                 DrawIconForFarmAnimals();
                 DrawIconForPets();
@@ -82,7 +83,7 @@ namespace UIInfoSuite.UIElements
 
         private void UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (Game1.eventUp || Game1.activeClickableMenu != null || !(Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm))
+            if (Game1.eventUp || Game1.activeClickableMenu != null || !(Game1.currentLocation is AnimalHouse || Game1.currentLocation is Farm || Game1.currentLocation is FarmHouse))
                 return;
 
             float sine = (float)Math.Sin(e.Ticks / 20.0);
