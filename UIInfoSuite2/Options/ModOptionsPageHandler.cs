@@ -199,7 +199,9 @@ namespace UIInfoSuite.Options
                 }
                 _modOptionsPageButton.draw(Game1.spriteBatch);
 
-                //Might need to render hover text here
+                // Draw the game menu's hover text again so it displays above our tab
+                if (!gameMenu.hoverText.Equals(""))
+                    IClickableMenu.drawHoverText(Game1.spriteBatch, gameMenu.hoverText, Game1.smallFont);
             }
         }
     }
