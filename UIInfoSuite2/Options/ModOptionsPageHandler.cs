@@ -187,6 +187,8 @@ namespace UIInfoSuite.Options
             if (Game1.activeClickableMenu is GameMenu gameMenu &&
                 gameMenu.currentTab != 3 && // Do not render when the map is showing
                 !GameMenu.forcePreventClose && // Do not render when an action is being remapped
+                // Do not render if a letter is open in the collection's page
+                !(gameMenu.currentTab == 5 && gameMenu.GetCurrentPage() is CollectionsPage cPage && cPage.letterviewerSubMenu != null) &&
                 _showPersonalConfigButton) // Only render when it is enabled in the config.json
             {
                 if (gameMenu.currentTab == _modOptionsTabPageNumber)
