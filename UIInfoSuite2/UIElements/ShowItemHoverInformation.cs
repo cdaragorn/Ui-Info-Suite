@@ -58,7 +58,6 @@ namespace UIInfoSuite.UIElements
 
         private readonly PerScreen<Item> _hoverItem = new PerScreen<Item>();
         private CommunityCenter _communityCenter;
-        private Dictionary<string, string> _bundleData;
         private LibraryMuseum _libraryMuseum;
 
         private Dictionary<string, string> _bundleNameOverrides;
@@ -81,7 +80,6 @@ namespace UIInfoSuite.UIElements
             if (showItemHoverInformation)
             {
                 _communityCenter = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
-                _bundleData = Game1.netWorldState.Value.BundleData;
 
                 _libraryMuseum = Game1.getLocationFromName("ArchaeologyHouse") as LibraryMuseum;
 
@@ -106,7 +104,6 @@ namespace UIInfoSuite.UIElements
                 _bundleNameOverrides = GetEnglishNamesForCustomCommunityCenterBundles();
             else
                 _bundleNameOverrides = null;
-            _bundleData = Game1.netWorldState.Value.BundleData;
             PopulateRequiredBundles();
         }
 
@@ -178,7 +175,7 @@ namespace UIInfoSuite.UIElements
             if (!Game1.player.mailReceived.Contains("JojaMember"))
             {
 
-                foreach (var bundle in _bundleData)
+                foreach (var bundle in Game1.netWorldState.Value.BundleData)
                 {
                     string[] bundleRoomInfo = bundle.Key.Split('/');
                     string bundleRoom = bundleRoomInfo[0];
