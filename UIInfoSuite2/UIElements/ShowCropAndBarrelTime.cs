@@ -248,11 +248,12 @@ namespace UIInfoSuite.UIElements
 
                         if (hoeDirt.crop.indexOfHarvest.Value > 0)
                         {
-                            string hoverText = _indexOfCropNames.SafeGet(hoeDirt.crop.indexOfHarvest.Value);
+                            int itemId = hoeDirt.crop.isWildSeedCrop() ? hoeDirt.crop.whichForageCrop.Value : hoeDirt.crop.indexOfHarvest.Value;
+                            string hoverText = _indexOfCropNames.SafeGet(itemId);
                             if (string.IsNullOrEmpty(hoverText))
                             {
-                                hoverText = new StardewValley.Object(new Debris(hoeDirt.crop.indexOfHarvest.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
-                                _indexOfCropNames.Add(hoeDirt.crop.indexOfHarvest.Value, hoverText);
+                                hoverText = new StardewValley.Object(itemId, 1).DisplayName;
+                                _indexOfCropNames.Add(itemId, hoverText);
                             }
 
                             StringBuilder finalHoverText = new StringBuilder();
