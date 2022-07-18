@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace UIInfoSuite.Options
 {
-    class ModOptions
+    internal record ModOptions
     {
         public bool AllowExperienceBarToFadeOut { get; set; } = true;
         public bool ShowExperienceBar { get; set; } = true;
@@ -15,7 +14,6 @@ namespace UIInfoSuite.Options
         public bool ShowLuckIcon { get; set; } = true;
         public bool ShowTravelingMerchant { get; set; } = true;
         public bool ShowRainyDay { get; set; } = true;
-        public bool ShowLocationOfTownsPeopleShowQuestIcon { get; set; } = true;
         public bool ShowCropAndBarrelTooltip { get; set; } = true;
         public bool ShowBirthdayIcon { get; set; } = true;
         public bool ShowAnimalsNeedPets { get; set; } = true;
@@ -34,60 +32,5 @@ namespace UIInfoSuite.Options
         public bool ShowTodaysGifts { get; set; } = true;
         public bool HideBirthdayIfFullFriendShip { get; set; } = true;
         public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new Dictionary<string, bool>();
-
-        public object Get(string propertyName)
-        {
-            return GetType().GetProperties().Single(pi => pi.Name == propertyName).GetValue(this);
-        }
-
-        public void Set(string propertyName, object value)
-        {
-            GetType().GetProperties().Single(pi => pi.Name == propertyName).SetValue(this, value);
-        }
-
-        public bool Equals(ModOptions options)
-        {
-            if (AllowExperienceBarToFadeOut == options.AllowExperienceBarToFadeOut &&
-                ShowExperienceBar == options.ShowExperienceBar &&
-                ShowExperienceGain == options.ShowExperienceGain &&
-                ShowLevelUpAnimation == options.ShowLevelUpAnimation &&
-                ShowHeartFills == options.ShowHeartFills &&
-                ShowExtraItemInformation == options.ShowExtraItemInformation &&
-                ShowLocationOfTownsPeople == options.ShowLocationOfTownsPeople &&
-                ShowLuckIcon == options.ShowLuckIcon &&
-                ShowTravelingMerchant == options.ShowTravelingMerchant &&
-                ShowRainyDay == options.ShowRainyDay &&
-                ShowLocationOfTownsPeopleShowQuestIcon == options.ShowLocationOfTownsPeopleShowQuestIcon &&
-                ShowCropAndBarrelTooltip == options.ShowCropAndBarrelTooltip &&
-                ShowBirthdayIcon == options.ShowBirthdayIcon &&
-                HideBirthdayIfFullFriendShip == options.HideBirthdayIfFullFriendShip &&
-                ShowAnimalsNeedPets == options.ShowAnimalsNeedPets &&
-                HideAnimalPetOnMaxFriendship == options.HideAnimalPetOnMaxFriendship &&
-                ShowItemEffectRanges == options.ShowItemEffectRanges &&
-                ShowItemsRequiredForBundles == options.ShowItemsRequiredForBundles &&
-                ShowHarvestPricesInShop == options.ShowHarvestPricesInShop &&
-                DisplayCalendarAndBillboard == options.DisplayCalendarAndBillboard &&
-                ShowWhenNewRecipesAreAvailable == options.ShowWhenNewRecipesAreAvailable &&
-                ShowToolUpgradeStatus == options.ShowToolUpgradeStatus &&
-                HideMerchantWhenVisited == options.HideMerchantWhenVisited &&
-                ShowExactValue == options.ShowExactValue &&
-                ShowRobinBuildingStatusIcon == options.ShowRobinBuildingStatusIcon &&
-                ShowSeasonalBerry == options.ShowSeasonalBerry &&
-                ShowSeasonalBerryHazelnut == options.ShowSeasonalBerryHazelnut &&
-                ShowTodaysGifts == options.ShowTodaysGifts)
-            {
-                if (ShowLocationOfFriends.Count != options.ShowLocationOfFriends.Count)
-                    return false;
-                if (ShowLocationOfFriends.Keys.Except(options.ShowLocationOfFriends.Keys).Any())
-                    return false;
-                if (options.ShowLocationOfFriends.Keys.Except(ShowLocationOfFriends.Keys).Any())
-                    return false;
-                foreach (var pair in ShowLocationOfFriends)
-                    if (pair.Value != options.ShowLocationOfFriends[pair.Key])
-                        return false;
-                return true;
-            }
-            return false;
-        }
     }
 }
