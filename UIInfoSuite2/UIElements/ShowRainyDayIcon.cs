@@ -1,16 +1,16 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using UIInfoSuite2.Infrastucture;
-using UIInfoSuite2.Infrastucture.Extensions;
+using System;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowRainyDayIcon : IDisposable
+    internal class ShowRainyDayIcon : IDisposable
     {
         #region Properties
 

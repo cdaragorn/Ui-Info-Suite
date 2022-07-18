@@ -1,30 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
-using UIInfoSuite2.Infrastucture;
-using UIInfoSuite2.Infrastucture.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowQueenOfSauceIcon : IDisposable
+    internal class ShowQueenOfSauceIcon : IDisposable
     {
         #region Properties
-        private Dictionary<string, string> _recipesByDescription = new Dictionary<string, string>();
-        private Dictionary<string, string> _recipes = new Dictionary<string, string>();
+        private Dictionary<string, string> _recipesByDescription = new();
+        private Dictionary<string, string> _recipes = new();
         private CraftingRecipe _todaysRecipe;
 
-        private NPC _gus;
-
-        private readonly PerScreen<bool> _drawQueenOfSauceIcon = new PerScreen<bool>();
+        private readonly PerScreen<bool> _drawQueenOfSauceIcon = new();
         //private bool _drawDishOfDayIcon = false;
-        private readonly PerScreen<ClickableTextureComponent> _icon = new PerScreen<ClickableTextureComponent>();
+        private readonly PerScreen<ClickableTextureComponent> _icon = new();
 
         private readonly IModHelper _helper;
         #endregion

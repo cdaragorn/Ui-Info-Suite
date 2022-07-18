@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using System;
+using System.Collections.Generic;
 
 namespace UIInfoSuite2.Options
 {
@@ -13,7 +13,7 @@ namespace UIInfoSuite2.Options
     {
         private const int Width = 800;
 
-        private List<ClickableComponent> _optionSlots = new List<ClickableComponent>();
+        private List<ClickableComponent> _optionSlots = new();
         private List<ModOptionsElement> _options;
         private string _hoverText;
         private int _optionsSlotHeld;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewModdingAPI;
@@ -10,14 +8,16 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Locations;
 using StardewValley.Network;
+using System;
+using System.Linq;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowWhenAnimalNeedsPet : IDisposable
+    internal class ShowWhenAnimalNeedsPet : IDisposable
     {
         #region Properties
-        private readonly PerScreen<float> _yMovementPerDraw = new PerScreen<float>();
-        private readonly PerScreen<float> _alpha = new PerScreen<float>();
+        private readonly PerScreen<float> _yMovementPerDraw = new();
+        private readonly PerScreen<float> _alpha = new();
 
         public bool HideOnMaxFriendship { get; set; }
 
@@ -107,7 +107,7 @@ namespace UIInfoSuite2.UIElements
                         animal.Value.age.Value >= animal.Value.ageWhenMature.Value)
                     {
                         Vector2 positionAboveAnimal = GetPetPositionAboveAnimal(animal.Value);
-                        positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + (double)animal.Value.Name.GetHashCode()) * 5.0);
+                        positionAboveAnimal.Y += (float)(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 300.0 + animal.Value.Name.GetHashCode()) * 5.0);
                         Game1.spriteBatch.Draw(
                             Game1.emoteSpriteSheet,
                             Utility.ModifyCoordinatesForUIScale(new Vector2(positionAboveAnimal.X + 14f, positionAboveAnimal.Y)),

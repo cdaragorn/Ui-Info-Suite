@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     internal record ModOptions
     {
@@ -31,6 +31,6 @@ namespace UIInfoSuite.Options
         public bool ShowSeasonalBerryHazelnut { get; set; } = false;
         public bool ShowTodaysGifts { get; set; } = true;
         public bool HideBirthdayIfFullFriendShip { get; set; } = true;
-        public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new Dictionary<string, bool>();
+        public Dictionary<string, bool> ShowLocationOfFriends { get; set; } = new();
     }
 }

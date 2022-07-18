@@ -1,19 +1,19 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using UIInfoSuite2.Infrastucture;
-using UIInfoSuite2.Infrastucture.Extensions;
+using System;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowSeasonalBerry : IDisposable
+    internal class ShowSeasonalBerry : IDisposable
     {
         #region Properties
 
-        Rectangle? _berrySpriteLocation;
+        private Rectangle? _berrySpriteLocation;
         private float _spriteScale = 8 / 3f;
         private string _hoverText;
         private ClickableTextureComponent _berryIcon;

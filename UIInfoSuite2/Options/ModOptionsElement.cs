@@ -18,7 +18,7 @@ namespace UIInfoSuite2.Options
 
         protected readonly ModOptionsElement _parent;
 
-        public Rectangle Bounds { get { return _bounds; } }
+        public Rectangle Bounds => _bounds;
 
         public ModOptionsElement(string label, int whichOption = -1, ModOptionsElement parent = null)
         {

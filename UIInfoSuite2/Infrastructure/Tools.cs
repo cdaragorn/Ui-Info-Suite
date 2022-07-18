@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace UIInfoSuite2.Infrastucture
+namespace UIInfoSuite2.Infrastructure
 {
     public static class Tools
     {

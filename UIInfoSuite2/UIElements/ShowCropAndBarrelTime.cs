@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -11,17 +8,20 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using UIInfoSuite2.Infrastucture;
-using UIInfoSuite2.Infrastucture.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowCropAndBarrelTime : IDisposable
+    internal class ShowCropAndBarrelTime : IDisposable
     {
-        private readonly Dictionary<int, string> _indexOfCropNames = new Dictionary<int, string>();
-        private readonly PerScreen<StardewValley.Object> _currentTile = new PerScreen<StardewValley.Object>();
-        private readonly PerScreen<TerrainFeature> _terrain = new PerScreen<TerrainFeature>();
-        private readonly PerScreen<Building> _currentTileBuilding = new PerScreen<Building>();
+        private readonly Dictionary<int, string> _indexOfCropNames = new();
+        private readonly PerScreen<StardewValley.Object> _currentTile = new();
+        private readonly PerScreen<TerrainFeature> _terrain = new();
+        private readonly PerScreen<Building> _currentTileBuilding = new();
         private readonly IModHelper _helper;
 
         public ShowCropAndBarrelTime(IModHelper helper)
@@ -49,7 +49,7 @@ namespace UIInfoSuite2.UIElements
             if (!e.IsMultipleOf(4))
                 return;
 
-            var gamepadTile = Game1.player.CurrentTool != null ? Utility.snapToInt(Game1.player.GetToolLocation()/Game1.tileSize) : Utility.snapToInt(Game1.player.GetGrabTile());
+            var gamepadTile = Game1.player.CurrentTool != null ? Utility.snapToInt(Game1.player.GetToolLocation() / Game1.tileSize) : Utility.snapToInt(Game1.player.GetGrabTile());
             var mouseTile = Game1.currentCursorTile;
 
             var tile = (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0) ? gamepadTile : mouseTile;
@@ -139,7 +139,7 @@ namespace UIInfoSuite2.UIElements
                         overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
                         overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
                     }
-                    
+
                     IClickableMenu.drawHoverText(
                         Game1.spriteBatch,
                         builder.ToString(),
@@ -158,7 +158,7 @@ namespace UIInfoSuite2.UIElements
                     StringBuilder hoverText = new StringBuilder();
 
                     hoverText.AppendLine(currentTile.heldObject.Value.DisplayName);
-                    
+
                     if (currentTile is Cask)
                     {
                         Cask currentCask = currentTile as Cask;

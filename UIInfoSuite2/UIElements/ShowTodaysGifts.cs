@@ -1,16 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowTodaysGifts : IDisposable
+    internal class ShowTodaysGifts : IDisposable
     {
         #region Properties
         private string[] _friendNames;
@@ -106,7 +106,7 @@ namespace UIInfoSuite2.UIElements
                 {
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors,
-                        new Vector2((float)(_socialPage.xPositionOnScreen + 384 + 296 + 4), yPosition + 6),
+                        new Vector2(_socialPage.xPositionOnScreen + 384 + 296 + 4, yPosition + 6),
                         new Rectangle?(new Rectangle(106, 442, 9, 9)),
                         Color.LightGray, 0.0f, Vector2.Zero, 3f, SpriteEffects.None, 0.22f
                     );

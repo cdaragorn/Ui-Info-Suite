@@ -1,46 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using UIInfoSuite2.Infrastucture.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UIInfoSuite2.Infrastructure.Extensions;
 using UIInfoSuite2.UIElements;
 
 namespace UIInfoSuite2.Options
 {
-    class ModOptionsPageHandler : IDisposable
+    internal class ModOptionsPageHandler : IDisposable
     {
-        private List<ModOptionsElement> _optionsElements = new List<ModOptionsElement>();
+        private List<ModOptionsElement> _optionsElements = new();
         private readonly List<IDisposable> _elementsToDispose;
         private ModOptionsPageButton _modOptionsPageButton;
         private ModOptionsPage _modOptionsPage;
         private readonly IModHelper _helper;
-        private bool _showPersonalConfigButton;
+        private readonly bool _showPersonalConfigButton;
 
         private int _modOptionsTabPageNumber;
 
-        private readonly LuckOfDay _luckOfDay;
-        private readonly ShowBirthdayIcon _showBirthdayIcon;
-        private readonly ShowAccurateHearts _showAccurateHearts;
-        private readonly LocationOfTownsfolk _locationOfTownsfolk;
-        private readonly ShowWhenAnimalNeedsPet _showWhenAnimalNeedsPet;
-        private readonly ShowCalendarAndBillboardOnGameMenuButton _showCalendarAndBillboardOnGameMenuButton;
-        private readonly ShowCropAndBarrelTime _showCropAndBarrelTime;
-        private readonly ShowItemEffectRanges _showScarecrowAndSprinklerRange;
-        private readonly ExperienceBar _experienceBar;
-        private readonly ShowItemHoverInformation _showItemHoverInformation;
-        private readonly ShowTravelingMerchant _showTravelingMerchant;
-        private readonly ShowRainyDayIcon _showRainyDayIcon;
-        private readonly ShopHarvestPrices _shopHarvestPrices;
-        private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
-        private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
-        private readonly ShowRobinBuildingStatusIcon _showRobinBuildingStatusIcon;
-        private readonly ShowSeasonalBerry _showSeasonalBerry;
-        private readonly ShowTodaysGifts _showTodaysGift;
-
-        public ModOptionsPageHandler(IModHelper helper, ModOptions _options, bool showPersonalConfigButton)
+        public ModOptionsPageHandler(IModHelper helper, ModOptions options, bool showPersonalConfigButton)
         {
             if (showPersonalConfigButton)
             {
@@ -48,81 +29,81 @@ namespace UIInfoSuite2.Options
             }
             _helper = helper;
             _showPersonalConfigButton = showPersonalConfigButton;
-            _luckOfDay = new LuckOfDay(helper);
-            _showBirthdayIcon = new ShowBirthdayIcon(helper);
-            _showAccurateHearts = new ShowAccurateHearts(helper.Events);
-            _locationOfTownsfolk = new LocationOfTownsfolk(helper, _options);
-            _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);
-            _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
-            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(helper);
-            _experienceBar = new ExperienceBar(helper);
-            _showItemHoverInformation = new ShowItemHoverInformation(helper);
-            _shopHarvestPrices = new ShopHarvestPrices(helper);
-            _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
-            _showTravelingMerchant = new ShowTravelingMerchant(helper);
-            _showRainyDayIcon = new ShowRainyDayIcon(helper);
-            _showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
-            _showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
-            _showRobinBuildingStatusIcon = new ShowRobinBuildingStatusIcon(helper);
-            _showSeasonalBerry = new ShowSeasonalBerry(helper);
-            _showTodaysGift = new ShowTodaysGifts(helper);
+            var luckOfDay = new LuckOfDay(helper);
+            var showBirthdayIcon = new ShowBirthdayIcon(helper);
+            var showAccurateHearts = new ShowAccurateHearts(helper.Events);
+            var locationOfTownsfolk = new LocationOfTownsfolk(helper, options);
+            var showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);
+            var showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
+            var showScarecrowAndSprinklerRange = new ShowItemEffectRanges(helper);
+            var experienceBar = new ExperienceBar(helper);
+            var showItemHoverInformation = new ShowItemHoverInformation(helper);
+            var shopHarvestPrices = new ShopHarvestPrices(helper);
+            var showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
+            var showTravelingMerchant = new ShowTravelingMerchant(helper);
+            var showRainyDayIcon = new ShowRainyDayIcon(helper);
+            var showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
+            var showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
+            var showRobinBuildingStatusIcon = new ShowRobinBuildingStatusIcon(helper);
+            var showSeasonalBerry = new ShowSeasonalBerry(helper);
+            var showTodaysGift = new ShowTodaysGifts(helper);
 
             _elementsToDispose = new List<IDisposable>()
             {
-                _luckOfDay,
-                _showBirthdayIcon,
-                _showAccurateHearts,
-                _locationOfTownsfolk,
-                _showWhenAnimalNeedsPet,
-                _showCalendarAndBillboardOnGameMenuButton,
-                _showCropAndBarrelTime,
-                _experienceBar,
-                _showItemHoverInformation,
-                _showTravelingMerchant,
-                _showRainyDayIcon,
-                _shopHarvestPrices,
-                _showQueenOfSauceIcon,
-                _showToolUpgradeStatus,
-                _showRobinBuildingStatusIcon,
-                _showSeasonalBerry
+                luckOfDay,
+                showBirthdayIcon,
+                showAccurateHearts,
+                locationOfTownsfolk,
+                showWhenAnimalNeedsPet,
+                showCalendarAndBillboardOnGameMenuButton,
+                showCropAndBarrelTime,
+                experienceBar,
+                showItemHoverInformation,
+                showTravelingMerchant,
+                showRainyDayIcon,
+                shopHarvestPrices,
+                showQueenOfSauceIcon,
+                showToolUpgradeStatus,
+                showRobinBuildingStatusIcon,
+                showSeasonalBerry
             };
 
             int whichOption = 1;
             Version thisVersion = Assembly.GetAssembly(this.GetType()).GetName().Version;
             _optionsElements.Add(new ModOptionsElement("UI Info Suite 2 v" + thisVersion.Major + "." + thisVersion.Minor + "." + thisVersion.Build));
 
-            var luckIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowLuckIcon)), whichOption++, _luckOfDay.ToggleOption, () => _options.ShowLuckIcon, v => _options.ShowLuckIcon = v);
+            var luckIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowLuckIcon)), whichOption++, luckOfDay.ToggleOption, () => options.ShowLuckIcon, v => options.ShowLuckIcon = v);
             _optionsElements.Add(luckIcon);
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExactValue)), whichOption++, _luckOfDay.ToggleShowExactValueOption, () => _options.ShowExactValue, v => _options.ShowExactValue = v, luckIcon));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowLevelUpAnimation)), whichOption++, _experienceBar.ToggleLevelUpAnimation, () => _options.ShowLevelUpAnimation, v => _options.ShowLevelUpAnimation = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExperienceBar)), whichOption++, _experienceBar.ToggleShowExperienceBar, () => _options.ShowExperienceBar, v => _options.ShowExperienceBar = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.AllowExperienceBarToFadeOut)), whichOption++, _experienceBar.ToggleExperienceBarFade, () => _options.AllowExperienceBarToFadeOut, v => _options.AllowExperienceBarToFadeOut = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExperienceGain)), whichOption++, _experienceBar.ToggleShowExperienceGain, () => _options.ShowExperienceGain, v => _options.ShowExperienceGain = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowExactValue)), whichOption++, luckOfDay.ToggleShowExactValueOption, () => options.ShowExactValue, v => options.ShowExactValue = v, luckIcon));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowLevelUpAnimation)), whichOption++, experienceBar.ToggleLevelUpAnimation, () => options.ShowLevelUpAnimation, v => options.ShowLevelUpAnimation = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowExperienceBar)), whichOption++, experienceBar.ToggleShowExperienceBar, () => options.ShowExperienceBar, v => options.ShowExperienceBar = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.AllowExperienceBarToFadeOut)), whichOption++, experienceBar.ToggleExperienceBarFade, () => options.AllowExperienceBarToFadeOut, v => options.AllowExperienceBarToFadeOut = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowExperienceGain)), whichOption++, experienceBar.ToggleShowExperienceGain, () => options.ShowExperienceGain, v => options.ShowExperienceGain = v));
             if (!_helper.ModRegistry.IsLoaded("Bouhm.NPCMapLocations"))
-                _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowLocationOfTownsPeople)), whichOption++, _locationOfTownsfolk.ToggleShowNPCLocationsOnMap, () => _options.ShowLocationOfTownsPeople, v => _options.ShowLocationOfTownsPeople = v));
-            var BirthdayIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowBirthdayIcon)), whichOption++, _showBirthdayIcon.ToggleOption, () => _options.ShowBirthdayIcon, v => _options.ShowBirthdayIcon = v);
+                _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowLocationOfTownsPeople)), whichOption++, locationOfTownsfolk.ToggleShowNPCLocationsOnMap, () => options.ShowLocationOfTownsPeople, v => options.ShowLocationOfTownsPeople = v));
+            var BirthdayIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowBirthdayIcon)), whichOption++, showBirthdayIcon.ToggleOption, () => options.ShowBirthdayIcon, v => options.ShowBirthdayIcon = v);
             _optionsElements.Add(BirthdayIcon);
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.HideBirthdayIfFullFriendShip)), whichOption++, _showBirthdayIcon.ToggleDisableOnMaxFriendshipOption, () => _options.HideBirthdayIfFullFriendShip, v => _options.HideBirthdayIfFullFriendShip = v, BirthdayIcon));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowHeartFills)), whichOption++, _showAccurateHearts.ToggleOption, () => _options.ShowHeartFills, v => _options.ShowHeartFills = v));
-            var animalPetIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowAnimalsNeedPets)), whichOption++, _showWhenAnimalNeedsPet.ToggleOption, () => _options.ShowAnimalsNeedPets, v => _options.ShowAnimalsNeedPets = v);
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.HideBirthdayIfFullFriendShip)), whichOption++, showBirthdayIcon.ToggleDisableOnMaxFriendshipOption, () => options.HideBirthdayIfFullFriendShip, v => options.HideBirthdayIfFullFriendShip = v, BirthdayIcon));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowHeartFills)), whichOption++, showAccurateHearts.ToggleOption, () => options.ShowHeartFills, v => options.ShowHeartFills = v));
+            var animalPetIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowAnimalsNeedPets)), whichOption++, showWhenAnimalNeedsPet.ToggleOption, () => options.ShowAnimalsNeedPets, v => options.ShowAnimalsNeedPets = v);
             _optionsElements.Add(animalPetIcon);
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.HideAnimalPetOnMaxFriendship)), whichOption++, _showWhenAnimalNeedsPet.ToggleDisableOnMaxFirendshipOption, () => _options.HideAnimalPetOnMaxFriendship, v => _options.HideAnimalPetOnMaxFriendship = v, animalPetIcon));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.DisplayCalendarAndBillboard)), whichOption++, _showCalendarAndBillboardOnGameMenuButton.ToggleOption, () => _options.DisplayCalendarAndBillboard, v => _options.DisplayCalendarAndBillboard = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowCropAndBarrelTooltip)), whichOption++, _showCropAndBarrelTime.ToggleOption, () => _options.ShowCropAndBarrelTooltip, v => _options.ShowCropAndBarrelTooltip = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowItemEffectRanges)), whichOption++, _showScarecrowAndSprinklerRange.ToggleOption, () => _options.ShowItemEffectRanges, v => _options.ShowItemEffectRanges = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowExtraItemInformation)), whichOption++, _showItemHoverInformation.ToggleOption, () => _options.ShowExtraItemInformation, v => _options.ShowExtraItemInformation = v));
-            var travellingMerchantIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowTravelingMerchant)), whichOption++, _showTravelingMerchant.ToggleOption, () => _options.ShowTravelingMerchant, v => _options.ShowTravelingMerchant = v);
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.HideAnimalPetOnMaxFriendship)), whichOption++, showWhenAnimalNeedsPet.ToggleDisableOnMaxFirendshipOption, () => options.HideAnimalPetOnMaxFriendship, v => options.HideAnimalPetOnMaxFriendship = v, animalPetIcon));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.DisplayCalendarAndBillboard)), whichOption++, showCalendarAndBillboardOnGameMenuButton.ToggleOption, () => options.DisplayCalendarAndBillboard, v => options.DisplayCalendarAndBillboard = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowCropAndBarrelTooltip)), whichOption++, showCropAndBarrelTime.ToggleOption, () => options.ShowCropAndBarrelTooltip, v => options.ShowCropAndBarrelTooltip = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowItemEffectRanges)), whichOption++, showScarecrowAndSprinklerRange.ToggleOption, () => options.ShowItemEffectRanges, v => options.ShowItemEffectRanges = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowExtraItemInformation)), whichOption++, showItemHoverInformation.ToggleOption, () => options.ShowExtraItemInformation, v => options.ShowExtraItemInformation = v));
+            var travellingMerchantIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowTravelingMerchant)), whichOption++, showTravelingMerchant.ToggleOption, () => options.ShowTravelingMerchant, v => options.ShowTravelingMerchant = v);
             _optionsElements.Add(travellingMerchantIcon);
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.HideMerchantWhenVisited)), whichOption++, _showTravelingMerchant.ToggleHideWhenVisitedOption, () => _options.HideMerchantWhenVisited, v => _options.HideMerchantWhenVisited = v, travellingMerchantIcon));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowRainyDay)), whichOption++, _showRainyDayIcon.ToggleOption, () => _options.ShowRainyDay, v => _options.ShowRainyDay = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowHarvestPricesInShop)), whichOption++, _shopHarvestPrices.ToggleOption, () => _options.ShowHarvestPricesInShop, v => _options.ShowHarvestPricesInShop = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowWhenNewRecipesAreAvailable)), whichOption++, _showQueenOfSauceIcon.ToggleOption, () => _options.ShowWhenNewRecipesAreAvailable, v => _options.ShowWhenNewRecipesAreAvailable = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowToolUpgradeStatus)), whichOption++, _showToolUpgradeStatus.ToggleOption, () => _options.ShowToolUpgradeStatus, v => _options.ShowToolUpgradeStatus = v));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowRobinBuildingStatusIcon)), whichOption++, _showRobinBuildingStatusIcon.ToggleOption, () => _options.ShowRobinBuildingStatusIcon, v => _options.ShowRobinBuildingStatusIcon = v));
-            var seasonalBerryIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowSeasonalBerry)), whichOption++, _showSeasonalBerry.ToggleOption, () => _options.ShowSeasonalBerry, v => _options.ShowSeasonalBerry = v);
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.HideMerchantWhenVisited)), whichOption++, showTravelingMerchant.ToggleHideWhenVisitedOption, () => options.HideMerchantWhenVisited, v => options.HideMerchantWhenVisited = v, travellingMerchantIcon));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowRainyDay)), whichOption++, showRainyDayIcon.ToggleOption, () => options.ShowRainyDay, v => options.ShowRainyDay = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowHarvestPricesInShop)), whichOption++, shopHarvestPrices.ToggleOption, () => options.ShowHarvestPricesInShop, v => options.ShowHarvestPricesInShop = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowWhenNewRecipesAreAvailable)), whichOption++, showQueenOfSauceIcon.ToggleOption, () => options.ShowWhenNewRecipesAreAvailable, v => options.ShowWhenNewRecipesAreAvailable = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowToolUpgradeStatus)), whichOption++, showToolUpgradeStatus.ToggleOption, () => options.ShowToolUpgradeStatus, v => options.ShowToolUpgradeStatus = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowRobinBuildingStatusIcon)), whichOption++, showRobinBuildingStatusIcon.ToggleOption, () => options.ShowRobinBuildingStatusIcon, v => options.ShowRobinBuildingStatusIcon = v));
+            var seasonalBerryIcon = new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowSeasonalBerry)), whichOption++, showSeasonalBerry.ToggleOption, () => options.ShowSeasonalBerry, v => options.ShowSeasonalBerry = v);
             _optionsElements.Add(seasonalBerryIcon);
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowSeasonalBerryHazelnut)), whichOption++, _showSeasonalBerry.ToggleHazelnutOption, () => _options.ShowSeasonalBerryHazelnut, v => _options.ShowSeasonalBerryHazelnut = v, seasonalBerryIcon));
-            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(_options.ShowTodaysGifts)), whichOption++, _showTodaysGift.ToggleOption, () => _options.ShowTodaysGifts, v => _options.ShowTodaysGifts = v));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowSeasonalBerryHazelnut)), whichOption++, showSeasonalBerry.ToggleHazelnutOption, () => options.ShowSeasonalBerryHazelnut, v => options.ShowSeasonalBerryHazelnut = v, seasonalBerryIcon));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(nameof(options.ShowTodaysGifts)), whichOption++, showTodaysGift.ToggleOption, () => options.ShowTodaysGifts, v => options.ShowTodaysGifts = v));
         }
 
 
@@ -187,7 +168,8 @@ namespace UIInfoSuite2.Options
 
         private void OnRenderingMenu(object sender, RenderingActiveMenuEventArgs e)
         {
-            if (_showPersonalConfigButton && Game1.activeClickableMenu is GameMenu gameMenu) {
+            if (_showPersonalConfigButton && Game1.activeClickableMenu is GameMenu gameMenu)
+            {
                 // Draw our tab icon behind the menu even if it is dimmed by the menu's transparent background,
                 // so that it still displays during transitions eg. when a letter is viewed in the collections tab
                 DrawButton(gameMenu);
@@ -198,7 +180,7 @@ namespace UIInfoSuite2.Options
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu &&
                 gameMenu.currentTab != 3 && // Do not render when the map is showing
-                // Do not render if a letter is open in the collection's page
+                                            // Do not render if a letter is open in the collection's page
                 !(gameMenu.currentTab == 5 && gameMenu.GetCurrentPage() is CollectionsPage cPage && cPage.letterviewerSubMenu != null) &&
                 _showPersonalConfigButton) // Only render when it is enabled in the config.json
             {

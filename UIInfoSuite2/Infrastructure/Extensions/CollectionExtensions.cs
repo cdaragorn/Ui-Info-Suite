@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace UIInfoSuite2.Infrastucture.Extensions
+namespace UIInfoSuite2.Infrastructure.Extensions
 {
     public static class CollectionExtensions
     {
-        public static TValue SafeGet<Tkey, TValue>(this IDictionary<Tkey, TValue> dictionary, Tkey key, TValue defaultValue = default)
+        public static TValue SafeGet<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default)
         {
             TValue value = defaultValue;
 

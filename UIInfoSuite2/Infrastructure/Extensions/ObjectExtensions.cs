@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
+using System.Collections.Generic;
 
-namespace UIInfoSuite2.Infrastucture.Extensions
+namespace UIInfoSuite2.Infrastructure.Extensions
 {
     public static class ObjectExtensions
     {
         #region Properties
-        private static readonly Dictionary<string, int> _npcHeadShotSize = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> NpcHeadShotSize = new()
         {
             { "Piere", 9 },
             { "Sebastian", 7 },
@@ -50,7 +50,7 @@ namespace UIInfoSuite2.Infrastucture.Extensions
         public static Rectangle GetHeadShot(this NPC npc)
         {
             int size;
-            if (!_npcHeadShotSize.TryGetValue(npc.Name, out size))
+            if (!NpcHeadShotSize.TryGetValue(npc.Name, out size))
                 size = 4;
 
             Rectangle mugShotSourceRect = npc.getMugShotSourceRect();
@@ -61,7 +61,7 @@ namespace UIInfoSuite2.Infrastucture.Extensions
 
         public static string SafeGetString(this IModHelper helper, string key)
         {
-            string result = string.Empty;
+            var result = string.Empty;
 
             if (!string.IsNullOrEmpty(key) &&
                 helper != null)

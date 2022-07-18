@@ -1,21 +1,21 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
-using UIInfoSuite2.Infrastucture;
-using UIInfoSuite2.Infrastucture.Extensions;
+using System;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
 namespace UIInfoSuite2.UIElements
 {
-    class ShowBirthdayIcon : IDisposable
+    internal class ShowBirthdayIcon : IDisposable
     {
         #region Properties
         private NPC _birthdayNPC;
-        private readonly PerScreen<ClickableTextureComponent> _birthdayIcon = new PerScreen<ClickableTextureComponent>();
+        private readonly PerScreen<ClickableTextureComponent> _birthdayIcon = new();
         public bool HideBirthdayIfFullFriendShip { get; set; }
         private readonly IModHelper _helper;
         #endregion
