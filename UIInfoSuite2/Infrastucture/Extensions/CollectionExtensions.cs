@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace UIInfoSuite.Infrastructure.Extensions
+namespace UIInfoSuite2.Infrastucture.Extensions
 {
     public static class CollectionExtensions
     {

@@ -1,16 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
-using StardewValley.Menus;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
-using StardewValley.Buildings;
 using StardewModdingAPI.Utilities;
+using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Menus;
+using UIInfoSuite2.Infrastucture;
+using UIInfoSuite2.Infrastucture.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     class ShowRobinBuildingStatusIcon : IDisposable
     {

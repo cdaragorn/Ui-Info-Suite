@@ -1,17 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastucture;
+using UIInfoSuite2.Infrastucture.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     class ShowCalendarAndBillboardOnGameMenuButton : IDisposable
     {

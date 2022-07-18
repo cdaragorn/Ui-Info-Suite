@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
-using System.Collections.Generic;
 
-namespace UIInfoSuite.Infrastructure.Extensions
+namespace UIInfoSuite2.Infrastucture.Extensions
 {
     public static class ObjectExtensions
     {

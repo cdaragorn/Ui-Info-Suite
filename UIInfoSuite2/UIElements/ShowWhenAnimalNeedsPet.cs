@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewModdingAPI;
@@ -8,10 +10,8 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Locations;
 using StardewValley.Network;
-using System;
-using System.Linq;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     class ShowWhenAnimalNeedsPet : IDisposable
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     class ExperiencePointDisplay
     {

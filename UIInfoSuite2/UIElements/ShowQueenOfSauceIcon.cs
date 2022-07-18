@@ -1,17 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastucture;
+using UIInfoSuite2.Infrastucture.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     class ShowQueenOfSauceIcon : IDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace UIInfoSuite.Infrastructure.Extensions
+﻿namespace UIInfoSuite2.Infrastucture.Extensions
 {
     static class StringExtensions
     {

@@ -1,14 +1,14 @@
-﻿using StardewModdingAPI;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using UIInfoSuite.Infrastructure.Extensions;
-using UIInfoSuite.UIElements;
+using UIInfoSuite2.Infrastucture.Extensions;
+using UIInfoSuite2.UIElements;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     class ModOptionsPageHandler : IDisposable
     {

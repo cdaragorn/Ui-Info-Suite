@@ -1,4 +1,4 @@
-﻿namespace UIInfoSuite.Compatibility
+﻿namespace UIInfoSuite2.Compatibility
 {
     public interface ILevelExtender
     {

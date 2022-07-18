@@ -13,11 +13,11 @@ using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Tools;
-using UIInfoSuite.Compatibility;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Compatibility;
+using UIInfoSuite2.Infrastucture;
+using UIInfoSuite2.Infrastucture.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     public class ExperienceBar : IDisposable
     {

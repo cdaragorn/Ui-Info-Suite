@@ -1,4 +1,4 @@
-﻿namespace UIInfoSuite.Infrastructure
+﻿namespace UIInfoSuite2.Infrastucture
 {
     public static class LanguageKeys
     {

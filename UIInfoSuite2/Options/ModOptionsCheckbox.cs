@@ -1,12 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using UIInfoSuite.Infrastructure.Extensions;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     class ModOptionsCheckbox : ModOptionsElement
     {

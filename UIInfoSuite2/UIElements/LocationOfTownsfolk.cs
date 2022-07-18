@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
@@ -6,16 +11,11 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Quests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
-using UIInfoSuite.Options;
+using UIInfoSuite2.Infrastucture;
+using UIInfoSuite2.Infrastucture.Extensions;
+using UIInfoSuite2.Options;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     class LocationOfTownsfolk : IDisposable
     {

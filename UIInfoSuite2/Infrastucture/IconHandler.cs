@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using StardewValley;
+﻿using System;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI.Utilities;
-using System;
+using StardewValley;
 
-namespace UIInfoSuite.Infrastructure
+namespace UIInfoSuite2.Infrastucture
 {
     public sealed class IconHandler
     {

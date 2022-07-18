@@ -3,9 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
-using System;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     public class ModOptionsElement
     {

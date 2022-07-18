@@ -1,7 +1,7 @@
 ﻿using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     class ModConfig
     {
