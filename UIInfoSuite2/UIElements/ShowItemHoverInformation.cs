@@ -234,7 +234,7 @@ namespace UIInfoSuite.UIElements
                 }
 
                 // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
-                if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject !is Furniture)
+                if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject is not Furniture)
                 {
                     foreach (var requiredBundle in _prunedRequiredBundles)
                     {
