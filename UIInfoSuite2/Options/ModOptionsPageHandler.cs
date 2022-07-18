@@ -134,8 +134,9 @@ namespace UIInfoSuite.Options
 
         private void OnButtonLeftClicked(object sender, EventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu
-                && !GameMenu.forcePreventClose) // Do not activate when an action is being remapped
+            if (Game1.activeClickableMenu is GameMenu gameMenu
+                && !GameMenu.forcePreventClose // Do not activate when an action is being remapped
+                && gameMenu.GetCurrentPage().readyToClose())
             {
                 SetActiveClickableMenuToModOptionsPage();
                 Game1.playSound("smallSelect");
@@ -147,7 +148,8 @@ namespace UIInfoSuite.Options
             // Remove from old menu
             if (e.OldMenu != null)
             {
-                _helper.Events.Display.RenderedActiveMenu -= DrawButton;
+                _helper.Events.Display.RenderingActiveMenu -= OnRenderingMenu;
+                _helper.Events.Display.RenderedActiveMenu -= OnRenderedMenu;
                 if (_modOptionsPageButton != null)
                     _modOptionsPageButton.OnLeftClicked -= OnButtonLeftClicked;
 
@@ -167,7 +169,8 @@ namespace UIInfoSuite.Options
                     _modOptionsPageButton = new ModOptionsPageButton(_helper.Events);
                 }
 
-                _helper.Events.Display.RenderedActiveMenu += DrawButton;
+                _helper.Events.Display.RenderingActiveMenu += OnRenderingMenu;
+                _helper.Events.Display.RenderedActiveMenu += OnRenderedMenu;
                 _modOptionsPageButton.OnLeftClicked += OnButtonLeftClicked;
                 List<IClickableMenu> tabPages = newMenu.pages;
 
@@ -182,25 +185,35 @@ namespace UIInfoSuite.Options
                 menu.currentTab = _modOptionsTabPageNumber;
         }
 
-        private void DrawButton(object sender, EventArgs e)
+        private void OnRenderingMenu(object sender, RenderingActiveMenuEventArgs e)
+        {
+            if (_showPersonalConfigButton && Game1.activeClickableMenu is GameMenu gameMenu) {
+                // Draw our tab icon behind the menu even if it is dimmed by the menu's transparent background,
+                // so that it still displays during transitions eg. when a letter is viewed in the collections tab
+                DrawButton(gameMenu);
+            }
+        }
+
+        private void OnRenderedMenu(object sender, RenderedActiveMenuEventArgs e)
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu &&
                 gameMenu.currentTab != 3 && // Do not render when the map is showing
-                !GameMenu.forcePreventClose && // Do not render when an action is being remapped
+                // Do not render if a letter is open in the collection's page
+                !(gameMenu.currentTab == 5 && gameMenu.GetCurrentPage() is CollectionsPage cPage && cPage.letterviewerSubMenu != null) &&
                 _showPersonalConfigButton) // Only render when it is enabled in the config.json
             {
-                if (gameMenu.currentTab == _modOptionsTabPageNumber)
-                {
-                    _modOptionsPageButton.yPositionOnScreen = Game1.activeClickableMenu.yPositionOnScreen + 24;
-                }
-                else
-                {
-                    _modOptionsPageButton.yPositionOnScreen = Game1.activeClickableMenu.yPositionOnScreen + 16;
-                }
-                _modOptionsPageButton.draw(Game1.spriteBatch);
+                DrawButton(gameMenu);
 
-                //Might need to render hover text here
+                // Draw the game menu's hover text again so it displays above our tab
+                if (!gameMenu.hoverText.Equals(""))
+                    IClickableMenu.drawHoverText(Game1.spriteBatch, gameMenu.hoverText, Game1.smallFont);
             }
+        }
+
+        private void DrawButton(GameMenu gameMenu)
+        {
+            _modOptionsPageButton.yPositionOnScreen = gameMenu.yPositionOnScreen + (gameMenu.currentTab == _modOptionsTabPageNumber ? 24 : 16);
+            _modOptionsPageButton.draw(Game1.spriteBatch);
         }
     }
 }
