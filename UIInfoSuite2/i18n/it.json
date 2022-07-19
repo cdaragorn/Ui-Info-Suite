@@ -1,0 +1,73 @@
+{
+  //GUI - Billboard
+  "Billboard": "Cartellone",
+  "Calendar": "Calendario",
+  //GUI - Seed shop
+  "HarvestPrice": "Prezzo raccolto",
+  //Production
+  "Days": "giorni",
+  "Hours": "ore",
+  "Minutes": "minuti",
+  //Harvest
+  "DaysToMature": "giorni per maturare",
+  "ReadyToHarvest": "Pronto per essere raccolto!",
+  //Display icons - General
+  "TodaysRecipe": "Ricetta di oggi: ",
+  "TravelingMerchantIsInTown": "Mercante viaggiatore è in città!",
+  "RainNextDay": "Domani pioverà",
+  "ThunderstormNextDay": "Ci sarà un temporale domani",
+  "SnowNextDay": "Domani nevicherà",
+  "IslandRainNextDay": "Domani pioverà nell'isola",
+  "IslandThunderstormNextDay": "Ci sarà un temporale domani nell'isola",
+  "DaysUntilToolIsUpgraded": "{0} giorni finchè {1} sarà migliorato",
+  "ToolIsFinishedBeingUpgraded": "{0} è completo!",
+  "NpcBirthday": "Compleanno di {0}",
+  "RobinBuildingStatus": "Robin completerà il tuo nuovo edificio in {0} giorno(i)",
+  // Display icons - Foragables
+  "CanFindSalmonberry": "Oggi puoi trovare Salmonberries",
+  "CanFindBlackberry": "Oggi puoi trovare More",
+  "CanFindHazelnut": "Oggi puoi trovare Nocciole sugli alberi",
+  //Display icons - Luck
+  "DailyLuckValue": "La tua fortuna giornaliera è {0}",
+  "FeelingLucky": "Ti senti fortunato!!",
+  "LuckyButNotTooLucky": "Ti senti abbastanza fortunato",
+  "NotFeelingLuckyAtAll": "Non ti senti per niente fortunato oggi...",
+  "MaybeStayHome": "Forse dovresti restare a casa oggi...",
+  "LuckStatus1": "Ti senti fortunato!",
+  "LuckStatus2": "Ti senti abbastanza fortunato!",
+  "LuckStatus3": "Il giorno è nelle tue mani",
+  "LuckStatus4": "Gli spiriti sono neutrali oggi",
+  "LuckStatus5": "La fortuna non sarà dalla tua parte oggi",
+  "LuckStatus6": "Forse dovresti restare a casa oggi...",
+  //Settings - General
+  "ShowLevelUpAnimation": "Mostra animazione di nuovo livello",
+  "ShowExperienceBar": "Mostra barra dell'esperienza",
+  "AllowExperienceBarToFadeOut": "Permetti alla barra dell'esperienza di scomparire",
+  "ShowExperienceGain": "Mostra guadagno esperienza",
+  "ShowLocationOfTownsPeople": "Mostra cittadini nella mappa",
+  "ShowAnimalsNeedPets": "Mostra quando gli animali vogliono essere accarezzati",
+  "HideAnimalPetOnMaxFriendship": "Nascondi quando l'amicizia è al massimo",
+  "ShowCropAndBarrelTooltip": "Mostra tempo raccolto e barili",
+  "ShowItemEffectRanges": "Mostra area spaventapasseri e spruzzatore",
+  "ShowExtraItemInformation": "Mostra informazioni oggetto",
+  "ShowHarvestPricesInShop": "Mostra prezzi raccolto del mercato",
+  //Settings - Tabs info
+  "DisplayCalendarAndBillboard": "Mostra bottone Calendario/Cartellone",
+  "ShowHeartFills": "Mostra riempimento cuori",
+  "ShowTodaysGifts": "Mostra i regali fatti oggi",
+  //Settings - Show icons
+  "ShowBirthdayIcon": "Mostra icona compleanno",
+  "HideBirthdayIfFullFriendShip": "Nascondi quando l'amicizia è al massimo",
+  "ShowTravelingMerchant": "Mostra mercante viaggiatore",
+  "HideMerchantWhenVisited": "Nascondi quando visitato",
+  "ShowRainyDay": "Mostra giorni di pioggia",
+  "ShowWhenNewRecipesAreAvailable": "Mostra quando sono disponibili nuove ricette",
+  "ShowToolUpgradeStatus": "Mostra status di miglioramento dell'utensile",
+  "ShowRobinBuildingStatusIcon": "Mostra status di costruzione di Robin",
+  "ShowLuckIcon": "Mostra icona fortuna",
+  "ShowExactValue": "Mostra valore esatto",
+  "ShowSeasonalBerry": "Mostra foraggiabili di stagione",
+  "ShowSeasonalBerryHazelnut": "Mostra Nocciole sugli alberi",
+  //Others
+  "LevelUp": "Nuovo livello"
+}
