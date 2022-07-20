@@ -10,14 +10,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class ShowItemEffectRanges : IDisposable
+    internal class ShowItemEffectRanges : IDisposable
     {
         #region Properties
-        private readonly PerScreen<List<Point>> _effectiveArea = new PerScreen<List<Point>>(createNewState: () => new List<Point>());
+        private readonly PerScreen<List<Point>> _effectiveArea = new(createNewState: () => new List<Point>());
 
-        private readonly Mutex _mutex = new Mutex();
+        private readonly Mutex _mutex = new();
 
         private readonly IModHelper _helper;
         #endregion
@@ -189,7 +189,7 @@ namespace UIInfoSuite.UIElements
                 }
             }
         }
-        
+
         private void AddTilesToHighlightedArea(int[][] tileMap, int xPos = 0, int yPos = 0)
         {
             int xOffset = tileMap.Length / 2;

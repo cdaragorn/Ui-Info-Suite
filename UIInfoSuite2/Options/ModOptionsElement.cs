@@ -3,9 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
-using System;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     public class ModOptionsElement
     {
@@ -19,7 +18,7 @@ namespace UIInfoSuite.Options
 
         protected readonly ModOptionsElement _parent;
 
-        public Rectangle Bounds { get { return _bounds; } }
+        public Rectangle Bounds => _bounds;
 
         public ModOptionsElement(string label, int whichOption = -1, ModOptionsElement parent = null)
         {

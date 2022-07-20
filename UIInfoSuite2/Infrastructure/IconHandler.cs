@@ -1,21 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewValley;
 using StardewModdingAPI.Utilities;
+using StardewValley;
 using System;
 
-namespace UIInfoSuite.Infrastructure
+namespace UIInfoSuite2.Infrastructure
 {
     public sealed class IconHandler
     {
-        public static IconHandler Handler { get; }
+        public static IconHandler Handler { get; } = new();
 
-        static IconHandler()
-        {
-            if (Handler == null)
-                Handler = new IconHandler();
-        }
-
-        private readonly PerScreen<int> _amountOfVisibleIcons = new PerScreen<int>();
+        private readonly PerScreen<int> _amountOfVisibleIcons = new();
 
         private IconHandler()
         {

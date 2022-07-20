@@ -5,18 +5,18 @@ using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class ShowToolUpgradeStatus : IDisposable
+    internal class ShowToolUpgradeStatus : IDisposable
     {
         #region Properties
-        private readonly PerScreen<Rectangle> _toolTexturePosition = new PerScreen<Rectangle>();
-        private readonly PerScreen<string> _hoverText = new PerScreen<string>();
-        private readonly PerScreen<Tool> _toolBeingUpgraded = new PerScreen<Tool>();
-        private readonly PerScreen<ClickableTextureComponent> _toolUpgradeIcon = new PerScreen<ClickableTextureComponent>();
+        private readonly PerScreen<Rectangle> _toolTexturePosition = new();
+        private readonly PerScreen<string> _hoverText = new();
+        private readonly PerScreen<Tool> _toolBeingUpgraded = new();
+        private readonly PerScreen<ClickableTextureComponent> _toolUpgradeIcon = new();
 
         private readonly IModHelper _helper;
         #endregion

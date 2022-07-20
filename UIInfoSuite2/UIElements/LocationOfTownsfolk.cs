@@ -11,19 +11,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
-using UIInfoSuite.Options;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
+using UIInfoSuite2.Options;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class LocationOfTownsfolk : IDisposable
+    internal class LocationOfTownsfolk : IDisposable
     {
         #region Properties
         private SocialPage _socialPage;
         private string[] _friendNames;
-        private List<NPC> _townsfolk = new List<NPC>();
-        private List<OptionsCheckbox> _checkboxes = new List<OptionsCheckbox>();
+        private List<NPC> _townsfolk = new();
+        private List<OptionsCheckbox> _checkboxes = new();
 
         private readonly ModOptions _options;
         private readonly IModHelper _helper;
@@ -31,7 +31,7 @@ namespace UIInfoSuite.UIElements
         private const int SocialPanelWidth = 190;
         private const int SocialPanelXOffset = 160;
 
-        private static readonly Dictionary<string, KeyValuePair<int, int>> _mapLocations = new Dictionary<string, KeyValuePair<int, int>>()
+        private static readonly Dictionary<string, KeyValuePair<int, int>> _mapLocations = new()
         {
             { "HarveyRoom", new KeyValuePair<int, int>(677, 304) },
             { "BathHouse_Pool", new KeyValuePair<int, int>(576, 60) },
@@ -216,7 +216,7 @@ namespace UIInfoSuite.UIElements
             {
                 OptionsCheckbox checkbox = _checkboxes[i];
                 var rect = new Rectangle(checkbox.bounds.X, checkbox.bounds.Y, checkbox.bounds.Width, checkbox.bounds.Height);
-                if(e.Button == SButton.ControllerX)
+                if (e.Button == SButton.ControllerX)
                 {
                     rect.Width += SocialPanelWidth + Game1.activeClickableMenu.width;
                 }
@@ -351,8 +351,8 @@ namespace UIInfoSuite.UIElements
 
                 xTile.Map map = character.currentLocation.Map;
 
-                float xScale = (float)areaWidth / (float)map.DisplayWidth;
-                float yScale = (float)areaHeight / (float)map.DisplayHeight;
+                float xScale = areaWidth / (float)map.DisplayWidth;
+                float yScale = areaHeight / (float)map.DisplayHeight;
 
                 float scaledX = character.position.X * xScale;
                 float scaledY = character.position.Y * yScale;
@@ -367,7 +367,7 @@ namespace UIInfoSuite.UIElements
 
         private static void DrawQuestsForNPC(NPC character, int x, int y)
         {
-            foreach (var quest in Game1.player.questLog.Where(q => q.accepted.Value && q.dailyQuest.Value && ! q.completed.Value))
+            foreach (var quest in Game1.player.questLog.Where(q => q.accepted.Value && q.dailyQuest.Value && !q.completed.Value))
             {
                 bool isQuestTarget = false;
                 switch (quest.questType.Value)

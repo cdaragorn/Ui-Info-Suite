@@ -7,13 +7,13 @@ using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
     public class ModOptionsPage : IClickableMenu
     {
         private const int Width = 800;
 
-        private List<ClickableComponent> _optionSlots = new List<ClickableComponent>();
+        private List<ClickableComponent> _optionSlots = new();
         private List<ModOptionsElement> _options;
         private string _hoverText;
         private int _optionsSlotHeld;

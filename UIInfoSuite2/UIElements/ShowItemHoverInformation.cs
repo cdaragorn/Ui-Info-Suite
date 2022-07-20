@@ -11,16 +11,16 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class ShowItemHoverInformation : IDisposable
+    internal class ShowItemHoverInformation : IDisposable
     {
-        private readonly Dictionary<string, List<KeyValuePair<int, int>>> _prunedRequiredBundles = new Dictionary<string, List<KeyValuePair<int, int>>>();
+        private readonly Dictionary<string, List<KeyValuePair<int, int>>> _prunedRequiredBundles = new();
         private readonly ClickableTextureComponent _bundleIcon =
-            new ClickableTextureComponent(
+            new(
                 "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
                 "",
@@ -29,7 +29,7 @@ namespace UIInfoSuite.UIElements
                 new Rectangle(331, 374, 15, 14),
                 Game1.pixelZoom);
         private readonly ClickableTextureComponent _museumIcon =
-            new ClickableTextureComponent(
+            new(
                 "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
                 "",
@@ -38,7 +38,7 @@ namespace UIInfoSuite.UIElements
                 Game1.getCharacterFromName("Gunther").GetHeadShot(),
                 Game1.pixelZoom);
         private readonly ClickableTextureComponent _shippingBottomIcon =
-            new ClickableTextureComponent(
+            new(
                 "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
                 "",
@@ -47,7 +47,7 @@ namespace UIInfoSuite.UIElements
                 new Rectangle(526, 218, 30, 22),
                 Game1.pixelZoom);
         private readonly ClickableTextureComponent _shippingTopIcon =
-            new ClickableTextureComponent(
+            new(
                 "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
                 "",
@@ -56,7 +56,7 @@ namespace UIInfoSuite.UIElements
                 new Rectangle(134, 236, 30, 15),
                 Game1.pixelZoom);
 
-        private readonly PerScreen<Item> _hoverItem = new PerScreen<Item>();
+        private readonly PerScreen<Item> _hoverItem = new();
         private CommunityCenter _communityCenter;
         private LibraryMuseum _libraryMuseum;
 
@@ -516,7 +516,7 @@ namespace UIInfoSuite.UIElements
 
         private static Vector2 DrawHoverText(SpriteBatch batch, string text, SpriteFont font, int xOffset = 0, int yOffset = 0, int moneyAmountToDisplayAtBottom = -1, string boldTitleText = null, int healAmountToDisplay = -1, string[] buffIconsToDisplay = null, Item hoveredItem = null)
         {
-            Vector2 result = Vector2.Zero;
+            Vector2 result;
 
             if (string.IsNullOrEmpty(text))
             {
@@ -748,7 +748,7 @@ namespace UIInfoSuite.UIElements
                         Game1.textColor);
                     yPos += (int)font.MeasureString(Game1.parseText(meleeWeapon.Description, Game1.smallFont, Game1.tileSize * 4 + Game1.tileSize / 4)).Y;
 
-                    if ((meleeWeapon as Tool).IndexOfMenuItemView != 47)
+                    if (meleeWeapon.IndexOfMenuItemView != 47)
                     {
                         Utility.drawWithShadow(
                             batch,

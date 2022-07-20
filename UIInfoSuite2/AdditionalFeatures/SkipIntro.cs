@@ -1,10 +1,10 @@
-﻿using StardewModdingAPI;
+﻿using System;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using System;
 
-namespace UIInfoSuite.AdditionalFeatures
+namespace UIInfoSuite2.AdditionalFeatures
 {
     public class SkipIntro
     {

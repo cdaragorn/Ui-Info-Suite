@@ -5,11 +5,11 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using UIInfoSuite.Infrastructure;
+using UIInfoSuite2.Infrastructure;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
-    class ModOptionsPageButton : IClickableMenu
+    internal class ModOptionsPageButton : IClickableMenu
     {
 
         public Rectangle Bounds { get; }

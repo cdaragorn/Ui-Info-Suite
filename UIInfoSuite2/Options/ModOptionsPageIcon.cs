@@ -1,8 +1,8 @@
 ﻿using StardewValley.Menus;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
-    class ModOptionsPageIcon : IClickableMenu
+    internal class ModOptionsPageIcon : IClickableMenu
     {
 
 

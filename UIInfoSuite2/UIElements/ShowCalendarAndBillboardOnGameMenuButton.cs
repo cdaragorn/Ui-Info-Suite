@@ -8,15 +8,15 @@ using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class ShowCalendarAndBillboardOnGameMenuButton : IDisposable
+    internal class ShowCalendarAndBillboardOnGameMenuButton : IDisposable
     {
         #region Properties
-        private readonly PerScreen<ClickableTextureComponent> _showBillboardButton = new PerScreen<ClickableTextureComponent>(createNewState: () =>
+        private readonly PerScreen<ClickableTextureComponent> _showBillboardButton = new(createNewState: () =>
             new ClickableTextureComponent(
                 new Rectangle(0, 0, 99, 60),
                 Game1.content.Load<Texture2D>(Path.Combine("Maps", "summer_town")),
@@ -25,8 +25,8 @@ namespace UIInfoSuite.UIElements
 
         private readonly IModHelper _helper;
 
-        private readonly PerScreen<Item> _hoverItem = new PerScreen<Item>();
-        private readonly PerScreen<Item> _heldItem = new PerScreen<Item>();
+        private readonly PerScreen<Item> _hoverItem = new();
+        private readonly PerScreen<Item> _heldItem = new();
         #endregion
 
         #region Lifecycle
@@ -108,7 +108,7 @@ namespace UIInfoSuite.UIElements
             if (_showBillboardButton.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
                 string hoverText = Game1.getMouseX() <
-                                _showBillboardButton.Value.bounds.X + _showBillboardButton.Value.bounds.Width / 2 ? 
+                                _showBillboardButton.Value.bounds.X + _showBillboardButton.Value.bounds.Width / 2 ?
                     LanguageKeys.Calendar : LanguageKeys.Billboard;
                 IClickableMenu.drawHoverText(
                     Game1.spriteBatch,

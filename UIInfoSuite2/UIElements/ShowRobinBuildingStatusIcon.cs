@@ -1,25 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Menus;
 using System;
-using Microsoft.Xna.Framework.Graphics;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
-using StardewValley.Buildings;
-using StardewModdingAPI.Utilities;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class ShowRobinBuildingStatusIcon : IDisposable
+    internal class ShowRobinBuildingStatusIcon : IDisposable
     {
         #region Properties
 
         private bool _IsBuildingInProgress;
-        Rectangle? _buildingIconSpriteLocation;
+        private Rectangle? _buildingIconSpriteLocation;
         private string _hoverText;
-        private PerScreen<ClickableTextureComponent> _buildingIcon = new PerScreen<ClickableTextureComponent>();
+        private PerScreen<ClickableTextureComponent> _buildingIcon = new();
         private Texture2D _robinIconSheet;
 
         private readonly IModHelper _helper;

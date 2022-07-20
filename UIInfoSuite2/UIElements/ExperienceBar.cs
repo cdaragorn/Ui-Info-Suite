@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,44 +8,49 @@ using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Tools;
-using UIInfoSuite.Compatibility;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using UIInfoSuite2.Compatibility;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
     public class ExperienceBar : IDisposable
     {
-        public interface LevelExtenderEvents
+        public interface ILevelExtenderEvents
         {
-            event EventHandler OnXPChanged;
+            event EventHandler OnXpChanged;
         }
 
         private const int MaxBarWidth = 175;
 
-        private readonly PerScreen<int[]> _currentExperience = new PerScreen<int[]>(createNewState: () => new int[5]);
-        private readonly PerScreen<int[]> _currentLevelExtenderExperience = new PerScreen<int[]>(createNewState: () => new int[5]);
-        private readonly PerScreen<List<ExperiencePointDisplay>> _experiencePointDisplays = new PerScreen<List<ExperiencePointDisplay>>(createNewState: () => new List<ExperiencePointDisplay>());
+        private readonly PerScreen<int[]> _currentExperience = new(createNewState: () => new int[5]);
+        private readonly PerScreen<int[]> _currentLevelExtenderExperience = new(createNewState: () => new int[5]);
+        private readonly PerScreen<List<ExperiencePointDisplay>> _experiencePointDisplays = new(createNewState: () => new List<ExperiencePointDisplay>());
 
         private readonly TimeSpan _levelUpPauseTime = TimeSpan.FromSeconds(2);
-        private readonly PerScreen<int> _hideLevelUpTicks = new PerScreen<int>();
+        private readonly PerScreen<int> _hideLevelUpTicks = new();
 
-        private static Rectangle _farmingIconRectangle = new Rectangle(10, 428, 10, 10);
-        private static Rectangle _fishingIconRectangle = new Rectangle(20, 428, 10, 10);
-        private static Rectangle _foragingIconRectangle = new Rectangle(60, 428, 10, 10);
-        private static Rectangle _miningIconRectangle = new Rectangle(30, 428, 10, 10);
-        private static Rectangle _combatIconRectangle = new Rectangle(120, 428, 10, 10);
+        private static Rectangle _farmingIconRectangle = new(10, 428, 10, 10);
+        private static Rectangle _fishingIconRectangle = new(20, 428, 10, 10);
+        private static Rectangle _foragingIconRectangle = new(60, 428, 10, 10);
+        private static Rectangle _miningIconRectangle = new(30, 428, 10, 10);
+        private static Rectangle _combatIconRectangle = new(120, 428, 10, 10);
 
         private readonly Color _iconColor = Color.White;
-        private readonly PerScreen<Color> _experienceFillColor = new PerScreen<Color>(createNewState: () => Color.Blue);
-        private readonly PerScreen<Rectangle> _experienceIconPosition = new PerScreen<Rectangle>(createNewState: () => _farmingIconRectangle);
-        private readonly PerScreen<Rectangle> _levelUpIconRectangle = new PerScreen<Rectangle>(createNewState: () => _combatIconRectangle);
-        private readonly PerScreen<Item> _previousItem = new PerScreen<Item>();
-        private readonly PerScreen<bool> _experienceBarShouldBeVisible = new PerScreen<bool>();
-        private readonly PerScreen<bool> _shouldDrawLevelUp = new PerScreen<bool>(createNewState: () => false);
+        private readonly PerScreen<Color> _experienceFillColor = new(createNewState: () => Color.Blue);
+        private readonly PerScreen<Rectangle> _experienceIconPosition = new(createNewState: () => _farmingIconRectangle);
+        private readonly PerScreen<Rectangle> _levelUpIconRectangle = new(createNewState: () => _combatIconRectangle);
+        private readonly PerScreen<Item> _previousItem = new();
+        private readonly PerScreen<bool> _experienceBarShouldBeVisible = new();
+        private readonly PerScreen<bool> _shouldDrawLevelUp = new(createNewState: () => false);
 
         private readonly TimeSpan _timeBeforeExperienceBarFades = TimeSpan.FromSeconds(8);
-        private readonly PerScreen<int> _hideExperienceBarTicks = new PerScreen<int>();
+        private readonly PerScreen<int> _hideExperienceBarTicks = new();
 
         private SoundEffectInstance _soundEffect;
         private bool _allowExperienceBarToFadeOut = true;
@@ -61,10 +61,10 @@ namespace UIInfoSuite.UIElements
 
         private readonly ILevelExtender _levelExtenderAPI;
 
-        private readonly PerScreen<int> _currentSkillLevel = new PerScreen<int>(createNewState: () => 0);
-        private readonly PerScreen<int> _experienceRequiredToLevel = new PerScreen<int>(createNewState: () => -1);
-        private readonly PerScreen<int> _experienceFromPreviousLevels = new PerScreen<int>(createNewState: () => -1);
-        private readonly PerScreen<int> _experienceEarnedThisLevel = new PerScreen<int>(createNewState: () => -1);
+        private readonly PerScreen<int> _currentSkillLevel = new(createNewState: () => 0);
+        private readonly PerScreen<int> _experienceRequiredToLevel = new(createNewState: () => -1);
+        private readonly PerScreen<int> _experienceFromPreviousLevels = new(createNewState: () => -1);
+        private readonly PerScreen<int> _experienceEarnedThisLevel = new(createNewState: () => -1);
 
         public ExperienceBar(IModHelper helper)
         {

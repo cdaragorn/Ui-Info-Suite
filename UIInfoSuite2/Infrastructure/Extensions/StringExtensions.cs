@@ -1,6 +1,6 @@
-﻿namespace UIInfoSuite.Infrastructure.Extensions
+﻿namespace UIInfoSuite2.Infrastructure.Extensions
 {
-    static class StringExtensions
+    internal static class StringExtensions
     {
         public static int SafeParseInt32(this string s)
         {

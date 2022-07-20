@@ -1,21 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
-using StardewModdingAPI.Utilities;
 using System;
-using UIInfoSuite.Infrastructure;
-using UIInfoSuite.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastructure;
+using UIInfoSuite2.Infrastructure.Extensions;
 
-namespace UIInfoSuite.UIElements
+namespace UIInfoSuite2.UIElements
 {
-    class LuckOfDay : IDisposable
+    internal class LuckOfDay : IDisposable
     {
         #region Properties
-        private readonly PerScreen<string> _hoverText = new PerScreen<string>(createNewState: () => string.Empty);
-        private readonly PerScreen<Color> _color = new PerScreen<Color>(createNewState: () => new Color(Color.White.ToVector4()));
-        private readonly PerScreen<ClickableTextureComponent> _icon = new PerScreen<ClickableTextureComponent>(createNewState: () => new ClickableTextureComponent("",
+        private readonly PerScreen<string> _hoverText = new(createNewState: () => string.Empty);
+        private readonly PerScreen<Color> _color = new(createNewState: () => new Color(Color.White.ToVector4()));
+        private readonly PerScreen<ClickableTextureComponent> _icon = new(createNewState: () => new ClickableTextureComponent("",
                 new Rectangle(Tools.GetWidthInPlayArea() - 134,
                     290,
                     10 * Game1.pixelZoom,
@@ -30,12 +30,12 @@ namespace UIInfoSuite.UIElements
 
         private bool ShowExactValue { get; set; }
 
-        private static readonly Color Luck1Color = new Color(87, 255, 106, 255);
-        private static readonly Color Luck2Color = new Color(148, 255, 210, 255);
-        private static readonly Color Luck3Color = new Color(246, 255, 145, 255);
-        private static readonly Color Luck4Color = new Color(255, 255, 255, 255);
-        private static readonly Color Luck5Color = new Color(255, 155, 155, 255);
-        private static readonly Color Luck6Color = new Color(165, 165, 165, 204);
+        private static readonly Color Luck1Color = new(87, 255, 106, 255);
+        private static readonly Color Luck2Color = new(148, 255, 210, 255);
+        private static readonly Color Luck3Color = new(246, 255, 145, 255);
+        private static readonly Color Luck4Color = new(255, 255, 255, 255);
+        private static readonly Color Luck5Color = new(255, 155, 155, 255);
+        private static readonly Color Luck6Color = new(165, 165, 165, 204);
         #endregion
 
         #region Lifecycle

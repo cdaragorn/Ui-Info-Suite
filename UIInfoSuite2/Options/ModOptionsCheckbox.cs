@@ -3,16 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using UIInfoSuite.Infrastructure.Extensions;
 
-namespace UIInfoSuite.Options
+namespace UIInfoSuite2.Options
 {
-    class ModOptionsCheckbox : ModOptionsElement
+    internal class ModOptionsCheckbox : ModOptionsElement
     {
         private readonly Action<bool> _toggleOptionsDelegate;
         private bool _isChecked;
-        private readonly Func<bool> _getOption;
         private readonly Action<bool> _setOption;
         private bool _canClick => !(_parent is ModOptionsCheckbox) || (_parent as ModOptionsCheckbox)._isChecked;
 
@@ -26,10 +23,9 @@ namespace UIInfoSuite.Options
             : base(label, whichOption, parent)
         {
             _toggleOptionsDelegate = toggleOptionDelegate;
-            _getOption = getOption;
             _setOption = setOption;
 
-            _isChecked = _getOption();
+            _isChecked = getOption();
             _toggleOptionsDelegate(_isChecked);
         }
 
