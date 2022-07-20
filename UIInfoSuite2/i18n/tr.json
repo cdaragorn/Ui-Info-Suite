@@ -24,9 +24,9 @@
   "NpcBirthday": "Doğum günü: {0}",
   "RobinBuildingStatus": "Robin inşaatı {0} günde bitirecek",
   // Display icons - Foragables
-  "CanFindSalmonberry": "Bugün Ağaç Çileği bulabilirsin", // TODO
-  "CanFindBlackberry": "Bugün Yabani Böğürtlen bulabilirsin", // TODO
-  "CanFindHazelnut": "Bugün ağaçlarda Fındık bulabilirsin", // TODO
+  "CanFindSalmonberry": "Bugün Ağaç Çileği bulabilirsin",
+  "CanFindBlackberry": "Bugün Yabani Böğürtlen bulabilirsin",
+  "CanFindHazelnut": "Bugün ağaçlarda Fındık bulabilirsin",
   //Display icons - Luck
   "DailyLuckValue": "Bugünkü şans değerin {0}",
   "FeelingLucky": "Şanslı hissediyorsun!!",
