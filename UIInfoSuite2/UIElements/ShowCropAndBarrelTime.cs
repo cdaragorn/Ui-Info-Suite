@@ -93,6 +93,9 @@ namespace UIInfoSuite2.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
+            if (Game1.activeClickableMenu != null)
+                return;
+
             var currentTileBuilding = _currentTileBuilding.Value;
             var currentTile = _currentTile.Value;
             var terrain = _terrain.Value;
