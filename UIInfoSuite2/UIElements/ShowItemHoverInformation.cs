@@ -294,18 +294,18 @@ namespace UIInfoSuite2.UIElements
                     windowHeight += 40;
 
                 int windowY = Game1.getMouseY() + 20;
-                windowY = Game1.viewport.Height - windowHeight - windowY < 0 ? Game1.viewport.Height - windowHeight : windowY;
+                int windowX = Game1.getMouseX() - 25 - windowWidth;
 
-                int windowX = Game1.getMouseX() - windowWidth - 25;
+                // Adjust the tooltip's position when it overflows
+                var safeArea = Utility.getSafeArea();
 
-                if (Game1.getMouseX() > Game1.viewport.Width - 300)
-                {
-                    windowX = Game1.viewport.Width - windowWidth - 350;
-                }
-                else if (windowX < 0)
-                {
+                if (windowY + windowHeight > safeArea.Bottom)
+                    windowY = safeArea.Bottom - windowHeight;
+
+                if (Game1.getMouseX() + 300 > safeArea.Right)
+                    windowX = safeArea.Right - 350 - windowWidth;
+                else if (windowX < safeArea.Left)
                     windowX = Game1.getMouseX() + 350;
-                }
 
                 Vector2 windowPos = new Vector2(windowX, windowY);
                 Vector2 currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
