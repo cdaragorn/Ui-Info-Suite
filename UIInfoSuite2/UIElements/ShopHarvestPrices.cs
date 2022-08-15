@@ -43,49 +43,20 @@ namespace UIInfoSuite2.UIElements
             if (!(menu.hoveredItem is Item hoverItem)) return;
 
             // draw shop harvest prices
-            bool isSeeds = hoverItem is StardewValley.Object hoverObject && hoverObject.Type == "Seeds";
-            bool isSapling = hoverItem.Name.EndsWith("Sapling");
-
             int value = 0;
-            if (isSeeds
-                && hoverItem.Name != "Mixed Seeds"
-                && hoverItem.Name != "Winter Seeds")
+            if (hoverItem is StardewValley.Object seedsObject
+                && seedsObject.Category == StardewValley.Object.SeedsCategory
+                && seedsObject.ParentSheetIndex != Crop.mixedSeedIndex)
             {
-
-                bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
-                if (itemHasPriceInfo)
+                if (seedsObject.isSapling())
                 {
-                    StardewValley.Object temp =
-                        new StardewValley.Object(
-                            new Debris(
-                                new Crop(
-                                        hoverItem.ParentSheetIndex,
-                                        0,
-                                        0)
-                                    .indexOfHarvest.Value,
-                                Game1.player.position,
-                                Game1.player.position).chunkType.Value,
-                            1);
-                    value = temp.Price;
+                    var tree = new StardewValley.TerrainFeatures.FruitTree(seedsObject.ParentSheetIndex);
+                    value = new StardewValley.Object(tree.indexOfFruit.Value, 1).sellToStorePrice();
                 }
                 else
                 {
-                    switch (hoverItem.ParentSheetIndex)
-                    {
-                        case 802: value = 75; break;    // Cactus
-                    }
-                }
-            }
-            else if (isSapling)
-            {
-                switch (hoverItem.ParentSheetIndex)
-                {
-                    case 628: value = 80; break;    // Cherry
-                    case 629: value = 50; break;    // Apricot
-                    case 630:                       // Orange
-                    case 633: value = 100; break;   // Apple
-                    case 631:                       // Peach
-                    case 632: value = 140; break;   // Pomegranate
+                    var crop = new Crop(seedsObject.ParentSheetIndex, 0, 0);
+                    value = new StardewValley.Object(crop.indexOfHarvest.Value, 1).sellToStorePrice();
                 }
             }
 

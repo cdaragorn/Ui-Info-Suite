@@ -248,17 +248,20 @@ namespace UIInfoSuite2.UIElements
                     }
                 }
 
-                if (_hoverItem.Value is StardewValley.Object
-                    && itemPrice > 0
-                    && (_hoverItem.Value as StardewValley.Object).Type == "Seeds"
-                    && (_hoverItem.Value.Name != "Mixed Seeds" || _hoverItem.Value.Name != "Winter Seeds"))
+                if (_hoverItem.Value is StardewValley.Object seedsObject
+                    && seedsObject.Category == StardewValley.Object.SeedsCategory
+                    && seedsObject.ParentSheetIndex != Crop.mixedSeedIndex)
                 {
-                    StardewValley.Object itemObject = new StardewValley.Object(
-                            new Debris(new Crop(_hoverItem.Value.ParentSheetIndex, 0, 0).indexOfHarvest.Value,
-                            Game1.player.position,
-                            Game1.player.position).chunkType.Value,
-                            1);
-                    cropPrice = itemObject.Price;
+                    if (seedsObject.isSapling())
+                    {
+                        var tree = new StardewValley.TerrainFeatures.FruitTree(seedsObject.ParentSheetIndex);
+                        cropPrice = new StardewValley.Object(tree.indexOfFruit.Value, 1).sellToStorePrice();
+                    }
+                    else
+                    {
+                        var crop = new Crop(seedsObject.ParentSheetIndex, 0, 0);
+                        cropPrice = new StardewValley.Object(crop.indexOfHarvest.Value, 1).sellToStorePrice();
+                    }
                 }
 
                 // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
