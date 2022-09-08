@@ -43,22 +43,7 @@ namespace UIInfoSuite2.UIElements
             if (!(menu.hoveredItem is Item hoverItem)) return;
 
             // draw shop harvest prices
-            int value = 0;
-            if (hoverItem is StardewValley.Object seedsObject
-                && seedsObject.Category == StardewValley.Object.SeedsCategory
-                && seedsObject.ParentSheetIndex != Crop.mixedSeedIndex)
-            {
-                if (seedsObject.isSapling())
-                {
-                    var tree = new StardewValley.TerrainFeatures.FruitTree(seedsObject.ParentSheetIndex);
-                    value = new StardewValley.Object(tree.indexOfFruit.Value, 1).sellToStorePrice();
-                }
-                else
-                {
-                    var crop = new Crop(seedsObject.ParentSheetIndex, 0, 0);
-                    value = new StardewValley.Object(crop.indexOfHarvest.Value, 1).sellToStorePrice();
-                }
-            }
+            int value = Tools.GetHarvestPrice(hoverItem);
 
             if (value > 0)
             {
