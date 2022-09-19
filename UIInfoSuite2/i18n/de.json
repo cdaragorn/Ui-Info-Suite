@@ -24,9 +24,9 @@
   "NpcBirthday": "{0}'s Geburtstag",
   "RobinBuildingStatus": "Robin wird in {0} Tage(n) mit dem Bau fertig sein",
   // Display icons - Foragables
-  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
-  "CanFindBlackberry": "You can find Blackberries today", // TODO
-  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
+  "CanFindSalmonberry": "Du kannst heute Lachsbeeren finden",
+  "CanFindBlackberry": "Du kannst heute Brombeeren finden",
+  "CanFindHazelnut": "Du kannst heute Haselnüsse auf Bäumen finden",
   //Display icons - Luck
   "DailyLuckValue": "Dein heutiges Glück ist {0}",
   "FeelingLucky": "Heute ist dein absoluter Glückstag!",
@@ -66,8 +66,8 @@
   "ShowRobinBuildingStatusIcon": "Zeige Robins Bau-Status",
   "ShowLuckIcon": "Zeige Glücksymbol",
   "ShowExactValue": "Zeige exakten Wert",
-  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
-  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
+  "ShowSeasonalBerry": "Zeige saisonale Früchte",
+  "ShowSeasonalBerryHazelnut": "Zeige Haselnüsse auf Bäumen",
   //Others
   "LevelUp": "Level aufgestiegen"
 }
