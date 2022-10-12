@@ -28,15 +28,7 @@ namespace UIInfoSuite2.UIElements
                 Game1.mouseCursors,
                 new Rectangle(331, 374, 15, 14),
                 Game1.pixelZoom);
-        private readonly ClickableTextureComponent _museumIcon =
-            new(
-                "",
-                new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-                "",
-                Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate", new object[0]),
-                Game1.getCharacterFromName("Gunther").Sprite.Texture,
-                Game1.getCharacterFromName("Gunther").GetHeadShot(),
-                Game1.pixelZoom);
+        private readonly ClickableTextureComponent _museumIcon;
         private readonly ClickableTextureComponent _shippingBottomIcon =
             new(
                 "",
@@ -67,6 +59,25 @@ namespace UIInfoSuite2.UIElements
         public ShowItemHoverInformation(IModHelper helper)
         {
             _helper = helper;
+
+            var gunther = Game1.getCharacterFromName("Gunther");
+            if (gunther == null) {
+                ModEntry.MonitorObject.Log($"{this.GetType().Name}: Could not find Gunther in the game, creating one for ourselves.", LogLevel.Warn);
+                gunther = new NPC() {
+                    Name = "Gunther",
+                    Age = 0,
+                    Sprite = new AnimatedSprite("Characters\\Gunther"),
+                };
+            }
+
+            _museumIcon = new(
+                "",
+                new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
+                "",
+                Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate", new object[0]),
+                gunther.Sprite.Texture,
+                gunther.GetHeadShot(),
+                Game1.pixelZoom);
         }
 
         public void ToggleOption(bool showItemHoverInformation)
