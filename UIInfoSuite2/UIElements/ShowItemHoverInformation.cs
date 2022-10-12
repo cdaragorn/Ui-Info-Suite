@@ -62,7 +62,7 @@ namespace UIInfoSuite2.UIElements
 
             var gunther = Game1.getCharacterFromName("Gunther");
             if (gunther == null) {
-                ModEntry.MonitorObject.Log($"{this.GetType().Name}: Could not find Gunther in the game, creating one for ourselves.", LogLevel.Warn);
+                ModEntry.MonitorObject.Log($"{this.GetType().Name}: Could not find Gunther in the game, creating a fake one for ourselves.", LogLevel.Warn);
                 gunther = new NPC() {
                     Name = "Gunther",
                     Age = 0,
