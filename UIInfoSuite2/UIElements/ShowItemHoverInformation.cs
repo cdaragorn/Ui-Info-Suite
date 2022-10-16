@@ -236,9 +236,9 @@ namespace UIInfoSuite2.UIElements
         private void DrawAdvancedTooltip()
         {
 
-            if (_hoverItem.Value != null &&
-                _hoverItem.Value.Name != "Scythe" &&
-              !(_hoverItem.Value is StardewValley.Tools.FishingRod))
+            if (_hoverItem.Value != null
+                && !(_hoverItem.Value is StardewValley.Tools.MeleeWeapon weapon && weapon.isScythe())
+                && !(_hoverItem.Value is StardewValley.Tools.FishingRod))
             {
                 int itemPrice = 0;
                 int stackPrice = 0;
