@@ -18,6 +18,7 @@ namespace UIInfoSuite2.Options
         private ModOptionsPage _modOptionsPage;
         private readonly IModHelper _helper;
         private readonly bool _showPersonalConfigButton;
+        private List<int> _instancesWithOptionsPageOpen = new();
 
         private int _modOptionsTabPageNumber;
 
@@ -26,6 +27,7 @@ namespace UIInfoSuite2.Options
             if (showPersonalConfigButton)
             {
                 helper.Events.Display.MenuChanged += ToggleModOptions;
+                GameRunner.instance.Window.ClientSizeChanged += OnWindowClientSizeChanged;
             }
             _helper = helper;
             _showPersonalConfigButton = showPersonalConfigButton;
@@ -111,6 +113,34 @@ namespace UIInfoSuite2.Options
         {
             foreach (var item in _elementsToDispose)
                 item.Dispose();
+        }
+
+        private void OnWindowClientSizeChanged(object sender, EventArgs e)
+        {
+            ModEntry.MonitorObject.Log("ClientSizeChanged!", LogLevel.Info);
+            GameRunner.instance.ExecuteForInstances((Game1 instance) => {
+                if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == _modOptionsTabPageNumber)
+                {
+                    gameMenu.currentTab = GameMenu.optionsTab;
+                    _instancesWithOptionsPageOpen.Add(instance.instanceId);
+                    _helper.Events.Display.WindowResized += OnWindowResized;
+                }
+            });
+        }
+
+        private void OnWindowResized(object sender, EventArgs e)
+        {
+            ModEntry.MonitorObject.Log("WindowResized!", LogLevel.Info);
+            _helper.Events.Display.WindowResized -= OnWindowResized;
+            GameRunner.instance.ExecuteForInstances((Game1 instance) => {
+                if (_instancesWithOptionsPageOpen.Remove(instance.instanceId))
+                {
+                    if (Game1.activeClickableMenu is GameMenu gameMenu)
+                    {
+                        gameMenu.currentTab = _modOptionsTabPageNumber;
+                    }
+                }
+            });
         }
 
         private void OnButtonLeftClicked(object sender, EventArgs e)
