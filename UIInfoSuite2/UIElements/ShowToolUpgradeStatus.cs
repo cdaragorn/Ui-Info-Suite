@@ -77,7 +77,16 @@ namespace UIInfoSuite2.UIElements
                         Game1.toolSpriteSheet,
                         _toolTexturePosition.Value,
                         2.5f);
-                _toolUpgradeIcon.Value.draw(Game1.spriteBatch);
+
+                if (_toolBeingUpgraded.Value.GetType().FullName == "LoveOfCooking.Objects.CookingTool")
+                {
+                    // Special case for the Love of Cooking mod's frying pan
+                    _toolBeingUpgraded.Value.drawInMenu(e.SpriteBatch, iconPosition.ToVector2() - new Vector2(16) / 2, 2.5f / Game1.pixelZoom);
+                }
+                else
+                {
+                    _toolUpgradeIcon.Value.draw(e.SpriteBatch);
+                }
             }
         }
 
