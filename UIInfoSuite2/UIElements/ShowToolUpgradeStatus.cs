@@ -78,10 +78,18 @@ namespace UIInfoSuite2.UIElements
                         _toolTexturePosition.Value,
                         2.5f);
 
+                // Special case for the Love of Cooking mod's frying pan
                 if (_toolBeingUpgraded.Value.GetType().FullName == "LoveOfCooking.Objects.CookingTool")
                 {
-                    // Special case for the Love of Cooking mod's frying pan
-                    _toolBeingUpgraded.Value.drawInMenu(e.SpriteBatch, iconPosition.ToVector2() - new Vector2(16) / 2, 2.5f / Game1.pixelZoom);
+                    try
+                    {
+                        _toolBeingUpgraded.Value.drawInMenu(e.SpriteBatch, iconPosition.ToVector2() - new Vector2(16) / 2, 2.5f / Game1.pixelZoom);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModEntry.MonitorObject.LogOnce("An error occured while drawing the frying pan icon from the Love of Cooking mod.", LogLevel.Error);
+                        ModEntry.MonitorObject.Log(ex.ToString());
+                    }
                 }
                 else
                 {
