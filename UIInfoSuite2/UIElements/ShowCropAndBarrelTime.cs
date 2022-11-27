@@ -49,37 +49,33 @@ namespace UIInfoSuite2.UIElements
             if (!e.IsMultipleOf(4))
                 return;
 
+            _currentTileBuilding.Value = null;
+            _currentTile.Value = null;
+            _terrain.Value = null;
+
             var gamepadTile = Game1.player.CurrentTool != null ? Utility.snapToInt(Game1.player.GetToolLocation() / Game1.tileSize) : Utility.snapToInt(Game1.player.GetGrabTile());
             var mouseTile = Game1.currentCursorTile;
 
             var tile = (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0) ? gamepadTile : mouseTile;
 
-            // get tile under cursor
-            _currentTileBuilding.Value = Game1.currentLocation is BuildableGameLocation buildableLocation
-                ? buildableLocation.getBuildingAt(tile)
-                : null;
+            if (Game1.currentLocation is BuildableGameLocation buildableLocation)
+                _currentTileBuilding.Value = buildableLocation.getBuildingAt(tile);
 
             if (Game1.currentLocation != null)
             {
                 if (Game1.currentLocation.Objects != null && Game1.currentLocation.Objects.TryGetValue(tile, out var currentObject))
                     _currentTile.Value = currentObject;
-                else
-                    _currentTile.Value = null;
 
                 if (Game1.currentLocation.terrainFeatures != null && Game1.currentLocation.terrainFeatures.TryGetValue(tile, out var terrain))
                     _terrain.Value = terrain;
-                else
-                {
-                    if (_currentTile.Value is IndoorPot pot && pot.hoeDirt.Value != null)
+                
+                // Make sure that _terrain is null before overwriting it because Tea Saplings are added to terrainFeatures and not IndoorPot.bush
+                if (_terrain.Value == null && _currentTile.Value is IndoorPot pot) {
+                    if (pot.hoeDirt.Value != null)
                         _terrain.Value = pot.hoeDirt.Value;
-                    else
-                        _terrain.Value = null;
+                    if (pot.bush.Value != null)
+                        _terrain.Value = pot.bush.Value;
                 }
-            }
-            else
-            {
-                _currentTile.Value = null;
-                _terrain.Value = null;
             }
         }
 
@@ -310,6 +306,32 @@ namespace UIInfoSuite2.UIElements
                             Game1.spriteBatch,
                             text,
                             Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
+                }
+                else if (terrain is Bush bush)
+                {
+                    // Tea saplings (which are actually bushes)
+                    if (bush.size == 3)
+                    {
+                        int teaAge = bush.getAge();
+                        if (teaAge < 20)
+                        {
+                            string text = new StardewValley.Object(251, 1).DisplayName
+                                + $"\n{20 - teaAge} "
+                                + _helper.SafeGetString(LanguageKeys.DaysToMature);
+
+                            if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)
+                            {
+                                var tilePosition = Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(new Vector2(terrain.currentTileLocation.X, terrain.currentTileLocation.Y) * Game1.tileSize));
+                                overrideX = (int)(tilePosition.X + Utility.ModifyCoordinateForUIScale(32));
+                                overrideY = (int)(tilePosition.Y + Utility.ModifyCoordinateForUIScale(32));
+                            }
+
+                            IClickableMenu.drawHoverText(
+                                Game1.spriteBatch,
+                                text,
+                                Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
+                        }
+                    }
                 }
             }
         }
