@@ -51,9 +51,10 @@ namespace UIInfoSuite2.UIElements
                 _helper.Events.GameLoop.UpdateTicked += UpdateTicked;
             }
         }
-        public void ToggleDisableOnMaxFirendshipOption(bool hideOnMaxFriendship)
+        public void ToggleDisableOnMaxFriendshipOption(bool hideOnMaxFriendship)
         {
             HideOnMaxFriendship = hideOnMaxFriendship;
+            ToggleOption(true);
         }
         #endregion
 

@@ -68,6 +68,7 @@ namespace UIInfoSuite2.UIElements
         public void ToggleShowExactValueOption(bool showExactValue)
         {
             ShowExactValue = showExactValue;
+            ToggleOption(true);
         }
         #endregion
 

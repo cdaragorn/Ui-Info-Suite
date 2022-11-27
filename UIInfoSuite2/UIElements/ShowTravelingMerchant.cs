@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
+using System;
+using System.Linq;
 using UIInfoSuite2.Infrastructure;
 using UIInfoSuite2.Infrastructure.Extensions;
 
@@ -55,6 +55,7 @@ namespace UIInfoSuite2.UIElements
         public void ToggleHideWhenVisitedOption(bool hideWhenVisited)
         {
             HideWhenVisited = hideWhenVisited;
+            ToggleOption(true);
         }
         #endregion
 

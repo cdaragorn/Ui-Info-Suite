@@ -53,6 +53,7 @@ namespace UIInfoSuite2.UIElements
         public void ToggleDisableOnMaxFriendshipOption(bool hideBirthdayIfFullFriendShip)
         {
             HideBirthdayIfFullFriendShip = hideBirthdayIfFullFriendShip;
+            ToggleOption(true);
         }
 
         #endregion
@@ -105,7 +106,7 @@ namespace UIInfoSuite2.UIElements
                 }
             }
         }
-        
+
         private void CheckForBirthday()
         {
             _birthdayNPCs.Value.Clear();
@@ -113,13 +114,14 @@ namespace UIInfoSuite2.UIElements
             {
                 foreach (var character in location.characters)
                 {
-                    if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth)) {
+                    if (character.isBirthday(Game1.currentSeason, Game1.dayOfMonth))
+                    {
                         Friendship? friendship = GetFriendshipWithNPC(character.Name);
                         if (friendship != null)
                         {
                             if (HideBirthdayIfFullFriendShip && friendship.Points >= Utility.GetMaximumHeartsForCharacter(character) * NPC.friendshipPointsPerHeartLevel)
                                 continue;
-                            
+
                             _birthdayNPCs.Value.Add(character);
                         }
 
