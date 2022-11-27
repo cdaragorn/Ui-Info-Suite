@@ -95,16 +95,10 @@ namespace UIInfoSuite2.Infrastructure
                 }
             }
 
-            if (Game1.activeClickableMenu is GameMenu gameMenu)
+            if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.GetCurrentPage() is InventoryPage inventory)
             {
-                foreach (var menu in gameMenu.pages)
-                {
-                    if (menu is InventoryPage inventory)
-                    {
-                        FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                        hoverItem = hoveredItemField.GetValue(inventory) as Item;
-                    }
-                }
+                FieldInfo hoveredItemField = typeof(InventoryPage).GetField("hoveredItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                hoverItem = hoveredItemField.GetValue(inventory) as Item;
             }
 
             if (Game1.activeClickableMenu is ItemGrabMenu itemMenu)
