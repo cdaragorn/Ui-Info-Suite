@@ -68,9 +68,10 @@ namespace UIInfoSuite2.UIElements
 
                 if (Game1.currentLocation.terrainFeatures != null && Game1.currentLocation.terrainFeatures.TryGetValue(tile, out var terrain))
                     _terrain.Value = terrain;
-                
+
                 // Make sure that _terrain is null before overwriting it because Tea Saplings are added to terrainFeatures and not IndoorPot.bush
-                if (_terrain.Value == null && _currentTile.Value is IndoorPot pot) {
+                if (_terrain.Value == null && _currentTile.Value is IndoorPot pot)
+                {
                     if (pot.hoeDirt.Value != null)
                         _terrain.Value = pot.hoeDirt.Value;
                     if (pot.bush.Value != null)
@@ -310,7 +311,7 @@ namespace UIInfoSuite2.UIElements
                 else if (terrain is Bush bush)
                 {
                     // Tea saplings (which are actually bushes)
-                    if (bush.size == 3)
+                    if (bush.size.Value == Bush.greenTeaBush)
                     {
                         int teaAge = bush.getAge();
                         if (teaAge < 20)
