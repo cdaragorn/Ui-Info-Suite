@@ -43,51 +43,7 @@ namespace UIInfoSuite2.UIElements
             if (!(menu.hoveredItem is Item hoverItem)) return;
 
             // draw shop harvest prices
-            bool isSeeds = hoverItem is StardewValley.Object hoverObject && hoverObject.Type == "Seeds";
-            bool isSapling = hoverItem.Name.EndsWith("Sapling");
-
-            int value = 0;
-            if (isSeeds
-                && hoverItem.Name != "Mixed Seeds"
-                && hoverItem.Name != "Winter Seeds")
-            {
-
-                bool itemHasPriceInfo = Tools.GetTruePrice(hoverItem) > 0;
-                if (itemHasPriceInfo)
-                {
-                    StardewValley.Object temp =
-                        new StardewValley.Object(
-                            new Debris(
-                                new Crop(
-                                        hoverItem.ParentSheetIndex,
-                                        0,
-                                        0)
-                                    .indexOfHarvest.Value,
-                                Game1.player.position,
-                                Game1.player.position).chunkType.Value,
-                            1);
-                    value = temp.Price;
-                }
-                else
-                {
-                    switch (hoverItem.ParentSheetIndex)
-                    {
-                        case 802: value = 75; break;    // Cactus
-                    }
-                }
-            }
-            else if (isSapling)
-            {
-                switch (hoverItem.ParentSheetIndex)
-                {
-                    case 628: value = 80; break;    // Cherry
-                    case 629: value = 50; break;    // Apricot
-                    case 630:                       // Orange
-                    case 633: value = 100; break;   // Apple
-                    case 631:                       // Peach
-                    case 632: value = 140; break;   // Pomegranate
-                }
-            }
+            int value = Tools.GetHarvestPrice(hoverItem);
 
             if (value > 0)
             {

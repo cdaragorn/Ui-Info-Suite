@@ -259,18 +259,7 @@ namespace UIInfoSuite2.UIElements
                     }
                 }
 
-                if (_hoverItem.Value is StardewValley.Object
-                    && itemPrice > 0
-                    && (_hoverItem.Value as StardewValley.Object).Type == "Seeds"
-                    && (_hoverItem.Value.Name != "Mixed Seeds" || _hoverItem.Value.Name != "Winter Seeds"))
-                {
-                    StardewValley.Object itemObject = new StardewValley.Object(
-                            new Debris(new Crop(_hoverItem.Value.ParentSheetIndex, 0, 0).indexOfHarvest.Value,
-                            Game1.player.position,
-                            Game1.player.position).chunkType.Value,
-                            1);
-                    cropPrice = itemObject.Price;
-                }
+                cropPrice = Tools.GetHarvestPrice(_hoverItem.Value);
 
                 // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
                 if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject is not Furniture)
