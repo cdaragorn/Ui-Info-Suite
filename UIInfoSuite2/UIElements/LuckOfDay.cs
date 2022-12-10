@@ -28,6 +28,7 @@ namespace UIInfoSuite2.UIElements
                 false));
         private readonly IModHelper _helper;
 
+        private bool Enabled { get; set; }
         private bool ShowExactValue { get; set; }
 
         private static readonly Color Luck1Color = new(87, 255, 106, 255);
@@ -51,6 +52,8 @@ namespace UIInfoSuite2.UIElements
 
         public void ToggleOption(bool showLuckOfDay)
         {
+            Enabled = showLuckOfDay;
+
             _helper.Events.Player.Warped -= OnWarped;
             _helper.Events.Display.RenderingHud -= OnRenderingHud;
             _helper.Events.Display.RenderedHud -= OnRenderedHud;
@@ -68,7 +71,7 @@ namespace UIInfoSuite2.UIElements
         public void ToggleShowExactValueOption(bool showExactValue)
         {
             ShowExactValue = showExactValue;
-            ToggleOption(true);
+            ToggleOption(Enabled);
         }
         #endregion
 

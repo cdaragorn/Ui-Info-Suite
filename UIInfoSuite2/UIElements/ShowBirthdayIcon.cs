@@ -17,7 +17,9 @@ namespace UIInfoSuite2.UIElements
         #region Properties
         private readonly PerScreen<List<NPC>> _birthdayNPCs = new(() => new());
         private readonly PerScreen<List<ClickableTextureComponent>> _birthdayIcons = new(() => new());
-        public bool HideBirthdayIfFullFriendShip { get; set; }
+
+        private bool Enabled { get; set; }
+        private bool HideBirthdayIfFullFriendShip { get; set; }
         private readonly IModHelper _helper;
         #endregion
 
@@ -35,6 +37,8 @@ namespace UIInfoSuite2.UIElements
 
         public void ToggleOption(bool showBirthdayIcon)
         {
+            Enabled = showBirthdayIcon;
+
             _helper.Events.GameLoop.DayStarted -= OnDayStarted;
             _helper.Events.Display.RenderingHud -= OnRenderingHud;
             _helper.Events.Display.RenderedHud -= OnRenderedHud;
@@ -53,7 +57,7 @@ namespace UIInfoSuite2.UIElements
         public void ToggleDisableOnMaxFriendshipOption(bool hideBirthdayIfFullFriendShip)
         {
             HideBirthdayIfFullFriendShip = hideBirthdayIfFullFriendShip;
-            ToggleOption(true);
+            ToggleOption(Enabled);
         }
 
         #endregion
