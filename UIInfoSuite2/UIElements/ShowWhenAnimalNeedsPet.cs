@@ -19,7 +19,8 @@ namespace UIInfoSuite2.UIElements
         private readonly PerScreen<float> _yMovementPerDraw = new();
         private readonly PerScreen<float> _alpha = new();
 
-        public bool HideOnMaxFriendship { get; set; }
+        private bool Enabled { get; set; }
+        private bool HideOnMaxFriendship { get; set; }
 
         private readonly IModHelper _helper;
         #endregion
@@ -38,6 +39,8 @@ namespace UIInfoSuite2.UIElements
 
         public void ToggleOption(bool showWhenAnimalNeedsPet)
         {
+            Enabled = showWhenAnimalNeedsPet;
+
             _helper.Events.Player.Warped -= OnWarped;
             _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawAnimalHasProduct;
             _helper.Events.Display.RenderingHud -= OnRenderingHud_DrawNeedsPetTooltip;
@@ -54,7 +57,7 @@ namespace UIInfoSuite2.UIElements
         public void ToggleDisableOnMaxFriendshipOption(bool hideOnMaxFriendship)
         {
             HideOnMaxFriendship = hideOnMaxFriendship;
-            ToggleOption(true);
+            ToggleOption(Enabled);
         }
         #endregion
 
