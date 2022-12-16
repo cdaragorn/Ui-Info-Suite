@@ -105,6 +105,10 @@ namespace UIInfoSuite2.UIElements
 
             _showBillboardButton.Value = billboardButton;
             _showBillboardButton.Value.draw(Game1.spriteBatch);
+
+            // Draw the mouse again to display it over the billboard
+            Game1.activeClickableMenu.drawMouse(Game1.spriteBatch);
+
             if (_showBillboardButton.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
                 string hoverText = Game1.getMouseX() <
