@@ -1,73 +1,73 @@
 {
-  //GUI - Billboard
-  "Billboard": "Hirdetőtábla",
-  "Calendar": "Naptár",
-  //GUI - Seed shop
-  "HarvestPrice": "Ár learatásnál",
-  //Production
-  "Days": "nap",
-  "Hours": "óra",
-  "Minutes": "perc",
-  //Harvest
-  "DaysToMature": "nap a megnövésig",
-  "ReadyToHarvest": "Aratásra kész!",
-  //Display icons - General
-  "TodaysRecipe": "Mai recept: ",
-  "TravelingMerchantIsInTown": "Az utazó árus a városban van!",
-  "RainNextDay": "Holnap esni fog az eső",
-  "ThunderstormNextDay": "Holnap vihar lesz",
-  "SnowNextDay": "Holnap esni fog a hó",
-  "IslandRainNextDay": "Holnap esni fog az eső",
-  "IslandThunderstormNextDay": "Holnap vihar lesz",
-  "DaysUntilToolIsUpgraded": "{0} nap amíg {1} fejlesztése kész lesz",
-  "ToolIsFinishedBeingUpgraded": "{0} fejlesztése be lett fejezve!",
-  "NpcBirthday": "{0} születésnapja",
-  "RobinBuildingStatus": "Robin be fogja fejezni az új épületedet {0} nap múlva",
-  // Display icons - Foragables
-  "CanFindSalmonberry": "You can find Salmonberries today", // TODO
-  "CanFindBlackberry": "You can find Blackberries today", // TODO
-  "CanFindHazelnut": "You can find Hazelnuts on trees today", // TODO
-  //Display icons - Luck
-  "DailyLuckValue": "A mai szerencséd {0}",
-  "FeelingLucky": "Szerencsésnek érzed magad!",
-  "LuckyButNotTooLucky": "Szerencsésnek érzed magad... de nem nagyon!",
-  "NotFeelingLuckyAtAll": "Egyáltalán nem érzed szerencsésnek magad!",
-  "MaybeStayHome": "Talán ma otthon kéne maradnod!",
-  "LuckStatus1": "Szerencsésnek érzed magad!",
-  "LuckStatus2": "Ma egy kicsit szerencsésnek érzem magam!",
-  "LuckStatus3": "A nap a te kezedben van!",
-  "LuckStatus4": "A szellemek ma teljesen semlegesnek érzik magukat!",
-  "LuckStatus5": "A szerencse ma nem a te oldaladon áll!",
-  "LuckStatus6": "Talán ma otthon kéne maradnod!",
-  //Settings - General
-  "ShowLevelUpAnimation": "Mutasd a szintlépés animációt",
-  "ShowExperienceBar": "Mutasd a tapasztalati pont mérőt",
-  "AllowExperienceBarToFadeOut": "A tapasztalati pont mérő elhalványulhat",
-  "ShowExperienceGain": "Mutasd a tapasztalati pont szerzést",
-  "ShowLocationOfTownsPeople": "Mutasd a lakókat a térképen",
-  "ShowAnimalsNeedPets": "Mutasd ha az állatokat meg kell simogatni",
-  "HideAnimalPetOnMaxFriendship": "Rejtsd el, ha max szinten van",
-  "ShowCropAndBarrelTooltip": "Mutasd a termés és kézműves termék időket",
-  "ShowItemEffectRanges": "Mutasd a madárijesztő és öntöző távolságokat",
-  "ShowExtraItemInformation": "Mutasd a tárgyak információit",
-  "ShowHarvestPricesInShop": "Mutasd a boltban a learatási árakat",
-  //Settings - Tabs info
-  "DisplayCalendarAndBillboard": "Mutasd a hirdetőtábla/naptár gombot",
-  "ShowHeartFills": "Mutasd a szívek töltöttségét",
-  "ShowTodaysGifts": "Mutasd a ma adott ajándékokat",
-  //Settings - Show icons
-  "ShowBirthdayIcon": "Mutasd a szülinap ikont",
-  "HideBirthdayIfFullFriendShip": "Rejtsd el, ha max szinten van",
-  "ShowTravelingMerchant": "Mutasd az utazó árus ikont",
-  "HideMerchantWhenVisited": "Rejtsd el, amikor meglátogattad",
-  "ShowRainyDay": "Mutasd az esős napokat",
-  "ShowWhenNewRecipesAreAvailable": "Mutasd amikor új receptek elérhetőek",
-  "ShowToolUpgradeStatus": "Mutasd az eszközfejlesztések idejét",
-  "ShowRobinBuildingStatusIcon": "Mutasd Robin építési állapotát",
-  "ShowLuckIcon": "Mutasd a szerencse ikont",
-  "ShowExactValue": "Mutasd a pontos értéket",
-  "ShowSeasonalBerry": "Show seasonal forageables", // TODO
-  "ShowSeasonalBerryHazelnut": "Show hazelnuts on trees", // TODO
-  //Others
-  "LevelUp": "Szintlépés"
+	//GUI - Billboard
+	"Billboard": "Hirdetőtábla",
+	"Calendar": "Naptár",
+	//GUI - Seed shop
+	"HarvestPrice": "Betakarítási ár",
+	//Production
+	"Days": "nap",
+	"Hours": "óra",
+	"Minutes": "perc",
+	//Harvest
+	"DaysToMature": "nap a megérésig",
+	"ReadyToHarvest": "Aratásra kész!",
+	//Display icons - General
+	"TodaysRecipe": "Mai recept: ",
+	"TravelingMerchantIsInTown": "Az utazó kereskedő a városban van!",
+	"RainNextDay": "Holnap esni fog az eső",
+	"ThunderstormNextDay": "Holnap vihar lesz",
+	"SnowNextDay": "Holnap esni fog a hó",
+	"IslandRainNextDay": "Holnap a szigeten esni fog az eső",
+	"IslandThunderstormNextDay": "Holnap a szigeten vihar lesz",
+	"DaysUntilToolIsUpgraded": "{0} nap amíg a(z) {1} fejlesztése elkészül",
+	"ToolIsFinishedBeingUpgraded": "A(z) {0} fejlesztése be lett fejezve!",
+	"NpcBirthday": "{0} születésnapja",
+	"RobinBuildingStatus": "Robin {0} nap múlva fogja befejezni az új épületedet",
+	// Display icons - Foragables
+	"CanFindSalmonberry": "Ma díszszedret találhatsz",
+	"CanFindBlackberry": "Ma szedret találhatsz",
+	"CanFindHazelnut": "Ma mogyorót találhatsz a fákon",
+	//Display icons - Luck
+	"DailyLuckValue": "A napi szerencséd {0}",
+	"FeelingLucky": "Ma szerencsésnek érzed magad!",
+	"LuckyButNotTooLucky": "Ma szerencsésnek érzed magad... de nem túl szerencsésnek!",
+	"NotFeelingLuckyAtAll": "Ma egyáltalán nem érzed magad szerencsésnek!",
+	"MaybeStayHome": "Talán ma otthon kellene maradnod!",
+	"LuckStatus1": "Ma szerencsésnek érzed magad!",
+	"LuckStatus2": "Ma egy kicsit szerencsésnek érzed magad!",
+	"LuckStatus3": "A nap a te kezedben van!",
+	"LuckStatus4": "Ma a szellemek teljesen semlegesnek érzik magukat!",
+	"LuckStatus5": "Ma a szerencse nem a te oldaladon áll!",
+	"LuckStatus6": "Talán ma otthon kellene maradnod!",
+	//Settings - General
+	"ShowLevelUpAnimation": "Szintlépés animáció megjelenítés",
+	"ShowExperienceBar": "Tapasztalatpont mérő megjelenítés",
+	"AllowExperienceBarToFadeOut": "Tapasztalatpont mérő elhalványul",
+	"ShowExperienceGain": "Tapasztalatpont szerzés megjeleníté",
+	"ShowLocationOfTownsPeople": "Lakók megjelenítése a térképen",
+	"ShowAnimalsNeedPets": "'Állatokat meg kell simogatni' megjelenítés",
+	"HideAnimalPetOnMaxFriendship": "Maximális szívszint elrejtés",
+	"ShowCropAndBarrelTooltip": "Termés és kézműves termék idő megjelenítés",
+	"ShowItemEffectRanges": "Madárijesztő és öntöző távolság megjelenítés",
+	"ShowExtraItemInformation": "Tárgy információ megjelenítés",
+	"ShowHarvestPricesInShop": "Betakarítási ára megjelenítés a boltokban",
+	//Settings - Tabs info
+	"DisplayCalendarAndBillboard": "Hirdetőtábla/naptár gomb megjelenítés",
+	"ShowHeartFills": "Szív töltöttség megjelenítés",
+	"ShowTodaysGifts": "Ma ajándékozott ajándék megjelenítés",
+	//Settings - Show icons
+	"ShowBirthdayIcon": "Születésnap ikon megjelenítés",
+	"HideBirthdayIfFullFriendShip": "Maximális barátság elrejtés",
+	"ShowTravelingMerchant": "Utazó kereskedő ikon megjelenítés",
+	"HideMerchantWhenVisited": "Meglátogatáskor elrejtés",
+	"ShowRainyDay": "Esős nap megjelenítés",
+	"ShowWhenNewRecipesAreAvailable": "Új elérhető recept megjelenítés",
+	"ShowToolUpgradeStatus": "Eszközfejlesztési idő megjelenítés",
+	"ShowRobinBuildingStatusIcon": "Robin építési állapot megjelenítés",
+	"ShowLuckIcon": "Szerencse ikon megjelenítés",
+	"ShowExactValue": "Pontos érték megjelenítés",
+	"ShowSeasonalBerry": "Szezonális takarmánynövény megjelenítés",
+	"ShowSeasonalBerryHazelnut": "Mogyoró megjelenítés a fákon",
+	//Others
+	"LevelUp": "Szintlépés"
 }
