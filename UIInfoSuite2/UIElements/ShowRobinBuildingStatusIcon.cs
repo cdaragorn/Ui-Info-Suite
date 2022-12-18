@@ -109,19 +109,14 @@ namespace UIInfoSuite2.UIElements
 
         private void FindRobinSpritesheet()
         {
-            foreach (var location in Game1.locations)
+            Texture2D? foundTexture = Game1.getCharacterFromName("Robin")?.Sprite?.Texture;
+            if (foundTexture != null)
             {
-                foreach (var character in location.characters)
-                {
-                    if (character.Name == "Robin")
-                    {
-                        _robinIconSheet = character.Sprite.Texture;
-                        break;
-                    }
-                }
-
-                if (_robinIconSheet != null)
-                    break;
+                _robinIconSheet = foundTexture;
+            }
+            else
+            {
+                ModEntry.MonitorObject.Log($"{this.GetType().Name}: Could not find Robin spritesheet.", LogLevel.Warn);
             }
 
             _buildingIconSpriteLocation = new Rectangle(0, 195 + 1, 15, 15 - 1);    // 1px edits for better alignment with other icons
