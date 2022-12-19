@@ -123,6 +123,10 @@ namespace UIInfoSuite2.UIElements
                 if (_robinIconSheet != null)
                     break;
             }
+            if (_robinIconSheet == null)
+            {
+                ModEntry.MonitorObject.Log($"{this.GetType().Name}: Could not find Robin spritesheet.", LogLevel.Warn);
+            }
 
             _buildingIconSpriteLocation = new Rectangle(0, 195 + 1, 15, 15 - 1);    // 1px edits for better alignment with other icons
         }
