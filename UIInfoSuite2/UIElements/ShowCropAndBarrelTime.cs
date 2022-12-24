@@ -18,7 +18,7 @@ namespace UIInfoSuite2.UIElements
 {
     internal class ShowCropAndBarrelTime : IDisposable
     {
-        private readonly Dictionary<int, string> _indexOfCropNames = new();
+        private readonly Dictionary<string, string> _indexOfCropNames = new();
         private readonly PerScreen<StardewValley.Object> _currentTile = new();
         private readonly PerScreen<TerrainFeature> _terrain = new();
         private readonly PerScreen<Building> _currentTileBuilding = new();
@@ -159,9 +159,8 @@ namespace UIInfoSuite2.UIElements
 
                     hoverText.AppendLine(currentTile.heldObject.Value.DisplayName);
 
-                    if (currentTile is Cask)
+                    if (currentTile is Cask currentCask)
                     {
-                        Cask currentCask = currentTile as Cask;
                         hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
@@ -221,9 +220,8 @@ namespace UIInfoSuite2.UIElements
             }
             else if (terrain != null)
             {
-                if (terrain is HoeDirt)
+                if (terrain is HoeDirt hoeDirt)
                 {
-                    HoeDirt hoeDirt = terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
                         !hoeDirt.crop.dead.Value)
                     {
@@ -246,27 +244,19 @@ namespace UIInfoSuite2.UIElements
                             }
                         }
 
-                        if (hoeDirt.crop.indexOfHarvest.Value > 0)
+                        string? harvestName = this.GetCropHarvestName(hoeDirt.crop);
+                        if (!String.IsNullOrEmpty(harvestName))
                         {
-                            int itemId = hoeDirt.crop.isWildSeedCrop() ? hoeDirt.crop.whichForageCrop.Value : hoeDirt.crop.indexOfHarvest.Value;
-                            string hoverText = _indexOfCropNames.SafeGet(itemId);
-                            if (string.IsNullOrEmpty(hoverText))
-                            {
-                                hoverText = new StardewValley.Object(itemId, 1).DisplayName;
-                                _indexOfCropNames.Add(itemId, hoverText);
-                            }
-
-                            StringBuilder finalHoverText = new StringBuilder();
-                            finalHoverText.Append(hoverText).Append(": ");
+                            StringBuilder hoverText = new StringBuilder(harvestName).Append(": ");
                             if (num > 0)
                             {
-                                finalHoverText.Append(num).Append(" ")
+                                hoverText.Append(num).Append(" ")
                                     .Append(_helper.SafeGetString(
                                         LanguageKeys.Days));
                             }
                             else
                             {
-                                finalHoverText.Append(_helper.SafeGetString(
+                                hoverText.Append(_helper.SafeGetString(
                                     LanguageKeys.ReadyToHarvest));
                             }
 
@@ -279,14 +269,13 @@ namespace UIInfoSuite2.UIElements
 
                             IClickableMenu.drawHoverText(
                                 Game1.spriteBatch,
-                                finalHoverText.ToString(),
+                                hoverText.ToString(),
                                 Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                         }
                     }
                 }
-                else if (terrain is FruitTree)
+                else if (terrain is FruitTree tree)
                 {
-                    FruitTree tree = terrain as FruitTree;
                     var text = new StardewValley.Object(new Debris(tree.indexOfFruit.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                     if (tree.daysUntilMature.Value > 0)
                     {
@@ -334,6 +323,48 @@ namespace UIInfoSuite2.UIElements
                         }
                     }
                 }
+            }
+        }
+
+        string? GetCropHarvestName(Crop crop)
+        {
+            if (crop.indexOfHarvest.Value > 0)
+            {
+                int itemId = crop.isWildSeedCrop() ? crop.whichForageCrop.Value : crop.indexOfHarvest.Value;
+                string key = ":" + itemId;
+                if (!_indexOfCropNames.TryGetValue(key, out string? harvestName)) {
+                    harvestName = new StardewValley.Object(itemId, 1).DisplayName;
+                    _indexOfCropNames.Add(key, harvestName);
+                }
+                return harvestName;
+            }
+            else if (crop.GetType().FullName == "DynamicGameAssets.Game.CustomCrop")
+            {
+                string? cropId = null;
+                try
+                {
+                    cropId = ModEntry.DgaHelper!.GetFullId(crop)!;
+                    string key = "dga:" + cropId;
+                    if (!_indexOfCropNames.TryGetValue(key, out string? harvestName)) {
+                        var harvestCrop = ModEntry.DgaHelper!.GetCropHarvest(crop, checkType: false);
+                        if (harvestCrop == null)
+                            return null;
+                        
+                        harvestName = harvestCrop.DisplayName;
+                        _indexOfCropNames.Add(key, harvestName);
+                    }
+                    return harvestName;
+                }
+                catch (Exception e)
+                {
+                    ModEntry.MonitorObject.LogOnce($"An error occured while retrieving the crop harvest name for {cropId ?? "unknownCrop"}.", LogLevel.Error);
+                    ModEntry.MonitorObject.Log(e.ToString(), LogLevel.Debug);
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
     }

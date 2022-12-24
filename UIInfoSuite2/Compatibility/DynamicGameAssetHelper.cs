@@ -3,13 +3,16 @@ using System.Collections;
 using StardewValley;
 using UIInfoSuite2.Infrastructure.Extensions;
 using StardewModdingAPI;
+using SObject = StardewValley.Object;
 
 namespace UIInfoSuite2.Compatibility
 {
     public class DynamicGameAssetsHelper
     {
         public IDynamicGameAssetsApi Api { get; init; }
-        private IReflectionHelper Reflection;
+        private IReflectionHelper Reflection { get; init; }
+
+        private IReflectedMethod? modFindMethod;
 
         public DynamicGameAssetsHelper(IDynamicGameAssetsApi api, IModHelper helper)
         {
@@ -17,43 +20,74 @@ namespace UIInfoSuite2.Compatibility
             this.Reflection = helper.Reflection;
         }
 
-        public int GetHarvestPrice(Item item)
+        /// dga is an object of any type within the DynamicGameAssets assembly
+        public object? FindDataPack(object dga, string fullId)
         {
-            // Code without reflection:
-            // 
-            //   string? itemPlants = item.Data?.Plants;
-            //   if (itemPlants == null)
-            //       return 0;
-            //
-            //   CropPackData cropData = DynamicGameAssets.Mod.Find(itemPlants);
-            //   
-            //   List<HarvestedDropData>? harvestDrops = null;
-            //   foreach (var phase in cropData.Phases)
-            //   {
-            //       List<HarvestedDropData> phaseDrops = phase.HarvestedDrops;
-            //       if (phaseDrops!.Count > 0)
-            //           harvestDrops = phaseDrops;
-            //   }
-            //   if (harvestDrops!.Count > 1)
-            //      throw new Exception("DGA crops with multiple drops on the last harvest are not supported");
-            //
-            //   var possibleDrops = harvestDrops[0].Item;
-            //   if (possibleDrops.Count != 1)
-            //       throw new Exception("DGA crops with random drops are not supported");
-            //
-            //   ItemAbstraction dropItem = possibleDrops[0].Value;
-            //   string dropItemType = dropItem.Type.ToString();
-            //   string dropItemValue = dropItem.Value;
-            //
-            // Code with SMAPI-like reflection:
+            if (modFindMethod == null)
+            {
+                string dgaAQName = dga.GetType().AssemblyQualifiedName!;
+                string modAQName = "DynamicGameAssets.Mod" + dgaAQName.Substring(dgaAQName.IndexOf(','));
+                modFindMethod = Reflection.GetMethod(Type.GetType(modAQName)!, "Find");
+            }
 
-            string? itemPlants = Reflection.GetProperty<string?>(Reflection.GetPropertyGetter<object?>(item, "Data").GetValue()!, "Plants").GetValue();
+            return modFindMethod.Invoke<object?>(fullId);
+        }
+
+        public object? GetCropData(object customCrop, bool checkType = true)
+        {
+            if (checkType && customCrop.GetType().FullName != "DynamicGameAssets.Game.CustomCrop")
+                throw new ArgumentException(nameof(customCrop));
+
+            return Reflection.GetPropertyGetter<object?>(customCrop, "Data").GetValue();
+        }
+
+        public string? GetFullId(object dgaItem, bool checkType = true)
+        {
+            if (checkType && dgaItem.GetType().BaseType?.FullName == "DynamicGameAssets.Game.IDGAItem")
+                throw new ArgumentException(nameof(dgaItem));
+
+            return Reflection.GetProperty<string?>(dgaItem, "FullId").GetValue();
+        }
+
+        public SObject? GetCropHarvest(object customCrop, bool checkType = true)
+        {
+            if (checkType && customCrop.GetType().FullName != "DynamicGameAssets.Game.CustomCrop")
+                throw new ArgumentException(nameof(customCrop));
+
+            var cropData = this.GetCropData(customCrop, checkType: false);
+            if (cropData == null)
+                return null;
+            
+            return this.GetCropPackHarvest(cropData);
+        }
+
+        public SObject? GetSeedsHarvest(Item item, bool checkType = true)
+        {
+            if (checkType && item.GetType().FullName != "DynamicGameAssets.Game.CustomObject")
+                throw new ArgumentException(nameof(item));
+            
+            if (!(item is StardewValley.Object seedsObject && seedsObject.Category == StardewValley.Object.SeedsCategory))
+                return null;
+
+            var itemData = Reflection.GetPropertyGetter<object?>(item, "Data").GetValue();
+            if (itemData == null)
+                return null;
+            
+            string? itemPlants = Reflection.GetProperty<string?>(itemData, "Plants").GetValue();
             if (itemPlants == null)
-                return 0;
+                return null;
 
-            string itemAQName = item.GetType().AssemblyQualifiedName!; // eg. "DynamicGameAssets.Game.CustomObject, DynamicGameAssets, ..."
-            string modAQName = "DynamicGameAssets.Mod" + itemAQName.Substring(itemAQName.IndexOf(','));
-            var cropData = Reflection.GetMethod(Type.GetType(modAQName)!, "Find").Invoke<object?>(itemPlants)!;
+            var cropData = this.FindDataPack(item, itemPlants);
+            if (cropData == null)
+                return null;
+
+            return this.GetCropPackHarvest(cropData);
+        }
+
+        public SObject? GetCropPackHarvest(object cropData, bool checkType = true)
+        {
+            if (checkType && cropData.GetType().FullName != "DynamicGameAssets.PackData.CropPackData")
+                throw new ArgumentException(nameof(cropData));
 
             var cropPhases = Reflection.GetPropertyGetter<IList>(cropData, "Phases").GetValue();
 
@@ -66,7 +100,7 @@ namespace UIInfoSuite2.Compatibility
                     harvestDrops = phaseDrops;
             }
             if (harvestDrops == null)
-                return 0;
+                return null;
             if (harvestDrops.Count > 1)
                 throw new Exception("DGA crops with multiple drops on the last harvest are not supported");
 
@@ -77,21 +111,13 @@ namespace UIInfoSuite2.Compatibility
             var dropItem = Reflection.GetPropertyGetter<object?>(possibleDrops[0]!, "Value").GetValue()!;
             string dropItemType = Reflection.GetPropertyGetter<Enum>(dropItem, "Type").GetValue()!.ToString()!;
             string dropItemValue = Reflection.GetPropertyGetter<string?>(dropItem, "Value").GetValue()!;
-            // End of SMAPI-like reflection code.
             
             if (dropItemType == "DGAItem")
-            {
-                var drop = this.Api.SpawnDGAItem(dropItemValue);
-                return Reflection.GetMethod(drop, "sellToStorePrice").Invoke<int>(Type.Missing);
-            }
+                return (StardewValley.Object) this.Api.SpawnDGAItem(dropItemValue);
             else if (dropItemType == "VanillaItem")
-            {
-                return new StardewValley.Object(int.Parse(dropItemValue), 1).sellToStorePrice();
-            }
+                return new StardewValley.Object(int.Parse(dropItemValue), 1);
             else
-            {
                 throw new Exception("Harvest types other than DGAItem and VanillaItem are not supported");
-            }
         }
     }
 }
