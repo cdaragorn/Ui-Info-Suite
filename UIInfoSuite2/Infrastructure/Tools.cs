@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
+using SObject = StardewValley.Object;
 
 namespace UIInfoSuite2.Infrastructure
 {
@@ -43,20 +44,16 @@ namespace UIInfoSuite2.Infrastructure
             }
         }
 
-        public static int GetTruePrice(Item item)
+        public static int GetSellToStorePrice(Item item)
         {
-            int truePrice = 0;
-
-            if (item is StardewValley.Object objectItem)
+            if (item is SObject obj)
             {
-                truePrice = objectItem.sellToStorePrice() * 2;
+                return obj.sellToStorePrice();        
             }
-            else if (item is Item thing)
+            else
             {
-                truePrice = thing.salePrice();
+                return item.salePrice() / 2;
             }
-
-            return truePrice;
         }
 
         public static SObject? GetHarvest(Item item)

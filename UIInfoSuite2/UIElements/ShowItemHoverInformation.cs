@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -240,27 +240,21 @@ namespace UIInfoSuite2.UIElements
                 && !(_hoverItem.Value is StardewValley.Tools.MeleeWeapon weapon && weapon.isScythe())
                 && !(_hoverItem.Value is StardewValley.Tools.FishingRod))
             {
-                int itemPrice = 0;
+                int itemPrice = Tools.GetSellToStorePrice(_hoverItem.Value);
+
                 int stackPrice = 0;
-                int cropPrice = 0;
-                int truePrice = Tools.GetTruePrice(_hoverItem.Value);
-                int windowWidth;
-                string requiredBundleName = null;
+                if (itemPrice > 0 && _hoverItem.Value.Stack > 1)
+                    stackPrice = itemPrice * _hoverItem.Value.Stack;
+                
+                int cropPrice = Tools.GetHarvestPrice(_hoverItem.Value);
 
-                //if (_lastHoverItem == null || _hoverItem.Value.Name != _lastHoverItem.Name || _hoverItem.Value.Stack != lastStackSize)
-                //{
-                if (truePrice > 0)
-                {
-                    itemPrice = truePrice / 2;
+                bool notDonatedYet = _libraryMuseum.isItemSuitableForDonation(_hoverItem.Value);
 
-                    if (_hoverItem.Value.Stack > 1)
-                    {
-                        stackPrice = (itemPrice * _hoverItem.Value.Stack);
-                    }
-                }
-
-                cropPrice = Tools.GetHarvestPrice(_hoverItem.Value);
-
+                bool notShippedYet = (_hoverItem.Value is StardewValley.Object obj
+                    && obj.countsForShippedCollection()
+                    && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex));
+                
+                string? requiredBundleName = null;
                 // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
                 if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject is not Furniture)
                 {
@@ -273,6 +267,8 @@ namespace UIInfoSuite2.UIElements
                         }
                     }
                 }
+
+                int windowWidth;
 
                 int bundleTextWidth = 0;
                 if (!string.IsNullOrEmpty(requiredBundleName))
@@ -307,10 +303,10 @@ namespace UIInfoSuite2.UIElements
                 else if (windowX < safeArea.Left)
                     windowX = Game1.getMouseX() + 350;
 
-                Vector2 windowPos = new Vector2(windowX, windowY);
+                Point windowPos = new Point(windowX, windowY);
                 Vector2 currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
 
-                if (itemPrice > 0)
+                if (itemPrice > 0 || stackPrice > 0 || cropPrice > 0 || !String.IsNullOrEmpty(requiredBundleName))
                 {
                     IClickableMenu.drawTextureBox(
                         Game1.spriteBatch,
@@ -321,7 +317,10 @@ namespace UIInfoSuite2.UIElements
                         windowWidth,
                         windowHeight,
                         Color.White);
+                }
 
+                if (itemPrice > 0)
+                {
                     Game1.spriteBatch.Draw(
                         Game1.debrisSpriteSheet,
                         new Vector2(currentDrawPos.X, currentDrawPos.Y + 4),
@@ -346,86 +345,86 @@ namespace UIInfoSuite2.UIElements
                         Game1.textColor);
 
                     currentDrawPos.Y += 40;
-
-                    if (stackPrice > 0)
-                    {
-                        Game1.spriteBatch.Draw(
-                            Game1.debrisSpriteSheet,
-                            new Vector2(currentDrawPos.X, currentDrawPos.Y),
-                            Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-                            Color.White,
-                            0,
-                            new Vector2(8, 8),
-                            Game1.pixelZoom,
-                            SpriteEffects.None,
-                            0.95f);
-
-                        Game1.spriteBatch.Draw(
-                            Game1.debrisSpriteSheet,
-                            new Vector2(currentDrawPos.X, currentDrawPos.Y + 10),
-                            Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-                            Color.White,
-                            0,
-                            new Vector2(8, 8),
-                            Game1.pixelZoom,
-                            SpriteEffects.None,
-                            0.95f);
-
-                        Game1.spriteBatch.DrawString(
-                            Game1.smallFont,
-                            stackPrice.ToString(),
-                            new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
-                            Game1.textShadowColor);
-
-                        Game1.spriteBatch.DrawString(
-                            Game1.smallFont,
-                            stackPrice.ToString(),
-                            new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-                            Game1.textColor);
-
-                        currentDrawPos.Y += 40;
-                    }
-
-                    if (cropPrice > 0)
-                    {
-
-                        Game1.spriteBatch.Draw(
-                            Game1.mouseCursors,
-                            new Vector2(currentDrawPos.X - 15, currentDrawPos.Y - 10),
-                            new Rectangle(60, 428, 10, 10),
-                            Color.White,
-                            0.0f,
-                            Vector2.Zero,
-                            Game1.pixelZoom * 0.75f,
-                            SpriteEffects.None,
-                            0.85f);
-
-                        Game1.spriteBatch.DrawString(
-                            Game1.smallFont,
-                            cropPrice.ToString(),
-                            new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
-                            Game1.textShadowColor);
-
-                        Game1.spriteBatch.DrawString(
-                            Game1.smallFont,
-                            cropPrice.ToString(),
-                            new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-                            Game1.textColor);
-                    }
                 }
 
-                if (_libraryMuseum.isItemSuitableForDonation(_hoverItem.Value))
+                if (stackPrice > 0)
                 {
-                    _museumIcon.bounds.X = (int)windowPos.X - 30;
-                    _museumIcon.bounds.Y = (int)windowPos.Y - 60 + windowHeight;
+                    Game1.spriteBatch.Draw(
+                        Game1.debrisSpriteSheet,
+                        new Vector2(currentDrawPos.X, currentDrawPos.Y),
+                        Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
+                        Color.White,
+                        0,
+                        new Vector2(8, 8),
+                        Game1.pixelZoom,
+                        SpriteEffects.None,
+                        0.95f);
+
+                    Game1.spriteBatch.Draw(
+                        Game1.debrisSpriteSheet,
+                        new Vector2(currentDrawPos.X, currentDrawPos.Y + 10),
+                        Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
+                        Color.White,
+                        0,
+                        new Vector2(8, 8),
+                        Game1.pixelZoom,
+                        SpriteEffects.None,
+                        0.95f);
+
+                    Game1.spriteBatch.DrawString(
+                        Game1.smallFont,
+                        stackPrice.ToString(),
+                        new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
+                        Game1.textShadowColor);
+
+                    Game1.spriteBatch.DrawString(
+                        Game1.smallFont,
+                        stackPrice.ToString(),
+                        new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
+                        Game1.textColor);
+
+                    currentDrawPos.Y += 40;
+                }
+
+                if (cropPrice > 0)
+                {
+
+                    Game1.spriteBatch.Draw(
+                        Game1.mouseCursors,
+                        new Vector2(currentDrawPos.X - 15, currentDrawPos.Y - 10),
+                        new Rectangle(60, 428, 10, 10),
+                        Color.White,
+                        0.0f,
+                        Vector2.Zero,
+                        Game1.pixelZoom * 0.75f,
+                        SpriteEffects.None,
+                        0.85f);
+
+                    Game1.spriteBatch.DrawString(
+                        Game1.smallFont,
+                        cropPrice.ToString(),
+                        new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
+                        Game1.textShadowColor);
+
+                    Game1.spriteBatch.DrawString(
+                        Game1.smallFont,
+                        cropPrice.ToString(),
+                        new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
+                        Game1.textColor);
+                }
+
+                if (notDonatedYet)
+                {
+                    _museumIcon.bounds.X = windowPos.X - 30;
+                    _museumIcon.bounds.Y = windowPos.Y - 60 + windowHeight;
                     _museumIcon.scale = 2;
                     _museumIcon.draw(Game1.spriteBatch);
                 }
 
                 if (!string.IsNullOrEmpty(requiredBundleName))
                 {
-                    int num1 = (int)windowPos.X - 30;
-                    int num2 = (int)windowPos.Y - 14;
+                    int num1 = windowPos.X - 30;
+                    int num2 = windowPos.Y - 14;
                     int num3 = num1 + 52;
                     int y3 = num2 + 4;
                     int height = 36;
@@ -454,12 +453,10 @@ namespace UIInfoSuite2.UIElements
                     _bundleIcon.draw(Game1.spriteBatch);
                 }
 
-                if (_hoverItem.Value is StardewValley.Object obj)
+                if (notShippedYet)
                 {
-                    if (obj.countsForShippedCollection() && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex))
-                    {
-                        int num1 = (int)windowPos.X + windowWidth - 66;
-                        int num2 = (int)windowPos.Y - 27;
+                        int num1 = windowPos.X + windowWidth - 66;
+                        int num2 = windowPos.Y - 27;
 
                         _shippingBottomIcon.bounds.X = num1;
                         _shippingBottomIcon.bounds.Y = num2 - 8;
@@ -470,7 +467,6 @@ namespace UIInfoSuite2.UIElements
                         _shippingTopIcon.bounds.Y = num2;
                         _shippingTopIcon.scale = 1.2f;
                         _shippingTopIcon.draw(Game1.spriteBatch);
-                    }
                 }
 
                 //memorize the result to save processing time when calling again with same values
