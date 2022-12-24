@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 
@@ -68,6 +69,19 @@ namespace UIInfoSuite2.Infrastructure
                 {
                     var tree = new StardewValley.TerrainFeatures.FruitTree(seedsObject.ParentSheetIndex);
                     return new StardewValley.Object(tree.indexOfFruit.Value, 1).sellToStorePrice();
+                }
+                else if (item.GetType().FullName == "DynamicGameAssets.Game.CustomObject")
+                {
+                    try
+                    {
+                        return ModEntry.DgaHelper!.GetHarvestPrice(item);
+                    }
+                    catch (Exception e)
+                    {
+                        ModEntry.MonitorObject.LogOnce(e.ToString(), LogLevel.Warn);
+                        ModEntry.MonitorObject.Log(e.ToString(), LogLevel.Debug);
+                        return 0;
+                    }
                 }
                 else
                 {

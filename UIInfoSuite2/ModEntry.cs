@@ -15,6 +15,7 @@ namespace UIInfoSuite2
 
         #region Properties
         public static IMonitor MonitorObject { get; private set; }
+        public static DynamicGameAssetsHelper? DgaHelper { get; private set; }
 
         private static SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
         private static ModConfig _modConfig;
@@ -108,6 +109,11 @@ namespace UIInfoSuite2
         #region Generic mod config menu
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            // get DGA's API
+            var dgaApi = Helper.ModRegistry.GetApi<IDynamicGameAssetsApi>("spacechase0.DynamicGameAssets");
+            if (dgaApi != null)
+                DgaHelper = new DynamicGameAssetsHelper(dgaApi, Helper);
+
             // get Generic Mod Config Menu's API (if it's installed)
             var modVersion = Helper.ModRegistry.Get("spacechase0.GenericModConfigMenu")?.Manifest?.Version;
             var minModVersion = "1.6.0";
