@@ -20,11 +20,19 @@ namespace UIInfoSuite2.Compatibility
             this.Reflection = helper.Reflection;
         }
 
+        public bool isDgaType(object obj)
+        {
+            return obj.GetType().FullName?.StartsWith("DynamicGameAssets.") == true;
+        }
+
         /// dga is an object of any type within the DynamicGameAssets assembly
-        public object? FindDataPack(object dga, string fullId)
+        public object? FindPackData(object dga, string fullId, bool checkType = true)
         {
             if (modFindMethod == null)
             {
+                if (dga.GetType().FullName?.StartsWith("DynamicGameAssets.") != true)
+                    throw new ArgumentException(nameof(dga));
+
                 string dgaAQName = dga.GetType().AssemblyQualifiedName!;
                 string modAQName = "DynamicGameAssets.Mod" + dgaAQName.Substring(dgaAQName.IndexOf(','));
                 modFindMethod = Reflection.GetMethod(Type.GetType(modAQName)!, "Find");
@@ -77,7 +85,7 @@ namespace UIInfoSuite2.Compatibility
             if (itemPlants == null)
                 return null;
 
-            var cropData = this.FindDataPack(item, itemPlants);
+            var cropData = this.FindPackData(item, itemPlants, checkType: checkType);
             if (cropData == null)
                 return null;
 

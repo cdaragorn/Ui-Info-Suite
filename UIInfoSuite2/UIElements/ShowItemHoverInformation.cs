@@ -224,6 +224,36 @@ namespace UIInfoSuite2.UIElements
             }
         }
 
+        private bool SlowCheckShouldShip(Item item)
+        {
+            var obj = item as StardewValley.Object;
+            if (obj == null)
+                return false;
+            
+            if (!obj.countsForShippedCollection())
+                return false;
+            
+            int itemId;
+            try
+            {
+                itemId = Game1.objectInformation.First(info => info.Value.Split('/')[0] == _hoverItem.Value.Name).Key;
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (Game1.player.basicShipped.ContainsKey(itemId))
+                return false;
+            
+            float beforeShipping = Utility.getFarmerItemsShippedPercent();
+            Game1.player.basicShipped.Add(itemId, 1);
+            float afterShipping = Utility.getFarmerItemsShippedPercent();
+            Game1.player.basicShipped.Remove(itemId);
+                
+            return beforeShipping != afterShipping;
+        }
+
         //private Item _lastHoverItem;
         //private int lastStackSize;
         //private int lastItemPrice;
@@ -250,10 +280,18 @@ namespace UIInfoSuite2.UIElements
 
                 bool notDonatedYet = _libraryMuseum.isItemSuitableForDonation(_hoverItem.Value);
 
+
                 bool notShippedYet = (_hoverItem.Value is StardewValley.Object obj
                     && obj.countsForShippedCollection()
                     && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex));
-                
+                // Handle DGA items separately because for them, obj.ParentSheetIndex is always the same.
+                // Also, DGA patches certain shipping functions but not all of them, and maybe in a way that we can't observe.
+                if (notShippedYet && ModEntry.DgaHelper?.isDgaType(_hoverItem.Value) == true)
+                {
+                    ModEntry.MonitorObject.LogOnce($"{this.GetType().FullName}: Checking if {_hoverItem.Value.Name} should be shipped using the slow way", LogLevel.Trace);
+                    notShippedYet = this.SlowCheckShouldShip(_hoverItem.Value);
+                }
+
                 string? requiredBundleName = null;
                 // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
                 if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject is not Furniture)
