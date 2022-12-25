@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using StardewValley;
-using UIInfoSuite2.Infrastructure.Extensions;
+using UIInfoSuite2.Infrastructure.Reflection;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using SObject = StardewValley.Object;
 
 namespace UIInfoSuite2.Compatibility
@@ -11,6 +12,8 @@ namespace UIInfoSuite2.Compatibility
     {
         public IDynamicGameAssetsApi Api { get; init; }
         private IReflectionHelper Reflection { get; init; }
+        private IModEvents ModEvents { get; init; }
+        private Reflector Reflector { get; init; }
 
         private IReflectedMethod? modFindMethod;
 
@@ -18,7 +21,22 @@ namespace UIInfoSuite2.Compatibility
         {
             this.Api = api;
             this.Reflection = helper.Reflection;
+            this.ModEvents = helper.Events;
+            this.Reflector = new Reflector();
+
+            this.ModEvents.GameLoop.DayEnding += OnDayEnding;
         }
+
+        public void Dispose()
+        {
+            this.ModEvents.GameLoop.DayEnding -= this.OnDayEnding;
+        }
+
+        private void OnDayEnding(object? sender, DayEndingEventArgs e)
+        {
+            this.Reflector.NewCacheInterval();
+        }
+        
 
         public bool isDgaType(object obj)
         {
@@ -46,7 +64,7 @@ namespace UIInfoSuite2.Compatibility
             if (checkType && customCrop.GetType().FullName != "DynamicGameAssets.Game.CustomCrop")
                 throw new ArgumentException(nameof(customCrop));
 
-            return Reflection.GetPropertyGetter<object?>(customCrop, "Data").GetValue();
+            return Reflector.GetPropertyGetter<object?>(customCrop, "Data").GetValue();
         }
 
         public string? GetFullId(object dgaItem, bool checkType = true)
@@ -77,7 +95,7 @@ namespace UIInfoSuite2.Compatibility
             if (!(item is StardewValley.Object seedsObject && seedsObject.Category == StardewValley.Object.SeedsCategory))
                 return null;
 
-            var itemData = Reflection.GetPropertyGetter<object?>(item, "Data").GetValue();
+            var itemData = Reflector.GetPropertyGetter<object?>(item, "Data").GetValue();
             if (itemData == null)
                 return null;
             
@@ -97,13 +115,13 @@ namespace UIInfoSuite2.Compatibility
             if (checkType && cropData.GetType().FullName != "DynamicGameAssets.PackData.CropPackData")
                 throw new ArgumentException(nameof(cropData));
 
-            var cropPhases = Reflection.GetPropertyGetter<IList>(cropData, "Phases").GetValue();
+            var cropPhases = Reflector.GetPropertyGetter<IList>(cropData, "Phases").GetValue();
 
             // Find the last phase that has a harvest drop
             IList? harvestDrops = null;
             foreach (var phase in cropPhases)
             {
-                var phaseDrops = Reflection.GetPropertyGetter<IList>(phase!, "HarvestedDrops").GetValue()!;
+                var phaseDrops = Reflector.GetPropertyGetter<IList>(phase!, "HarvestedDrops").GetValue()!;
                 if (phaseDrops.Count > 0)
                     harvestDrops = phaseDrops;
             }
@@ -112,13 +130,13 @@ namespace UIInfoSuite2.Compatibility
             if (harvestDrops.Count > 1)
                 throw new Exception("DGA crops with multiple drops on the last harvest are not supported");
 
-            var possibleDrops = Reflection.GetPropertyGetter<IList>(harvestDrops[0]!, "Item").GetValue();
+            var possibleDrops = Reflector.GetPropertyGetter<IList>(harvestDrops[0]!, "Item").GetValue();
             if (possibleDrops.Count != 1)
                 throw new Exception("DGA crops with random drops are not supported");
 
-            var dropItem = Reflection.GetPropertyGetter<object?>(possibleDrops[0]!, "Value").GetValue()!;
-            string dropItemType = Reflection.GetPropertyGetter<Enum>(dropItem, "Type").GetValue()!.ToString()!;
-            string dropItemValue = Reflection.GetPropertyGetter<string?>(dropItem, "Value").GetValue()!;
+            var dropItem = Reflector.GetPropertyGetter<object?>(possibleDrops[0]!, "Value").GetValue()!;
+            string dropItemType = Reflector.GetPropertyGetter<Enum>(dropItem, "Type").GetValue()!.ToString()!;
+            string dropItemValue = Reflector.GetPropertyGetter<string?>(dropItem, "Value").GetValue()!;
             
             if (dropItemType == "DGAItem")
                 return (StardewValley.Object) this.Api.SpawnDGAItem(dropItemValue);

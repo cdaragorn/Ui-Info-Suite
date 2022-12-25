@@ -84,7 +84,45 @@ namespace UIInfoSuite2.Infrastructure.Reflection
 
     public class Reflector
     {
-        private readonly Dictionary<string, MemberInfo?> Cache = new();
+        public class IntervalMemoryCache<TKey, TValue>
+            where TKey : notnull
+        {
+            private Dictionary<TKey, TValue> HotCache = new();
+            private Dictionary<TKey, TValue> StaleCache = new();
+
+            public TValue GetOrSet(TKey cacheKey, Func<TValue> get)
+            {
+                // from hot cache
+                if (this.HotCache.TryGetValue(cacheKey, out TValue? value))
+                    return value;
+
+                // from stale cache
+                if (this.StaleCache.TryGetValue(cacheKey, out value))
+                {
+                    this.HotCache[cacheKey] = value;
+                    return value;
+                }
+
+                // new value
+                value = get();
+                this.HotCache[cacheKey] = value;
+                return value;
+            }
+
+            public void StartNewInterval()
+            {
+                this.StaleCache.Clear();
+                if (this.HotCache.Count is not 0)
+                    (this.StaleCache, this.HotCache) = (this.HotCache, this.StaleCache); // swap hot cache to stale
+            }
+        }
+
+        private readonly IntervalMemoryCache<string, MemberInfo?> Cache = new();
+
+        public void NewCacheInterval()
+        {
+            this.Cache.StartNewInterval();
+        }
 
         public IReflectedGetProperty<TValue> GetPropertyGetter<TValue>(object obj, string name, bool required = true)
         {
@@ -129,17 +167,7 @@ namespace UIInfoSuite2.Infrastructure.Reflection
             where TMemberInfo : MemberInfo
         {
             string key = $"{memberType}{(isStatic ? 's' : 'i')}{type.FullName}:{memberName}";
-            // original: return (TMemberInfo?) this.Cache.GetOrSet(key, fetch);
-            if (this.Cache.TryGetValue(key, out var memberInfo))
-            {
-                return (TMemberInfo?) memberInfo;
-            }
-            else
-            {
-                var newMemberInfo = fetch();
-                this.Cache.Add(key, newMemberInfo);
-                return (TMemberInfo?) newMemberInfo;
-            }
+            return (TMemberInfo?) this.Cache.GetOrSet(key, fetch);
         }
     }
 }
