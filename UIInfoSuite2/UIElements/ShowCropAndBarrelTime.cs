@@ -338,15 +338,15 @@ namespace UIInfoSuite2.UIElements
                 }
                 return harvestName;
             }
-            else if (crop.GetType().FullName == "DynamicGameAssets.Game.CustomCrop")
+            else if (ModEntry.DGA.IsCustomCrop(crop, out var dgaHelper))
             {
                 string? cropId = null;
                 try
                 {
-                    cropId = ModEntry.DgaHelper!.GetFullId(crop)!;
+                    cropId = dgaHelper!.GetFullId(crop)!;
                     string key = "dga:" + cropId;
                     if (!_indexOfCropNames.TryGetValue(key, out string? harvestName)) {
-                        var harvestCrop = ModEntry.DgaHelper!.GetCropHarvest(crop, checkType: false);
+                        var harvestCrop = dgaHelper!.GetCropHarvest(crop);
                         if (harvestCrop == null)
                             return null;
                         

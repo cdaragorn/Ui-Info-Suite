@@ -15,7 +15,7 @@ namespace UIInfoSuite2
 
         #region Properties
         public static IMonitor MonitorObject { get; private set; }
-        public static DynamicGameAssetsHelper? DgaHelper { get; private set; }
+        public static DynamicGameAssetsEntry DGA { get; private set; }
 
         private static SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
         private static ModConfig _modConfig;
@@ -31,9 +31,12 @@ namespace UIInfoSuite2
         public override void Entry(IModHelper helper)
         {
             MonitorObject = Monitor;
+            DGA = new DynamicGameAssetsEntry(Helper, Monitor);
 
             _skipIntro = new SkipIntro(helper.Events);
             _modConfig = Helper.ReadConfig<ModConfig>();
+
+            helper.ConsoleCommands.Add("ship_all_items", "Ship all items for the Full Shipment achievement", ShipAllItems);
 
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
@@ -112,7 +115,7 @@ namespace UIInfoSuite2
             // get DGA's API
             var dgaApi = Helper.ModRegistry.GetApi<IDynamicGameAssetsApi>("spacechase0.DynamicGameAssets");
             if (dgaApi != null)
-                DgaHelper = new DynamicGameAssetsHelper(dgaApi, Helper);
+                DGA.SetApi(dgaApi);
 
             // get Generic Mod Config Menu's API (if it's installed)
             var modVersion = Helper.ModRegistry.Get("spacechase0.GenericModConfigMenu")?.Manifest?.Version;
@@ -165,5 +168,32 @@ namespace UIInfoSuite2
             );
         }
         #endregion
+
+        void ShipAllItems(string command, string[] args)
+        {
+            if (args.Length > 0)
+                throw new ArgumentException(nameof(args));
+
+            var who = Game1.player;
+            
+            foreach (var item in Game1.objectInformation)
+            {
+                string itemName = item.Value.Split('/')[0];
+                string text = item.Value.Split('/')[3];
+                if (!text.Contains("Arch") && !text.Contains("Fish") && !text.Contains("Mineral") && !text.Substring(text.Length - 3).Equals("-2") && !text.Contains("Cooking") && !text.Substring(text.Length - 3).Equals("-7") && StardewValley.Object.isPotentialBasicShippedCategory(item.Key, text.Substring(text.Length - 3)))
+				{
+					if (!who.basicShipped.ContainsKey(item.Key))
+                    {
+                        Monitor.Log($"{command}: shipping {itemName}", LogLevel.Info);
+					    who.basicShipped.Add(item.Key, 1);
+                    }
+                    else
+                    {
+                        Monitor.Log($"{command}: already shipped {itemName}", LogLevel.Info);
+                    }
+				}
+
+            }
+        }
     }
 }

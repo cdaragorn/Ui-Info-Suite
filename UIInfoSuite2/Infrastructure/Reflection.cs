@@ -4,6 +4,7 @@ using System.Reflection;
 
 /// Reflector#GetPropertyGetter<TValue> provides cached readonly access to properties through reflection. 
 /// Where TValue can be a supertype of the actual property type.
+/// Based on SMAPI's Reflector class.
 namespace UIInfoSuite2.Infrastructure.Reflection
 {
     public interface IReflectedGetProperty<TValue>

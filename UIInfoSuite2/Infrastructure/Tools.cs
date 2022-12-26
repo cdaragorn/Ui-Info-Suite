@@ -67,18 +67,18 @@ namespace UIInfoSuite2.Infrastructure
                     var tree = new StardewValley.TerrainFeatures.FruitTree(seedsObject.ParentSheetIndex);
                     return new SObject(tree.indexOfFruit.Value, 1);
                 }
-                else if (item.GetType().FullName == "DynamicGameAssets.Game.CustomObject")
+                else if (ModEntry.DGA.IsCustomObject(item, out var dgaHelper))
                 {
                     try
                     {
-                        return ModEntry.DgaHelper!.GetSeedsHarvest(item, checkType: false);
+                        return dgaHelper!.GetSeedsHarvest(item);
                     }
                     catch (Exception e)
                     {
                         string? itemId = null;
                         try
                         {
-                            itemId = ModEntry.DgaHelper!.GetFullId(item);
+                            itemId = dgaHelper!.GetFullId(item);
                         }
                         catch (Exception catchException)
                         {

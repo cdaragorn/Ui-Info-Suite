@@ -224,36 +224,6 @@ namespace UIInfoSuite2.UIElements
             }
         }
 
-        private bool SlowCheckShouldShip(Item item)
-        {
-            var obj = item as StardewValley.Object;
-            if (obj == null)
-                return false;
-            
-            if (!obj.countsForShippedCollection())
-                return false;
-            
-            int itemId;
-            try
-            {
-                itemId = Game1.objectInformation.First(info => info.Value.Split('/')[0] == _hoverItem.Value.Name).Key;
-            }
-            catch
-            {
-                return false;
-            }
-
-            if (Game1.player.basicShipped.ContainsKey(itemId))
-                return false;
-            
-            float beforeShipping = Utility.getFarmerItemsShippedPercent();
-            Game1.player.basicShipped.Add(itemId, 1);
-            float afterShipping = Utility.getFarmerItemsShippedPercent();
-            Game1.player.basicShipped.Remove(itemId);
-                
-            return beforeShipping != afterShipping;
-        }
-
         //private Item _lastHoverItem;
         //private int lastStackSize;
         //private int lastItemPrice;
@@ -270,6 +240,8 @@ namespace UIInfoSuite2.UIElements
                 && !(_hoverItem.Value is StardewValley.Tools.MeleeWeapon weapon && weapon.isScythe())
                 && !(_hoverItem.Value is StardewValley.Tools.FishingRod))
             {
+                var hoveredObject = _hoverItem.Value as StardewValley.Object;
+
                 int itemPrice = Tools.GetSellToStorePrice(_hoverItem.Value);
 
                 int stackPrice = 0;
@@ -281,20 +253,37 @@ namespace UIInfoSuite2.UIElements
                 bool notDonatedYet = _libraryMuseum.isItemSuitableForDonation(_hoverItem.Value);
 
 
-                bool notShippedYet = (_hoverItem.Value is StardewValley.Object obj
-                    && obj.countsForShippedCollection()
-                    && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex));
-                // Handle DGA items separately because for them, obj.ParentSheetIndex is always the same.
-                // Also, DGA patches certain shipping functions but not all of them, and maybe in a way that we can't observe.
-                if (notShippedYet && ModEntry.DgaHelper?.isDgaType(_hoverItem.Value) == true)
+                bool notShippedYet = (hoveredObject != null
+                    && hoveredObject.countsForShippedCollection()
+                    && !Game1.player.basicShipped.ContainsKey(hoveredObject.ParentSheetIndex)
+                    && hoveredObject.Type != "Fish");
+                if (notShippedYet && ModEntry.DGA.IsCustomObject(hoveredObject!, out var dgaHelper))
                 {
-                    ModEntry.MonitorObject.LogOnce($"{this.GetType().FullName}: Checking if {_hoverItem.Value.Name} should be shipped using the slow way", LogLevel.Trace);
-                    notShippedYet = this.SlowCheckShouldShip(_hoverItem.Value);
+                    // NB For DGA items, Game1.player.basicShipped.ContainsKey(hoveredObject.ParentSheetIndex) will always be false
+                    try
+                    {
+                        // For shipping, DGA patches:
+                        // - CollectionsPage()
+                        // - ShippingMenu.parseItems()
+                        // - StardewValley.Object.countsForShippedCollection()
+                        // - StardewValley.Object.isIndexOkForBasicShippedCategory()
+                        // But it doesn't patch Utility.getFarmerItemsShippedPercent() which determines if the requirements for the achievement are met.
+                        // This means that DGA items do not (yet) count for the "Full Shipment" achievement even though they appear in the collections page.
+                        
+                        // Nonetheless, show the icon if that item is still hidden in the collections page.
+                        int dgaId = dgaHelper!.GetDgaObjectFakeId(hoveredObject!);           
+                        notShippedYet = !Game1.player.basicShipped.ContainsKey(dgaId);
+                    }
+                    catch (Exception e)
+                    {
+                        ModEntry.MonitorObject.LogOnce($"An error occured while checking if the DGA item {hoveredObject!.Name} has been shipped.", LogLevel.Error);
+                        ModEntry.MonitorObject.Log(e.ToString(), LogLevel.Debug);
+                    }
                 }
 
                 string? requiredBundleName = null;
                 // Bundle items must be "small" objects. This avoids marking other kinds of objects as needed, such as Chest (id 130), Recycling Machine (id 20), etc...
-                if (_hoverItem.Value is StardewValley.Object hoveredObject && !hoveredObject.bigCraftable.Value && hoveredObject is not Furniture)
+                if (hoveredObject != null && !hoveredObject.bigCraftable.Value && hoveredObject is not Furniture)
                 {
                     foreach (var requiredBundle in _prunedRequiredBundles)
                     {
