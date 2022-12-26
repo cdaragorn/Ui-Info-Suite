@@ -39,8 +39,8 @@ namespace UIInfoSuite2.Compatibility
             this.ModEvents.GameLoop.DayEnding += OnDayEnding;
         }
 
-        /// Supply an object of any DGA type to enable access to classes inside DGA 
-        public void SupplyDga(object dga)
+        /// <summary>Inject an object of any DGA type to get a reference to the DGA Assembly</summary>
+        public void InjectDga(object dga)
         {
             if (_dgaAssembly == null)
             {
@@ -159,6 +159,7 @@ namespace UIInfoSuite2.Compatibility
             }
         }
 
+        /// <summary>Mod.Find()</summary>
         public object? FindPackData(string fullId)
         {
             var modFind = GetModFindMethod();
@@ -174,11 +175,13 @@ namespace UIInfoSuite2.Compatibility
         }
 
         #region DGA instance fields, methods and properties
+        /// <summary>CustomCrop.Data</summary>
         private object? GetCropData(object customCrop)
         {
             return Reflector.GetPropertyGetter<object?>(customCrop, "Data").GetValue();
         }
 
+        /// <summary>IDGAItem.FullId</summary>
         public string? GetFullId(object dgaItem)
         {
             return Reflection.GetProperty<string?>(dgaItem, "FullId").GetValue();

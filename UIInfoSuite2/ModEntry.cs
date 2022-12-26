@@ -115,7 +115,7 @@ namespace UIInfoSuite2
             // get DGA's API
             var dgaApi = Helper.ModRegistry.GetApi<IDynamicGameAssetsApi>("spacechase0.DynamicGameAssets");
             if (dgaApi != null)
-                DGA.SetApi(dgaApi);
+                DGA.InjectApi(dgaApi);
 
             // get Generic Mod Config Menu's API (if it's installed)
             var modVersion = Helper.ModRegistry.Get("spacechase0.GenericModConfigMenu")?.Manifest?.Version;
