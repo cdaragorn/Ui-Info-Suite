@@ -40,13 +40,15 @@ namespace UIInfoSuite2.Compatibility
         }
 
         /// <summary>Inject an object of any DGA type to get a reference to the DGA Assembly</summary>
-        public void InjectDga(object dga)
+        /// <returns>The initialized <see cref="DynamicGameAssetsHelper"/>.</returns>
+        public DynamicGameAssetsHelper InjectDga(object dga)
         {
             if (_dgaAssembly == null)
             {
                 _dgaAssembly = dga.GetType().Assembly;
                 Monitor.Log($"{this.GetType().Name}: Retrieved reference to DGA assemby using DGA class instance of {dga.GetType().FullName}.", LogLevel.Trace);
             }
+            return this;
         }
 
         public void Dispose()
