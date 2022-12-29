@@ -2,6 +2,7 @@
   <PropertyGroup>
     <Version>2.2.9</Version>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <Import Project="UIInfoSuite2.csproj.local" Condition="Exists('UIInfoSuite2.csproj.local')" />
