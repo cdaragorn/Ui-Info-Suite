@@ -4,6 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <Import Project="UIInfoSuite2.csproj.local" Condition="Exists('UIInfoSuite2.csproj.local')" />
+
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.0" />
   </ItemGroup>
