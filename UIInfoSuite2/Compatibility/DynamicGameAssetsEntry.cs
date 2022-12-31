@@ -2,6 +2,7 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UIInfoSuite2.Compatibility
 {
@@ -50,7 +51,7 @@ namespace UIInfoSuite2.Compatibility
         }
 
         /// <summary>Check if <paramref name="obj"/> is a DGA CustomCrop and provide a <see cref="DynamicGameAssetsHelper"/></summary>
-        public bool IsCustomCrop(object obj, out DynamicGameAssetsHelper? dgaHelper)
+        public bool IsCustomCrop(object obj, [NotNullWhen(true)] out DynamicGameAssetsHelper? dgaHelper)
         {
             dgaHelper = null;
             if (this.IsLoaded && obj.GetType().FullName == "DynamicGameAssets.Game.CustomCrop")
@@ -60,7 +61,7 @@ namespace UIInfoSuite2.Compatibility
 
 
         /// <summary>Check if <paramref name="obj"/> is a DGA CustomObject and provide a <see cref="DynamicGameAssetsHelper"/></summary>        
-        public bool IsCustomObject(object obj, out DynamicGameAssetsHelper? dgaHelper)
+        public bool IsCustomObject(object obj, [NotNullWhen(true)] out DynamicGameAssetsHelper? dgaHelper)
         {
             dgaHelper = null;
             if (this.IsLoaded && obj.GetType().FullName == "DynamicGameAssets.Game.CustomObject")

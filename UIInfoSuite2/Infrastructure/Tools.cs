@@ -71,14 +71,14 @@ namespace UIInfoSuite2.Infrastructure
                 {
                     try
                     {
-                        return dgaHelper!.GetSeedsHarvest(item);
+                        return dgaHelper.GetSeedsHarvest(item);
                     }
                     catch (Exception e)
                     {
                         string? itemId = null;
                         try
                         {
-                            itemId = dgaHelper!.GetFullId(item);
+                            itemId = dgaHelper.GetFullId(item);
                         }
                         catch (Exception catchException)
                         {

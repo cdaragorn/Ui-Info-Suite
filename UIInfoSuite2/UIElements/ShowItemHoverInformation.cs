@@ -257,7 +257,7 @@ namespace UIInfoSuite2.UIElements
                     && hoveredObject.countsForShippedCollection()
                     && !Game1.player.basicShipped.ContainsKey(hoveredObject.ParentSheetIndex)
                     && hoveredObject.Type != "Fish");
-                if (notShippedYet && ModEntry.DGA.IsCustomObject(hoveredObject!, out var dgaHelper))
+                if (notShippedYet && hoveredObject != null && ModEntry.DGA.IsCustomObject(hoveredObject, out var dgaHelper))
                 {
                     // NB For DGA items, Game1.player.basicShipped.ContainsKey(hoveredObject.ParentSheetIndex) will always be false
                     try
@@ -271,12 +271,12 @@ namespace UIInfoSuite2.UIElements
                         // This means that DGA items do not (yet) count for the "Full Shipment" achievement even though they appear in the collections page.
                         
                         // Nonetheless, show the icon if that item is still hidden in the collections page.
-                        int dgaId = dgaHelper!.GetDgaObjectFakeId(hoveredObject!);           
+                        int dgaId = dgaHelper.GetDgaObjectFakeId(hoveredObject);
                         notShippedYet = !Game1.player.basicShipped.ContainsKey(dgaId);
                     }
                     catch (Exception e)
                     {
-                        ModEntry.MonitorObject.LogOnce($"An error occured while checking if the DGA item {hoveredObject!.Name} has been shipped.", LogLevel.Error);
+                        ModEntry.MonitorObject.LogOnce($"An error occured while checking if the DGA item {hoveredObject.Name} has been shipped.", LogLevel.Error);
                         ModEntry.MonitorObject.Log(e.ToString(), LogLevel.Debug);
                     }
                 }

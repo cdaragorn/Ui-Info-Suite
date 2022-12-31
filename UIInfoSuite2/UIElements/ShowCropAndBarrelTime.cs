@@ -343,10 +343,10 @@ namespace UIInfoSuite2.UIElements
                 string? cropId = null;
                 try
                 {
-                    cropId = dgaHelper!.GetFullId(crop)!;
+                    cropId = dgaHelper.GetFullId(crop)!;
                     string key = "dga:" + cropId;
                     if (!_indexOfCropNames.TryGetValue(key, out string? harvestName)) {
-                        var harvestCrop = dgaHelper!.GetCropHarvest(crop);
+                        var harvestCrop = dgaHelper.GetCropHarvest(crop);
                         if (harvestCrop == null)
                             return null;
                         
