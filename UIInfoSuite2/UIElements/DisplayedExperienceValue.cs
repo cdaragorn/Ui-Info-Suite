@@ -3,22 +3,24 @@ using StardewValley;
 
 namespace UIInfoSuite2.UIElements
 {
-    internal class ExperiencePointDisplay
+    internal class DisplayedExperienceValue
     {
-        private int _alpha = 100;
-        private Vector2 _position;
         private readonly float _experiencePoints;
+        private Vector2 _position;
 
-        public ExperiencePointDisplay(float experiencePoints, Vector2 position)
+        private int _alpha = 100;
+
+        public DisplayedExperienceValue(float experiencePoints, Vector2 position)
         {
-            _position = position;
             _experiencePoints = experiencePoints;
+            _position = position;
         }
 
         public void Draw()
         {
             _position.Y -= 0.5f;
             --_alpha;
+
             Game1.drawWithBorder(
                 "Exp " + _experiencePoints,
                 Color.DarkSlateGray * (_alpha / 100f),
