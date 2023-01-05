@@ -18,11 +18,13 @@ namespace UIInfoSuite2.UIElements
 {
     internal class ShowCropAndBarrelTime : IDisposable
     {
-        private readonly Dictionary<string, string> _indexOfCropNames = new();
+        private readonly Dictionary<int, string> _indexOfCropNames = new();
         private readonly PerScreen<StardewValley.Object> _currentTile = new();
         private readonly PerScreen<TerrainFeature> _terrain = new();
         private readonly PerScreen<Building> _currentTileBuilding = new();
         private readonly IModHelper _helper;
+
+        private readonly Dictionary<string, string> _indexOfDgaCropNames = new();
 
         public ShowCropAndBarrelTime(IModHelper helper)
         {
@@ -159,8 +161,9 @@ namespace UIInfoSuite2.UIElements
 
                     hoverText.AppendLine(currentTile.heldObject.Value.DisplayName);
 
-                    if (currentTile is Cask currentCask)
+                    if (currentTile is Cask)
                     {
+                        Cask currentCask = currentTile as Cask;
                         hoverText.Append((int)(currentCask.daysToMature.Value / currentCask.agingRate.Value))
                             .Append(" " + _helper.SafeGetString(
                             LanguageKeys.DaysToMature));
@@ -220,8 +223,9 @@ namespace UIInfoSuite2.UIElements
             }
             else if (terrain != null)
             {
-                if (terrain is HoeDirt hoeDirt)
+                if (terrain is HoeDirt)
                 {
+                    HoeDirt hoeDirt = terrain as HoeDirt;
                     if (hoeDirt.crop != null &&
                         !hoeDirt.crop.dead.Value)
                     {
@@ -274,8 +278,9 @@ namespace UIInfoSuite2.UIElements
                         }
                     }
                 }
-                else if (terrain is FruitTree tree)
+                else if (terrain is FruitTree)
                 {
+                    FruitTree tree = terrain as FruitTree;
                     var text = new StardewValley.Object(new Debris(tree.indexOfFruit.Value, Vector2.Zero, Vector2.Zero).chunkType.Value, 1).DisplayName;
                     if (tree.daysUntilMature.Value > 0)
                     {
@@ -331,10 +336,9 @@ namespace UIInfoSuite2.UIElements
             if (crop.indexOfHarvest.Value > 0)
             {
                 int itemId = crop.isWildSeedCrop() ? crop.whichForageCrop.Value : crop.indexOfHarvest.Value;
-                string key = ":" + itemId;
-                if (!_indexOfCropNames.TryGetValue(key, out string? harvestName)) {
+                if (!_indexOfCropNames.TryGetValue(itemId, out string? harvestName)) {
                     harvestName = new StardewValley.Object(itemId, 1).DisplayName;
-                    _indexOfCropNames.Add(key, harvestName);
+                    _indexOfCropNames.Add(itemId, harvestName);
                 }
                 return harvestName;
             }
@@ -344,14 +348,13 @@ namespace UIInfoSuite2.UIElements
                 try
                 {
                     cropId = dgaHelper.GetFullId(crop)!;
-                    string key = "dga:" + cropId;
-                    if (!_indexOfCropNames.TryGetValue(key, out string? harvestName)) {
+                    if (!_indexOfDgaCropNames.TryGetValue(cropId, out string? harvestName)) {
                         var harvestCrop = dgaHelper.GetCropHarvest(crop);
                         if (harvestCrop == null)
                             return null;
                         
                         harvestName = harvestCrop.DisplayName;
-                        _indexOfCropNames.Add(key, harvestName);
+                        _indexOfDgaCropNames.Add(cropId, harvestName);
                     }
                     return harvestName;
                 }
