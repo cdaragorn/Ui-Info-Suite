@@ -115,8 +115,6 @@ namespace UIInfoSuite2.UIElements
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_HandleTimers;
             _helper.Events.GameLoop.SaveLoaded -= OnSaveLoaded;
 
-            //GraphicsEvents.OnPreRenderHudEvent -= OnPreRenderHudEvent;
-            //PlayerEvents.Warped -= RemoveAllExperiencePointDisplays;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_UpdateExperience;
             _helper.Events.Player.LevelChanged -= OnLevelChanged;
             _helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked_UpdateExperience;
@@ -136,8 +134,6 @@ namespace UIInfoSuite2.UIElements
 
             if (ExperienceBarEnabled || ExperienceGainTextEnabled)
             {
-                //GraphicsEvents.OnPreRenderHudEvent += OnPreRenderHudEvent;
-                //PlayerEvents.Warped += RemoveAllExperiencePointDisplays;
                 _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked_UpdateExperience;
             }
 
@@ -331,16 +327,13 @@ namespace UIInfoSuite2.UIElements
 
             _experienceRequiredToLevel.Value = GetExperienceRequiredToLevel(_currentSkillLevel.Value);
             _experienceFromPreviousLevels.Value = GetExperienceRequiredToLevel(_currentSkillLevel.Value - 1);
-            _experienceEarnedThisLevel.Value =
-                Game1.player.experiencePoints[currentLevelIndex] - _experienceFromPreviousLevels.Value;
+            _experienceEarnedThisLevel.Value = Game1.player.experiencePoints[currentLevelIndex] - _experienceFromPreviousLevels.Value;
 
             if (_experienceRequiredToLevel.Value <= 0 && _levelExtenderApi != null)
             {
                 _experienceEarnedThisLevel.Value = _levelExtenderApi.CurrentXP()[currentLevelIndex];
-                _experienceFromPreviousLevels.Value =
-                    _currentExperience.Value[currentLevelIndex] - _experienceEarnedThisLevel.Value;
-                _experienceRequiredToLevel.Value = _levelExtenderApi.RequiredXP()[currentLevelIndex] +
-                                                   _experienceFromPreviousLevels.Value;
+                _experienceFromPreviousLevels.Value = _currentExperience.Value[currentLevelIndex] - _experienceEarnedThisLevel.Value;
+                _experienceRequiredToLevel.Value = _levelExtenderApi.RequiredXP()[currentLevelIndex] + _experienceFromPreviousLevels.Value;
             }
 
             if (displayExperience)
@@ -373,34 +366,20 @@ namespace UIInfoSuite2.UIElements
             }
         }
 
-        private int GetExperienceRequiredToLevel(int currentLevel)
+        private static int GetExperienceRequiredToLevel(int currentLevel) => currentLevel switch
         {
-            int amount = 0;
-
-            //if (currentLevel < 10)
-            //{
-            switch (currentLevel)
-            {
-                case 0: amount = 100; break;
-                case 1: amount = 380; break;
-                case 2: amount = 770; break;
-                case 3: amount = 1300; break;
-                case 4: amount = 2150; break;
-                case 5: amount = 3300; break;
-                case 6: amount = 4800; break;
-                case 7: amount = 6900; break;
-                case 8: amount = 10000; break;
-                case 9: amount = 15000; break;
-            }
-            //}
-            //else if (_levelExtenderAPI != null &&
-            //    currentLevel < 100)
-            //{
-            //    var requiredXP = _levelExtenderAPI.requiredXP();
-            //    amount = requiredXP[currentLevel];
-            //}
-            return amount;
-        }
+            0 => 100,
+            1 => 380,
+            2 => 770,
+            3 => 1300,
+            4 => 2150,
+            5 => 3300,
+            6 => 4800,
+            7 => 6900,
+            8 => 10000,
+            9 => 15000,
+            _ => -1
+        };
 
         #endregion Logic
     }
