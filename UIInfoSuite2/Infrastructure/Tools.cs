@@ -4,8 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
+using SObject = StardewValley.Object;
 
 namespace UIInfoSuite2.Infrastructure
 {
@@ -42,41 +44,64 @@ namespace UIInfoSuite2.Infrastructure
             }
         }
 
-        public static int GetTruePrice(Item item)
+        public static int GetSellToStorePrice(Item item)
         {
-            int truePrice = 0;
-
-            if (item is StardewValley.Object objectItem)
+            if (item is SObject obj)
             {
-                truePrice = objectItem.sellToStorePrice() * 2;
+                return obj.sellToStorePrice();        
             }
-            else if (item is Item thing)
+            else
             {
-                truePrice = thing.salePrice();
+                return item.salePrice() / 2;
             }
-
-            return truePrice;
         }
 
-        public static int GetHarvestPrice(Item item)
+        public static SObject? GetHarvest(Item item)
         {
-            if (item is StardewValley.Object seedsObject
+            if (item is SObject seedsObject
                 && seedsObject.Category == StardewValley.Object.SeedsCategory
                 && seedsObject.ParentSheetIndex != Crop.mixedSeedIndex)
             {
                 if (seedsObject.isSapling())
                 {
                     var tree = new StardewValley.TerrainFeatures.FruitTree(seedsObject.ParentSheetIndex);
-                    return new StardewValley.Object(tree.indexOfFruit.Value, 1).sellToStorePrice();
+                    return new SObject(tree.indexOfFruit.Value, 1);
+                }
+                else if (ModEntry.DGA.IsCustomObject(item, out var dgaHelper))
+                {
+                    try
+                    {
+                        return dgaHelper.GetSeedsHarvest(item);
+                    }
+                    catch (Exception e)
+                    {
+                        string? itemId = null;
+                        try
+                        {
+                            itemId = dgaHelper.GetFullId(item);
+                        }
+                        catch (Exception catchException)
+                        {
+                            ModEntry.MonitorObject.Log(catchException.ToString(), LogLevel.Trace);
+                        }
+                        ModEntry.MonitorObject.LogOnce($"An error occured while fetching the harvest for {itemId ?? "unknownItem"}", LogLevel.Error);
+                        ModEntry.MonitorObject.Log(e.ToString(), LogLevel.Debug);
+                        return null;
+                    }
                 }
                 else
                 {
                     var crop = new Crop(seedsObject.ParentSheetIndex, 0, 0);
-                    return new StardewValley.Object(crop.indexOfHarvest.Value, 1).sellToStorePrice();
+                    return new SObject(crop.indexOfHarvest.Value, 1);
                 }
             } else {
-                return 0;
+                return null;
             }
+        }
+
+        public static int GetHarvestPrice(Item item)
+        {
+            return GetHarvest(item)?.sellToStorePrice() ?? 0;
         }
 
         public static void DrawMouseCursor()

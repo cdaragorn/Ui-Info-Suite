@@ -15,6 +15,7 @@ namespace UIInfoSuite2
 
         #region Properties
         public static IMonitor MonitorObject { get; private set; }
+        public static DynamicGameAssetsEntry DGA { get; private set; }
 
         private static SkipIntro _skipIntro; // Needed so GC won't throw away object with subscriptions
         private static ModConfig _modConfig;
@@ -30,6 +31,7 @@ namespace UIInfoSuite2
         public override void Entry(IModHelper helper)
         {
             MonitorObject = Monitor;
+            DGA = new DynamicGameAssetsEntry(Helper, Monitor);
 
             _skipIntro = new SkipIntro(helper.Events);
             _modConfig = Helper.ReadConfig<ModConfig>();

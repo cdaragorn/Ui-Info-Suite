@@ -24,6 +24,8 @@ namespace UIInfoSuite2.UIElements
         private readonly PerScreen<Building> _currentTileBuilding = new();
         private readonly IModHelper _helper;
 
+        private readonly Dictionary<string, string> _indexOfDgaCropNames = new();
+
         public ShowCropAndBarrelTime(IModHelper helper)
         {
             _helper = helper;
@@ -246,27 +248,19 @@ namespace UIInfoSuite2.UIElements
                             }
                         }
 
-                        if (hoeDirt.crop.indexOfHarvest.Value > 0)
+                        string? harvestName = this.GetCropHarvestName(hoeDirt.crop);
+                        if (!String.IsNullOrEmpty(harvestName))
                         {
-                            int itemId = hoeDirt.crop.isWildSeedCrop() ? hoeDirt.crop.whichForageCrop.Value : hoeDirt.crop.indexOfHarvest.Value;
-                            string hoverText = _indexOfCropNames.SafeGet(itemId);
-                            if (string.IsNullOrEmpty(hoverText))
-                            {
-                                hoverText = new StardewValley.Object(itemId, 1).DisplayName;
-                                _indexOfCropNames.Add(itemId, hoverText);
-                            }
-
-                            StringBuilder finalHoverText = new StringBuilder();
-                            finalHoverText.Append(hoverText).Append(": ");
+                            StringBuilder hoverText = new StringBuilder(harvestName).Append(": ");
                             if (num > 0)
                             {
-                                finalHoverText.Append(num).Append(" ")
+                                hoverText.Append(num).Append(" ")
                                     .Append(_helper.SafeGetString(
                                         LanguageKeys.Days));
                             }
                             else
                             {
-                                finalHoverText.Append(_helper.SafeGetString(
+                                hoverText.Append(_helper.SafeGetString(
                                     LanguageKeys.ReadyToHarvest));
                             }
 
@@ -279,7 +273,7 @@ namespace UIInfoSuite2.UIElements
 
                             IClickableMenu.drawHoverText(
                                 Game1.spriteBatch,
-                                finalHoverText.ToString(),
+                                hoverText.ToString(),
                                 Game1.smallFont, overrideX: overrideX, overrideY: overrideY);
                         }
                     }
@@ -334,6 +328,46 @@ namespace UIInfoSuite2.UIElements
                         }
                     }
                 }
+            }
+        }
+
+        string? GetCropHarvestName(Crop crop)
+        {
+            if (crop.indexOfHarvest.Value > 0)
+            {
+                int itemId = crop.isWildSeedCrop() ? crop.whichForageCrop.Value : crop.indexOfHarvest.Value;
+                if (!_indexOfCropNames.TryGetValue(itemId, out string? harvestName)) {
+                    harvestName = new StardewValley.Object(itemId, 1).DisplayName;
+                    _indexOfCropNames.Add(itemId, harvestName);
+                }
+                return harvestName;
+            }
+            else if (ModEntry.DGA.IsCustomCrop(crop, out var dgaHelper))
+            {
+                string? cropId = null;
+                try
+                {
+                    cropId = dgaHelper.GetFullId(crop)!;
+                    if (!_indexOfDgaCropNames.TryGetValue(cropId, out string? harvestName)) {
+                        var harvestCrop = dgaHelper.GetCropHarvest(crop);
+                        if (harvestCrop == null)
+                            return null;
+                        
+                        harvestName = harvestCrop.DisplayName;
+                        _indexOfDgaCropNames.Add(cropId, harvestName);
+                    }
+                    return harvestName;
+                }
+                catch (Exception e)
+                {
+                    ModEntry.MonitorObject.LogOnce($"An error occured while retrieving the crop harvest name for {cropId ?? "unknownCrop"}.", LogLevel.Error);
+                    ModEntry.MonitorObject.Log(e.ToString(), LogLevel.Debug);
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
     }
