@@ -456,7 +456,10 @@ namespace UIInfoSuite2.UIElements
 
                 if (_hoverItem.Value is StardewValley.Object obj)
                 {
-                    if (obj.countsForShippedCollection() && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex))
+                    // See Utility.getFarmerItemsShippedPercent
+                    if (obj.countsForShippedCollection()
+                        && !Game1.player.basicShipped.ContainsKey(obj.ParentSheetIndex)
+                        && obj.Type != "Fish")
                     {
                         int num1 = (int)windowPos.X + windowWidth - 66;
                         int num2 = (int)windowPos.Y - 27;
