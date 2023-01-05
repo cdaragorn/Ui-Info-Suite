@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
-namespace UIInfoSuite2.UIElements
+namespace UIInfoSuite2.UIElements.ExperienceElements
 {
     public class DisplayedLevelUpMessage
     {

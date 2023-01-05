@@ -4,7 +4,7 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 
-namespace UIInfoSuite2.UIElements
+namespace UIInfoSuite2.UIElements.ExperienceElements
 {
     public class DisplayedExperienceBar
     {

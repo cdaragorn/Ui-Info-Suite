@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
 
-namespace UIInfoSuite2.UIElements
+namespace UIInfoSuite2.UIElements.ExperienceElements
 {
     internal class DisplayedExperienceValue
     {
