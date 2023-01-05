@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Enums;
 using StardewModdingAPI.Events;
@@ -30,6 +29,7 @@ namespace UIInfoSuite2.UIElements
         private readonly PerScreen<int> _experienceEarnedThisLevel = new(createNewState: () => -1);
 
         private readonly PerScreen<DisplayedExperienceBar> _displayedExperienceBar = new(createNewState: () => new DisplayedExperienceBar());
+        private readonly PerScreen<DisplayedLevelUpMessage> _displayedLevelUpMessage = new(createNewState: () => new DisplayedLevelUpMessage());
         private readonly PerScreen<List<DisplayedExperienceValue>> _displayedExperienceValues = new(createNewState: () => new List<DisplayedExperienceValue>());
 
         private const int LevelUpVisibleTicks = 120;
@@ -239,29 +239,7 @@ namespace UIInfoSuite2.UIElements
             // Level up text
             if (LevelUpAnimationEnabled && _levelUpVisibleTimer.Value != 0)
             {
-                Vector2 playerLocalPosition = Game1.player.getLocalPosition(Game1.viewport);
-
-                Game1.spriteBatch.Draw(
-                    Game1.mouseCursors,
-                    Utility.ModifyCoordinatesForUIScale(new Vector2(
-                        playerLocalPosition.X - 74,
-                        playerLocalPosition.Y - 130)),
-                    _levelUpIconRectangle.Value,
-                    Color.White,
-                    0,
-                    Vector2.Zero,
-                    Game1.pixelZoom,
-                    SpriteEffects.None,
-                    0.85f);
-
-                Game1.drawWithBorder(
-                    _helper.SafeGetString(
-                        LanguageKeys.LevelUp),
-                    Color.DarkSlateGray,
-                    Color.PaleTurquoise,
-                    Utility.ModifyCoordinatesForUIScale(new Vector2(
-                        playerLocalPosition.X - 28,
-                        playerLocalPosition.Y - 130)));
+                _displayedLevelUpMessage.Value.Draw(_levelUpIconRectangle.Value, _helper.SafeGetString(LanguageKeys.LevelUp));
             }
 
             // Experience values
