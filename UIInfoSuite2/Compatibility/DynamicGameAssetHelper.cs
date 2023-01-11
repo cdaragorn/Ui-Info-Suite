@@ -127,15 +127,19 @@ namespace UIInfoSuite2.Compatibility
                     if (oldBasicShipped.TryGetValue(shipped, out int oldValue))
                     {
                         if (oldValue != basicShipped[shipped])
+                        {
                             basicShipped[shipped] = oldValue;
+                            newItems.Add(shipped);
+                        }
                     }
                     else
                     {
+                        basicShipped.Remove(shipped);
                         newItems.Add(shipped);
                     }
                 }
-                if (newItems.Count > 1)
-                    throw new Exception("More than one item were shipped whereas we expected only one");
+                if (newItems.Count != 1)
+                    throw new Exception($"{newItems.Count} items were shipped when we expected only one");
                 
                 return newItems[0];
             }

@@ -260,6 +260,7 @@ namespace UIInfoSuite2.UIElements
                 if (notShippedYet && hoveredObject != null && ModEntry.DGA.IsCustomObject(hoveredObject, out var dgaHelper))
                 {
                     // NB For DGA items, Game1.player.basicShipped.ContainsKey(hoveredObject.ParentSheetIndex) will always be false
+                    //    and Object.countsForShippedCollection bypasses the type and category checks
                     try
                     {
                         // For shipping, DGA patches:
@@ -272,7 +273,11 @@ namespace UIInfoSuite2.UIElements
                         
                         // Nonetheless, show the icon if that item is still hidden in the collections page.
                         int dgaId = dgaHelper.GetDgaObjectFakeId(hoveredObject);
-                        notShippedYet = !Game1.player.basicShipped.ContainsKey(dgaId);
+                        string t = hoveredObject.Type;
+                        bool inCollectionsPage = !(t.Contains("Arch") || t.Contains("Fish") || t.Contains("Mineral") || t.Contains("Cooking"))
+                            && StardewValley.Object.isPotentialBasicShippedCategory(dgaId, hoveredObject.Category.ToString());
+                            
+                        notShippedYet = inCollectionsPage && !Game1.player.basicShipped.ContainsKey(dgaId);
                     }
                     catch (Exception e)
                     {
@@ -333,7 +338,7 @@ namespace UIInfoSuite2.UIElements
                 Point windowPos = new Point(windowX, windowY);
                 Vector2 currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
 
-                if (itemPrice > 0 || stackPrice > 0 || cropPrice > 0 || !String.IsNullOrEmpty(requiredBundleName))
+                if (itemPrice > 0 || stackPrice > 0 || cropPrice > 0 || !String.IsNullOrEmpty(requiredBundleName) || notDonatedYet || notShippedYet)
                 {
                     IClickableMenu.drawTextureBox(
                         Game1.spriteBatch,
