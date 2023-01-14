@@ -48,7 +48,7 @@ namespace UIInfoSuite2.UIElements
                 new Rectangle(134, 236, 30, 15),
                 Game1.pixelZoom);
 
-        private readonly PerScreen<Item> _hoverItem = new();
+        private readonly PerScreen<Item?> _hoverItem = new();
         private CommunityCenter _communityCenter;
         private LibraryMuseum _libraryMuseum;
 

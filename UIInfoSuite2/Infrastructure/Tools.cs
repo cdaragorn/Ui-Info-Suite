@@ -124,19 +124,18 @@ namespace UIInfoSuite2.Infrastructure
             }
         }
 
-        public static Item GetHoveredItem()
+        public static Item? GetHoveredItem()
         {
-            Item hoverItem = null;
+            Item? hoverItem = null;
 
-            if (Game1.onScreenMenus != null)
+            if (Game1.activeClickableMenu == null && Game1.onScreenMenus != null)
             {
-                for (int i = 0; i < Game1.onScreenMenus.Count; ++i)
+                foreach (var menu in Game1.onScreenMenus)
                 {
-                    Toolbar onScreenMenu = Game1.onScreenMenus[i] as Toolbar;
-                    if (onScreenMenu != null)
+                    if (menu is Toolbar toolbar)
                     {
                         FieldInfo hoverItemField = typeof(Toolbar).GetField("hoverItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                        hoverItem = hoverItemField.GetValue(onScreenMenu) as Item;
+                        hoverItem = hoverItemField.GetValue(toolbar) as Item;
                     }
                 }
             }
