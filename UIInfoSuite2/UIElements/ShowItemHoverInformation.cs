@@ -300,26 +300,38 @@ namespace UIInfoSuite2.UIElements
                     }
                 }
 
-                int windowWidth;
-
-                int bundleTextWidth = 0;
+                var drawPositionOffset = new Vector2();
+                int windowWidth, windowHeight;
+                
+                int bundleHeaderWidth = 0;
                 if (!string.IsNullOrEmpty(requiredBundleName))
                 {
-                    bundleTextWidth = (int)Game1.dialogueFont.MeasureString(requiredBundleName).Length();
-                    bundleTextWidth -= 30; //Text offset from left
+                    // bundleHeaderWidth = ((bundleIcon.Width = 15)*3 - 7 = 38) + 3 + bundleTextSize.X + 3 + ((shippingBin.Width * 1.2 = 36) - 12 = 24)
+                    bundleHeaderWidth = 68 + (int)Game1.dialogueFont.MeasureString(requiredBundleName).X;
                 }
-                int stackTextWidth = (int)(Game1.smallFont.MeasureString(stackPrice.ToString()).Length());
-                int itemTextWidth = (int)(Game1.smallFont.MeasureString(itemPrice.ToString()).Length());
-                int largestTextWidth = Math.Max(bundleTextWidth, Math.Max(stackTextWidth, itemTextWidth));
-                windowWidth = largestTextWidth + 90;
+                int itemTextWidth = (int)Game1.smallFont.MeasureString(itemPrice.ToString()).X;
+                int stackTextWidth = (int)Game1.smallFont.MeasureString(stackPrice.ToString()).X;
+                int cropTextWidth = (int)Game1.smallFont.MeasureString(cropPrice.ToString()).X;
+                // largestTextWidth = 12 + 4 + (icon.Width = 32) + 4 + max(textSize.X) + 8 + 16
+                int largestTextWidth = 76 + Math.Max(stackTextWidth, Math.Max(itemTextWidth, cropTextWidth));
+                windowWidth = Math.Max(bundleHeaderWidth, largestTextWidth);
 
-                int windowHeight = 75;
-
+                windowHeight = 20 + 16;
+                if (itemPrice > 0)
+                    windowHeight += 40;
                 if (stackPrice > 0)
                     windowHeight += 40;
-
                 if (cropPrice > 0)
                     windowHeight += 40;
+                if (!string.IsNullOrEmpty(requiredBundleName))
+                {
+                    windowHeight += 4;
+                    drawPositionOffset.Y += 4;
+                }
+                
+                // Minimal window dimensions
+                windowHeight = Math.Max(windowHeight, 40);
+                windowWidth = Math.Max(windowWidth, Math.Max(windowHeight + 8, 40));
 
                 int windowY = Game1.getMouseY() + 20;
                 int windowX = Game1.getMouseX() - 25 - windowWidth;
@@ -335,8 +347,15 @@ namespace UIInfoSuite2.UIElements
                 else if (windowX < safeArea.Left)
                     windowX = Game1.getMouseX() + 350;
 
-                Point windowPos = new Point(windowX, windowY);
-                Vector2 currentDrawPos = new Vector2(windowPos.X + 30, windowPos.Y + 40);
+                Vector2 windowPos = new Vector2(windowX, windowY);
+                Vector2 drawPosition = windowPos + new Vector2(16, 20) + drawPositionOffset;
+
+                int rowHeight = 40;
+                int iconWidth = 32; // TODO remove and replace with explanation
+                int iconGap = 4;
+                Vector2 iconCenterOffset = new Vector2(iconWidth / 2, rowHeight / 2);
+                Vector2 textOffset = new Vector2(iconWidth + iconGap, (rowHeight - 18) / 2 - 6);
+                Vector2 shadowOffset = new Vector2(2, 2);
 
                 if (itemPrice > 0 || stackPrice > 0 || cropPrice > 0 || !String.IsNullOrEmpty(requiredBundleName) || notDonatedYet || notShippedYet)
                 {
@@ -355,7 +374,7 @@ namespace UIInfoSuite2.UIElements
                 {
                     Game1.spriteBatch.Draw(
                         Game1.debrisSpriteSheet,
-                        new Vector2(currentDrawPos.X, currentDrawPos.Y + 4),
+                        drawPosition + iconCenterOffset,
                         Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
                         Color.White,
                         0,
@@ -363,27 +382,28 @@ namespace UIInfoSuite2.UIElements
                         Game1.pixelZoom,
                         SpriteEffects.None,
                         0.95f);
+                    
+                    this.DrawSmallTextWithShadow(Game1.spriteBatch, itemPrice.ToString(), drawPosition + textOffset);
 
-                    Game1.spriteBatch.DrawString(
-                        Game1.smallFont,
-                        itemPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
-                        Game1.textShadowColor);
-
-                    Game1.spriteBatch.DrawString(
-                        Game1.smallFont,
-                        itemPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-                        Game1.textColor);
-
-                    currentDrawPos.Y += 40;
+                    drawPosition.Y += rowHeight;
                 }
 
                 if (stackPrice > 0)
                 {
+                    Vector2 overlapOffset = new Vector2(0, 10);
                     Game1.spriteBatch.Draw(
                         Game1.debrisSpriteSheet,
-                        new Vector2(currentDrawPos.X, currentDrawPos.Y),
+                        drawPosition + iconCenterOffset - overlapOffset / 2,
+                        Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
+                        Color.White,
+                        0,
+                        new Vector2(8, 8),
+                        Game1.pixelZoom,
+                        SpriteEffects.None,
+                        0.95f);
+                    Game1.spriteBatch.Draw(
+                        Game1.debrisSpriteSheet,
+                        drawPosition + iconCenterOffset + overlapOffset / 2,
                         Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
                         Color.White,
                         0,
@@ -392,113 +412,88 @@ namespace UIInfoSuite2.UIElements
                         SpriteEffects.None,
                         0.95f);
 
-                    Game1.spriteBatch.Draw(
-                        Game1.debrisSpriteSheet,
-                        new Vector2(currentDrawPos.X, currentDrawPos.Y + 10),
-                        Game1.getSourceRectForStandardTileSheet(Game1.debrisSpriteSheet, 8, 16, 16),
-                        Color.White,
-                        0,
-                        new Vector2(8, 8),
-                        Game1.pixelZoom,
-                        SpriteEffects.None,
-                        0.95f);
+                    this.DrawSmallTextWithShadow(Game1.spriteBatch, stackPrice.ToString(), drawPosition + textOffset);
 
-                    Game1.spriteBatch.DrawString(
-                        Game1.smallFont,
-                        stackPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
-                        Game1.textShadowColor);
-
-                    Game1.spriteBatch.DrawString(
-                        Game1.smallFont,
-                        stackPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-                        Game1.textColor);
-
-                    currentDrawPos.Y += 40;
+                    drawPosition.Y += rowHeight;
                 }
 
                 if (cropPrice > 0)
                 {
-
                     Game1.spriteBatch.Draw(
                         Game1.mouseCursors,
-                        new Vector2(currentDrawPos.X - 15, currentDrawPos.Y - 10),
+                        drawPosition + iconCenterOffset,
                         new Rectangle(60, 428, 10, 10),
                         Color.White,
                         0.0f,
-                        Vector2.Zero,
+                        new Vector2(5, 5),
                         Game1.pixelZoom * 0.75f,
                         SpriteEffects.None,
                         0.85f);
 
-                    Game1.spriteBatch.DrawString(
-                        Game1.smallFont,
-                        cropPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 22, currentDrawPos.Y - 8),
-                        Game1.textShadowColor);
-
-                    Game1.spriteBatch.DrawString(
-                        Game1.smallFont,
-                        cropPrice.ToString(),
-                        new Vector2(currentDrawPos.X + 20, currentDrawPos.Y - 10),
-                        Game1.textColor);
+                    this.DrawSmallTextWithShadow(Game1.spriteBatch, cropPrice.ToString(), drawPosition + textOffset);
                 }
 
                 if (notDonatedYet)
                 {
-                    _museumIcon.bounds.X = windowPos.X - 30;
-                    _museumIcon.bounds.Y = windowPos.Y - 60 + windowHeight;
-                    _museumIcon.scale = 2;
-                    _museumIcon.draw(Game1.spriteBatch);
+                    Game1.spriteBatch.Draw(
+                        _museumIcon.texture,
+                        windowPos + new Vector2(2, windowHeight + 8),
+                        _museumIcon.sourceRect,
+                        Color.White,
+                        0f,
+                        new Vector2(_museumIcon.sourceRect.Width / 2, _museumIcon.sourceRect.Height),
+                        2,
+                        SpriteEffects.None,
+                        0.86f);
                 }
 
                 if (!string.IsNullOrEmpty(requiredBundleName))
                 {
-                    int num1 = windowPos.X - 30;
-                    int num2 = windowPos.Y - 14;
-                    int num3 = num1 + 52;
-                    int y3 = num2 + 4;
-                    int height = 36;
-                    int num5 = 36;
-                    int width = windowWidth / num5;
-                    int num6 = 6;
+                    // The bundle icon is 15x14 * 3 = 30x42, drawn offset by (-7, -13) from the top-left corner of the window
+                    // The color banner is 36 pixels high and horizontally centered with the bundle icon
+                    // NB The dialogue font has a cap height of 30, a left margin of 3 and a top margin of 6
 
-                    for (int i = 0; i < num5; ++i)
+                    var bundlePosition = windowPos + new Vector2(-7, -13);
+                    var bundleSourceRect = new Rectangle(331, 374, 15, 14);
+                    float bundleScale = 3f;
+
+                    int bundleBannerX = (int)bundlePosition.X;
+                    int bundleBannerY = (int)bundlePosition.Y + 3;
+                    int cellCount = 36;
+                    int solidCells = 6;
+                    int cellWidth = windowWidth / cellCount;
+                    for (int cell = 0; cell < cellCount; ++cell)
                     {
-                        float num7 = (float)(i >= num6 ? 0.92 - (i - num6) * (1.0 / (num5 - num6)) : 0.92f);
+                        float fadeAmount = 0.92f - (cell < solidCells ? 0 : 1.0f * (cell-solidCells)/(cellCount-solidCells));
                         Game1.spriteBatch.Draw(
                             Game1.staminaRect,
-                            new Rectangle(num3 + width * i, y3, width, height),
-                            Color.Crimson * num7);
+                            new Rectangle(bundleBannerX + cell * cellWidth, bundleBannerY, cellWidth, 36),
+                            Color.Crimson * fadeAmount);
                     }
+
+                    Game1.spriteBatch.Draw(
+                        Game1.mouseCursors,
+                        bundlePosition,
+                        bundleSourceRect,
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        bundleScale,
+                        SpriteEffects.None,
+                        0.86f);
 
                     Game1.spriteBatch.DrawString(
                         Game1.dialogueFont,
                         requiredBundleName,
-                        new Vector2(num1 + 72, num2),
+                        bundlePosition + new Vector2(bundleSourceRect.Width * bundleScale + 3, 0),
                         Color.White);
-
-                    _bundleIcon.bounds.X = num1 + 16;
-                    _bundleIcon.bounds.Y = num2 - 6;
-                    _bundleIcon.scale = 3;
-                    _bundleIcon.draw(Game1.spriteBatch);
                 }
 
                 if (notShippedYet)
                 {
-                        int num1 = windowPos.X + windowWidth - 66;
-                        int num2 = windowPos.Y - 27;
-
-                        _shippingBottomIcon.bounds.X = num1;
-                        _shippingBottomIcon.bounds.Y = num2 - 8;
-                        _shippingBottomIcon.scale = 1.2f;
-                        _shippingBottomIcon.draw(Game1.spriteBatch);
-
-                        _shippingTopIcon.bounds.X = num1;
-                        _shippingTopIcon.bounds.Y = num2;
-                        _shippingTopIcon.scale = 1.2f;
-                        _shippingTopIcon.draw(Game1.spriteBatch);
+                    // Draws a 36x28 shipping bin which is offset by (-24, -6) from the top-right corner of the window
+                    var shippingBinDims = new Vector2(30, 24);
+                    this.DrawShippingBin(Game1.spriteBatch, windowPos + new Vector2(windowWidth - 6, 8), shippingBinDims / 2);
                 }
 
                 //memorize the result to save processing time when calling again with same values
@@ -511,6 +506,44 @@ namespace UIInfoSuite2.UIElements
                 //lastRequiredBundleName = (lastRequiredBundleName != requiredBundleName) ? requiredBundleName : lastRequiredBundleName;
                 //lastStackSize = (_hoverItem.Value != null && lastStackSize != _hoverItem.Value.Stack) ? _hoverItem.Value.Stack : lastStackSize;
             }
+        }
+
+        private void DrawSmallTextWithShadow(SpriteBatch b, string text, Vector2 position)
+        {
+            b.DrawString(Game1.smallFont, text, position + new Vector2(2, 2), Game1.textShadowColor);
+            b.DrawString(Game1.smallFont, text, position, Game1.textColor);
+        }
+
+        private void DrawShippingBin(SpriteBatch b, Vector2 position, Vector2 origin)
+        {
+            float shippingBinScale = 1.2f;
+            var shippingBinSourceRect = new Rectangle(526, 218, 30, 22);
+            var shippingBinOffset = new Vector2(0, 2);
+            var shippingBinLidSourceRect = new Rectangle(134, 236, 30, 15);
+            var shippingBinLidOffset = Vector2.Zero;
+            
+            // NB This is not the texture used to draw the shipping bin on the farm map.
+            //    The one for the farm is located in "Buildings\Shipping Bin".
+            Game1.spriteBatch.Draw(
+                Game1.mouseCursors,
+                position,
+                shippingBinSourceRect,
+                Color.White,
+                0f,
+                origin - shippingBinOffset,
+                shippingBinScale,
+                SpriteEffects.None,
+                0.86f);
+            Game1.spriteBatch.Draw(
+                Game1.mouseCursors,
+                position,
+                shippingBinLidSourceRect,
+                Color.White,
+                0f,
+                origin - shippingBinLidOffset,
+                shippingBinScale,
+                SpriteEffects.None,
+                0.86f);
         }
     }
 }
