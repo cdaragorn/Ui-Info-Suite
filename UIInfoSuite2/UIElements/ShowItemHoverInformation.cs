@@ -300,8 +300,9 @@ namespace UIInfoSuite2.UIElements
                 int itemTextWidth = (int)Game1.smallFont.MeasureString(itemPrice.ToString()).X;
                 int stackTextWidth = (int)Game1.smallFont.MeasureString(stackPrice.ToString()).X;
                 int cropTextWidth = (int)Game1.smallFont.MeasureString(cropPrice.ToString()).X;
+                int minTextWidth = (int)Game1.smallFont.MeasureString("000").X;
                 // largestTextWidth = 12 + 4 + (icon.Width = 32) + 4 + max(textSize.X) + 8 + 16
-                int largestTextWidth = 76 + Math.Max(stackTextWidth, Math.Max(itemTextWidth, cropTextWidth));
+                int largestTextWidth = 76 + Math.Max(minTextWidth, Math.Max(stackTextWidth, Math.Max(itemTextWidth, cropTextWidth)));
                 windowWidth = Math.Max(bundleHeaderWidth, largestTextWidth);
 
                 windowHeight = 20 + 16;
@@ -319,7 +320,7 @@ namespace UIInfoSuite2.UIElements
                 
                 // Minimal window dimensions
                 windowHeight = Math.Max(windowHeight, 40);
-                windowWidth = Math.Max(windowWidth, Math.Max(windowHeight + 8, 40));
+                windowWidth = Math.Max(windowWidth, 40);
 
                 int windowY = Game1.getMouseY() + 20;
                 int windowX = Game1.getMouseX() - 25 - windowWidth;
