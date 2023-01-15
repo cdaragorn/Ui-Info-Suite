@@ -21,32 +21,23 @@ namespace UIInfoSuite2.UIElements
         private readonly Dictionary<string, List<KeyValuePair<int, int>>> _prunedRequiredBundles = new();
         private readonly ClickableTextureComponent _bundleIcon =
             new(
-                "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-                "",
-                Game1.content.LoadString("Strings\\UI:GameMenu_JunimoNote_Hover", new object[0]),
                 Game1.mouseCursors,
                 new Rectangle(331, 374, 15, 14),
-                Game1.pixelZoom);
+                3f);
         private readonly ClickableTextureComponent _museumIcon;
         private readonly ClickableTextureComponent _shippingBottomIcon =
             new(
-                "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-                "",
-                "",
                 Game1.mouseCursors,
                 new Rectangle(526, 218, 30, 22),
-                Game1.pixelZoom);
+                1.2f);
         private readonly ClickableTextureComponent _shippingTopIcon =
             new(
-                "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-                "",
-                "",
                 Game1.mouseCursors,
                 new Rectangle(134, 236, 30, 15),
-                Game1.pixelZoom);
+                1.2f);
 
         private readonly PerScreen<Item?> _hoverItem = new();
         private CommunityCenter _communityCenter;
@@ -71,10 +62,7 @@ namespace UIInfoSuite2.UIElements
             }
 
             _museumIcon = new(
-                "",
                 new Rectangle(0, 0, Game1.tileSize, Game1.tileSize),
-                "",
-                Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate", new object[0]),
                 gunther.Sprite.Texture,
                 gunther.GetHeadShot(),
                 Game1.pixelZoom);
@@ -306,7 +294,7 @@ namespace UIInfoSuite2.UIElements
                 int bundleHeaderWidth = 0;
                 if (!string.IsNullOrEmpty(requiredBundleName))
                 {
-                    // bundleHeaderWidth = ((bundleIcon.Width = 15)*3 - 7 = 38) + 3 + bundleTextSize.X + 3 + ((shippingBin.Width * 1.2 = 36) - 12 = 24)
+                    // bundleHeaderWidth = ((bundleIcon.Width * 3 = 45) - 7 = 38) + 3 + bundleTextSize.X + 3 + ((shippingBin.Width * 1.2 = 36) - 12 = 24)
                     bundleHeaderWidth = 68 + (int)Game1.dialogueFont.MeasureString(requiredBundleName).X;
                 }
                 int itemTextWidth = (int)Game1.smallFont.MeasureString(itemPrice.ToString()).X;
@@ -350,12 +338,10 @@ namespace UIInfoSuite2.UIElements
                 Vector2 windowPos = new Vector2(windowX, windowY);
                 Vector2 drawPosition = windowPos + new Vector2(16, 20) + drawPositionOffset;
 
+                // Icons are drawn in 32x40 cells. The small font has a cap height of 18 and an offset of (2, 6)
                 int rowHeight = 40;
-                int iconWidth = 32; // TODO remove and replace with explanation
-                int iconGap = 4;
-                Vector2 iconCenterOffset = new Vector2(iconWidth / 2, rowHeight / 2);
-                Vector2 textOffset = new Vector2(iconWidth + iconGap, (rowHeight - 18) / 2 - 6);
-                Vector2 shadowOffset = new Vector2(2, 2);
+                Vector2 iconCenterOffset = new Vector2(16, 20);
+                Vector2 textOffset = new Vector2(32 + 4, (rowHeight - 18) / 2 - 6);
 
                 if (itemPrice > 0 || stackPrice > 0 || cropPrice > 0 || !String.IsNullOrEmpty(requiredBundleName) || notDonatedYet || notShippedYet)
                 {
@@ -449,49 +435,14 @@ namespace UIInfoSuite2.UIElements
 
                 if (!string.IsNullOrEmpty(requiredBundleName))
                 {
-                    // The bundle icon is 15x14 * 3 = 30x42, drawn offset by (-7, -13) from the top-left corner of the window
-                    // The color banner is 36 pixels high and horizontally centered with the bundle icon
-                    // NB The dialogue font has a cap height of 30, a left margin of 3 and a top margin of 6
-
-                    var bundlePosition = windowPos + new Vector2(-7, -13);
-                    var bundleSourceRect = new Rectangle(331, 374, 15, 14);
-                    float bundleScale = 3f;
-
-                    int bundleBannerX = (int)bundlePosition.X;
-                    int bundleBannerY = (int)bundlePosition.Y + 3;
-                    int cellCount = 36;
-                    int solidCells = 6;
-                    int cellWidth = windowWidth / cellCount;
-                    for (int cell = 0; cell < cellCount; ++cell)
-                    {
-                        float fadeAmount = 0.92f - (cell < solidCells ? 0 : 1.0f * (cell-solidCells)/(cellCount-solidCells));
-                        Game1.spriteBatch.Draw(
-                            Game1.staminaRect,
-                            new Rectangle(bundleBannerX + cell * cellWidth, bundleBannerY, cellWidth, 36),
-                            Color.Crimson * fadeAmount);
-                    }
-
-                    Game1.spriteBatch.Draw(
-                        Game1.mouseCursors,
-                        bundlePosition,
-                        bundleSourceRect,
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        bundleScale,
-                        SpriteEffects.None,
-                        0.86f);
-
-                    Game1.spriteBatch.DrawString(
-                        Game1.dialogueFont,
-                        requiredBundleName,
-                        bundlePosition + new Vector2(bundleSourceRect.Width * bundleScale + 3, 0),
-                        Color.White);
+                    // Draws a 30x42 bundle icon offset by (-7, -13) from the top-left corner of the window
+                    // and the 36px high banner with the bundle name
+                    this.DrawBundleBanner(requiredBundleName, windowPos + new Vector2(-7, -13), windowWidth);
                 }
 
                 if (notShippedYet)
                 {
-                    // Draws a 36x28 shipping bin which is offset by (-24, -6) from the top-right corner of the window
+                    // Draws a 36x28 shipping bin offset by (-24, -6) from the top-right corner of the window
                     var shippingBinDims = new Vector2(30, 24);
                     this.DrawShippingBin(Game1.spriteBatch, windowPos + new Vector2(windowWidth - 6, 8), shippingBinDims / 2);
                 }
@@ -514,34 +465,67 @@ namespace UIInfoSuite2.UIElements
             b.DrawString(Game1.smallFont, text, position, Game1.textColor);
         }
 
+        private void DrawBundleBanner(string bundleName, Vector2 position, int windowWidth)
+        {
+            // NB The dialogue font has a cap height of 30 and an offset of (3, 6)
+
+            int bundleBannerX = (int)position.X;
+            int bundleBannerY = (int)position.Y + 3;
+            int cellCount = 36;
+            int solidCells = 6;
+            int cellWidth = windowWidth / cellCount;
+            for (int cell = 0; cell < cellCount; ++cell)
+            {
+                float fadeAmount = 0.92f - (cell < solidCells ? 0 : 1.0f * (cell-solidCells)/(cellCount-solidCells));
+                Game1.spriteBatch.Draw(
+                    Game1.staminaRect,
+                    new Rectangle(bundleBannerX + cell * cellWidth, bundleBannerY, cellWidth, 36),
+                    Color.Crimson * fadeAmount);
+            }
+
+            Game1.spriteBatch.Draw(
+                Game1.mouseCursors,
+                position,
+                _bundleIcon.sourceRect,
+                Color.White,
+                0f,
+                Vector2.Zero,
+                _bundleIcon.scale,
+                SpriteEffects.None,
+                0.86f);
+
+            Game1.spriteBatch.DrawString(
+                Game1.dialogueFont,
+                bundleName,
+                position + new Vector2(_bundleIcon.sourceRect.Width * _bundleIcon.scale + 3, 0),
+                Color.White);
+        }
+
         private void DrawShippingBin(SpriteBatch b, Vector2 position, Vector2 origin)
         {
-            float shippingBinScale = 1.2f;
-            var shippingBinSourceRect = new Rectangle(526, 218, 30, 22);
             var shippingBinOffset = new Vector2(0, 2);
-            var shippingBinLidSourceRect = new Rectangle(134, 236, 30, 15);
-            var shippingBinLidOffset = Vector2.Zero;
+            // var shippingBinLidOffset = Vector2.Zero;
             
             // NB This is not the texture used to draw the shipping bin on the farm map.
             //    The one for the farm is located in "Buildings\Shipping Bin".
             Game1.spriteBatch.Draw(
-                Game1.mouseCursors,
+                _shippingBottomIcon.texture,
                 position,
-                shippingBinSourceRect,
+                _shippingBottomIcon.sourceRect,
                 Color.White,
                 0f,
                 origin - shippingBinOffset,
-                shippingBinScale,
+                _shippingBottomIcon.scale,
                 SpriteEffects.None,
                 0.86f);
             Game1.spriteBatch.Draw(
-                Game1.mouseCursors,
+                _shippingTopIcon.texture,
                 position,
-                shippingBinLidSourceRect,
+                _shippingTopIcon.sourceRect,
                 Color.White,
                 0f,
-                origin - shippingBinLidOffset,
-                shippingBinScale,
+                origin,
+                _shippingTopIcon.scale,
                 SpriteEffects.None,
                 0.86f);
         }
