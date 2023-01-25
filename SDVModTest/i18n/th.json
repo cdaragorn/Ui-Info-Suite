@@ -29,5 +29,7 @@
 	"ShowExtraItemInformation" : "Show item hover information",
 	"ShowTravelingMerchant" : "Show Traveling Merchant",
 	"ShowHarvestPricesInShop" : "Show shop harvest prices",
-	"ShowWhenNewRecipesAreAvailable" : "Show when new recipes are available"
+	"ShowWhenNewRecipesAreAvailable" : "Show when new recipes are available",
+	"NPCBirthday": "{0}'s Birthday",
+	"UIOptions": "UI Info Mod Options"
 }

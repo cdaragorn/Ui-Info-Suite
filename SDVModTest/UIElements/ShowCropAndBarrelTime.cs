@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using UIInfoSuite.Extensions;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -167,16 +167,44 @@ namespace UIInfoSuite.UIElements
                     }
                     else
                     {
-                        var hours = currentTile.MinutesUntilReady / 60;
-                        var minutes = currentTile.MinutesUntilReady % 60;
-                        if (hours > 0)
-                            hoverText.Append(hours).Append(" ")
+
+                        int timeLeft = _currentTile.MinutesUntilReady;
+                        int longTime = timeLeft / 60;
+                        string longText = LanguageKeys.Hours;
+                        int shortTime = timeLeft % 60;
+                        string shortText = LanguageKeys.Minutes;
+
+                        // 1600 minutes per day if you go to bed at 2am, more if you sleep early.
+                        if (timeLeft >= 1600) {
+                            // Unlike crops and casks, this is only an approximate number of days
+                            // because of how time works while sleeping. It's close enough though.
+                            longText = LanguageKeys.Days;
+                            longTime = timeLeft / 1600;
+                            
+                            shortText = LanguageKeys.Hours;
+                            shortTime = (timeLeft % 1600);
+
+                            // Hours below 1200 are 60 minutes per hour. Overnight it's 100 minutes per hour.
+                            // We could just divide by 60 here but then you could see strange times like
+                            // "2 days, 25 hours".
+                            // This is a bit of a fudge since depending on the current time of day and when the
+                            // farmer goes to bed, the night might happen earlier or last longer, but it's just
+                            // an approximation; regardless the processing won't finish before tomorrow.
+                            if (shortTime <= 1200)
+                                shortTime /= 60;
+                            else
+                                shortTime = 20 + (shortTime - 1200) / 100;
+                        }
+
+                        if (longTime > 0)
+                            hoverText.Append(longTime).Append(" ")
                                 .Append(_helper.SafeGetString(
-                                    LanguageKeys.Hours))
+                                    longText))
                                 .Append(", ");
-                        hoverText.Append(minutes).Append(" ")
+
+                        hoverText.Append(shortTime).Append(" ")
                             .Append(_helper.SafeGetString(
-                                LanguageKeys.Minutes));
+                                shortText));
                     }
 
                     if (Game1.options.gamepadControls && Game1.timerUntilMouseFade <= 0)

@@ -32,5 +32,7 @@
 	"ShowTravelingMerchant" : "Zeige reisenden Händler",
 	"ShowHarvestPricesInShop" : "Zeige Erntewerte",
 	"ShowWhenNewRecipesAreAvailable" : "Zeige, wenn neue Rezepte verfügbar sind",
-	"ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt"
+	"ShowToolUpgradeStatus" : "Zeige Werkzeugverbesserungsfortschritt",
+	"NPCBirthday": "{0}'s Birthday",
+	"UIOptions": "UI Info Mod Options"
 }

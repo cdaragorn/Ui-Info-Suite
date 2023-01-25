@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -122,7 +122,7 @@ namespace UIInfoSuite.UIElements
                     var validTile = Utility.snapToInt(Utility.GetNearbyValidPlacementPosition(Game1.player, Game1.currentLocation, currentItem, (int)currentTile.X * Game1.tileSize, (int)currentTile.Y * Game1.tileSize))/Game1.tileSize;
                     Game1.isCheckingNonMousePlacement = false;
 
-                    if (name.Contains("arecrow"))
+                    if (name.Contains("arecrow") && !name.Contains("sprinkler") )
                     {
                         arrayToUse = new int[17][];
                         for (var i = 0; i < 17; ++i)
@@ -139,10 +139,12 @@ namespace UIInfoSuite.UIElements
                         {
                             foreach (var next in objects)
                             {
-                                ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                                if (!next.name.ToLower().Contains("sprinkler"))
+                                {
+                                    ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                                }
                             }
                         }
-
                     }
                     else if (name.Contains("sprinkler"))
                     {
@@ -181,7 +183,7 @@ namespace UIInfoSuite.UIElements
                                 {
                                     arrayToUse = _modConfig.QualitySprinkler;
                                 }
-                                else if (name.Contains("prismatic"))
+                                else if (objectName.Contains("prismatic"))
                                 {
                                     arrayToUse = _modConfig.PrismaticSprinkler;
                                 }

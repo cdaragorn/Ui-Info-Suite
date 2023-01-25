@@ -5,28 +5,34 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using UIInfoSuite.Extensions;
 
 namespace UIInfoSuite.Options
 {
     class ModOptionsPageButton : IClickableMenu
     {
-
+        private readonly IModHelper _helper;
         public Rectangle Bounds { get; }
         //private readonly ModOptionsPageHandler _optionsPageHandler;
         //private bool _hasClicked;
 
         public event EventHandler OnLeftClicked;
 
-        public ModOptionsPageButton(IModEvents events)
+        public ModOptionsPageButton(IModHelper helper)
         {
+            var events = helper.Events;
+            this._helper = helper;
             //_optionsPageHandler = optionsPageHandler;
             width = 64;
             height = 64;
-            var activeClickableMenu = Game1.activeClickableMenu as GameMenu;
 
-            xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
-            yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
-            Bounds = new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height);
+            if (Game1.activeClickableMenu is GameMenu activeClickableMenu)
+            {
+                xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
+                yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
+                Bounds = new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height);
+            }
+
             events.Input.ButtonPressed += OnButtonPressed;
             events.Display.MenuChanged += OnMenuChanged;
         }
@@ -96,7 +102,7 @@ namespace UIInfoSuite.Options
 
             if (isWithinBounds(Game1.getMouseX(), Game1.getMouseY()))
             {
-                drawHoverText(Game1.spriteBatch, "UI Info Mod Options", Game1.smallFont);
+                IClickableMenu.drawHoverText(Game1.spriteBatch, _helper.SafeGetString(OptionKeys.UIOptions), Game1.smallFont);
             }
             Tools.DrawMouseCursor();
         }
