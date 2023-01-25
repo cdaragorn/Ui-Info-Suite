@@ -14,7 +14,7 @@ namespace UIInfoSuite.Options
     {
         private List<ModOptionsElement> _optionsElements = new List<ModOptionsElement>();
         private readonly List<IDisposable> _elementsToDispose;
-        private readonly IDictionary<string, String> _options;
+        private readonly IDictionary<string, string> _options;
         private ModOptionsPageButton _modOptionsPageButton;
         private ModOptionsPage _modOptionsPage;
         private readonly IModHelper _helper;
@@ -30,18 +30,18 @@ namespace UIInfoSuite.Options
         private readonly ShowCropAndBarrelTime _showCropAndBarrelTime;
         private readonly ShowItemEffectRanges _showScarecrowAndSprinklerRange;
         private readonly ExperienceBar _experienceBar;
-        private readonly ShowItemHoverInformation _showItemHoverInformation;
+        private readonly ItemHoverInformation _showItemHoverInformation;
         private readonly ShowTravelingMerchant _showTravelingMerchant;
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
 
-        public ModOptionsPageHandler(IModHelper helper, IDictionary<String, String> options)
+        public ModOptionsPageHandler(IModHelper helper, IDictionary<string, string> options)
         {
             _options = options;
             helper.Events.Display.MenuChanged += ToggleModOptions;
             _helper = helper;
-            ModConfig modConfig = _helper.ReadConfig<ModConfig>();
+            var modConfig = _helper.ReadConfig<ModConfig>();
             _luckOfDay = new LuckOfDay(helper);
             _showBirthdayIcon = new ShowBirthdayIcon(helper);
             _showAccurateHearts = new ShowAccurateHearts(helper.Events);
@@ -50,7 +50,7 @@ namespace UIInfoSuite.Options
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
             _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modConfig, helper.Events);
             _experienceBar = new ExperienceBar(helper);
-            _showItemHoverInformation = new ShowItemHoverInformation(helper.Events);
+            _showItemHoverInformation = new ItemHoverInformation(helper.Events);
             _shopHarvestPrices = new ShopHarvestPrices(helper);
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
             _showTravelingMerchant = new ShowTravelingMerchant(helper);
@@ -74,8 +74,8 @@ namespace UIInfoSuite.Options
                 _showToolUpgradeStatus
             };
 
-            int whichOption = 1;
-            Version thisVersion = Assembly.GetAssembly(this.GetType()).GetName().Version;
+            var whichOption = 1;
+            var thisVersion = Assembly.GetAssembly(GetType()).GetName().Version;
             _optionsElements.Add(new ModOptionsElement("UI Info Suite v" +
                 thisVersion.Major + "." + thisVersion.Minor + "." + thisVersion.Build));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowLuckIcon), whichOption++, _luckOfDay.Toggle, _options, OptionKeys.ShowLuckIcon));
@@ -129,7 +129,7 @@ namespace UIInfoSuite.Options
 
                 if (e.OldMenu is GameMenu gameMenu)
                 {
-                    List<IClickableMenu> tabPages = gameMenu.pages;
+                    var tabPages = gameMenu.pages;
                     tabPages.Remove(_modOptionsPage);
                 }
             }
@@ -145,7 +145,7 @@ namespace UIInfoSuite.Options
 
                 _helper.Events.Display.RenderedActiveMenu += DrawButton;
                 _modOptionsPageButton.OnLeftClicked += OnButtonLeftClicked;
-                List<IClickableMenu> tabPages = newMenu.pages;
+                var tabPages = newMenu.pages;
 
                 _modOptionsTabPageNumber = tabPages.Count;
                 tabPages.Add(_modOptionsPage);

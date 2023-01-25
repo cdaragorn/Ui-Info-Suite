@@ -3,11 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UIInfoSuite.Options
 {
@@ -17,19 +12,19 @@ namespace UIInfoSuite.Options
         private const int DefaultY = 4;
         private const int DefaultPixelSize = 9;
         private Rectangle _bounds;
-        private String _label;
+        private string _label;
         private int _whichOption;
         protected bool _canClick = true;
 
         public Rectangle Bounds { get { return _bounds; } }
 
-        public ModOptionsElement(String label)
+        public ModOptionsElement(string label)
             : this(label, -1, -1, DefaultPixelSize * Game1.pixelZoom, DefaultPixelSize * Game1.pixelZoom)
         {
 
         }
 
-        public ModOptionsElement(String label, int x, int y, int width, int height, int whichOption = -1)
+        public ModOptionsElement(string label, int x, int y, int width, int height, int whichOption = -1)
         {
             if (x < 0)
                 x = DefaultX * Game1.pixelZoom;
