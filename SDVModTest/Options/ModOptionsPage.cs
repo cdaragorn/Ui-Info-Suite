@@ -15,7 +15,7 @@ namespace UIInfoSuite.Options
 
         private List<ClickableComponent> _optionSlots = new List<ClickableComponent>();
         private List<ModOptionsElement> _options;
-        private String _hoverText;
+        private string _hoverText;
         private int _optionsSlotHeld;
         private int _currentItemIndex;
         private bool _isScrolling;
@@ -63,7 +63,7 @@ namespace UIInfoSuite.Options
                 _scrollBar.bounds.Width,
                 height - Game1.tileSize * 2 - _upArrow.bounds.Height - Game1.pixelZoom * 2);
 
-            for (int i = 0; i < 7; ++i)
+            for (var i = 0; i < 7; ++i)
                 _optionSlots.Add(new ClickableComponent(
                     new Rectangle(
                         xPositionOnScreen + Game1.tileSize / 4,
@@ -86,7 +86,7 @@ namespace UIInfoSuite.Options
                 yPositionOnScreen = Game1.activeClickableMenu.yPositionOnScreen + 10;
                 height = Game1.activeClickableMenu.height;
 
-                for (int i = 0; i < _optionSlots.Count; ++i)
+                for (var i = 0; i < _optionSlots.Count; ++i)
                 {
                     var next = _optionSlots[i];
                     next.bounds.X = xPositionOnScreen + Game1.tileSize / 4;
@@ -138,7 +138,7 @@ namespace UIInfoSuite.Options
 
                 if (_isScrolling)
                 {
-                    int yBefore = _scrollBar.bounds.Y;
+                    var yBefore = _scrollBar.bounds.Y;
 
                     _scrollBar.bounds.Y = Math.Min(
                         yPositionOnScreen + height - Game1.tileSize - Game1.pixelZoom * 3 - _scrollBar.bounds.Height, 
@@ -202,7 +202,7 @@ namespace UIInfoSuite.Options
 
                 if (_optionsSlotHeld > -1 && _optionsSlotHeld + _currentItemIndex < _options.Count)
                 {
-                    ClickableComponent optionSlot = _optionSlots[_optionsSlotHeld];
+                    var optionSlot = _optionSlots[_optionsSlotHeld];
                     _options[_currentItemIndex + _optionsSlotHeld].LeftClickReleased(x - optionSlot.bounds.X, y - optionSlot.bounds.Y);
                 }
                 _optionsSlotHeld = -1;
@@ -253,7 +253,7 @@ namespace UIInfoSuite.Options
                     base.releaseLeftClick(x, y);
                 }
                 _currentItemIndex = Math.Max(0, Math.Min(_options.Count - 7, _currentItemIndex));
-                for (int i = 0; i < _optionSlots.Count; ++i)
+                for (var i = 0; i < _optionSlots.Count; ++i)
                 {
                     if (_optionSlots[i].bounds.Contains(x, y) && 
                         _currentItemIndex + i < _options.Count && 
@@ -299,7 +299,7 @@ namespace UIInfoSuite.Options
             Game1.drawDialogueBox(xPositionOnScreen, yPositionOnScreen - 10, width, height, false, true);
             batch.End();
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null);
-            for (int i = 0; i < _optionSlots.Count; ++i)
+            for (var i = 0; i < _optionSlots.Count; ++i)
             {
                 if (_currentItemIndex >= 0 &&
                     _currentItemIndex + i < _options.Count)
@@ -318,7 +318,7 @@ namespace UIInfoSuite.Options
                 _downArrow.draw(batch);
                 if (_options.Count > 7)
                 {
-                    IClickableMenu.drawTextureBox(
+                    drawTextureBox(
                         batch, 
                         Game1.mouseCursors, 
                         new Rectangle(403, 383, 6, 6), 
@@ -333,7 +333,7 @@ namespace UIInfoSuite.Options
                 }
             }
             if (_hoverText != "")
-                IClickableMenu.drawHoverText(batch, _hoverText, Game1.smallFont);
+                drawHoverText(batch, _hoverText, Game1.smallFont);
 
             //if (Game1.options.hardwareCursor)
             //{

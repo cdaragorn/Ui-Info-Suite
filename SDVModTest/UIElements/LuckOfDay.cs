@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using StardewModdingAPI.Utilities;
 using System;
 using UIInfoSuite.Extensions;
 
@@ -10,10 +11,25 @@ namespace UIInfoSuite.UIElements
 {
     class LuckOfDay : IDisposable
     {
-        private String _hoverText = string.Empty;
-        private Color _color = new Color(Color.White.ToVector4());
-        private ClickableTextureComponent _icon;
+        private readonly PerScreen<string> _hoverText = new PerScreen<string>(createNewState: () => string.Empty);
+        private readonly PerScreen<Color> _color = new PerScreen<Color>(createNewState: () => new Color(Color.White.ToVector4()));
+        private readonly PerScreen<ClickableTextureComponent> _icon = new PerScreen<ClickableTextureComponent>(createNewState: () => new ClickableTextureComponent("",
+                new Rectangle(Tools.GetWidthInPlayArea() - 134,
+                    290,
+                    10 * Game1.pixelZoom,
+                    10 * Game1.pixelZoom),
+                "",
+                "",
+                Game1.mouseCursors,
+                new Rectangle(50, 428, 10, 14),
+                Game1.pixelZoom,
+                false));
         private readonly IModHelper _helper;
+
+        private readonly static Color _maybeStayHomeColor = new Color(255, 155, 155, 255);
+        private readonly static Color _notFeelingLuckyAtAllColor = new Color(132, 132, 132, 255);
+        private readonly static Color _luckyButNotTooLuckyColor = new Color(255, 255, 255, 255);
+        private readonly static Color _feelingLuckyColor = new Color(155, 255, 155, 255);
 
         public void Toggle(bool showLuckOfDay)
         {
@@ -50,31 +66,25 @@ namespace UIInfoSuite.UIElements
             // calculate luck
             if (e.IsMultipleOf(30)) // half second
             {
-                _color = new Color(Color.White.ToVector4());
-
                 if (Game1.player.DailyLuck < -0.04)
                 {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.MaybeStayHome);
-                    _color.B = 155;
-                    _color.G = 155;
+                    _hoverText.Value = _helper.SafeGetString(LanguageKeys.MaybeStayHome);
+                    _color.Value = _maybeStayHomeColor;
                 }
                 else if (Game1.player.DailyLuck < 0)
                 {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.NotFeelingLuckyAtAll);
-                    _color.B = 165;
-                    _color.G = 165;
-                    _color.R = 165;
-                    _color *= 0.8f;
+                    _hoverText.Value = _helper.SafeGetString(LanguageKeys.NotFeelingLuckyAtAll);
+                    _color.Value = _notFeelingLuckyAtAllColor;
                 }
                 else if (Game1.player.DailyLuck <= 0.04)
                 {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.LuckyButNotTooLucky);
+                    _hoverText.Value = _helper.SafeGetString(LanguageKeys.LuckyButNotTooLucky);
+                    _color.Value = _luckyButNotTooLuckyColor;
                 }
                 else
                 {
-                    _hoverText = _helper.SafeGetString(LanguageKeys.FeelingLucky);
-                    _color.B = 155;
-                    _color.R = 155;
+                    _hoverText.Value = _helper.SafeGetString(LanguageKeys.FeelingLucky);
+                    _color.Value = _feelingLuckyColor;
                 }
             }
         }
@@ -85,8 +95,8 @@ namespace UIInfoSuite.UIElements
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // draw hover text
-            if (_icon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-                IClickableMenu.drawHoverText(Game1.spriteBatch, _hoverText, Game1.dialogueFont);
+            if (_icon.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
+                IClickableMenu.drawHoverText(Game1.spriteBatch, _hoverText.Value, Game1.dialogueFont);
         }
 
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
@@ -97,10 +107,12 @@ namespace UIInfoSuite.UIElements
             // draw dice icon
             if (!Game1.eventUp)
             {
-                Point iconPosition = IconHandler.Handler.GetNewIconPosition();
-                _icon.bounds.X = iconPosition.X;
-                _icon.bounds.Y = iconPosition.Y;
-                _icon.draw(Game1.spriteBatch, _color, 1f);
+                var iconPosition = IconHandler.Handler.GetNewIconPosition();
+                var icon = _icon.Value;
+                icon.bounds.X = iconPosition.X;
+                icon.bounds.Y = iconPosition.Y;
+                _icon.Value = icon;
+                _icon.Value.draw(Game1.spriteBatch, _color.Value, 1f);
             }
         }
 
@@ -118,7 +130,7 @@ namespace UIInfoSuite.UIElements
 
         private void AdjustIconXToBlackBorder()
         {
-            _icon = new ClickableTextureComponent("",
+            _icon.Value = new ClickableTextureComponent("",
                 new Rectangle(Tools.GetWidthInPlayArea() - 134,
                     290,
                     10 * Game1.pixelZoom,

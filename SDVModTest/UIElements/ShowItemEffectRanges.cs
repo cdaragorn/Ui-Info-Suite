@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -12,36 +14,15 @@ namespace UIInfoSuite.UIElements
 {
     class ShowItemEffectRanges : IDisposable
     {
-        private readonly List<Point> _effectiveArea = new List<Point>();
-        private readonly ModConfig _modConfig;
-        private readonly IModEvents _events;
+        private readonly PerScreen<List<Point>> _effectiveArea = new PerScreen<List<Point>>(createNewState: () => new List<Point>());
+        private readonly PerScreen<bool> _usingGamepad = new PerScreen<bool>();
 
         private readonly Mutex _mutex = new Mutex();
 
-        private static readonly int[][] _junimoHutArray = new int[17][]
-        {
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            new int[17] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-        };
+        private readonly IModEvents _events;
 
-        public ShowItemEffectRanges(ModConfig modConfig, IModEvents events)
+        public ShowItemEffectRanges(IModEvents events)
         {
-            _modConfig = modConfig;
             _events = events;
         }
 
@@ -67,6 +48,12 @@ namespace UIInfoSuite.UIElements
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (Game1.lastCursorMotionWasMouse)
+                _usingGamepad.Value = false;
+
+            if (Game1.isGamePadThumbstickInMotion())
+                _usingGamepad.Value = true;
+
             if (!e.IsMultipleOf(4))
                 return;
 
@@ -75,7 +62,7 @@ namespace UIInfoSuite.UIElements
                 try
                 {
                     // check draw tile outlines
-                    _effectiveArea.Clear();
+                    _effectiveArea.Value.Clear();
                 }
                 finally
                 {
@@ -83,114 +70,12 @@ namespace UIInfoSuite.UIElements
                 }
 
             }
-            if (Game1.activeClickableMenu == null &&
-                        !Game1.eventUp)
+
+
+            if (Game1.activeClickableMenu == null && !Game1.eventUp)
             {
-                if (Game1.currentLocation is BuildableGameLocation buildableLocation)
-                {
-                    Building building = buildableLocation.getBuildingAt(Game1.currentCursorTile);
-
-                    if (building is JunimoHut)
-                    {
-                        foreach (var nextBuilding in buildableLocation.buildings)
-                        {
-                            if (nextBuilding is JunimoHut nextHut)
-                                ParseConfigToHighlightedArea(_junimoHutArray, nextHut.tileX.Value + 1, nextHut.tileY.Value + 1);
-                        }
-                    }
-                }
-
-                if (Game1.player.CurrentItem != null)
-                {
-                    String name = Game1.player.CurrentItem.Name.ToLower();
-                    Item currentItem = Game1.player.CurrentItem;
-                    List<StardewValley.Object> objects = null;
-
-                    int[][] arrayToUse = null;
-
-                    if (name.Contains("arecrow") && !name.Contains("sprinkler") )
-                    {
-                        arrayToUse = new int[17][];
-                        for (int i = 0; i < 17; ++i)
-                        {
-                            arrayToUse[i] = new int[17];
-                            for (int j = 0; j < 17; ++j)
-                            {
-                                arrayToUse[i][j] = (Math.Abs(i - 8) + Math.Abs(j - 8) <= 12) ? 1 : 0;
-                            }
-                        }
-                        ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
-                        objects = GetObjectsInLocationOfSimilarName("arecrow");
-                        if (objects != null)
-                        {
-                            foreach (StardewValley.Object next in objects)
-                            {
-                                if (!next.name.ToLower().Contains("sprinkler"))
-                                {
-                                    ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
-                                }
-                            }
-                        }
-                    }
-                    else if (name.Contains("sprinkler"))
-                    {
-                        if (name.Contains("iridium"))
-                        {
-                            arrayToUse = _modConfig.IridiumSprinkler;
-                        }
-                        else if (name.Contains("quality"))
-                        {
-                            arrayToUse = _modConfig.QualitySprinkler;
-                        }
-                        else if (name.Contains("prismatic"))
-                        {
-                            arrayToUse = _modConfig.PrismaticSprinkler;
-                        }
-                        else
-                        {
-                            arrayToUse = _modConfig.Sprinkler;
-                        }
-
-                        if (arrayToUse != null)
-                            ParseConfigToHighlightedArea(arrayToUse, TileUnderMouseX, TileUnderMouseY);
-
-                        objects = GetObjectsInLocationOfSimilarName("sprinkler");
-
-                        if (objects != null)
-                        {
-                            foreach (StardewValley.Object next in objects)
-                            {
-                                string objectName = next.name.ToLower();
-                                if (objectName.Contains("iridium"))
-                                {
-                                    arrayToUse = _modConfig.IridiumSprinkler;
-                                }
-                                else if (objectName.Contains("quality"))
-                                {
-                                    arrayToUse = _modConfig.QualitySprinkler;
-                                }
-                                else if (objectName.Contains("prismatic"))
-                                {
-                                    arrayToUse = _modConfig.PrismaticSprinkler;
-                                }
-                                else
-                                {
-                                    arrayToUse = _modConfig.Sprinkler;
-                                }
-
-                                if (arrayToUse != null)
-                                    ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
-                            }
-                        }
-                    }
-                    else if (name.Contains("bee house"))
-                    {
-                        ParseConfigToHighlightedArea(_modConfig.Beehouse, TileUnderMouseX, TileUnderMouseY);
-                    }
-
-                }
+                UpdateEffectiveArea();
             }
-
         }
 
         /// <summary>Raised after the game draws to the sprite patch in a draw tick, just before the final sprite batch is rendered to the screen.</summary>
@@ -203,17 +88,20 @@ namespace UIInfoSuite.UIElements
                 try
                 {
                     // draw tile outlines
-                    foreach (Point point in _effectiveArea)
+                    foreach (var point in _effectiveArea.Value)
+                    { 
+                        var position = new Vector2(point.X * Utility.ModifyCoordinateFromUIScale(Game1.tileSize), point.Y * Utility.ModifyCoordinateFromUIScale(Game1.tileSize));
                         Game1.spriteBatch.Draw(
                             Game1.mouseCursors,
-                            Game1.GlobalToLocal(new Vector2(point.X * Game1.tileSize, point.Y * Game1.tileSize)),
+                            Utility.ModifyCoordinatesForUIScale(Game1.GlobalToLocal(Utility.ModifyCoordinatesForUIScale(position))),
                             new Rectangle(194, 388, 16, 16),
                             Color.White * 0.7f,
                             0.0f,
                             Vector2.Zero,
-                            Game1.pixelZoom,
+                            Utility.ModifyCoordinateForUIScale(Game1.pixelZoom),
                             SpriteEffects.None,
                             0.01f);
+                    }
                 }
                 finally
                 {
@@ -222,21 +110,98 @@ namespace UIInfoSuite.UIElements
             }
         }
 
+        private void UpdateEffectiveArea()
+        {
+            int[][] arrayToUse;
+            List<StardewValley.Object> similarObjects;
+
+            // Junimo Hut is handled differently, because it is a building
+            if (Game1.currentLocation is BuildableGameLocation buildableLocation)
+            {
+                Building building = buildableLocation.getBuildingAt(Game1.GetPlacementGrabTile());
+
+                if (building is JunimoHut)
+                {
+                    arrayToUse = GetDistanceArray(ObjectsWithDistance.JunimoHut);
+                    foreach (var nextBuilding in buildableLocation.buildings)
+                    {
+                        if (nextBuilding is JunimoHut nextHut)
+                        {
+                            ParseConfigToHighlightedArea(arrayToUse, nextHut.tileX.Value + 1, nextHut.tileY.Value + 1);
+                        }
+                    }
+                }
+            }
+
+            // Every other item is here
+            if (Game1.player.CurrentItem is Item currentItem && currentItem.isPlaceable())
+            {
+                string itemName = Game1.player.CurrentItem.Name;
+
+                Vector2 currentTile = Game1.GetPlacementGrabTile();
+                Game1.isCheckingNonMousePlacement = !Game1.IsPerformingMousePlacement();
+                Vector2 validTile = Utility.snapToInt(Utility.GetNearbyValidPlacementPosition(Game1.player, Game1.currentLocation, currentItem, (int)currentTile.X * Game1.tileSize, (int)currentTile.Y * Game1.tileSize)) / Game1.tileSize;
+                Game1.isCheckingNonMousePlacement = false;
+
+                if (itemName.IndexOf("arecrow", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    arrayToUse = itemName.Contains("eluxe") ? GetDistanceArray(ObjectsWithDistance.DeluxeScarecrow) : GetDistanceArray(ObjectsWithDistance.Scarecrow);
+                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
+
+                    similarObjects = GetSimilarObjectsInLocation("arecrow");
+                    foreach (StardewValley.Object next in similarObjects)
+                    {
+                        arrayToUse = next.Name.IndexOf("eluxe", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.DeluxeScarecrow) : GetDistanceArray(ObjectsWithDistance.Scarecrow);
+                        ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                    }
+                }
+                else if (itemName.IndexOf("sprinkler", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    arrayToUse = itemName.IndexOf("iridium", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.IridiumSprinkler) :
+                        itemName.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.QualitySprinkler) :
+                        itemName.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler) :
+                            GetDistanceArray(ObjectsWithDistance.Sprinkler);
+
+                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
+
+                    similarObjects = GetSimilarObjectsInLocation("sprinkler");
+                    foreach (StardewValley.Object next in similarObjects)
+                    {
+                        bool hasPressureNozzle = false;
+                        if (next.heldObject.Value != null && next.heldObject.Value.DisplayName.IndexOf("nozzle", StringComparison.OrdinalIgnoreCase) >= 0)
+                            hasPressureNozzle = true;
+
+                        arrayToUse = next.name.IndexOf("iridium", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.IridiumSprinkler, hasPressureNozzle) :
+                        next.name.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.QualitySprinkler, hasPressureNozzle) :
+                        next.name.IndexOf("prismatic", StringComparison.OrdinalIgnoreCase) >= 0 ? GetDistanceArray(ObjectsWithDistance.PrismaticSprinkler, hasPressureNozzle) :
+                            GetDistanceArray(ObjectsWithDistance.Sprinkler, hasPressureNozzle);
+
+                        ParseConfigToHighlightedArea(arrayToUse, (int)next.TileLocation.X, (int)next.TileLocation.Y);
+                    }
+                }
+                else if (itemName.IndexOf("bee house", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    arrayToUse = GetDistanceArray(ObjectsWithDistance.Beehouse);
+                    ParseConfigToHighlightedArea(arrayToUse, (int)validTile.X, (int)validTile.Y);
+                }
+            }
+        }
+
         private void ParseConfigToHighlightedArea(int[][] highlightedLocation, int xPos, int yPos)
         {
-            int xOffset = highlightedLocation.Length / 2;
+            var xOffset = highlightedLocation.Length / 2;
 
             if (_mutex.WaitOne())
             {
                 try
                 {
-                    for (int i = 0; i < highlightedLocation.Length; ++i)
+                    for (var i = 0; i < highlightedLocation.Length; ++i)
                     {
-                        int yOffset = highlightedLocation[i].Length / 2;
-                        for (int j = 0; j < highlightedLocation[i].Length; ++j)
+                        var yOffset = highlightedLocation[i].Length / 2;
+                        for (var j = 0; j < highlightedLocation[i].Length; ++j)
                         {
                             if (highlightedLocation[i][j] == 1)
-                                _effectiveArea.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
+                                _effectiveArea.Value.Add(new Point(xPos + i - xOffset, yPos + j - yOffset));
                         }
                     }
                 }
@@ -247,21 +212,12 @@ namespace UIInfoSuite.UIElements
             }
         }
 
-        private int TileUnderMouseX
-        {
-            get { return (Game1.getMouseX() + Game1.viewport.X) / Game1.tileSize; }
-        }
 
-        private int TileUnderMouseY
+        private List<StardewValley.Object> GetSimilarObjectsInLocation(string nameContains)
         {
-            get { return (Game1.getMouseY() + Game1.viewport.Y) / Game1.tileSize; }
-        }
+            var result = new List<StardewValley.Object>();
 
-        private List<StardewValley.Object> GetObjectsInLocationOfSimilarName(String nameContains)
-        {
-            List<StardewValley.Object> result = new List<StardewValley.Object>();
-
-            if (!String.IsNullOrEmpty(nameContains))
+            if (!string.IsNullOrEmpty(nameContains))
             {
                 nameContains = nameContains.ToLower();
                 var objects = Game1.currentLocation.Objects;
@@ -273,6 +229,85 @@ namespace UIInfoSuite.UIElements
                 }
             }
             return result;
+        }
+
+        private enum ObjectsWithDistance
+        {
+            JunimoHut,
+            Beehouse,
+            Scarecrow,
+            DeluxeScarecrow,
+            Sprinkler,
+            QualitySprinkler,
+            IridiumSprinkler,
+            PrismaticSprinkler
+        }
+
+        private int[][] GetDistanceArray(ObjectsWithDistance type, bool hasPressureNozzle = false)
+        {
+            switch (type)
+            {
+                case ObjectsWithDistance.JunimoHut:
+                    return GetCircularMask(100, maxDisplaySquareRadius: 8);
+                case ObjectsWithDistance.Beehouse:
+                    return GetCircularMask(4.19, exceptionalDistance: 5, onlyClearExceptions: true);
+                case ObjectsWithDistance.Scarecrow:
+                    return GetCircularMask(8.99);
+                case ObjectsWithDistance.DeluxeScarecrow:
+                    return GetCircularMask(16.99);
+                case ObjectsWithDistance.Sprinkler:
+                    return hasPressureNozzle ? GetCircularMask(100, maxDisplaySquareRadius: 1) : GetCircularMask(1);
+                case ObjectsWithDistance.QualitySprinkler:
+                    return hasPressureNozzle ? GetCircularMask(100, maxDisplaySquareRadius: 2) : GetCircularMask(100, maxDisplaySquareRadius: 1);
+                case ObjectsWithDistance.IridiumSprinkler:
+                    return hasPressureNozzle ? GetCircularMask(100, maxDisplaySquareRadius: 3) : GetCircularMask(100, maxDisplaySquareRadius: 2);
+                case ObjectsWithDistance.PrismaticSprinkler:
+                    return GetCircularMask(3.69, exceptionalDistance: Math.Sqrt(18), onlyClearExceptions: false);
+                default:
+                    return null;
+            }
+        }
+
+        private static int[][] GetCircularMask(double maxDistance, double? exceptionalDistance = null, bool? onlyClearExceptions = null, int? maxDisplaySquareRadius = null)
+        {
+            int radius = Math.Max((int)Math.Ceiling(maxDistance), exceptionalDistance.HasValue ? (int)Math.Ceiling(exceptionalDistance.Value) : 0);
+            radius = Math.Min(radius, maxDisplaySquareRadius.HasValue ? maxDisplaySquareRadius.Value : radius);
+            int size = 2 * radius + 1;
+
+            int[][] result = new int[size][];
+            for (int i = 0; i < size; i++)
+            {
+                result[i] = new int[size];
+                for (int j = 0; j < size; j++)
+                {
+                    double distance = GetDistance(i, j, radius);
+                    int val = (IsInDistance(maxDistance, distance)
+                        || (IsDistanceDirectionOK(i, j, radius, onlyClearExceptions) && IsExceptionalDistanceOK(exceptionalDistance, distance)))
+                        ? 1 : 0;
+                    result[i][j] = val;
+                }
+            }
+            return result;
+        }
+
+        private static bool IsDistanceDirectionOK(int i, int j, int radius, bool? onlyClearExceptions)
+        {
+            return onlyClearExceptions.HasValue && onlyClearExceptions.Value ? (radius - j) == 0 || (radius - i) == 0 : true;
+        }
+
+        private static bool IsExceptionalDistanceOK(double? exceptionalDistance, double distance)
+        {
+            return exceptionalDistance.HasValue && exceptionalDistance.Value == distance;
+        }
+
+        private static bool IsInDistance(double maxDistance, double distance)
+        {
+            return distance <= maxDistance;
+        }
+
+        private static double GetDistance(int i, int j, int radius)
+        {
+            return Math.Sqrt((radius - i) * (radius - i) + (radius - j) * (radius - j));
         }
     }
 }

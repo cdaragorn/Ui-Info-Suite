@@ -34,5 +34,6 @@
 	"ShowWhenNewRecipesAreAvailable" : "Show when new recipes are available",
 	"ShowToolUpgradeStatus" : "Show tool upgrade status",
 	"NPCBirthday": "{0}'s Birthday",
-	"UIOptions": "UI Info Mod Options"
+	"UIOptions": "UI Info Mod Options",		
+    "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)"
 }
