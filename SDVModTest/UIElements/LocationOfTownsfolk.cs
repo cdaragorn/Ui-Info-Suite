@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using StardewValley.Locations;
 
 namespace UIInfoSuite.UIElements
 {
@@ -33,9 +34,10 @@ namespace UIInfoSuite.UIElements
             { "BathHouse_Pool", new KeyValuePair<int, int>(576, 60) },
             { "WizardHouseBasement", new KeyValuePair<int, int>(196, 352) },
             { "BugLand", new KeyValuePair<int, int>(0, 0) },
-            { "Desert", new KeyValuePair<int, int>(60, 92) },
-            { "Cellar", new KeyValuePair<int, int>(0, 0) },
+            { "Desert", new KeyValuePair<int, int>(75, 40) },
+            { "Cellar", new KeyValuePair<int, int>(470, 260) },
             { "JojaMart", new KeyValuePair<int, int>(872, 280) },
+            { "LeoTreeHouse", new KeyValuePair<int, int>(744, 128) },
             { "Tent", new KeyValuePair<int, int>(784, 128) },
             { "HaleyHouse", new KeyValuePair<int, int>(652, 408) },
             { "Hospital", new KeyValuePair<int, int>(677, 304) },
@@ -47,14 +49,14 @@ namespace UIInfoSuite.UIElements
             { "SeedShop", new KeyValuePair<int, int>(696, 296) },
             { "Blacksmith", new KeyValuePair<int, int>(852, 388) },
             { "JoshHouse", new KeyValuePair<int, int>(740, 320) },
-            { "SandyHouse", new KeyValuePair<int, int>(40, 40) },
+            { "SandyHouse", new KeyValuePair<int, int>(40, 115) },
             { "Tunnel", new KeyValuePair<int, int>(0, 0) },
             { "CommunityCenter", new KeyValuePair<int, int>(692, 204) },
             { "Backwoods", new KeyValuePair<int, int>(460, 156) },
             { "ElliottHouse", new KeyValuePair<int, int>(826, 550) },
             { "SebastianRoom", new KeyValuePair<int, int>(732, 148) },
             { "BathHouse_Entry", new KeyValuePair<int, int>(576, 60) },
-            { "Greenhouse", new KeyValuePair<int, int>(0, 0) },
+            { "Greenhouse", new KeyValuePair<int, int>(370, 270) },
             { "Sewer", new KeyValuePair<int, int>(380, 596) },
             { "WizardHouse", new KeyValuePair<int, int>(196, 352) },
             { "Trailer", new KeyValuePair<int, int>(780, 360) },
@@ -249,42 +251,54 @@ namespace UIInfoSuite.UIElements
                                 case "Town":
                                 case "Forest":
                                     {
-                                        var xStart = 0;
-                                        var yStart = 0;
-                                        var areaWidth = 0;
-                                        var areaHeight = 0;
 
-                                        switch (locationName)
+                                        // Ginger Island
+                                        if (character.currentLocation is IslandLocation)
                                         {
-                                            case "Town":
-                                                {
-                                                    xStart = 595;
-                                                    yStart = 163;
-                                                    areaWidth = 345;
-                                                    areaHeight = 330;
-                                                    break;
-                                                }
-
-                                            case "Forest":
-                                                {
-                                                    xStart = 183;
-                                                    yStart = 378;
-                                                    areaWidth = 319;
-                                                    areaHeight = 261;
-                                                    break;
-                                                }
+                                            location = new KeyValuePair<int, int>(1104, 658);
                                         }
-                                        var map = character.currentLocation.Map;
+                                        else if (locationName == "Town" || locationName == "Forest")
+                                        {
+                                            int xStart = 0;
+                                            int yStart = 0;
+                                            int areaWidth = 0;
+                                            int areaHeight = 0;
 
-                                        var xScale = areaWidth / (float)map.DisplayWidth;
-                                        var yScale = areaHeight / (float)map.DisplayHeight;
+                                            switch (locationName)
+                                            {
+                                                case "Town":
+                                                    {
+                                                        xStart = 595;
+                                                        yStart = 163;
+                                                        areaWidth = 345;
+                                                        areaHeight = 330;
+                                                        break;
+                                                    }
 
-                                        var scaledX = character.position.X * xScale;
-                                        var scaledY = character.position.Y * yScale;
-                                        var xPos = (int)scaledX + xStart;
-                                        var yPos = (int)scaledY + yStart;
-                                        location = new KeyValuePair<int, int>(xPos, yPos);
+                                                case "Forest":
+                                                    {
+                                                        xStart = 183;
+                                                        yStart = 378;
+                                                        areaWidth = 319;
+                                                        areaHeight = 261;
+                                                        break;
+                                                    }
+                                            }
+                                            xTile.Map map = character.currentLocation.Map;
 
+                                            float xScale = (float)areaWidth / (float)map.DisplayWidth;
+                                            float yScale = (float)areaHeight / (float)map.DisplayHeight;
+
+                                            float scaledX = character.position.X * xScale;
+                                            float scaledY = character.position.Y * yScale;
+                                            int xPos = (int)scaledX + xStart;
+                                            int yPos = (int)scaledY + yStart;
+                                            location = new KeyValuePair<int, int>(xPos, yPos);
+                                        }
+                                        else
+                                        {
+                                            _mapLocations.TryGetValue(locationName, out location);
+                                        }
                                         break;
                                     }
 
