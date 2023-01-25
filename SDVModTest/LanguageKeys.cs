@@ -20,5 +20,6 @@
         public const string DaysUntilToolIsUpgraded = "DaysUntilToolIsUpgraded";
         public const string ToolIsFinishedBeingUpgraded = "ToolIsFinishedBeingUpgraded";
         public const string NPCBirthday = "NPCBirthday";
+        public const string RobinBuildingStatus = "RobinBuildingStatus";
     }
 }

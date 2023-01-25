@@ -34,5 +34,6 @@
   "ShowWhenNewRecipesAreAvailable": "Mutasd ha új receptek érhetőek el",
   "ShowToolUpgradeStatus": "Mutasd az eszköz fejlesztés állapotát",
   "NPCBirthday": "Ma van {0} születésnapja",
-  "UIOptions": "UI Info Mod Beállítások"
+  "UIOptions": "UI Info Mod Beállítások",
+  "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)"
 }
