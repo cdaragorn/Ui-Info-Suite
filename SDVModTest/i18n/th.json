@@ -35,4 +35,5 @@
 	"ShowToolUpgradeStatus" : "แสดงสถานะการอัพเกรดอุปกรณ์",
 	"NPCBirthday": "วันเกิดของ{0}",
 	"UIOptions": "ปรับแต่งมอด UI Info"
+  "RobinBuildingStatus": "Robin will finish your new building in {0} day(s)"
 }

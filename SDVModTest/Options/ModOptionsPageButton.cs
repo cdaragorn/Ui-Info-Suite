@@ -25,12 +25,14 @@ namespace UIInfoSuite.Options
             //_optionsPageHandler = optionsPageHandler;
             width = 64;
             height = 64;
+
             if (Game1.activeClickableMenu is GameMenu activeClickableMenu)
             {
                 xPositionOnScreen = activeClickableMenu.xPositionOnScreen + activeClickableMenu.width - 200;
                 yPositionOnScreen = activeClickableMenu.yPositionOnScreen + 16;
                 Bounds = new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height);
             }
+
             events.Input.ButtonPressed += OnButtonPressed;
             events.Display.MenuChanged += OnMenuChanged;
         }
@@ -53,8 +55,8 @@ namespace UIInfoSuite.Options
         {
             if (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA)
             {
-                int x = (int)e.Cursor.ScreenPixels.X;
-                int y = (int)e.Cursor.ScreenPixels.Y;
+                var x = (int)Utility.ModifyCoordinateForUIScale(e.Cursor.ScreenPixels.X);
+                var y = (int)Utility.ModifyCoordinateForUIScale(e.Cursor.ScreenPixels.Y);
                 if (isWithinBounds(x, y))
                 {
                     receiveLeftClick(x, y);

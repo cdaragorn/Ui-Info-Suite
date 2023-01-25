@@ -14,7 +14,7 @@ namespace UIInfoSuite.Options
     {
         private List<ModOptionsElement> _optionsElements = new List<ModOptionsElement>();
         private readonly List<IDisposable> _elementsToDispose;
-        private readonly IDictionary<string, String> _options;
+        private readonly IDictionary<string, string> _options;
         private ModOptionsPageButton _modOptionsPageButton;
         private ModOptionsPage _modOptionsPage;
         private readonly IModHelper _helper;
@@ -30,32 +30,34 @@ namespace UIInfoSuite.Options
         private readonly ShowCropAndBarrelTime _showCropAndBarrelTime;
         private readonly ShowItemEffectRanges _showScarecrowAndSprinklerRange;
         private readonly ExperienceBar _experienceBar;
-        private readonly ShowItemHoverInformation _showItemHoverInformation;
+        private readonly ItemHoverInformation _showItemHoverInformation;
         private readonly ShowTravelingMerchant _showTravelingMerchant;
         private readonly ShopHarvestPrices _shopHarvestPrices;
         private readonly ShowQueenOfSauceIcon _showQueenOfSauceIcon;
         private readonly ShowToolUpgradeStatus _showToolUpgradeStatus;
+        private readonly ShowRobinBuildingStatusIcon _showRobinBuildingStatusIcon;
 
-        public ModOptionsPageHandler(IModHelper helper, IDictionary<String, String> options)
+        public ModOptionsPageHandler(IModHelper helper, IDictionary<string, string> options)
         {
             _options = options;
             helper.Events.Display.MenuChanged += ToggleModOptions;
             _helper = helper;
-            ModConfig modConfig = _helper.ReadConfig<ModConfig>();
+
             _luckOfDay = new LuckOfDay(helper);
             _showBirthdayIcon = new ShowBirthdayIcon(helper);
             _showAccurateHearts = new ShowAccurateHearts(helper.Events);
             _locationOfTownsfolk = new LocationOfTownsfolk(helper, _options);
             _showWhenAnimalNeedsPet = new ShowWhenAnimalNeedsPet(helper);
             _showCalendarAndBillboardOnGameMenuButton = new ShowCalendarAndBillboardOnGameMenuButton(helper);
-            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(modConfig, helper.Events);
+            _showScarecrowAndSprinklerRange = new ShowItemEffectRanges(helper.Events);
             _experienceBar = new ExperienceBar(helper);
-            _showItemHoverInformation = new ShowItemHoverInformation(helper.Events);
+            _showItemHoverInformation = new ItemHoverInformation(helper.Events);
             _shopHarvestPrices = new ShopHarvestPrices(helper);
             _showQueenOfSauceIcon = new ShowQueenOfSauceIcon(helper);
             _showTravelingMerchant = new ShowTravelingMerchant(helper);
             _showCropAndBarrelTime = new ShowCropAndBarrelTime(helper);
             _showToolUpgradeStatus = new ShowToolUpgradeStatus(helper);
+            _showRobinBuildingStatusIcon = new ShowRobinBuildingStatusIcon(helper);
 
             _elementsToDispose = new List<IDisposable>()
             {
@@ -71,11 +73,12 @@ namespace UIInfoSuite.Options
                 _showTravelingMerchant,
                 _shopHarvestPrices,
                 _showQueenOfSauceIcon,
-                _showToolUpgradeStatus
+                _showToolUpgradeStatus,
+                _showRobinBuildingStatusIcon
             };
 
-            int whichOption = 1;
-            Version thisVersion = Assembly.GetAssembly(this.GetType()).GetName().Version;
+            var whichOption = 1;
+            var thisVersion = Assembly.GetAssembly(GetType()).GetName().Version;
             _optionsElements.Add(new ModOptionsElement("UI Info Suite v" +
                 thisVersion.Major + "." + thisVersion.Minor + "." + thisVersion.Build));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowLuckIcon), whichOption++, _luckOfDay.Toggle, _options, OptionKeys.ShowLuckIcon));
@@ -95,6 +98,7 @@ namespace UIInfoSuite.Options
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowHarvestPricesInShop), whichOption++, _shopHarvestPrices.ToggleOption, _options, OptionKeys.ShowHarvestPricesInShop));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowWhenNewRecipesAreAvailable), whichOption++, _showQueenOfSauceIcon.ToggleOption, _options, OptionKeys.ShowWhenNewRecipesAreAvailable));
             _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowToolUpgradeStatus), whichOption++, _showToolUpgradeStatus.ToggleOption, _options, OptionKeys.ShowToolUpgradeStatus));
+            _optionsElements.Add(new ModOptionsCheckbox(_helper.SafeGetString(OptionKeys.ShowRobinBuildingStatusIcon), whichOption++, _showRobinBuildingStatusIcon.ToggleOption, _options, OptionKeys.ShowRobinBuildingStatusIcon));
 
         }
 
@@ -129,7 +133,7 @@ namespace UIInfoSuite.Options
 
                 if (e.OldMenu is GameMenu gameMenu)
                 {
-                    List<IClickableMenu> tabPages = gameMenu.pages;
+                    var tabPages = gameMenu.pages;
                     tabPages.Remove(_modOptionsPage);
                 }
             }
@@ -145,7 +149,7 @@ namespace UIInfoSuite.Options
 
                 _helper.Events.Display.RenderedActiveMenu += DrawButton;
                 _modOptionsPageButton.OnLeftClicked += OnButtonLeftClicked;
-                List<IClickableMenu> tabPages = newMenu.pages;
+                var tabPages = newMenu.pages;
 
                 _modOptionsTabPageNumber = tabPages.Count;
                 tabPages.Add(_modOptionsPage);
