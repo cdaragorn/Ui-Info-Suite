@@ -106,7 +106,8 @@ namespace UIInfoSuite.UIElements
                 var billboardButton = _showBillboardButton.Value;
                 billboardButton.bounds.X = Game1.activeClickableMenu.xPositionOnScreen + Game1.activeClickableMenu.width - 160;
 
-                billboardButton.bounds.Y = Game1.activeClickableMenu.yPositionOnScreen + Game1.activeClickableMenu.height - 300;
+                billboardButton.bounds.Y = Game1.activeClickableMenu.yPositionOnScreen + Game1.activeClickableMenu.height -
+                    (_helper.ModRegistry.IsLoaded("spacechase0.BiggerBackpack") ? 230 : 300);   // Compatiblity with BiggerBackpack mod;
                 _showBillboardButton.Value = billboardButton;
                 _showBillboardButton.Value.draw(Game1.spriteBatch);
                 if (_showBillboardButton.Value.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
