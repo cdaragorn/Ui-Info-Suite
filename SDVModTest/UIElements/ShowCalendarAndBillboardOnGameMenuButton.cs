@@ -82,14 +82,14 @@ namespace UIInfoSuite.UIElements
         {
             if (Game1.activeClickableMenu is GameMenu gameMenu && gameMenu.currentTab == 0
                 && _heldItem.Value == null
-                && _showBillboardButton.Value.containsPoint((int)Utility.ModifyCoordinateForUIScale(Game1.getMouseX()), (int)Utility.ModifyCoordinateForUIScale(Game1.getMouseY())))
+                && _showBillboardButton.Value.containsPoint((int)Utility.ModifyCoordinateForUIScale(Game1.getMousePosition(true).X), (int)Utility.ModifyCoordinateForUIScale(Game1.getMousePosition(true).Y)))
             {
                 if (Game1.questOfTheDay != null &&
                     string.IsNullOrEmpty(Game1.questOfTheDay.currentObjective))
                     Game1.questOfTheDay.currentObjective = "wat?";
 
                 Game1.activeClickableMenu =
-                    new Billboard(!(Utility.ModifyCoordinateForUIScale(Game1.getMouseX()) <
+                    new Billboard(!(Utility.ModifyCoordinateForUIScale(Game1.getMousePosition(true).X) <
                     _showBillboardButton.Value.bounds.X + _showBillboardButton.Value.bounds.Width / 2));
             }
         }
